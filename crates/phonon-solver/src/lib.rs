@@ -24,8 +24,10 @@ pub mod verification;
 pub use em::{
     AntennaElectrodynamicSolver, EmBenchmarkReport, EmBenchmarkRunner, EmLinkResult,
     EmPropagationScene, EmWaveSolver, EmitterBenchmarkReport, EmitterBenchmarkRunner,
-    GroundStation, ObservationPoint, RadiationSphereResult, RfTransceiverSolver, SatelliteNode,
-    SpaceLinkBudgetResult, SpaceLinkSolver, TransceiverLinkResult, TransientBurstResult,
+    GroundStation, LinkEvaluationParams, ObservationPoint, PacketTransmissionResult,
+    ProtocolBenchmarkReport, ProtocolBenchmarkRunner, RadiationSphereResult, RfRealismTier,
+    RfTierEngine, RfTransceiverSolver, SatelliteNode, SpaceLinkBudgetResult, SpaceLinkSolver,
+    TierChannelResult, TransceiverLinkResult, TransientBurstResult, WifiLinkSimulator,
 };
 pub use error::SolverError;
 pub use hetero::{
