@@ -223,23 +223,54 @@ Digital computing executes purely via constructive and destructive wavepacket in
 
 ---
 
-## 11. Comprehensive Technology Scaling Comparison
+## 11. Electromagnetic Wave Electrodynamics, Sensory Perception & Aerovex Multi-Scale Architecture
 
-| Dimension | 3nm GAA CMOS Baseline | Molecular QI Logic | Spintronic NML Logic | Cryogenic SOEN Coprocessor | Topological Majorana Qubit | **Hypersonic Phononic Logic** |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Primary Switching Mechanism** | Field-effect channel pinch-off | Quantum interference anti-resonance | Magnetostatic stray field & STT | Somatic Josephson $2\pi$ phase slip | Non-Abelian adiabatic braiding ($B_{ij}$) | **Coherent acoustic wavepacket interference** |
-| **Operating Voltage / Drive** | $0.70\text{ V}$ | $0.35\text{ V}$ | $0.15\text{ V}$ (Clock pulse) | $1.0\text{ mV}$ ($V_c = I_c R_n$) | Electrostatic gate ramp ($\Delta \mu \sim 3\text{ meV}$) | **$0.0\text{ V}$ DC (Piezoelectric RF excitation)** |
-| **Logic Event Energy** | $100 - 392\text{ aJ}$ ($2446\text{ meV}$) | **$0.006\text{ aJ}$ ($38.2\text{ meV}$)** | **$0.12\text{ fJ}$** | **$3.5\text{ aJ}$** ($3.5\text{ fJ}$ wall-plug) | **$\sim 0.01\text{ aJ}$ adiabatic steering** | **$12 - 25\text{ aJ}$** |
-| **Static Standby Power** | $1.5\text{ nW}$ / gate | $< 3.5\text{ pW}$ | **$0.0\text{ W}$ (True Zero)** | **$0.0\text{ W}$ (Zero DC flux loss)** | **$0.0\text{ W}$ (Zero static bias)** | **$0.0\text{ W}$ (True Zero)** |
-| **State Retention** | Volatile | Semi-volatile | **Non-volatile ($\Delta \ge 40$)** | Leaky or persistent superconducting | **Topologically protected ($T_1 \sim 200\text{ ms}$)** | **Bistable mechanical / delay line** |
-| **Interconnect Medium** | Copper wires ($RC$ limited) | Conjugated molecular wires | Stray field (No charge flow) | Dielectric optical waveguides | Nanowire T-junction networks | **Phononic crystal defect waveguide** |
-| **Physical Footprint** | $0.02\text{ }\mu\text{m}^2$ / cell | $< 0.0001\,\mu\text{m}^2$ | $\approx 0.05\,\mu\text{m}^2$ | $\approx 2.5\,\mu\text{m}^2$ / neuron | **$\approx 1.0\,\mu\text{m}^2$ / logical qubit** | **$\approx 0.04\,\mu\text{m}^2$ / gate** |
-| **Radiation Immunity** | Susceptible to SEU / soft errors | High radiation tolerance | **Immune to ionizing radiation** | Cryogenic superconducting shielded | **Topologically immune to local noise** | **Immune to ionizing radiation (> 100 Mrad TID, 0 SEU)** |
-| **Operating Temperature** | $-40^\circ\text{C} \text{ to } 125^\circ\text{C}$ (Fails $> 175^\circ\text{C}$) | $< 400\text{ K}$ | $< 400\text{ K}$ | $4\text{ K}$ cryogenic | $< 1\text{ K}$ sub-Kelvin | **$-270^\circ\text{C} \text{ to } 800^\circ\text{C}+$ ($1073\text{ K}$)** |
+### 11.1 3D Vector Maxwell Electrodynamics & Dielectric Wave Propagation
+Spatial electromagnetic propagation couples time-dependent Maxwell equations with dielectric material boundaries:
+$$\nabla \times \mathbf{E} = -\frac{\partial \mathbf{B}}{\partial t}, \quad \nabla \times \mathbf{H} = \mathbf{J} + \frac{\partial \mathbf{D}}{\partial t}, \quad \nabla \cdot \mathbf{D} = \rho_v, \quad \nabla \cdot \mathbf{B} = 0$$
+- **Poynting Energy Flux**: Radiated power density $\mathbf{S} = \mathbf{E} \times \mathbf{H}\text{ W/m}^2$, with far-field path loss scaling as $1/r^2$.
+- **Complex Dielectric Obstacles & Walls**: Materials (concrete $\epsilon_r \approx 4.5, \tan\delta \approx 0.05$, drywall, glass, metals) govern reflection and absorption via complex permittivity $\epsilon^* = \epsilon_0(\epsilon_r' - j\epsilon_r'')$. Fresnel reflection coefficients for TE/TM polarizations, Snell's law refraction, and skin-depth absorption ($\delta = \sqrt{2/\omega \mu \sigma}$) model realistic indoor/outdoor building attenuation.
+- **Geodetic & Space Coordinates**: Transceivers are located using WGS-84 Geodetic coordinates (Latitude, Longitude, Altitude), transformed to Earth-Centered Earth-Fixed (ECEF) and Earth-Centered Inertial (ECI) Cartesian frames. Line-of-sight (LOS) propagation accounts for Earth curvature horizon limits and atmospheric refractive index gradients ($k = 4/3$ effective Earth radius).
+- **Physical Noise & Space RF Channel**: Integrates Johnson-Nyquist thermal noise floor ($N_0 = k_B T_{sys} B$), ITU-R P.676 atmospheric oxygen/water vapor resonance absorption, ITU-R P.838 rain fade, solar radio flux ($F_{10.7}$, solar burst radiation temperature $T_{sun} \sim 10^4 - 10^6\text{ K}$), cosmic microwave background ($2.725\text{ K}$), ionospheric scintillation, and relativistic Doppler shifts.
+
+### 11.2 Multi-Tier RF Abstraction Hierarchy: Raw Machines to Dual-CPU Networking
+Phonon establishes a unified multi-tier abstraction hierarchy spanning from atomistic RF emitters to network-switched multi-processor communication:
+1. **Tier 0 (Discrete Raw Electronics)**: Synthesizes physical radio transmitters from discrete electronic primitives (LC tank oscillators, Colpitts/Hartley stages, quartz crystals, power amplifiers). Non-linear MNA currents pump antenna radiating elements with radiation resistance ($R_{rad}$), ohmic loss, and spherical harmonic 3D gain patterns $G(\theta, \phi)$.
+2. **Tier 1 (Digital Baseband PHY)**: Generates baseband I/Q constellations (BPSK, QPSK, 16/64/256-QAM) and Orthogonal Frequency Division Multiplexing (OFDM). Models channel Bit Error Rates (BER) governed by $E_b/N_0$, multipath Rayleigh/Rician fading ($K$-factor), and symbol synchronization errors.
+3. **Tier 2 (Protocol MAC & Real Wi-Fi Modules)**: Executes IEEE 802.11 (a/b/g/n/ac/ax) and SDR MAC logic, implementing CSMA/CA clear-channel assessment, exponential backoff, RTS/CTS handshakes, frame sequence checking (CRC-32), and dynamic rate scaling.
+4. **Tier 3 (End-to-End CPU-to-Router Co-Simulation)**: Integrates memory-mapped Virtual Network Interface Controllers (NICs) into Phonon simulated CPUs (e.g., RISC-V). Two distinct CPU nodes communicate across an intermediate physical/abstracted Router switch, handling ARP, IPv4/IPv6 packet forwarding, queue overflow, and packet retransmission with complete physical and protocol fidelity.
+
+### 11.3 Multi-Physics Sensory Perception & Transducer Synthesis
+- **Acoustic Wave Propagation & Microphones**: Sound propagation is governed by the 3D acoustic wave equation in fluid media with pressure $P(\mathbf{r}, t)$, speed $c_s = \sqrt{\gamma R T / M}$, and viscous absorption. Vacuum space enforces strict zero-sound transmission. Physical microphones (capacitive condenser diaphragms with dynamic capacitance $C(t) = \epsilon_0 A / (d_0 - x(t))$ and piezoelectric transducers) convert acoustic sound pressure waves directly into analog MNA electrical potentials.
+- **Headless Vulkan Optical Perception & CMOS APS**: Multi-tier optical pipeline utilizing headless offscreen Vulkan rendering for synthetic scene generation. Microscopic CMOS Active Pixel Sensors (APS) simulate silicon photodiode depletion charge integration, quantum efficiency $\eta_{QE}(\lambda)$, dark current, photon shot noise, and correlated double sampling (CDS) read noise. High-level camera models provide configurable FOV, Brown-Conrady lens distortion ($k_1, k_2, p_1, p_2$), exposure, and noise filters.
+- **Pulsed Time-of-Flight LiDAR**: 905 nm and 1550 nm eye-safe pulsed lasers with Gaussian beam divergence, target surface BRDF reflectance, atmospheric Mie scattering (fog, rain, dust), and Aerovex Bounding Volume Hierarchy (BVH) raycasting acceleration.
+- **Tactile & Inertial Transducers**: Piezoresistive and capacitive tactile sensors coupled directly to Aerovex rigid-body collision contact manifolds and normal forces. 6-DOF and 9-DOF IMUs simulate triaxial accelerometers, gyroscopes, and magnetometers with Allan variance stochastic noise and Earth geomagnetic field coupling.
+
+### 11.4 Aerovex Sim & Perception Co-Simulation Architecture
+Phonon interfaces directly with Aerovex's universal simulation kernel (`aerovex-sim`) and perception engine (`aerovex-perception`):
+- **Lock-Free Clock Synchronization**: Bridges Aerovex discrete multi-world physics ticks with Phonon continuous MNA adaptive TR-BDF2 time integration.
+- **Shared Spatial & Perception Primitives**: Direct zero-copy inter-module binding of rigid-body state vectors, contact manifolds, BVH trees, and camera framebuffers.
+- **Multi-Physics 3D Asset Ecosystem**: Standardized 3D asset catalog with complex permittivity, permeability, acoustic impedance, and optical BRDF for 100+ materials.
 
 ---
 
-## 12. Workspace Architecture & Next Phase Roadmap
+## 12. Comprehensive Technology Scaling Comparison
+
+| Dimension | 3nm GAA CMOS Baseline | Molecular QI Logic | Spintronic NML Logic | Cryogenic SOEN Coprocessor | Topological Majorana Qubit | Hypersonic Phononic Logic | **Phonon-Aerovex Multi-Tier RF & Sensor Stack** |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **Primary Switching / Medium** | Field-effect channel pinch-off | Quantum interference anti-resonance | Magnetostatic stray field & STT | Somatic Josephson $2\pi$ phase slip | Non-Abelian adiabatic braiding ($B_{ij}$) | Coherent acoustic wavepacket interference | **3D Vector EM / Acoustic waves & Transducers** |
+| **Operating Voltage / Drive** | $0.70\text{ V}$ | $0.35\text{ V}$ | $0.15\text{ V}$ (Clock pulse) | $1.0\text{ mV}$ ($V_c = I_c R_n$) | Electrostatic gate ramp ($\Delta \mu \sim 3\text{ meV}$) | $0.0\text{ V}$ DC (Piezoelectric RF excitation) | **Microvolts (Antenna RF) to Standard Bus ($3.3\text{V}$)** |
+| **Logic / Transmission Energy** | $100 - 392\text{ aJ}$ ($2446\text{ meV}$) | **$0.006\text{ aJ}$ ($38.2\text{ meV}$)** | **$0.12\text{ fJ}$** | **$3.5\text{ aJ}$** ($3.5\text{ fJ}$ wall-plug) | **$\sim 0.01\text{ aJ}$ adiabatic steering** | **$12 - 25\text{ aJ}$** | **Friis path-loss scaled ($1\text{ nJ} - 10\text{ mJ}$ / packet)** |
+| **Static Standby Power** | $1.5\text{ nW}$ / gate | $< 3.5\text{ pW}$ | **$0.0\text{ W}$ (True Zero)** | **$0.0\text{ W}$ (Zero DC flux loss)** | **$0.0\text{ W}$ (Zero static bias)** | **$0.0\text{ W}$ (True Zero)** | **$0.0\text{ W}$ passive / milliwatts active RF** |
+| **State Retention** | Volatile | Semi-volatile | **Non-volatile ($\Delta \ge 40$)** | Leaky or persistent superconducting | **Topologically protected ($T_1 \sim 200\text{ ms}$)** | **Bistable mechanical / delay line** | **Electromagnetic packet transit buffer** |
+| **Interconnect Medium** | Copper wires ($RC$ limited) | Conjugated molecular wires | Stray field (No charge flow) | Dielectric optical waveguides | Nanowire T-junction networks | Phononic crystal defect waveguide | **Wireless EM free-space / Dielectric walls / Air** |
+| **Physical Footprint** | $0.02\text{ }\mu\text{m}^2$ / cell | $< 0.0001\,\mu\text{m}^2$ | $\approx 0.05\,\mu\text{m}^2$ | $\approx 2.5\,\mu\text{m}^2$ / neuron | **$\approx 1.0\,\mu\text{m}^2$ / logical qubit** | **$\approx 0.04\,\mu\text{m}^2$ / gate** | **Microstrip patch / Dipole ($\text{mm} - \text{m}$ scale)** |
+| **Radiation & Noise Immunity** | Susceptible to SEU / soft errors | High radiation tolerance | **Immune to ionizing radiation** | Cryogenic superconducting shielded | **Topologically immune to local noise** | **Immune to ionizing radiation (> 100 Mrad TID)** | **Realistic Solar $F_{10.7}$, CMB $2.7\text{K}$, Ionospheric** |
+| **Operating Environment** | $-40^\circ\text{C} \text{ to } 125^\circ\text{C}$ (Fails $> 175^\circ\text{C}$) | $< 400\text{ K}$ | $< 400\text{ K}$ | $4\text{ K}$ cryogenic | $< 1\text{ K}$ sub-Kelvin | $-270^\circ\text{C} \text{ to } 800^\circ\text{C}+$ ($1073\text{ K}$) | **Terrestrial (WGS-84) & Orbital Deep Space** |
+
+---
+
+## 13. Workspace Architecture & Next Phase Roadmap
 
 Phonon is partitioned into modular Rust crates enforcing zero memory unsafety (`#![deny(unsafe_code)]`):
 
@@ -254,6 +285,17 @@ crates/
 └── phonon-gui/           # Native GPU-accelerated CAD schematic capture & thermal visualizer
 ```
 
-- **Active Phase in `todo.md`**: **Phase 29: Molecular Spintronics, Chiral-Induced Spin Selectivity (CISS) & Single-Molecule Magnet Synthesis**.
-- **Queued Phase in `todo.md`**: **Phase 30: Diamond Nitrogen-Vacancy (NV) Center Quantum Sensors, Optically Detected Magnetic Resonance & Nanoscale Magnetometry**.
+- **Active Phase in `todo.md`**: **Phase 29: Electromagnetic Wave Propagation, 3D Vector Maxwell Electrodynamics & Geodetic Space RF Environments**.
+- **Queued Phased Pipeline**:
+  - **Phase 30**: First-Principles RF Emitter Synthesis & Discrete Antenna Transduction (Raw Machines to Transceivers)
+  - **Phase 31**: Multi-Tier RF Abstraction, Digital Baseband PHY Modulation & Wi-Fi/SDR Protocol Engines
+  - **Phase 32**: End-to-End CPU-to-Router Network Co-Simulation & Discrete Packet Switching
+  - **Phase 33**: Acoustic Wave Propagation, Atmospheric Sound Transduction & Physical Microphone Synthesis
+  - **Phase 34**: Headless Vulkan Synthetic Perception, Multi-Tier Optical Cameras & CMOS APS Photodiode Arrays
+  - **Phase 35**: LiDAR Time-of-Flight Synthesis, Atmospheric Scattering & Aerovex BVH Acceleration
+  - **Phase 36**: Physics-Coupled Tactile/Force Sensors, Multi-Axis IMU & Aerovex Sim Architectural Integration
+  - **Phase 37**: Unified Multi-Physics 3D Asset Ecosystem, Dielectric Material Library & Component Catalog
+  - **Phase 38**: Molecular Spintronics, Chiral-Induced Spin Selectivity (CISS) & Single-Molecule Magnet Synthesis
+  - **Phase 39**: Diamond Nitrogen-Vacancy (NV) Center Quantum Sensors, Optically Detected Magnetic Resonance & Nanoscale Magnetometry
+
 
