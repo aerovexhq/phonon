@@ -83,6 +83,11 @@ impl Vector3D {
     }
 
     #[inline]
+    pub fn magnitude(&self) -> f64 {
+        self.norm()
+    }
+
+    #[inline]
     pub fn angle_to(&self, other: &Self) -> f64 {
         let denom = self.norm() * other.norm();
         if denom < 1e-15 {
@@ -126,6 +131,42 @@ impl std::ops::Neg for Vector3D {
             x: -self.x,
             y: -self.y,
             z: -self.z,
+        }
+    }
+}
+
+impl std::ops::Mul<f64> for Vector3D {
+    type Output = Self;
+    #[inline]
+    fn mul(self, rhs: f64) -> Self {
+        Self {
+            x: self.x * rhs,
+            y: self.y * rhs,
+            z: self.z * rhs,
+        }
+    }
+}
+
+impl std::ops::Mul<Vector3D> for f64 {
+    type Output = Vector3D;
+    #[inline]
+    fn mul(self, rhs: Vector3D) -> Vector3D {
+        Vector3D {
+            x: self * rhs.x,
+            y: self * rhs.y,
+            z: self * rhs.z,
+        }
+    }
+}
+
+impl std::ops::Div<f64> for Vector3D {
+    type Output = Self;
+    #[inline]
+    fn div(self, rhs: f64) -> Self {
+        Self {
+            x: self.x / rhs,
+            y: self.y / rhs,
+            z: self.z / rhs,
         }
     }
 }
