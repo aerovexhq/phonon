@@ -1,0 +1,16 @@
+[package]
+name = "phonon-models"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[dependencies]
+phonon-core = { path = "../phonon-core" }
+thiserror = { workspace = true }
+
+[dev-dependencies]
+approx = { workspace = true }
+
+[lints]
+workspace = true

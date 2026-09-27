@@ -1,0 +1,17 @@
+[package]
+name = "phonon-netlist"
+description = "SPICE 3f5 / HSPICE netlist lexer, AST parser, subcircuit flattener, and model elaborator for Phonon"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+phonon-core = { path = "../phonon-core" }
+phonon-models = { path = "../phonon-models" }
+phonon-solver = { path = "../phonon-solver" }
+thiserror = { workspace = true }

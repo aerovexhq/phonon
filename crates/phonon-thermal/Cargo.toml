@@ -1,0 +1,20 @@
+[package]
+name = "phonon-thermal"
+description = "Multi-physics electro-thermal solver engine, thermal diffusion grids, and Cauer/Foster networks for Phonon"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+phonon-core = { path = "../phonon-core" }
+phonon-models = { path = "../phonon-models" }
+phonon-solver = { path = "../phonon-solver" }
+thiserror = { workspace = true }
+
+[dev-dependencies]
+approx = { workspace = true }
