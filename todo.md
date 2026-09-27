@@ -4,14 +4,6 @@
 
 ## Future
 
-### Phase 30: First-Principles RF Emitter Synthesis & Discrete Antenna Transduction (Raw Machines to Transceivers)
-Construct physical radio frequency emitters synthesized from raw discrete electronic components, including LC tank, Colpitts, and crystal oscillators.
-Couple non-linear circuit MNA terminal currents directly into far-field radiation via time-dependent Poynting vector integration.
-Synthesize physical antenna transducer models: dipole, monopole, microstrip patch, horn, parabolic reflector, and phased array beamformers.
-Model antenna radiation resistance ($R_{rad}$), ohmic loss resistance, radiation efficiency, and 3D directivity spherical harmonic gain patterns.
-Implement parallel Rayon solvers evaluating radiated electric field vectors $\mathbf{E}(\mathbf{r}, t)$ and magnetic field vectors $\mathbf{H}(\mathbf{r}, t)$ across 3D observation spheres.
-Benchmark synthesized discrete radio transmitters against analytical Friis transmission equations across near-field and far-field boundaries.
-
 ### Phase 31: Multi-Tier RF Abstraction, Digital Baseband PHY Modulation & Wi-Fi/SDR Protocol Engines
 Architect a hierarchical RF abstraction engine bridging raw continuous EM field electrodynamics to digital communication protocols.
 Formulate digital baseband PHY layer modulation schemes: BPSK, QPSK, 16-QAM, 64-QAM, 256-QAM, and Orthogonal Frequency Division Multiplexing (OFDM).
@@ -88,17 +80,25 @@ Benchmark diamond NV quantum magnetometers against SQUID and Hall sensors across
 
 ## Current
 
-### Phase 29: Electromagnetic Wave Propagation, 3D Vector Maxwell Electrodynamics & Geodetic Space RF Environments
-Formulate 3D vector electromagnetic wave propagation coupling Maxwell electrodynamics, Poynting radiation, and distance-squared path loss.
-Model complex dielectric material interaction across walls and obstacles with Fresnel reflection, transmission, skin depth, and loss tangents.
-Implement geodetic WGS-84 coordinates (Lat/Lon/Alt) with ECEF/ECI coordinate transformations, Earth curvature horizon limits, and atmospheric refraction.
-Formulate space networking links incorporating orbital delay, relativistic Doppler shift, and ionospheric scintillation.
-Integrate multi-source physical noise models: Johnson-Nyquist thermal noise, ITU-R atmospheric and rain fade, cosmic microwave background (2.7 K), and solar flux radiation bursts ($F_{10.7}$).
-Benchmark multi-threaded Rayon EM wave solvers across multi-kilometer terrestrial obstacle courses and deep-space orbital links.
+### Phase 30: First-Principles RF Emitter Synthesis & Discrete Antenna Transduction (Raw Machines to Transceivers)
+Construct physical radio frequency emitters synthesized from raw discrete electronic components, including LC tank, Colpitts, and crystal oscillators.
+Couple non-linear circuit MNA terminal currents directly into far-field radiation via time-dependent Poynting vector integration.
+Synthesize physical antenna transducer models: dipole, monopole, microstrip patch, horn, parabolic reflector, and phased array beamformers.
+Model antenna radiation resistance ($R_{rad}$), ohmic loss resistance, radiation efficiency, and 3D directivity spherical harmonic gain patterns.
+Implement parallel Rayon solvers evaluating radiated electric field vectors $\mathbf{E}(\mathbf{r}, t)$ and magnetic field vectors $\mathbf{H}(\mathbf{r}, t)$ across 3D observation spheres.
+Benchmark synthesized discrete radio transmitters against analytical Friis transmission equations across near-field and far-field boundaries.
 
 ---
 
 ## Done
+
+### Phase 29: Electromagnetic Wave Propagation, 3D Vector Maxwell Electrodynamics & Geodetic Space RF Environments
+Formulated 3D vector electromagnetic wave propagation coupling Maxwell electrodynamics, Poynting radiation, and distance-squared path loss.
+Modeled complex dielectric material interaction across walls and obstacles with Fresnel reflection, transmission, skin depth, and loss tangents.
+Implemented geodetic WGS-84 coordinates (Lat/Lon/Alt) with ECEF/ECI coordinate transformations, Earth curvature horizon limits, and atmospheric refraction.
+Formulated space networking links incorporating orbital delay, relativistic Doppler shift, and ionospheric scintillation.
+Integrated multi-source physical noise models: Johnson-Nyquist thermal noise, ITU-R atmospheric and rain fade, cosmic microwave background (2.7 K), and solar flux radiation bursts ($F_{10.7}$).
+Benchmarked multi-threaded Rayon EM wave solvers across multi-kilometer terrestrial obstacle courses and deep-space orbital links.
 
 ### Phase 28: Phononic Crystal Metamaterials, Acoustic Wave Logic & Hypersonic Nanoresonator Synthesis
 Developed an autonomous solver exploring phononic bandgap metamaterials, hypersonic acoustic waves, and non-electronic mechanical logic.
