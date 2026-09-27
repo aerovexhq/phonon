@@ -1,0 +1,23 @@
+//! Electromagnetic Wave Propagation, 3D Vector Electrodynamics & Geodetic Space RF Environments.
+
+pub mod coordinates;
+pub mod dielectric;
+pub mod noise;
+pub mod space_channel;
+pub mod vector_wave;
+
+pub use coordinates::{
+    EarthHorizon, EcefCoord, EnuCoord, GeodeticCoord, MEAN_EARTH_RADIUS_METERS, STANDARD_K_FACTOR,
+    WGS84_A_METERS, WGS84_B_METERS, WGS84_E_SQ, WGS84_FLATTENING,
+};
+pub use dielectric::{
+    DielectricWall, FresnelCoefficients, KnifeEdgeObstacle, RayHit, RfDielectricMaterial,
+};
+pub use noise::{
+    RfNoiseModel, COSMIC_MICROWAVE_BACKGROUND_KELVIN, SOLAR_DISK_DIAMETER_DEG,
+    STANDARD_NOISE_TEMP_KELVIN,
+};
+pub use space_channel::{DopplerResult, SpaceNode, IONO_DISPERSION_CONSTANT, ONE_TECU};
+pub use vector_wave::{
+    ComplexField3D, EmWaveSource, Polarization, Vector3D, INTRINSIC_IMPEDANCE_VACUUM,
+};
