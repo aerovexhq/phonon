@@ -288,9 +288,9 @@ crates/
 - **Completed Phases in `todo.md`**:
   - **Phase 29: Electromagnetic Wave Propagation, 3D Vector Maxwell Electrodynamics & Geodetic Space RF Environments** (Completed with full 3D vector fields, complex permittivity dielectrics, Fresnel reflection/transmission, WGS-84 Bowring geodetics, relativistic Doppler, ionospheric scintillation, multi-source RF noise, and 10,000-link Rayon benchmark).
   - **Phase 30: First-Principles RF Emitter Synthesis & Discrete Antenna Transduction (Raw Machines to Transceivers)** (Completed with LC Tank, Colpitts, and Crystal BVD oscillators, RF power amplifiers with 1-dB compression, physical antennas [dipole, monopole, patch, horn, dish, phased array], electrodynamic observation sphere solvers, and 10,000-case Rayon benchmark).
-- **Active Phase in `todo.md`**: **Phase 31: Multi-Tier RF Abstraction, Digital Baseband PHY Modulation & Wi-Fi/SDR Protocol Engines**.
+  - **Phase 31: Multi-Tier RF Abstraction, Digital Baseband PHY Modulation & Wi-Fi/SDR Protocol Engines** (Completed with multi-tier RF abstraction [Tier 0 FullWave, Tier 1 Raytraced Multipath, Tier 2 Accelerated Path Loss], digital baseband PHY modulations [BPSK, QPSK, 16/64/256-QAM], IEEE 802.11a/g/n OFDM framing, IEEE 802.11 CSMA/CA MAC engine with CRC-32 FCS, pilot-assisted OFDM equalization, and 10,000-packet Rayon benchmark at > 30,000 packets/sec).
+- **Active Phase in `todo.md`**: **Phase 32: End-to-End CPU-to-Router Network Co-Simulation & Discrete Packet Switching**.
 - **Queued Phased Pipeline**:
-  - **Phase 32**: End-to-End CPU-to-Router Network Co-Simulation & Discrete Packet Switching
   - **Phase 33**: Acoustic Wave Propagation, Atmospheric Sound Transduction & Physical Microphone Synthesis
   - **Phase 34**: Headless Vulkan Synthetic Perception, Multi-Tier Optical Cameras & CMOS APS Photodiode Arrays
   - **Phase 35**: LiDAR Time-of-Flight Synthesis, Atmospheric Scattering & Aerovex BVH Acceleration

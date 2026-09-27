@@ -4,16 +4,8 @@
 
 ## Future
 
-### Phase 32: End-to-End CPU-to-Router Network Co-Simulation & Discrete Packet Switching
-Synthesize memory-mapped Virtual Network Interface Controllers (NICs) integrated directly into Phonon simulated CPU execution datapaths.
-Construct multi-node physical and logical network topologies connecting distinct CPU systems through simulated wireless/wired Router switches.
-Model full-stack packet handling: ARP address resolution, IPv4/IPv6 datagram framing, UDP/TCP socket transport, and hardware interrupt generation.
-Simulate router queue dynamics, packet collision, buffer exhaustion, and dynamic packet dropping under realistic wireless channel degradation.
-Implement Rayon-accelerated co-simulation stepping synchronized CPU instruction pipelines, NIC FIFOs, and physical RF channel propagation.
-Verify complete end-to-end data communication between dual CPUs operating across walls and simulated atmospheric interference with pure physical fidelity.
-
 ### Phase 33: Acoustic Wave Propagation, Atmospheric Sound Transduction & Physical Microphone Synthesis
-Formulate multi-medium acoustic wave equations modeling acoustic pressure waves $P(\mathbf{r}, t)$ through gases, solids, structural walls, and vacuum isolation.
+Synthesize multi-medium acoustic wave equations modeling acoustic pressure waves $P(\mathbf{r}, t)$ through gases, solids, structural walls, and vacuum isolation.
 Model atmospheric sound parameters: temperature/humidity-dependent sonic speed ($c_s = \sqrt{\gamma R T / M}$), viscous acoustic absorption, and wall transmission loss.
 Synthesize physical microphone transducer models: capacitive condenser diaphragms with time-varying capacitance and piezoelectric voltage generators.
 Implement multi-tier acoustic solvers supporting 3D raycasting acoustic path tracing, Sabine geometric reverberation ($T_{60}$), and full wave PDEs.
@@ -72,17 +64,25 @@ Benchmark diamond NV quantum magnetometers against SQUID and Hall sensors across
 
 ## Current
 
-### Phase 31: Multi-Tier RF Abstraction, Digital Baseband PHY Modulation & Wi-Fi/SDR Protocol Engines
-Architect a hierarchical RF abstraction engine bridging raw continuous EM field electrodynamics to digital communication protocols.
-Formulate digital baseband PHY layer modulation schemes: BPSK, QPSK, 16-QAM, 64-QAM, 256-QAM, and Orthogonal Frequency Division Multiplexing (OFDM).
-Simulate transmission channels coupling realistic AWGN, multipath Rayleigh/Rician fading, symbol timing error, and theoretical Bit Error Rate (BER) curves.
-Implement IEEE 802.11 (Wi-Fi a/b/g/n/ac/ax) and software-defined radio (SDR) MAC engines with CSMA/CA, exponential backoff, RTS/CTS, and CRC/FCS validation.
-Provide dynamic realism tiers allowing runtime switching between full electrodynamic field simulation, raytraced multipath, and accelerated analytical path loss.
-Benchmark throughput, packet error rate (PER), and latency across varying obstacle densities, distance scales, and multi-tier abstraction modes.
+### Phase 32: End-to-End CPU-to-Router Network Co-Simulation & Discrete Packet Switching
+Synthesize memory-mapped Virtual Network Interface Controllers (NICs) integrated directly into Phonon simulated CPU execution datapaths.
+Construct multi-node physical and logical network topologies connecting distinct CPU systems through simulated wireless/wired Router switches.
+Model full-stack packet handling: ARP address resolution, IPv4/IPv6 datagram framing, UDP/TCP socket transport, and hardware interrupt generation.
+Simulate router queue dynamics, packet collision, buffer exhaustion, and dynamic packet dropping under realistic wireless channel degradation.
+Implement Rayon-accelerated co-simulation stepping synchronized CPU instruction pipelines, NIC FIFOs, and physical RF channel propagation.
+Verify complete end-to-end data communication between dual CPUs operating across walls and simulated atmospheric interference with pure physical fidelity.
 
 ---
 
 ## Done
+
+### Phase 31: Multi-Tier RF Abstraction, Digital Baseband PHY Modulation & Wi-Fi/SDR Protocol Engines
+Architected a multi-tier RF abstraction engine supporting runtime switching between FullWave Maxwell, Raytraced Multipath, and Accelerated Path Loss tiers.
+Formulated digital baseband PHY modulations (BPSK, QPSK, 16/64/256-QAM) and IEEE 802.11a/g/n OFDM framing with exact theoretical BER under AWGN and Rayleigh fading.
+Synthesized multipath tapped-delay-line channel models for IEEE 802.11 Model B/C/D with Doppler spread, excess delay, and coherence bandwidth characterization.
+Implemented IEEE 802.11 CSMA/CA MAC protocol engines with CCA clear channel assessment, random backoff, exponential contention window scaling, and CRC-32 FCS validation.
+Constructed end-to-end wireless link simulator coupling digital byte payloads, OFDM pilot-assisted channel equalization, and physical dielectric obstacle penetration.
+Benchmarked parallel Rayon protocol execution across 10,000 packets at > 30,000 packets/sec, verifying empirical PER, BER, and throughput against analytical models.
 
 ### Phase 30: First-Principles RF Emitter Synthesis & Discrete Antenna Transduction (Raw Machines to Transceivers)
 Constructed physical radio frequency emitters synthesized from raw discrete electronic components, including LC tank, Colpitts, and crystal oscillators.
