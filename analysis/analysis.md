@@ -285,10 +285,11 @@ crates/
 └── phonon-gui/           # Native GPU-accelerated CAD schematic capture & thermal visualizer
 ```
 
-- **Completed Phase in `todo.md`**: **Phase 29: Electromagnetic Wave Propagation, 3D Vector Maxwell Electrodynamics & Geodetic Space RF Environments** (Completed with full 3D vector fields, complex permittivity dielectrics, Fresnel reflection/transmission, WGS-84 Bowring geodetics, relativistic Doppler, ionospheric scintillation, multi-source RF noise, and 10,000-link Rayon benchmark).
-- **Active Phase in `todo.md`**: **Phase 30: First-Principles RF Emitter Synthesis & Discrete Antenna Transduction (Raw Machines to Transceivers)**.
+- **Completed Phases in `todo.md`**:
+  - **Phase 29: Electromagnetic Wave Propagation, 3D Vector Maxwell Electrodynamics & Geodetic Space RF Environments** (Completed with full 3D vector fields, complex permittivity dielectrics, Fresnel reflection/transmission, WGS-84 Bowring geodetics, relativistic Doppler, ionospheric scintillation, multi-source RF noise, and 10,000-link Rayon benchmark).
+  - **Phase 30: First-Principles RF Emitter Synthesis & Discrete Antenna Transduction (Raw Machines to Transceivers)** (Completed with LC Tank, Colpitts, and Crystal BVD oscillators, RF power amplifiers with 1-dB compression, physical antennas [dipole, monopole, patch, horn, dish, phased array], electrodynamic observation sphere solvers, and 10,000-case Rayon benchmark).
+- **Active Phase in `todo.md`**: **Phase 31: Multi-Tier RF Abstraction, Digital Baseband PHY Modulation & Wi-Fi/SDR Protocol Engines**.
 - **Queued Phased Pipeline**:
-  - **Phase 31**: Multi-Tier RF Abstraction, Digital Baseband PHY Modulation & Wi-Fi/SDR Protocol Engines
   - **Phase 32**: End-to-End CPU-to-Router Network Co-Simulation & Discrete Packet Switching
   - **Phase 33**: Acoustic Wave Propagation, Atmospheric Sound Transduction & Physical Microphone Synthesis
   - **Phase 34**: Headless Vulkan Synthetic Perception, Multi-Tier Optical Cameras & CMOS APS Photodiode Arrays

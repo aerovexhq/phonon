@@ -22,8 +22,10 @@ pub mod transient;
 pub mod verification;
 
 pub use em::{
-    EmBenchmarkReport, EmBenchmarkRunner, EmLinkResult, EmPropagationScene, EmWaveSolver,
-    GroundStation, SatelliteNode, SpaceLinkBudgetResult, SpaceLinkSolver,
+    AntennaElectrodynamicSolver, EmBenchmarkReport, EmBenchmarkRunner, EmLinkResult,
+    EmPropagationScene, EmWaveSolver, EmitterBenchmarkReport, EmitterBenchmarkRunner,
+    GroundStation, ObservationPoint, RadiationSphereResult, RfTransceiverSolver, SatelliteNode,
+    SpaceLinkBudgetResult, SpaceLinkSolver, TransceiverLinkResult, TransientBurstResult,
 };
 pub use error::SolverError;
 pub use hetero::{

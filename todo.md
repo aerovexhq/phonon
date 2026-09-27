@@ -4,14 +4,6 @@
 
 ## Future
 
-### Phase 31: Multi-Tier RF Abstraction, Digital Baseband PHY Modulation & Wi-Fi/SDR Protocol Engines
-Architect a hierarchical RF abstraction engine bridging raw continuous EM field electrodynamics to digital communication protocols.
-Formulate digital baseband PHY layer modulation schemes: BPSK, QPSK, 16-QAM, 64-QAM, 256-QAM, and Orthogonal Frequency Division Multiplexing (OFDM).
-Simulate transmission channels coupling realistic AWGN, multipath Rayleigh/Rician fading, symbol timing error, and theoretical Bit Error Rate (BER) curves.
-Implement IEEE 802.11 (Wi-Fi a/b/g/n/ac/ax) and software-defined radio (SDR) MAC engines with CSMA/CA, exponential backoff, RTS/CTS, and CRC/FCS validation.
-Provide dynamic realism tiers allowing runtime switching between full electrodynamic field simulation, raytraced multipath, and accelerated analytical path loss.
-Benchmark throughput, packet error rate (PER), and latency across varying obstacle densities, distance scales, and multi-tier abstraction modes.
-
 ### Phase 32: End-to-End CPU-to-Router Network Co-Simulation & Discrete Packet Switching
 Synthesize memory-mapped Virtual Network Interface Controllers (NICs) integrated directly into Phonon simulated CPU execution datapaths.
 Construct multi-node physical and logical network topologies connecting distinct CPU systems through simulated wireless/wired Router switches.
@@ -80,17 +72,25 @@ Benchmark diamond NV quantum magnetometers against SQUID and Hall sensors across
 
 ## Current
 
-### Phase 30: First-Principles RF Emitter Synthesis & Discrete Antenna Transduction (Raw Machines to Transceivers)
-Construct physical radio frequency emitters synthesized from raw discrete electronic components, including LC tank, Colpitts, and crystal oscillators.
-Couple non-linear circuit MNA terminal currents directly into far-field radiation via time-dependent Poynting vector integration.
-Synthesize physical antenna transducer models: dipole, monopole, microstrip patch, horn, parabolic reflector, and phased array beamformers.
-Model antenna radiation resistance ($R_{rad}$), ohmic loss resistance, radiation efficiency, and 3D directivity spherical harmonic gain patterns.
-Implement parallel Rayon solvers evaluating radiated electric field vectors $\mathbf{E}(\mathbf{r}, t)$ and magnetic field vectors $\mathbf{H}(\mathbf{r}, t)$ across 3D observation spheres.
-Benchmark synthesized discrete radio transmitters against analytical Friis transmission equations across near-field and far-field boundaries.
+### Phase 31: Multi-Tier RF Abstraction, Digital Baseband PHY Modulation & Wi-Fi/SDR Protocol Engines
+Architect a hierarchical RF abstraction engine bridging raw continuous EM field electrodynamics to digital communication protocols.
+Formulate digital baseband PHY layer modulation schemes: BPSK, QPSK, 16-QAM, 64-QAM, 256-QAM, and Orthogonal Frequency Division Multiplexing (OFDM).
+Simulate transmission channels coupling realistic AWGN, multipath Rayleigh/Rician fading, symbol timing error, and theoretical Bit Error Rate (BER) curves.
+Implement IEEE 802.11 (Wi-Fi a/b/g/n/ac/ax) and software-defined radio (SDR) MAC engines with CSMA/CA, exponential backoff, RTS/CTS, and CRC/FCS validation.
+Provide dynamic realism tiers allowing runtime switching between full electrodynamic field simulation, raytraced multipath, and accelerated analytical path loss.
+Benchmark throughput, packet error rate (PER), and latency across varying obstacle densities, distance scales, and multi-tier abstraction modes.
 
 ---
 
 ## Done
+
+### Phase 30: First-Principles RF Emitter Synthesis & Discrete Antenna Transduction (Raw Machines to Transceivers)
+Constructed physical radio frequency emitters synthesized from raw discrete electronic components, including LC tank, Colpitts, and crystal oscillators.
+Coupled non-linear circuit MNA terminal currents directly into far-field radiation via time-dependent Poynting vector integration.
+Synthesized physical antenna transducer models: dipole, monopole, microstrip patch, horn, parabolic reflector, and phased array beamformers.
+Modeled antenna radiation resistance ($R_{rad}$), ohmic loss resistance, radiation efficiency, and 3D directivity spherical harmonic gain patterns.
+Implemented parallel Rayon solvers evaluating radiated electric field vectors $\mathbf{E}(\mathbf{r}, t)$ and magnetic field vectors $\mathbf{H}(\mathbf{r}, t)$ across 3D observation spheres.
+Benchmarked synthesized discrete radio transmitters against analytical Friis transmission equations across near-field and far-field boundaries.
 
 ### Phase 29: Electromagnetic Wave Propagation, 3D Vector Maxwell Electrodynamics & Geodetic Space RF Environments
 Formulated 3D vector electromagnetic wave propagation coupling Maxwell electrodynamics, Poynting radiation, and distance-squared path loss.

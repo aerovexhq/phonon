@@ -53,12 +53,14 @@ pub use cryogenic::{
 };
 pub use diode::{DiodeEvaluation, DiodeModel};
 pub use em::{
-    ComplexField3D, DielectricWall, DopplerResult, EarthHorizon, EcefCoord, EmWaveSource, EnuCoord,
-    FresnelCoefficients, GeodeticCoord, KnifeEdgeObstacle, Polarization, RayHit,
-    RfDielectricMaterial, RfNoiseModel, SpaceNode, Vector3D, COSMIC_MICROWAVE_BACKGROUND_KELVIN,
-    INTRINSIC_IMPEDANCE_VACUUM, IONO_DISPERSION_CONSTANT, MEAN_EARTH_RADIUS_METERS, ONE_TECU,
-    SOLAR_DISK_DIAMETER_DEG, STANDARD_K_FACTOR, STANDARD_NOISE_TEMP_KELVIN, WGS84_A_METERS,
-    WGS84_B_METERS, WGS84_E_SQ, WGS84_FLATTENING,
+    AmplifierClass, AntennaGeometry, ComplexField3D, DielectricWall, DiscreteTransmitter,
+    DopplerResult, EarthHorizon, EcefCoord, EmWaveSource, EnuCoord, FresnelCoefficients,
+    GeodeticCoord, KnifeEdgeObstacle, OscillatorType, PhysicalAntenna, Polarization, RayHit,
+    RfDielectricMaterial, RfNoiseModel, RfPowerAmplifier, SpaceNode, Vector3D, BOLTZMANN_CONSTANT,
+    COSMIC_MICROWAVE_BACKGROUND_KELVIN, INTRINSIC_IMPEDANCE_VACUUM, IONO_DISPERSION_CONSTANT,
+    MEAN_EARTH_RADIUS_METERS, ONE_TECU, REFERENCE_TEMP_K, SOLAR_DISK_DIAMETER_DEG,
+    STANDARD_K_FACTOR, STANDARD_NOISE_TEMP_KELVIN, VACUUM_IMPEDANCE, VACUUM_PERMEABILITY,
+    WGS84_A_METERS, WGS84_B_METERS, WGS84_E_SQ, WGS84_FLATTENING,
 };
 pub use hetero::{
     BlackElectromigrationModel, BlockAllocationMap, BlockStressReport, CpuMacroBlock,
