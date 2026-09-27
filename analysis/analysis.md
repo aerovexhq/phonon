@@ -285,9 +285,9 @@ crates/
 └── phonon-gui/           # Native GPU-accelerated CAD schematic capture & thermal visualizer
 ```
 
-- **Active Phase in `todo.md`**: **Phase 29: Electromagnetic Wave Propagation, 3D Vector Maxwell Electrodynamics & Geodetic Space RF Environments**.
+- **Completed Phase in `todo.md`**: **Phase 29: Electromagnetic Wave Propagation, 3D Vector Maxwell Electrodynamics & Geodetic Space RF Environments** (Completed with full 3D vector fields, complex permittivity dielectrics, Fresnel reflection/transmission, WGS-84 Bowring geodetics, relativistic Doppler, ionospheric scintillation, multi-source RF noise, and 10,000-link Rayon benchmark).
+- **Active Phase in `todo.md`**: **Phase 30: First-Principles RF Emitter Synthesis & Discrete Antenna Transduction (Raw Machines to Transceivers)**.
 - **Queued Phased Pipeline**:
-  - **Phase 30**: First-Principles RF Emitter Synthesis & Discrete Antenna Transduction (Raw Machines to Transceivers)
   - **Phase 31**: Multi-Tier RF Abstraction, Digital Baseband PHY Modulation & Wi-Fi/SDR Protocol Engines
   - **Phase 32**: End-to-End CPU-to-Router Network Co-Simulation & Discrete Packet Switching
   - **Phase 33**: Acoustic Wave Propagation, Atmospheric Sound Transduction & Physical Microphone Synthesis

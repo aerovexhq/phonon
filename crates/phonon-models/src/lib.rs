@@ -8,6 +8,7 @@ pub mod chemistry;
 pub mod common;
 pub mod cryogenic;
 pub mod diode;
+pub mod em;
 pub mod hetero;
 pub mod hierarchical;
 pub mod memristor;
@@ -51,6 +52,14 @@ pub use cryogenic::{
     CryogenicFreezeoutModel, CryogenicMobilityModel,
 };
 pub use diode::{DiodeEvaluation, DiodeModel};
+pub use em::{
+    ComplexField3D, DielectricWall, DopplerResult, EarthHorizon, EcefCoord, EmWaveSource, EnuCoord,
+    FresnelCoefficients, GeodeticCoord, KnifeEdgeObstacle, Polarization, RayHit,
+    RfDielectricMaterial, RfNoiseModel, SpaceNode, Vector3D, COSMIC_MICROWAVE_BACKGROUND_KELVIN,
+    INTRINSIC_IMPEDANCE_VACUUM, IONO_DISPERSION_CONSTANT, MEAN_EARTH_RADIUS_METERS, ONE_TECU,
+    SOLAR_DISK_DIAMETER_DEG, STANDARD_K_FACTOR, STANDARD_NOISE_TEMP_KELVIN, WGS84_A_METERS,
+    WGS84_B_METERS, WGS84_E_SQ, WGS84_FLATTENING,
+};
 pub use hetero::{
     BlackElectromigrationModel, BlockAllocationMap, BlockStressReport, CpuMacroBlock,
     HeteroMaterialProperties, HeteroMaterialType, ProcessorBlockType, ProcessorFloorplan,
