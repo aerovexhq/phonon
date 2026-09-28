@@ -24,6 +24,7 @@ pub mod mvl;
 pub mod net;
 pub mod optics;
 pub mod optimization;
+pub mod optomechanics;
 pub mod parasitics;
 pub mod phononic;
 pub mod photonic;
@@ -140,6 +141,10 @@ pub use optimization::{
     FitnessEvaluation, GeneBounds, Individual, IrdsNodeTarget, Nsga2Config, Nsga2Optimizer,
     OptContactMetal, OptGateDielectric, OptimizationTarget, ParameterSensitivities,
     RoadmapComplianceReport, TransistorGenome,
+};
+pub use optomechanics::{
+    OmitParams, OptomechanicalParams, OptomechanicalSystemType, PonderomotiveSqueezingParams,
+    SidebandCoolingParams,
 };
 pub use parasitics::{RealCapacitorModel, RealInductorModel};
 pub use phononic::{
