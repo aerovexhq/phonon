@@ -4,14 +4,6 @@
 
 ## Future
 
-### Phase 50: Relativistic Plasma Wakefields, Laser-Driven Particle Acceleration & Synchrotron Radiation
-Develop an autonomous multi-physics solver modeling relativistic plasma wakefield acceleration (PWFA) and laser-plasma interactions.
-Formulate relativistic Vlasov-Maxwell kinetics and ponderomotive envelope equations in underdense and overdense plasma channels.
-Model electron beam self-injection, blowout bubble regimes, multi-gigavolt-per-meter accelerating gradients, and dephasing lengths.
-Synthesize synchrotron and betatron X-ray radiation emission with non-linear quantum electrodynamical (QED) radiation reaction.
-Implement multi-threaded Rayon relativistic Boris particle-mesh pushers and spectral Fourier laser envelope propagators.
-Benchmark laser wakefield acceleration across 10,000 time steps with energy conservation $< 10^{-6}$ and sub-femtosecond bunch duration.
-
 ### Phase 51: Molecular Spintronics, Single-Molecule Magnetism & Spin-Torque Nano-Oscillators
 Develop an autonomous multi-scale solver modeling molecular spintronics, single-molecule magnets (SMM), and spin-torque nano-oscillators.
 Formulate giant spin Hamiltonians with uniaxial anisotropy, transverse crystal fields, and resonant quantum tunneling of magnetization.
@@ -20,21 +12,37 @@ Synthesize spin-transfer torque and spin-orbit torque nano-oscillators (STNO/SHN
 Implement multi-threaded Rayon stochastic Landau-Lifshitz-Gilbert (sLLG) Langevin integrators tracking phase noise and spectral linewidth.
 Benchmark molecular spin memory and RF oscillator co-simulation across 10,000 precession cycles with phase locking and zero drift.
 
+### Phase 52: Superconducting Traveling-Wave Parametric Amplifiers & Quantum-Limited Readout
+Develop an autonomous solver modeling Josephson traveling-wave parametric amplifiers (JTWPA) and SNAIL parametric devices.
+Formulate non-linear wave propagation across multi-junction Josephson transmission lines with periodic dispersion engineering.
+Model four-wave and three-wave mixing parametric processes, phase-matching conditions, and quantum-limited noise performance.
+Synthesize SNAIL arrays with Kerr-free third-order non-linearities and high saturation powers exceeding $-90\text{ dBm}$.
+Implement multi-threaded Rayon coupled-mode ODE integrators evaluating dynamic gain profiles across $4-8\text{ GHz}$ bandwidths.
+Benchmark quantum-limited readout amplification across 10,000 signal pulses with added noise photons $N_{add} \le 0.5$ and $> 20\text{ dB}$ gain.
+
 ---
 
 ## Current
 
-### Phase 49: Quantum Electrodynamical Circuit Synthesis, Transmon Cavity-QED & Purcell Filter Co-Simulation
-Develop an autonomous solver modeling circuit quantum electrodynamics (cQED), 3D microwave cavities, and Purcell filtering.
-Formulate quantized transmission line lumped-element Foster ladders coupling transmon nonlinear Josephson inductance $E_J / E_C$.
-Model Jaynes-Cummings dispersive Hamiltonians, Stark-shifted dressed states, state-dependent cavity pull $\chi$, and photon shot noise.
-Synthesize physical Purcell filters suppressing spontaneous radiative qubit decay while preserving dispersive readout cavity coupling.
-Implement multi-threaded Rayon master equation Lindbladian solvers tracking dressed dephasing rates and dispersive qubit readout SNR.
-Benchmark quantum processor co-simulation across 10,000 dispersive readout trajectories with state discrimination fidelity $> 99.5\%$.
+### Phase 50: Relativistic Plasma Wakefields, Laser-Driven Particle Acceleration & Synchrotron Radiation
+Develop an autonomous multi-physics solver modeling relativistic plasma wakefield acceleration (PWFA) and laser-plasma interactions.
+Formulate relativistic Vlasov-Maxwell kinetics and ponderomotive envelope equations in underdense and overdense plasma channels.
+Model electron beam self-injection, blowout bubble regimes, multi-gigavolt-per-meter accelerating gradients, and dephasing lengths.
+Synthesize synchrotron and betatron X-ray radiation emission with non-linear quantum electrodynamical (QED) radiation reaction.
+Implement multi-threaded Rayon relativistic Boris particle-mesh pushers and spectral Fourier laser envelope propagators.
+Benchmark laser wakefield acceleration across 10,000 time steps with energy conservation $< 10^{-6}$ and sub-femtosecond bunch duration.
 
 ---
 
 ## Done
+
+### Phase 49: Quantum Electrodynamical Circuit Synthesis, Transmon Cavity-QED & Purcell Filter Co-Simulation
+Formulated transmon charge-phase Hamiltonians, nonlinear Josephson inductance, and negative anharmonicity $\alpha \approx -E_C$.
+Modeled microwave readout cavities with loaded quality factors, Foster lumped ladders, and cavity decay rates $\kappa$.
+Synthesized dispersive Jaynes-Cummings coupling with state-dependent cavity frequency pull $2\chi$ and AC Stark shifts.
+Formulated bandpass Purcell filters suppressing spontaneous radiative decay by $> 50\times$ while maintaining readout speed.
+Implemented exact charge-basis Jacobi eigensolvers and IQ-quadrature dispersive readout solvers tracking measurement SNR.
+Benchmarked cQED processor co-simulation across 10,000 single-shot readout trajectories with state discrimination fidelity $> 99.5\%$.
 
 ### Phase 48: Autonomous Superconducting Spintronics, Majorana Zero Mode Qubits & Cryogenic CMOS Co-Simulation
 Formulated S/F/F junctions with spin-triplet Cooper pairs, long-range proximity effect, and supercurrent spin-orbit torque.

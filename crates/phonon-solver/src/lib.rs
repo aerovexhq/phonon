@@ -3,6 +3,7 @@
 
 pub mod acoustic;
 pub mod assets;
+pub mod cqed;
 pub mod em;
 pub mod error;
 pub mod hetero;
@@ -39,6 +40,10 @@ pub use acoustic::{
 pub use assets::{
     AcousticRayHit, AssetBenchmarkReport, AssetBenchmarkRunner, MeshInstance, MultiPhysicsBvh,
     MultiPhysicsBvhNode, MultiPhysicsScene, OpticalRayHit, RfTransmissionResult, WorldTriangle,
+};
+pub use cqed::{
+    CqedBenchmarkReport, CqedBenchmarkRunner, DispersiveReadoutResult, DispersiveReadoutSolver,
+    TransmonSpectrumSolution, TransmonSpectrumSolver,
 };
 pub use em::{
     AntennaElectrodynamicSolver, EmBenchmarkReport, EmBenchmarkRunner, EmLinkResult,
