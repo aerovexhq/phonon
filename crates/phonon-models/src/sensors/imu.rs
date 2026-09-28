@@ -79,6 +79,18 @@ impl Quaternion {
             iz * qw + iw * -qz + ix * -qy - iy * -qx,
         )
     }
+
+    /// Rotates a 3D vector v_body from body frame to world frame:
+    /// v_world = q * v_body * q^*
+    pub fn rotate_vector_body_to_world(&self, v: Vector3D) -> Vector3D {
+        let q_conj = Self {
+            w: self.w,
+            x: -self.x,
+            y: -self.y,
+            z: -self.z,
+        };
+        q_conj.rotate_vector_world_to_body(v)
+    }
 }
 
 /// Allan Variance and Stochastic Noise Parameters for a 3-axis sensor.
