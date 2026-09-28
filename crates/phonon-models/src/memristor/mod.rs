@@ -12,6 +12,7 @@ pub mod crossbar;
 pub mod fefet;
 pub mod neuron;
 pub mod pcm;
+pub mod reservoir;
 pub mod rram;
 pub mod stdp;
 
@@ -19,5 +20,9 @@ pub use crossbar::{CrossbarCellType, MemristiveCrossbarModel};
 pub use fefet::FerroelectricFetModel;
 pub use neuron::{NeuronState, SpikingNeuronModel};
 pub use pcm::PhaseChangeMemoryModel;
+pub use reservoir::{
+    DelayOscillatorType, DelayedFeedbackReservoir, MemristiveNonIdealityConfig,
+    MemristiveReservoir, MemristorTechnology, ReservoirActivation, ReservoirRng,
+};
 pub use rram::FilamentaryRramModel;
 pub use stdp::SpikeTimingPlasticityModel;

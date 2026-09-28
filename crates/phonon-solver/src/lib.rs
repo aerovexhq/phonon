@@ -12,6 +12,7 @@ pub mod mna;
 pub mod molecular;
 pub mod mvl;
 pub mod net;
+pub mod neuromorphic;
 pub mod optics;
 pub mod optimization;
 pub mod parallel;
@@ -72,6 +73,10 @@ pub use mvl::{
 };
 pub use net::{
     CoSimStepReport, NetworkBenchmarkReport, NetworkBenchmarkRunner, NetworkCoSimulator,
+};
+pub use neuromorphic::{
+    generate_lorenz63, generate_mackey_glass, generate_narma10, LiquidStateMachine, LsmConfig,
+    NeuromorphicBenchmarkReport, NeuromorphicBenchmarkRunner, ReservoirSolver, TrainedReadout,
 };
 pub use optics::{
     AabbBox, CheckerPlane, LightSource, OffscreenPerceptionEngine, OpticalBenchmarkReport,
