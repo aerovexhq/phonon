@@ -25,6 +25,7 @@ pub mod optimization;
 pub mod optomechanics;
 pub mod parallel;
 pub mod phononic;
+pub mod phononic_topological;
 pub mod plasma;
 pub mod quantum;
 pub mod relay;
@@ -126,6 +127,7 @@ pub use phononic::{
     AcousticGateVerificationResult, AcousticLogicSolver, AcousticWaveformTrace, ContinuumNode,
     ContinuumSolver2D, PhononicBenchmarkReport, PhononicBenchmarkRunner,
 };
+pub use phononic_topological::*;
 pub use plasma::{
     AlfvenFluxNode, AlfvenMhdConfig, AlfvenMhdStepper, BorisPicTracker, GradShafranovGrid,
     GradShafranovSolution, GradShafranovSolver, OrbitTopology, ParticleOrbitReport,

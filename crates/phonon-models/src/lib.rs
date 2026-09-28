@@ -32,6 +32,7 @@ pub mod optimization;
 pub mod optomechanics;
 pub mod parasitics;
 pub mod phononic;
+pub mod phononic_topological;
 pub mod photonic;
 pub mod plasma;
 pub mod quantum;
@@ -167,6 +168,7 @@ pub use phononic::{
     PhononicCrystal1D, PhononicFullAdder, PiezoelectricMaterial, SawResonator, VoigtStrain,
     VoigtStress, EPSILON_0,
 };
+pub use phononic_topological::*;
 pub use photonic::{
     ElectroOpticModulatorModel, EyeMetrics, EyeSample, LaserDiodeModel, LaserDiodeState,
     MicroRingResonatorModel, ModulatorType, OpticalWaveguideModel, PhotodetectorModel,
