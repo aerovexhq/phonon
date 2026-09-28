@@ -10,6 +10,7 @@ pub mod mna;
 pub mod molecular;
 pub mod mvl;
 pub mod net;
+pub mod optics;
 pub mod optimization;
 pub mod parallel;
 pub mod phononic;
@@ -59,6 +60,11 @@ pub use mvl::{
 };
 pub use net::{
     CoSimStepReport, NetworkBenchmarkReport, NetworkBenchmarkRunner, NetworkCoSimulator,
+};
+pub use optics::{
+    AabbBox, CheckerPlane, LightSource, OffscreenPerceptionEngine, OpticalBenchmarkReport,
+    OpticalBenchmarkRunner, OpticalRealismTier, PerceptionFrame, RayHit, SceneObject, Sphere,
+    SyntheticScene,
 };
 pub use optimization::{EngineConfig, InverseDesignEngine};
 pub use parallel::{
