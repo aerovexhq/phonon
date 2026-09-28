@@ -11,6 +11,7 @@ pub mod jtwpa;
 pub mod lidar;
 pub mod mixed_signal;
 pub mod mna;
+pub mod moire;
 pub mod molecular;
 pub mod mvl;
 pub mod net;
@@ -79,6 +80,7 @@ pub use mna::{
     assemble_mna_dc, solve_dc_linear, solve_dc_non_linear, DcSolution, MnaSystem, ModelContext,
     NewtonOptions, SolverOptions,
 };
+pub use moire::*;
 pub use molecular::{
     Cmos3nmBaseline, MolecularBenchmarkRunner, MolecularCandidate, MolecularComparisonReport,
     MolecularLogicSynthesizer, SelfConsistentNegfConfig, SelfConsistentNegfResult,

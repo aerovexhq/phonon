@@ -18,6 +18,7 @@ pub mod jtwpa;
 pub mod lidar;
 pub mod memristor;
 pub mod mixed_signal;
+pub mod moire;
 pub mod molecular;
 pub mod mosfet;
 pub mod mvl;
@@ -114,6 +115,7 @@ pub use mixed_signal::{
     A2dBridge, D2aBridge, D2aCompanion, DFlipFlop, DigitalNetwork, LogicGate, LogicGateType,
     PeriodicClock, SarController,
 };
+pub use moire::*;
 pub use molecular::{
     invert_complex_matrix, solve_complex_linear_system, MolecularFullAdderCell,
     MolecularGateMetrics, MolecularGraphType, MolecularInverter, MolecularJunction, MolecularNand2,
