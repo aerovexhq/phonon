@@ -3,6 +3,7 @@
 //! and Gummel-Poon BJTs.
 
 pub mod acoustic;
+pub mod assets;
 pub mod atomistic;
 pub mod bjt;
 pub mod chemistry;
@@ -43,6 +44,12 @@ pub use acoustic::{
     AcousticWall, CondenserMicrophone, MediumType, MicrophonePolarPattern, MicrophoneSignal,
     PiezoelectricMicrophone, ADIABATIC_INDEX_AIR, GAS_CONSTANT_R, MOLAR_MASS_AIR, P_ATM_SEA_LEVEL,
     P_REF_AIR, T_REF_KELVIN,
+};
+pub use assets::{
+    create_cubesat_chassis, create_dipole_antenna, create_finned_heatsink, create_patch_antenna,
+    create_quadrotor_frame, create_tactile_landing_gear, Aabb3D, AcousticProperties,
+    ElectromagneticProperties, MaterialCategory, MaterialLibrary, MaterialRecord, Mesh3D,
+    OpticalProperties, Submesh, ThermalMechanicalProperties, Triangle3D, Vertex3D,
 };
 pub use atomistic::{
     CarbonNanotube, CntCharacter, ContactResistanceModel, ElectromigrationModel,
