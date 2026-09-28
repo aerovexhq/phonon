@@ -94,8 +94,10 @@ pub use lidar::{
     ScanningArchitecture, WAVELENGTH_1550_NM, WAVELENGTH_905_NM,
 };
 pub use memristor::{
-    CrossbarCellType, FerroelectricFetModel, FilamentaryRramModel, MemristiveCrossbarModel,
-    NeuronState, PhaseChangeMemoryModel, SpikeTimingPlasticityModel, SpikingNeuronModel,
+    CrossbarCellType, DelayOscillatorType, DelayedFeedbackReservoir, FerroelectricFetModel,
+    FilamentaryRramModel, MemristiveCrossbarModel, MemristiveNonIdealityConfig,
+    MemristiveReservoir, MemristorTechnology, NeuronState, PhaseChangeMemoryModel,
+    ReservoirActivation, ReservoirRng, SpikeTimingPlasticityModel, SpikingNeuronModel,
 };
 pub use mixed_signal::{
     A2dBridge, D2aBridge, D2aCompanion, DFlipFlop, DigitalNetwork, LogicGate, LogicGateType,

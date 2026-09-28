@@ -4,14 +4,6 @@
 
 ## Future
 
-### Phase 45: Autonomous Multi-Physics Spacecraft GNC, Orbital Mechanics & Star Tracker Co-Simulation
-Develop an autonomous solver modeling spacecraft Guidance, Navigation, and Control (GNC), orbital mechanics, and attitude determination.
-Formulate Cowell two-body and perturbed gravity potential models ($J_2-J_4$, third-body lunar/solar ephemerides, atmospheric drag, solar radiation pressure).
-Model reaction wheel cluster dynamics with motor back-EMF, static/dynamic mass imbalance micro-vibrations, and magnetic torquer rods.
-Synthesize autonomous star tracker attitude determination with lost-in-space Triangle/Pyramid pattern recognition and Brown-Conrady sensor distortion.
-Implement multi-threaded Rayon coupled orbit-attitude propagators and Multiplicative Extended Kalman Filters (MEKF) with unit quaternions.
-Benchmark GNC co-simulation across 10,000 orbital revolutions with closed-loop nadir pointing error $< 0.005^\circ$ and micro-arcsecond star centroiding.
-
 ### Phase 46: Topological Quantum Computing, Non-Abelian Anyon Braiding & Surface Code Decoders
 Develop an autonomous solver modeling non-Abelian anyon braiding dynamics and topological surface code error correction decoders.
 Formulate microscopic Kitaev honeycomb and toric code lattice Hamiltonians supporting Ising and Fibonacci anyonic quasiparticles.
@@ -20,21 +12,37 @@ Synthesize minimum-weight perfect matching (MWPM) and neural belief-propagation 
 Implement multi-threaded Rayon stabilizer syndrome graphs and Monte Carlo threshold simulators evaluating fault-tolerant logical error rates.
 Benchmark topological decoders against rotated surface codes and color codes across decoding latency ($< 1\,\mu\text{s}$), threshold ($p_{th} > 1\%$), and distance.
 
+### Phase 47: Autonomous High-Energy Plasma Dynamics, Tokamak Fusion Magnetics & Alfven Wave Co-Simulation
+Develop an autonomous solver modeling high-energy thermonuclear plasma dynamics and Grad-Shafranov tokamak equilibrium magnetics.
+Formulate multi-fluid magnetohydrodynamics (MHD) coupling resistive diffusion, collisionless Hall currents, and pressure tensor gradients.
+Model toroidal magnetic flux surfaces, helical safety factor $q(r)$, magnetic shear, and shear Alfven wave dispersion relations.
+Synthesize non-linear neoclassical transport, anomalous drift-wave turbulence, and external radio-frequency (ICRF) heating dynamics.
+Implement multi-threaded Rayon adaptive flux-coordinate elliptic grid solvers and Boris particle-in-cell (PIC) kinetic fast-ion trackers.
+Benchmark tokamak plasma co-simulation across 10,000 Alfvén cycles with magnetic flux conservation $< 10^{-6}$ and Lawson criterion tracking.
+
 ---
 
 ## Current
 
-### Phase 44: Autonomous Neuromorphic Reservoir Computing & Memristive Liquid State Machines
-Develop an autonomous solver modeling analog neuromorphic reservoir computing networks and physical liquid state machines.
-Formulate non-linear dynamical recurrent maps driven by crossbar memristor arrays (filamentary RRAM, PCM, FeFET) and chaotic delay oscillators.
-Model fading memory fading response, high-dimensional temporal feature projection, and echo-state property (ESP) convergence criteria.
-Synthesize physical memristive synaptic plasticity with spike-timing-dependent plasticity (STDP) and sub-femtojoule spike dissipation.
-Implement multi-threaded Rayon ridge-regression and pseudo-inverse read-out weight solvers tracking temporal sequence recognition and chaotic time-series forecasting.
-Benchmark neuromorphic reservoir processors against digital DSPs and GPUs across energy delay product (EDP), training throughput, and classification accuracy.
+### Phase 45: Autonomous Multi-Physics Spacecraft GNC, Orbital Mechanics & Star Tracker Co-Simulation
+Develop an autonomous solver modeling spacecraft Guidance, Navigation, and Control (GNC), orbital mechanics, and attitude determination.
+Formulate Cowell two-body and perturbed gravity potential models ($J_2-J_4$, third-body lunar/solar ephemerides, atmospheric drag, solar radiation pressure).
+Model reaction wheel cluster dynamics with motor back-EMF, static/dynamic mass imbalance micro-vibrations, and magnetic torquer rods.
+Synthesize autonomous star tracker attitude determination with lost-in-space Triangle/Pyramid pattern recognition and Brown-Conrady sensor distortion.
+Implement multi-threaded Rayon coupled orbit-attitude propagators and Multiplicative Extended Kalman Filters (MEKF) with unit quaternions.
+Benchmark GNC co-simulation across 10,000 orbital revolutions with closed-loop nadir pointing error $< 0.005^\circ$ and micro-arcsecond star centroiding.
 
 ---
 
 ## Done
+
+### Phase 44: Autonomous Neuromorphic Reservoir Computing & Memristive Liquid State Machines
+Formulated multi-technology crossbar memristive arrays (RRAM, PCM, FeFET) and chaotic delay oscillators (Mackey-Glass, Ikeda).
+Synthesized recurrent Echo State Networks with fading memory, spectral radius criteria ($\rho < 1.0$), and ESP convergence.
+Modeled physical non-idealities: cycle-to-cycle noise, device-to-device variance, sneak paths, and sub-femtojoule synaptic dissipation.
+Formulated 3D cortical Spiking Liquid State Machines with distance connectivity, LIF neurons, and online STDP plasticity.
+Implemented multi-threaded Rayon ridge regression and Moore-Penrose pseudo-inverse readout solvers for chaotic time series (Lorenz-63, NARMA-10).
+Benchmarked neuromorphic reservoir processors against DSPs and GPUs, demonstrating orders-of-magnitude lower EDP and sub-nanojoule inference.
 
 ### Phase 43: Cold Atom Interferometry, Optical Lattice Clocks & Relativistic Geodesy
 Formulated alkali ($^{87}\text{Rb}$) and alkaline-earth ($^{88}\text{Sr}$) atomic transitions with recoil dynamics and contact interactions.
