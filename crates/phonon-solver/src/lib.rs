@@ -17,6 +17,7 @@ pub mod net;
 pub mod neuromorphic;
 pub mod optics;
 pub mod optimization;
+pub mod optomechanics;
 pub mod parallel;
 pub mod phononic;
 pub mod plasma;
@@ -99,6 +100,10 @@ pub use optics::{
     SyntheticScene,
 };
 pub use optimization::{EngineConfig, InverseDesignEngine};
+pub use optomechanics::{
+    CavityOptomechanicsBenchmarkReport, CavityOptomechanicsBenchmarkRunner, CovarianceResult,
+    LangevinSdeSolver, OptomechanicalMasterEquationSolver, TrajectoryResult,
+};
 pub use parallel::{
     solve_torn_dc, CircuitSoA, DiakopticsSolver, DiodeSoA, MosfetSoA, PartitionedCircuit,
     ResistorSoA, SubcircuitLocalSolution,
