@@ -27,6 +27,7 @@ pub mod photonic;
 pub mod quantum;
 pub mod radiation;
 pub mod relay;
+pub mod sensors;
 pub mod simd;
 pub mod spintronics;
 pub mod superconducting;
@@ -147,6 +148,11 @@ pub use relay::{
     AtomicRelayModel, AtomicRelayParameters, AtomicRelayState, EcmCellModel, EcmCellParameters,
     EcmCellState, EcmConductionState, EcmSwitchingMode, MultiBitRelayAdder, RelayContactState,
     RelayFullAdderCell, RelayLogicGate, RelaySwitchType, G_0, R_0,
+};
+pub use sensors::{
+    sample_imu, AllanNoiseConfig, CapacitiveSensorConfig, CollisionContactInput, ImuConfig,
+    ImuMeasurement, ImuState, PiezoresistiveSensorConfig, Quaternion, TactileMatrixArray,
+    STANDARD_GRAVITY_M_S2,
 };
 pub use simd::{batch_evaluate_diodes_simd, batch_evaluate_nmos_simd, MosfetBatchOutput};
 pub use spintronics::{
