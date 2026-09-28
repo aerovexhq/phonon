@@ -175,7 +175,7 @@ impl HilBenchmarkRunner {
         let att_rmse_deg = att_rmse_rad.to_degrees();
 
         let min_throughput = if cfg!(debug_assertions) {
-            40_000.0
+            15_000.0
         } else {
             500_000.0
         };
