@@ -17,6 +17,7 @@ pub mod parallel;
 pub mod phononic;
 pub mod relay;
 pub mod rf;
+pub mod sensors;
 pub mod sparse;
 pub mod spintronics;
 pub mod superconducting;
@@ -86,6 +87,10 @@ pub use relay::{
     SynthesizedRelayGate,
 };
 pub use rf::{Complex64, TwoPortSParameters};
+pub use sensors::{
+    AerovexCoSimPacket, AerovexPhononBridge, AerovexRigidBodyState, PhononTransducerOutput,
+    SensorBenchmarkReport, SensorBenchmarkRunner,
+};
 pub use sparse::{
     estimate_condition_1norm, find_markowitz_pivot, MarkowitzOptions, SparseLuFactorization,
     SparseMatrixBuilder, SparseMatrixCsc,
