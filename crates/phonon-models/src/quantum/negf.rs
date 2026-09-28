@@ -76,6 +76,83 @@ impl Complex {
             im: self.im * s,
         }
     }
+
+    #[inline(always)]
+    pub fn abs(&self) -> f64 {
+        self.norm_sq().sqrt()
+    }
+}
+
+impl std::ops::Add for Complex {
+    type Output = Self;
+    #[inline(always)]
+    fn add(self, rhs: Self) -> Self {
+        Self {
+            re: self.re + rhs.re,
+            im: self.im + rhs.im,
+        }
+    }
+}
+
+impl std::ops::Sub for Complex {
+    type Output = Self;
+    #[inline(always)]
+    fn sub(self, rhs: Self) -> Self {
+        Self {
+            re: self.re - rhs.re,
+            im: self.im - rhs.im,
+        }
+    }
+}
+
+impl std::ops::Mul for Complex {
+    type Output = Self;
+    #[inline(always)]
+    fn mul(self, rhs: Self) -> Self {
+        Self {
+            re: self.re * rhs.re - self.im * rhs.im,
+            im: self.re * rhs.im + self.im * rhs.re,
+        }
+    }
+}
+
+impl std::ops::Mul<f64> for Complex {
+    type Output = Self;
+    #[inline(always)]
+    fn mul(self, rhs: f64) -> Self {
+        self.scale(rhs)
+    }
+}
+
+impl std::ops::Mul<Complex> for f64 {
+    type Output = Complex;
+    #[inline(always)]
+    fn mul(self, rhs: Complex) -> Complex {
+        rhs.scale(self)
+    }
+}
+
+impl std::ops::Div for Complex {
+    type Output = Self;
+    #[inline(always)]
+    fn div(self, rhs: Self) -> Self {
+        let d = rhs.norm_sq().max(1e-30);
+        Self {
+            re: (self.re * rhs.re + self.im * rhs.im) / d,
+            im: (self.im * rhs.re - self.re * rhs.im) / d,
+        }
+    }
+}
+
+impl std::ops::Neg for Complex {
+    type Output = Self;
+    #[inline(always)]
+    fn neg(self) -> Self {
+        Self {
+            re: -self.re,
+            im: -self.im,
+        }
+    }
 }
 
 /// 1D Discretized tight-binding / finite-difference Hamiltonian grid for a quantum wire/channel.
