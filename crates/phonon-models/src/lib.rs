@@ -12,6 +12,7 @@ pub mod diode;
 pub mod em;
 pub mod hetero;
 pub mod hierarchical;
+pub mod lidar;
 pub mod memristor;
 pub mod mixed_signal;
 pub mod molecular;
@@ -80,6 +81,10 @@ pub use hetero::{
     RiscVFloorplanBuilder, ThermalHotspotReport, ThermalHotspotSolver, ThermoMechanicalStressModel,
 };
 pub use hierarchical::{HierarchicalDiodeBuilder, HierarchicalTransistorBuilder};
+pub use lidar::{
+    AtmosphericCondition, EchoReturn, FogType, LaserPulseConfig, LaserRay, LidarScannerConfig,
+    ScanningArchitecture, WAVELENGTH_1550_NM, WAVELENGTH_905_NM,
+};
 pub use memristor::{
     CrossbarCellType, FerroelectricFetModel, FilamentaryRramModel, MemristiveCrossbarModel,
     NeuronState, PhaseChangeMemoryModel, SpikeTimingPlasticityModel, SpikingNeuronModel,
