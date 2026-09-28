@@ -3,6 +3,7 @@
 
 pub mod acoustic;
 pub mod assets;
+pub mod cavity_spintronics;
 pub mod cqed;
 pub mod em;
 pub mod error;
@@ -49,6 +50,7 @@ pub use assets::{
     AcousticRayHit, AssetBenchmarkReport, AssetBenchmarkRunner, MeshInstance, MultiPhysicsBvh,
     MultiPhysicsBvhNode, MultiPhysicsScene, OpticalRayHit, RfTransmissionResult, WorldTriangle,
 };
+pub use cavity_spintronics::*;
 pub use cqed::{
     CqedBenchmarkReport, CqedBenchmarkRunner, DispersiveReadoutResult, DispersiveReadoutSolver,
     TransmonSpectrumSolution, TransmonSpectrumSolver,

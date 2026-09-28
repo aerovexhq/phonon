@@ -4,14 +4,6 @@
 
 ## Future
 
-### Phase 59: Floquet Topological Insulators, Driven High-Harmonic Generation & Chiral Floquet Electronics
-Develop an autonomous multi-physics solver modeling periodically driven Floquet topological materials.
-Formulate Floquet-Bloch Magnus expansion, non-perturbative high-harmonic generation (HHG), and chiral edge modes.
-Model light-induced topological bandgap opening and anomalous Floquet topological invariants in graphene.
-Synthesize sub-femtosecond carrier recollision dynamics and polarization-dependent Floquet Hall conductance.
-Implement multi-threaded Rayon Floquet effective Hamiltonian diagonalizers and time-dependent Schrödinger steppers.
-Benchmark Floquet band structures and harmonic spectra across 10,000 drive cycles with sub-harmonic resolution.
-
 ### Phase 60: Chiral Phononics, Topological Acoustic Metamaterials & Non-Reciprocal Acoustic Diodes
 Develop an autonomous multi-physics solver modeling chiral phononics and topological acoustic metamaterials.
 Formulate angular momentum phononic lattices, pseudo-magnetic fields, and valley Chern numbers.
@@ -20,21 +12,37 @@ Synthesize non-reciprocal acoustic circulators, spatio-temporal stiffness modula
 Implement multi-threaded Rayon dynamic stiffness matrix assemblers and Floquet-Bloch phononic solvers.
 Benchmark topological acoustic transport and non-reciprocal isolation across 10,000 acoustic drive cycles.
 
+### Phase 61: Quantum Diamond Nitrogen-Vacancy Magnetometry, Nanoscale NMR & Spin Relaxation Probes
+Develop an autonomous multi-physics solver modeling nitrogen-vacancy (NV) center quantum sensors in diamond.
+Formulate ground-state spin Hamiltonian with zero-field splitting $D \approx 2.87\text{ GHz}$, hyperfine, and Zeeman shifts.
+Model optically detected magnetic resonance (ODMR), Hahn echo decoherence $T_2$, and dynamical decoupling.
+Synthesize nanoscale nuclear magnetic resonance (NMR) sensing of single-molecule nuclear spin precessions.
+Implement multi-threaded Rayon quantum trajectory solvers and master equations for multi-spin ensembles.
+Benchmark NV magnetometry and nanoscale NMR across 10,000 pulses with sub-picotesla sensitivity.
+
 ---
 
 ## Current
 
-### Phase 58: Cavity Spintronics, Magnon-Photon Strong Coupling & Dissipationless Spin Currents
-Develop an autonomous multi-physics solver modeling cavity spintronics and hybrid quantum systems.
-Formulate coupled Landau-Lifshitz-Gilbert and Maxwell cavity modes with cooperativity $C_{mp} > 100$.
-Model coherent magnon-photon hybridization, anti-crossing polariton gap, and exceptional points.
-Synthesize non-local pure spin currents, spin pumping across YIG/Pt interfaces, and inverse spin Hall effect.
-Implement multi-threaded Rayon stochastic macrospin integrators and open quantum system master equations.
-Benchmark cavity magnonics and coherent spin dynamics across 10,000 drive cycles with sub-MHz polariton linewidth.
+### Phase 59: Floquet Topological Insulators, Driven High-Harmonic Generation & Chiral Floquet Electronics
+Develop an autonomous multi-physics solver modeling periodically driven Floquet topological materials.
+Formulate Floquet-Bloch Magnus expansion, non-perturbative high-harmonic generation (HHG), and chiral edge modes.
+Model light-induced topological bandgap opening and anomalous Floquet topological invariants in graphene.
+Synthesize sub-femtosecond carrier recollision dynamics and polarization-dependent Floquet Hall conductance.
+Implement multi-threaded Rayon Floquet effective Hamiltonian diagonalizers and time-dependent Schrödinger steppers.
+Benchmark Floquet band structures and harmonic spectra across 10,000 drive cycles with sub-harmonic resolution.
 
 ---
 
 ## Done
+
+### Phase 58: Cavity Spintronics, Magnon-Photon Strong Coupling & Dissipationless Spin Currents
+Formulated Kittel magnon modes, microwave cavity parameters, and non-Hermitian polariton Hamiltonians.
+Modeled strong coupling cooperativity $C_{mp} \approx 1463 > 100$ and anti-crossing splitting $\approx 87.5\text{ MHz}$.
+Synthesized non-local pure spin currents across YIG/Pt interfaces with damping enhancement $\Delta\alpha \approx 2.1\times 10^{-3}$.
+Formulated inverse spin Hall effect (ISHE) generating transverse open-circuit voltages $V_{ISHE} > 1.0\ \mu\text{V}$.
+Implemented time-domain RK4 coupled LLG-cavity integrators and microwave transmission $S_{21}$ solvers.
+Benchmarked cavity spintronics across 10,000 drive cycles with sub-MHz linewidths and high throughput.
 
 ### Phase 57: Non-Abelian Anyon Braiding in Fractional Quantum Hall Interferometers
 Formulated chiral Luttinger liquids, fractional charges $e^* = e/3, e/4$, and Moore-Read pfaffians.

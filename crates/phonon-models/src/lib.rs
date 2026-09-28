@@ -6,6 +6,7 @@ pub mod acoustic;
 pub mod assets;
 pub mod atomistic;
 pub mod bjt;
+pub mod cavity_spintronics;
 pub mod chemistry;
 pub mod common;
 pub mod cqed;
@@ -71,6 +72,7 @@ pub use atomistic::{
 };
 
 pub use bjt::{BjtEvaluation, BjtModel, BjtType};
+pub use cavity_spintronics::*;
 pub use chemistry::{
     BandAlignmentType, Bandstructure, CarrierMobilityParams, ChemicalMaterial,
     ChemicalMaterialBuilder, ChemicalMobility, ContactMaterial, ContactSpecies, CrystalStructure,
