@@ -5,6 +5,7 @@ pub mod acoustic;
 pub mod em;
 pub mod error;
 pub mod hetero;
+pub mod lidar;
 pub mod mixed_signal;
 pub mod mna;
 pub mod molecular;
@@ -40,6 +41,10 @@ pub use error::SolverError;
 pub use hetero::{
     HeteroCpuBenchmarkResult, HeteroCpuBenchmarkRunner, HeteroCpuOptimizer,
     HeteroOptimizationCandidate, PipelineTimingReport, TimingPathAnalyzer,
+};
+pub use lidar::{
+    Aabb, BvhHit, BvhNode, BvhPrimitive, BvhTree, LidarBenchmarkReport, LidarBenchmarkRunner,
+    LidarPoint, LidarPointCloud, TofLidarEngine,
 };
 pub use mixed_signal::{
     solve_mixed_signal, DigitalTraceStep, MixedSignalCircuit, MixedSignalOptions,
