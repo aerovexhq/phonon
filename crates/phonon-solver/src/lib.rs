@@ -6,6 +6,7 @@ pub mod assets;
 pub mod cqed;
 pub mod em;
 pub mod error;
+pub mod fqh;
 pub mod hetero;
 pub mod jtwpa;
 pub mod lidar;
@@ -61,6 +62,7 @@ pub use em::{
     TierChannelResult, TransceiverLinkResult, TransientBurstResult, WifiLinkSimulator,
 };
 pub use error::SolverError;
+pub use fqh::*;
 pub use hetero::{
     HeteroCpuBenchmarkResult, HeteroCpuBenchmarkRunner, HeteroCpuOptimizer,
     HeteroOptimizationCandidate, PipelineTimingReport, TimingPathAnalyzer,
