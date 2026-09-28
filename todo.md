@@ -4,14 +4,6 @@
 
 ## Future
 
-### Phase 36: Physics-Coupled Tactile/Force Sensors, Multi-Axis IMU & Aerovex Sim Architectural Integration
-Architect a direct bidirectional integration bridge coupling Phonon's multi-physics circuit solver directly with the Aerovex simulation kernel (`aerovex-sim`).
-Synthesize piezoresistive, capacitive, and elastomeric tactile force sensors driven directly by Aerovex rigid-body collision contact manifolds and normal forces.
-Synthesize 6-DOF and 9-DOF Inertial Measurement Units (IMUs): triaxial accelerometers, gyroscopes, and magnetometers coupled to Earth gravity and geomagnetic vectors.
-Model IMU stochastic noise processes: Allan variance parameters, white noise angle random walk, in-run bias instability, and thermal drift.
-Implement lock-free synchronized cosimulation clock stepping bridging Aerovex multi-world physics ticks with Phonon continuous MNA time integration.
-Benchmark coupled tactile-electronic feedback loops and IMU telemetry fidelity under high-dynamic aerospace and robotic flight trajectories.
-
 ### Phase 37: Unified Multi-Physics 3D Asset Ecosystem, Dielectric Material Library & Component Catalog
 Construct a unified multi-physics 3D asset and material registry supporting cross-domain electro-optical, acoustic, and mechanical simulations.
 Compile an authoritative library of 100+ standard materials specifying complex permittivity ($\epsilon_r$), permeability ($\mu_r$), conductivity ($\sigma$), acoustic impedance, and optical BRDF.
@@ -40,17 +32,25 @@ Benchmark diamond NV quantum magnetometers against SQUID and Hall sensors across
 
 ## Current
 
-### Phase 35: LiDAR Time-of-Flight Synthesis, Atmospheric Scattering & Aerovex BVH Acceleration
-Develop a physically rigorous pulsed time-of-flight (ToF) LiDAR sensor engine operating at 905 nm and 1550 nm eye-safe optical wavelengths.
-Model laser beam spatial profiles, Gaussian beam divergence, surface bidirectional reflectance (BRDF/albedo), and multi-echo optical pulse return.
-Simulate atmospheric optical extinction and backscatter under adverse environmental conditions, including dense fog, rain, dust, and smoke (Mie scattering).
-Integrate directly with Aerovex Bounding Volume Hierarchy (BVH) raycasting accelerators for high-throughput spatial intersection queries.
-Support configurable scanning architectures: 360-degree mechanical spinning, MEMS micro-mirror solid-state scanning, and Flash LiDAR arrays.
-Benchmark synthesized point cloud density, range measurement precision, and noise distribution against commercial automotive and aerospace LiDARs.
+### Phase 36: Physics-Coupled Tactile/Force Sensors, Multi-Axis IMU & Aerovex Sim Architectural Integration
+Architect a direct bidirectional integration bridge coupling Phonon's multi-physics circuit solver directly with the Aerovex simulation kernel (`aerovex-sim`).
+Synthesize piezoresistive, capacitive, and elastomeric tactile force sensors driven directly by Aerovex rigid-body collision contact manifolds and normal forces.
+Synthesize 6-DOF and 9-DOF Inertial Measurement Units (IMUs): triaxial accelerometers, gyroscopes, and magnetometers coupled to Earth gravity and geomagnetic vectors.
+Model IMU stochastic noise processes: Allan variance parameters, white noise angle random walk, in-run bias instability, and thermal drift.
+Implement lock-free synchronized cosimulation clock stepping bridging Aerovex multi-world physics ticks with Phonon continuous MNA time integration.
+Benchmark coupled tactile-electronic feedback loops and IMU telemetry fidelity under high-dynamic aerospace and robotic flight trajectories.
 
 ---
 
 ## Done
+
+### Phase 35: LiDAR Time-of-Flight Synthesis, Atmospheric Scattering & Aerovex BVH Acceleration
+Developed physically rigorous pulsed time-of-flight (ToF) LiDAR engine operating at 905 nm and 1550 nm eye-safe optical wavelengths.
+Modeled Gaussian beam spatial profiles, divergence expansion, surface BRDF reflectance, and multi-echo optical pulse return.
+Simulated Beer-Lambert extinction, Kruse-Kim Mie scattering in dense fog, rain attenuation, and atmospheric volume backscatter clutter.
+Constructed high-throughput Bounding Volume Hierarchy (BVH) raycasting accelerator with multi-hit penetration for translucent canopies.
+Implemented configurable scanning architectures: 360-degree mechanical spinning, MEMS micro-mirror solid-state, and Flash LiDAR arrays.
+Benchmarked parallel Rayon synthesis across > 180,000 points at > 4,800,000 pts/sec with <= 20 mm range RMSE and backscatter detection.
 
 ### Phase 34: Headless Vulkan Synthetic Perception, Multi-Tier Optical Cameras & CMOS APS Photodiode Arrays
 Constructed high-performance headless optical perception pipeline utilizing offscreen rendering for synthetic visual generation.
