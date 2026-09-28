@@ -17,6 +17,7 @@ pub mod optics;
 pub mod optimization;
 pub mod parallel;
 pub mod phononic;
+pub mod plasma;
 pub mod quantum;
 pub mod relay;
 pub mod rf;
@@ -92,6 +93,11 @@ pub use parallel::{
 pub use phononic::{
     AcousticGateVerificationResult, AcousticLogicSolver, AcousticWaveformTrace, ContinuumNode,
     ContinuumSolver2D, PhononicBenchmarkReport, PhononicBenchmarkRunner,
+};
+pub use plasma::{
+    AlfvenFluxNode, AlfvenMhdConfig, AlfvenMhdStepper, BorisPicTracker, GradShafranovGrid,
+    GradShafranovSolution, GradShafranovSolver, OrbitTopology, ParticleOrbitReport,
+    TokamakBenchmarkReport, TokamakBenchmarkRunner, TokamakScenario,
 };
 pub use quantum::{
     CovarianceMatrix4x4, OptomechanicalBenchmarkReport, OptomechanicalBenchmarkRunner,

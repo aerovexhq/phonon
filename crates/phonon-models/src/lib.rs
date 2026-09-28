@@ -25,6 +25,7 @@ pub mod optimization;
 pub mod parasitics;
 pub mod phononic;
 pub mod photonic;
+pub mod plasma;
 pub mod quantum;
 pub mod radiation;
 pub mod relay;
@@ -144,6 +145,13 @@ pub use photonic::{
     ElectroOpticModulatorModel, EyeMetrics, EyeSample, LaserDiodeModel, LaserDiodeState,
     MicroRingResonatorModel, ModulatorType, OpticalWaveguideModel, PhotodetectorModel,
     PhotodetectorType, RingResonatorType, TelecomAnalyzer,
+};
+pub use plasma::{
+    AlfvenWaveProperties, IcrfHeatingSource, KineticParticle, MhdFluidState, PlasmaSpecies,
+    SafetyFactorProfile, SolovevEquilibrium, ThermonuclearFusion, TokamakBeta, TokamakGeometry,
+    ToroidalAlfvenEigenmode, ALPHA_MASS, DEUTERON_MASS, DT_ALPHA_ENERGY_JOULES,
+    DT_TOTAL_ENERGY_JOULES, EV_TO_JOULES, KEV_TO_JOULES, PLASMA_ADIABATIC_INDEX, PROTON_MASS,
+    TRITON_MASS,
 };
 pub use quantum::{
     effective_damping_rate, effective_mechanical_frequency, is_ground_state_cooled,
