@@ -14,6 +14,7 @@ pub mod diode;
 pub mod em;
 pub mod hetero;
 pub mod hierarchical;
+pub mod jtwpa;
 pub mod lidar;
 pub mod memristor;
 pub mod mixed_signal;
@@ -96,6 +97,7 @@ pub use hetero::{
     RiscVFloorplanBuilder, ThermalHotspotReport, ThermalHotspotSolver, ThermoMechanicalStressModel,
 };
 pub use hierarchical::{HierarchicalDiodeBuilder, HierarchicalTransistorBuilder};
+pub use jtwpa::{DispersionEngineeringParams, ParametricProcessParams, SnailElementParams};
 pub use lidar::{
     AtmosphericCondition, EchoReturn, FogType, LaserPulseConfig, LaserRay, LidarScannerConfig,
     ScanningArchitecture, WAVELENGTH_1550_NM, WAVELENGTH_905_NM,
