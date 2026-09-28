@@ -18,6 +18,7 @@ pub mod molecular;
 pub mod mosfet;
 pub mod mvl;
 pub mod net;
+pub mod optics;
 pub mod optimization;
 pub mod parasitics;
 pub mod phononic;
@@ -105,6 +106,10 @@ pub use net::{
     compute_internet_checksum, nic_reg, ArpOperation, ArpPacket, ArpTable, CpuInstruction,
     IpProtocol, Ipv4Address, Ipv4Header, RouteEntry, RouterPort, RouterSwitch, SimulatedCpuNode,
     UdpDatagram, VirtualNic,
+};
+pub use optics::{
+    silicon_quantum_efficiency, transduce_cmos_pixel, CameraIntrinsics, CmosPixelConfig,
+    OpticalCamera, PixelOutput, ShutterType, SILICON_BANDGAP_JOULES, SILICON_CUTOFF_WAVELENGTH_NM,
 };
 pub use optimization::{
     evaluate_transistor_fitness, AdjointRefiner, ArchitectureType, ChannelMaterial, FastRng,
