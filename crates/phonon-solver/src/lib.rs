@@ -27,6 +27,7 @@ pub mod quantum;
 pub mod relay;
 pub mod rf;
 pub mod sensors;
+pub mod snspd;
 pub mod space;
 pub mod sparse;
 pub mod spintronics;
@@ -142,6 +143,7 @@ pub use sensors::{
     MultiRateEskf, PhononTransducerOutput, PidGains, QuadFlightController, SensorBenchmarkReport,
     SensorBenchmarkRunner,
 };
+pub use snspd::*;
 pub use space::{
     GncBenchmarkReport, GncBenchmarkRunner, GncConfig, PointingMode, SpacecraftGncSolver,
     SpacecraftState,
