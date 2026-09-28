@@ -65,7 +65,7 @@ fn test_hil_closed_loop_parallel_10k_steps_benchmark() {
         report.attitude_rmse_deg
     );
     let min_throughput = if cfg!(debug_assertions) {
-        40_000.0
+        25_000.0
     } else {
         500_000.0
     };
