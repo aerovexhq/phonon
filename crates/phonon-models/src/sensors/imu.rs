@@ -83,13 +83,90 @@ impl Quaternion {
     /// Rotates a 3D vector v_body from body frame to world frame:
     /// v_world = q * v_body * q^*
     pub fn rotate_vector_body_to_world(&self, v: Vector3D) -> Vector3D {
-        let q_conj = Self {
+        let q_conj = self.conjugate();
+        q_conj.rotate_vector_world_to_body(v)
+    }
+
+    /// Returns the quaternion conjugate: q^* = (w, -x, -y, -z).
+    #[inline]
+    pub fn conjugate(&self) -> Self {
+        Self {
             w: self.w,
             x: -self.x,
             y: -self.y,
             z: -self.z,
+        }
+    }
+
+    /// Quaternion Hamilton product: q_result = self * rhs.
+    pub fn multiply(&self, rhs: &Self) -> Self {
+        Self::new(
+            self.w * rhs.w - self.x * rhs.x - self.y * rhs.y - self.z * rhs.z,
+            self.w * rhs.x + self.x * rhs.w + self.y * rhs.z - self.z * rhs.y,
+            self.w * rhs.y - self.x * rhs.z + self.y * rhs.w + self.z * rhs.x,
+            self.w * rhs.z + self.x * rhs.y - self.y * rhs.x + self.z * rhs.w,
+        )
+    }
+
+    /// Extracts aerospace Euler angles (Roll phi, Pitch theta, Yaw psi) in radians.
+    pub fn to_euler_rpy(&self) -> (f64, f64, f64) {
+        let roll = (2.0 * (self.w * self.x + self.y * self.z))
+            .atan2(1.0 - 2.0 * (self.x * self.x + self.y * self.y));
+        let pitch = (2.0 * (self.w * self.y - self.x * self.z))
+            .clamp(-1.0, 1.0)
+            .asin();
+        let yaw = (2.0 * (self.w * self.z + self.x * self.y))
+            .atan2(1.0 - 2.0 * (self.y * self.y + self.z * self.z));
+        (roll, pitch, yaw)
+    }
+
+    /// Integrates angular velocity (p, q, r) in body frame over time step dt.
+    pub fn integrate_angular_velocity(&self, omega: Vector3D, dt: f64) -> Self {
+        let angle = omega.norm() * dt;
+        let dq = if angle > 1e-12 {
+            let half_angle = 0.5 * angle;
+            let s = half_angle.sin() / omega.norm();
+            Self {
+                w: half_angle.cos(),
+                x: omega.x * s,
+                y: omega.y * s,
+                z: omega.z * s,
+            }
+        } else {
+            Self {
+                w: 1.0,
+                x: 0.5 * omega.x * dt,
+                y: 0.5 * omega.y * dt,
+                z: 0.5 * omega.z * dt,
+            }
         };
-        q_conj.rotate_vector_world_to_body(v)
+        self.multiply(&dq)
+    }
+
+    /// Computes the 3x3 direction cosine rotation matrix R_B_to_W.
+    pub fn to_rotation_matrix_3x3(&self) -> [[f64; 3]; 3] {
+        let w = self.w;
+        let x = self.x;
+        let y = self.y;
+        let z = self.z;
+
+        [
+            [
+                1.0 - 2.0 * (y * y + z * z),
+                2.0 * (x * y - w * z),
+                2.0 * (x * z + w * y),
+            ],
+            [
+                2.0 * (x * y + w * z),
+                1.0 - 2.0 * (x * x + z * z),
+                2.0 * (y * z - w * x),
+            ],
+            [
+                2.0 * (x * z - w * y),
+                2.0 * (y * z + w * x),
+                1.0 - 2.0 * (x * x + y * y),
+            ],
+        ]
     }
 }
 

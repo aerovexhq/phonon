@@ -15,7 +15,7 @@ use std::f64::consts::PI;
 ///
 /// Fully deterministic and seedable, enabling reproducible channel realizations
 /// without relying on external crates or unsafe code.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ChannelRng {
     state: u64,
 }
