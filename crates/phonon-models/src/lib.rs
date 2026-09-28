@@ -157,9 +157,12 @@ pub use relay::{
     RelayFullAdderCell, RelayLogicGate, RelaySwitchType, G_0, R_0,
 };
 pub use sensors::{
-    sample_imu, AllanNoiseConfig, CapacitiveSensorConfig, CollisionContactInput, ImuConfig,
-    ImuMeasurement, ImuState, PiezoresistiveSensorConfig, Quaternion, TactileMatrixArray,
-    STANDARD_GRAVITY_M_S2,
+    compute_ground_effect_factor, sample_imu, AirframeConfig, AllanNoiseConfig, BarometerSensor,
+    CapacitiveSensorConfig, CollisionContactInput, DrydenWindModel, FlightDynamicsEngine,
+    FlightDynamicsState, GpsFixType, GpsMeasurement, ImuConfig, ImuMeasurement, ImuState,
+    InertiaTensor3D, LidarRangefinder, Quaternion, RotorConfig, BAROMETRIC_EXPONENT,
+    DRY_AIR_MOLAR_MASS_KG_PER_MOL, STANDARD_GRAVITY_M_S2, STANDARD_SEA_LEVEL_PRESSURE_PA,
+    STANDARD_SEA_LEVEL_TEMP_K, STANDARD_TEMP_LAPSE_RATE_K_PER_M, UNIVERSAL_GAS_CONSTANT,
 };
 pub use simd::{batch_evaluate_diodes_simd, batch_evaluate_nmos_simd, MosfetBatchOutput};
 pub use spintronics::{

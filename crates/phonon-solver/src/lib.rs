@@ -93,8 +93,11 @@ pub use relay::{
 };
 pub use rf::{Complex64, TwoPortSParameters};
 pub use sensors::{
-    AerovexCoSimPacket, AerovexPhononBridge, AerovexRigidBodyState, PhononTransducerOutput,
-    SensorBenchmarkReport, SensorBenchmarkRunner,
+    AerovexCoSimPacket, AerovexPhononBridge, AerovexRigidBodyState, EskfConfig, EskfNominalState,
+    FailsafeMode, FaultInjectionConfig, HilActuatorControls, HilBenchmarkReport,
+    HilBenchmarkRunner, HilFlightBridge, HilGpsPacket, HilSensorPacket, Matrix15x15, Matrix3x3,
+    MultiRateEskf, PhononTransducerOutput, PidGains, QuadFlightController, SensorBenchmarkReport,
+    SensorBenchmarkRunner,
 };
 pub use sparse::{
     estimate_condition_1norm, find_markowitz_pivot, MarkowitzOptions, SparseLuFactorization,

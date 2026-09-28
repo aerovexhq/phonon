@@ -3,10 +3,18 @@
 //! Provides models for tactile pressure sensors, contact manifolds,
 //! and 6-DOF / 9-DOF MEMS IMUs with Allan variance noise processes.
 
+pub mod flight_dynamics;
 pub mod imu;
 pub mod nv_center;
 pub mod tactile;
 
+pub use flight_dynamics::{
+    compute_ground_effect_factor, AirframeConfig, BarometerSensor, DrydenWindModel,
+    FlightDynamicsEngine, FlightDynamicsState, GpsFixType, GpsMeasurement, InertiaTensor3D,
+    LidarRangefinder, RotorConfig, BAROMETRIC_EXPONENT, DRY_AIR_MOLAR_MASS_KG_PER_MOL,
+    STANDARD_SEA_LEVEL_PRESSURE_PA, STANDARD_SEA_LEVEL_TEMP_K, STANDARD_TEMP_LAPSE_RATE_K_PER_M,
+    UNIVERSAL_GAS_CONSTANT,
+};
 pub use imu::{
     sample_imu, AllanNoiseConfig, ImuConfig, ImuMeasurement, ImuState, Quaternion,
     STANDARD_GRAVITY_M_S2,
