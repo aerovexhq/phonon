@@ -4,14 +4,6 @@
 
 ## Future
 
-### Phase 58: Cavity Spintronics, Magnon-Photon Strong Coupling & Dissipationless Spin Currents
-Develop an autonomous multi-physics solver modeling cavity spintronics and hybrid quantum systems.
-Formulate coupled Landau-Lifshitz-Gilbert and Maxwell cavity modes with cooperativity $C_{mp} > 100$.
-Model coherent magnon-photon hybridization, anti-crossing polariton gap, and exceptional points.
-Synthesize non-local pure spin currents, spin pumping across YIG/Pt interfaces, and inverse spin Hall effect.
-Implement multi-threaded Rayon stochastic macrospin integrators and open quantum system master equations.
-Benchmark cavity magnonics and coherent spin dynamics across 10,000 drive cycles with sub-MHz polariton linewidth.
-
 ### Phase 59: Floquet Topological Insulators, Driven High-Harmonic Generation & Chiral Floquet Electronics
 Develop an autonomous multi-physics solver modeling periodically driven Floquet topological materials.
 Formulate Floquet-Bloch Magnus expansion, non-perturbative high-harmonic generation (HHG), and chiral edge modes.
@@ -20,21 +12,37 @@ Synthesize sub-femtosecond carrier recollision dynamics and polarization-depende
 Implement multi-threaded Rayon Floquet effective Hamiltonian diagonalizers and time-dependent Schrödinger steppers.
 Benchmark Floquet band structures and harmonic spectra across 10,000 drive cycles with sub-harmonic resolution.
 
+### Phase 60: Chiral Phononics, Topological Acoustic Metamaterials & Non-Reciprocal Acoustic Diodes
+Develop an autonomous multi-physics solver modeling chiral phononics and topological acoustic metamaterials.
+Formulate angular momentum phononic lattices, pseudo-magnetic fields, and valley Chern numbers.
+Model acoustic edge state chirality, robust unidirectional waveguiding, and backscattering immunity.
+Synthesize non-reciprocal acoustic circulators, spatio-temporal stiffness modulation, and phonon diodes.
+Implement multi-threaded Rayon dynamic stiffness matrix assemblers and Floquet-Bloch phononic solvers.
+Benchmark topological acoustic transport and non-reciprocal isolation across 10,000 acoustic drive cycles.
+
 ---
 
 ## Current
 
-### Phase 57: Non-Abelian Anyon Braiding in Fractional Quantum Hall Interferometers
-Develop an autonomous multi-physics solver modeling Fabry-Pérot electronic Mach-Zehnder interferometers and fractional quantum Hall states.
-Formulate edge-state chiral Luttinger liquid Hamiltonians with fractional charge $e^* = e/3$ and non-Abelian Moore-Read $\nu = 5/2$ pfaffians.
-Model bulk-edge correspondence, quantum point contact (QPC) tunneling amplitudes, and Aharonov-Bohm vs Coulomb charging regimes.
-Synthesize non-Abelian braid transformations, topological entanglement entropy, and state-dependent interference phase shifts.
-Implement multi-threaded Rayon quantum trajectory master equation and conformal field theory (CFT) wave-function evaluators.
-Benchmark fractional quantum Hall interferometry across 10,000 braid sequences with braiding phase fidelity $\ge 99.9\%$.
+### Phase 58: Cavity Spintronics, Magnon-Photon Strong Coupling & Dissipationless Spin Currents
+Develop an autonomous multi-physics solver modeling cavity spintronics and hybrid quantum systems.
+Formulate coupled Landau-Lifshitz-Gilbert and Maxwell cavity modes with cooperativity $C_{mp} > 100$.
+Model coherent magnon-photon hybridization, anti-crossing polariton gap, and exceptional points.
+Synthesize non-local pure spin currents, spin pumping across YIG/Pt interfaces, and inverse spin Hall effect.
+Implement multi-threaded Rayon stochastic macrospin integrators and open quantum system master equations.
+Benchmark cavity magnonics and coherent spin dynamics across 10,000 drive cycles with sub-MHz polariton linewidth.
 
 ---
 
 ## Done
+
+### Phase 57: Non-Abelian Anyon Braiding in Fractional Quantum Hall Interferometers
+Formulated chiral Luttinger liquids, fractional charges $e^* = e/3, e/4$, and Moore-Read pfaffians.
+Modeled 2D topological qubit Hilbert space with non-Abelian braid matrices $R$ and $B_{23}$.
+Synthesized non-commutative braiding algebra $[R, B_{23}] \ne 0$ and topological entropy $S_{topo} = \ln(2)$.
+Formulated Fabry-Pérot electronic interferometry with even/odd anyon visibility collapse.
+Implemented quantum trajectory master equations and 2D conductance solvers in safe Rust.
+Benchmarked 10,000 braid sequences and interferometric sweeps with fidelity $\ge 99.9\%$.
 
 ### Phase 56: Superconducting Nanowire Single-Photon Detectors & Quantum Telemetry
 Formulated ultra-thin NbN/WSi meanders, Ginzburg-Landau critical currents, and kinetic inductance reset.
