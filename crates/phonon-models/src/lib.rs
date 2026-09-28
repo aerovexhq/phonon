@@ -13,6 +13,7 @@ pub mod cqed;
 pub mod cryogenic;
 pub mod diode;
 pub mod em;
+pub mod floquet;
 pub mod fqh;
 pub mod hetero;
 pub mod hierarchical;
@@ -98,6 +99,7 @@ pub use em::{
     SOLAR_DISK_DIAMETER_DEG, STANDARD_K_FACTOR, STANDARD_NOISE_TEMP_KELVIN, VACUUM_IMPEDANCE,
     VACUUM_PERMEABILITY, WGS84_A_METERS, WGS84_B_METERS, WGS84_E_SQ, WGS84_FLATTENING,
 };
+pub use floquet::*;
 pub use fqh::*;
 pub use hetero::{
     BlackElectromigrationModel, BlockAllocationMap, BlockStressReport, CpuMacroBlock,
