@@ -4,14 +4,6 @@
 
 ## Future
 
-### Phase 43: Cold Atom Interferometry, Optical Lattice Clocks & Relativistic Geodesy
-Develop an autonomous solver modeling matter-wave cold atom interferometers and optical lattice atomic clocks for quantum gravimetry.
-Formulate two-photon Raman and Bragg laser transition Hamiltonians manipulating ultracold Bose-Einstein condensates ($^{87}\text{Rb}$, $^{88}\text{Sr}$).
-Model Mach-Zehnder matter-wave phase accumulation measuring local gravitational acceleration ($g$), gravity gradients ($\nabla g$), and Sagnac rotations.
-Synthesize magic-wavelength 1D/3D optical lattices achieving fractional clock frequency instability below $10^{-18}$ for relativistic geodetic elevation mapping.
-Implement multi-threaded Rayon Gross-Pitaevskii and stochastic Schrödinger master-equation solvers tracking atomic dephasing and photon recoil.
-Benchmark cold atom quantum sensors against classical MEMS and quartz gravimeters across drift-free bias stability, sensitivity, and space readiness.
-
 ### Phase 44: Autonomous Neuromorphic Reservoir Computing & Memristive Liquid State Machines
 Develop an autonomous solver modeling analog neuromorphic reservoir computing networks and physical liquid state machines.
 Formulate non-linear dynamical recurrent maps driven by crossbar memristor arrays (filamentary RRAM, PCM, FeFET) and chaotic delay oscillators.
@@ -20,21 +12,37 @@ Synthesize physical memristive synaptic plasticity with spike-timing-dependent p
 Implement multi-threaded Rayon ridge-regression and pseudo-inverse read-out weight solvers tracking temporal sequence recognition and chaotic time-series forecasting.
 Benchmark neuromorphic reservoir processors against digital DSPs and GPUs across energy delay product (EDP), training throughput, and classification accuracy.
 
+### Phase 45: Autonomous Multi-Physics Spacecraft GNC, Orbital Mechanics & Star Tracker Co-Simulation
+Develop an autonomous solver modeling spacecraft Guidance, Navigation, and Control (GNC), orbital mechanics, and attitude determination.
+Formulate Cowell two-body and perturbed gravity potential models ($J_2-J_4$, third-body lunar/solar ephemerides, atmospheric drag, solar radiation pressure).
+Model reaction wheel cluster dynamics with motor back-EMF, static/dynamic mass imbalance micro-vibrations, and magnetic torquer rods.
+Synthesize autonomous star tracker attitude determination with lost-in-space Triangle/Pyramid pattern recognition and Brown-Conrady sensor distortion.
+Implement multi-threaded Rayon coupled orbit-attitude propagators and Multiplicative Extended Kalman Filters (MEKF) with unit quaternions.
+Benchmark GNC co-simulation across 10,000 orbital revolutions with closed-loop nadir pointing error $< 0.005^\circ$ and micro-arcsecond star centroiding.
+
 ---
 
 ## Current
 
-### Phase 42: Terahertz Quantum Cascade Lasers, Polaritonic Waveguides & Sub-Millimeter Spectroscopy
-Develop an autonomous solver exploring terahertz (THz) quantum cascade lasers (QCLs), resonant intersubband optical transitions, and polaritonic waveguides.
-Formulate self-consistent Schrödinger-Poisson non-equilibrium Green's function (NEGF) transport models for semiconductor multiple-quantum-well active regions.
-Model resonant phonon depopulation schemes, optical gain spectra, and sub-millimeter electromagnetic cavity wave propagation (0.5 to 10 THz).
-Synthesize low-loss metal-metal and semi-insulating surface-plasmon polaritonic waveguides confining sub-millimeter radiation below the diffraction limit.
-Implement multi-threaded Rayon rate-equation solvers tracking continuous-wave and pulsed lasing thresholds, frequency comb dynamics, and thermal roll-off.
-Benchmark THz QCL sources against molecular gas lasers and optical parametric oscillators across wall-plug efficiency, spectral purity, and integration density.
+### Phase 43: Cold Atom Interferometry, Optical Lattice Clocks & Relativistic Geodesy
+Develop an autonomous solver modeling matter-wave cold atom interferometers and optical lattice atomic clocks for quantum gravimetry.
+Formulate two-photon Raman and Bragg laser transition Hamiltonians manipulating ultracold Bose-Einstein condensates ($^{87}\text{Rb}$, $^{88}\text{Sr}$).
+Model Mach-Zehnder matter-wave phase accumulation measuring local gravitational acceleration ($g$), gravity gradients ($\nabla g$), and Sagnac rotations.
+Synthesize magic-wavelength 1D/3D optical lattices achieving fractional clock frequency instability below $10^{-18}$ for relativistic geodetic elevation mapping.
+Implement multi-threaded Rayon Gross-Pitaevskii and stochastic Schrödinger master-equation solvers tracking atomic dephasing and photon recoil.
+Benchmark cold atom quantum sensors against classical MEMS and quartz gravimeters across drift-free bias stability, sensitivity, and space readiness.
 
 ---
 
 ## Done
+
+### Phase 42: Terahertz Quantum Cascade Lasers, Polaritonic Waveguides & Sub-Millimeter Spectroscopy
+Formulated 1D Schrödinger BenDaniel-Duke solver evaluating MQW intersubband eigenstates $\psi_i(z)$, energies $E_i$, and dipole elements $z_{ij}$.
+Synthesized resonant LO-phonon depopulation matching $\Delta E_{21} \approx 36\text{ meV}$ with sub-picosecond extraction ($\tau_{21} \approx 0.3\text{ ps}$) sustaining inversion $\Delta n > 0$.
+Modeled sub-millimeter Lorentzian optical gain spectra $g(\nu)$ across $0.5-10\text{ THz}$ and Metal-Metal ($\Gamma \approx 0.90$) and SI-SP polaritonic waveguides.
+Formulated multi-level coupled rate equations $(n_3, n_2, n_1, S)$ with threshold current density $J_{th}$ and thermal roll-off modeling $T_{max} > 200\text{ K}$.
+Synthesized third-order optical non-linearity $\chi^{(3)}$ four-wave mixing frequency combs with $10-25\text{ GHz}$ repetition rate and sub-kHz beat-note linewidth.
+Benchmarked THz QCL sources against FIR gas lasers, OPOs, and PCAs across wall-plug efficiency ($1-5\%$), peak power ($> 100\text{ mW}$), and spectroscopy.
 
 ### Phase 41: Cavity Quantum Optomechanics, Phonon-Photon Transduction & Superconducting Qubit Interconnects
 Formulated coupled cavity optomechanical Hamiltonian with zero-point fluctuations ($x_{zpf}$) and single-photon coupling ($g_0 = -\frac{\omega_c}{L} x_{zpf}$).
