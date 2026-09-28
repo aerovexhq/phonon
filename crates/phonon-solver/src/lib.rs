@@ -7,6 +7,7 @@ pub mod cavity_spintronics;
 pub mod cqed;
 pub mod em;
 pub mod error;
+pub mod floquet;
 pub mod fqh;
 pub mod hetero;
 pub mod jtwpa;
@@ -64,6 +65,7 @@ pub use em::{
     TierChannelResult, TransceiverLinkResult, TransientBurstResult, WifiLinkSimulator,
 };
 pub use error::SolverError;
+pub use floquet::*;
 pub use fqh::*;
 pub use hetero::{
     HeteroCpuBenchmarkResult, HeteroCpuBenchmarkRunner, HeteroCpuOptimizer,
