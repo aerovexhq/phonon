@@ -34,6 +34,7 @@ pub mod simd;
 pub mod space;
 pub mod spintronics;
 pub mod superconducting;
+pub mod superconducting_spintronics;
 pub mod surrogate;
 pub mod synthesis;
 pub mod tcad;
@@ -195,6 +196,10 @@ pub use superconducting::{
     RsfqAnd, RsfqDff, RsfqInverter, RsfqJtl, RsfqToOptoDriver, SfqPulse, SnspdModel, SoenMetrics,
     SoenNeuron, SuperconductingFluxLoop, SuperconductorMaterial, SurfaceCodeGeometry,
     SyndromePacket,
+};
+pub use superconducting_spintronics::{
+    CooperPairSymmetry, CryoDac, CryoPll, CryoReadoutTia, CryoThermalBackaction, FermionParity,
+    FourMajoranaQubit, SuperconductingSpintronicJunction, TopologicalNanowireParams,
 };
 pub use surrogate::{
     fit_pce_surrogate, train_mlp_surrogate, ActivationFunction, DenseLayer, MlpTrainingConfig,

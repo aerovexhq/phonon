@@ -26,6 +26,7 @@ pub mod space;
 pub mod sparse;
 pub mod spintronics;
 pub mod superconducting;
+pub mod superconducting_spintronics;
 pub mod synthesis;
 pub mod topological;
 pub mod transient;
@@ -133,6 +134,11 @@ pub use superconducting::{
     ClassicalCmosBaseline, CoprocessorComparisonReport, CryoDecoderEngine, CryoQecDecoder,
     DecodingResult, HybridCoprocessorBenchmarkRunner, OpticalInterconnect, QecCorrection,
     SoenNetwork, SoenSpikeRecord, TravelingOpticalPacket,
+};
+pub use superconducting_spintronics::{
+    BdgHamiltonianSolver, BdgSolution, CryoSpintronicBenchmarkReport,
+    CryoSpintronicBenchmarkRunner, LindbladTrajectorySolver, TopologicalQubitDensityMatrix,
+    QUANTUM_CONDUCTANCE_G0,
 };
 pub use synthesis::{
     SynthesisConfig, SynthesizedCandidate, TopologyEvolver, TransientGateVerifier,
