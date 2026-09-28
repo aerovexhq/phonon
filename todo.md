@@ -4,14 +4,6 @@
 
 ## Future
 
-### Phase 42: Terahertz Quantum Cascade Lasers, Polaritonic Waveguides & Sub-Millimeter Spectroscopy
-Develop an autonomous solver exploring terahertz (THz) quantum cascade lasers (QCLs), resonant intersubband optical transitions, and polaritonic waveguides.
-Formulate self-consistent Schrödinger-Poisson non-equilibrium Green's function (NEGF) transport models for semiconductor multiple-quantum-well active regions.
-Model resonant phonon depopulation schemes, optical gain spectra, and sub-millimeter electromagnetic cavity wave propagation (0.5 to 10 THz).
-Synthesize low-loss metal-metal and semi-insulating surface-plasmon polaritonic waveguides confining sub-millimeter radiation below the diffraction limit.
-Implement multi-threaded Rayon rate-equation solvers tracking continuous-wave and pulsed lasing thresholds, frequency comb dynamics, and thermal roll-off.
-Benchmark THz QCL sources against molecular gas lasers and optical parametric oscillators across wall-plug efficiency, spectral purity, and integration density.
-
 ### Phase 43: Cold Atom Interferometry, Optical Lattice Clocks & Relativistic Geodesy
 Develop an autonomous solver modeling matter-wave cold atom interferometers and optical lattice atomic clocks for quantum gravimetry.
 Formulate two-photon Raman and Bragg laser transition Hamiltonians manipulating ultracold Bose-Einstein condensates ($^{87}\text{Rb}$, $^{88}\text{Sr}$).
@@ -20,21 +12,37 @@ Synthesize magic-wavelength 1D/3D optical lattices achieving fractional clock fr
 Implement multi-threaded Rayon Gross-Pitaevskii and stochastic Schrödinger master-equation solvers tracking atomic dephasing and photon recoil.
 Benchmark cold atom quantum sensors against classical MEMS and quartz gravimeters across drift-free bias stability, sensitivity, and space readiness.
 
+### Phase 44: Autonomous Neuromorphic Reservoir Computing & Memristive Liquid State Machines
+Develop an autonomous solver modeling analog neuromorphic reservoir computing networks and physical liquid state machines.
+Formulate non-linear dynamical recurrent maps driven by crossbar memristor arrays (filamentary RRAM, PCM, FeFET) and chaotic delay oscillators.
+Model fading memory fading response, high-dimensional temporal feature projection, and echo-state property (ESP) convergence criteria.
+Synthesize physical memristive synaptic plasticity with spike-timing-dependent plasticity (STDP) and sub-femtojoule spike dissipation.
+Implement multi-threaded Rayon ridge-regression and pseudo-inverse read-out weight solvers tracking temporal sequence recognition and chaotic time-series forecasting.
+Benchmark neuromorphic reservoir processors against digital DSPs and GPUs across energy delay product (EDP), training throughput, and classification accuracy.
+
 ---
 
 ## Current
 
-### Phase 41: Cavity Quantum Optomechanics, Phonon-Photon Transduction & Superconducting Qubit Interconnects
-Develop an autonomous multi-physics solver modeling cavity quantum optomechanics and coherent microwave-to-optical quantum state transduction.
-Formulate coupled Hamiltonian systems combining optical/microwave electromagnetic cavities, radiation pressure force, and localized acoustic phononic modes.
-Model optomechanical backaction: dynamical sideband cooling to the phononic quantum ground state, optomechanically induced transparency (OMIT), and parametric instability.
-Synthesize piezoelectric optomechanical crystals (AlN, GaAs, LN) achieving bidirectional coherent conversion efficiency between microwave and telecommunication optical photons.
-Implement multi-threaded Rayon quantum Langevin equation solvers tracking photon-phonon entanglement fidelities, thermal noise dissipation, and quantum state transfer rates.
-Benchmark optomechanical quantum transducers against electro-optic modulators across quantum conversion efficiency (> 50%), added noise quanta, and cryogenic heat load.
+### Phase 42: Terahertz Quantum Cascade Lasers, Polaritonic Waveguides & Sub-Millimeter Spectroscopy
+Develop an autonomous solver exploring terahertz (THz) quantum cascade lasers (QCLs), resonant intersubband optical transitions, and polaritonic waveguides.
+Formulate self-consistent Schrödinger-Poisson non-equilibrium Green's function (NEGF) transport models for semiconductor multiple-quantum-well active regions.
+Model resonant phonon depopulation schemes, optical gain spectra, and sub-millimeter electromagnetic cavity wave propagation (0.5 to 10 THz).
+Synthesize low-loss metal-metal and semi-insulating surface-plasmon polaritonic waveguides confining sub-millimeter radiation below the diffraction limit.
+Implement multi-threaded Rayon rate-equation solvers tracking continuous-wave and pulsed lasing thresholds, frequency comb dynamics, and thermal roll-off.
+Benchmark THz QCL sources against molecular gas lasers and optical parametric oscillators across wall-plug efficiency, spectral purity, and integration density.
 
 ---
 
 ## Done
+
+### Phase 41: Cavity Quantum Optomechanics, Phonon-Photon Transduction & Superconducting Qubit Interconnects
+Formulated coupled cavity optomechanical Hamiltonian with zero-point fluctuations ($x_{zpf}$) and single-photon coupling ($g_0 = -\frac{\omega_c}{L} x_{zpf}$).
+Synthesized piezoelectric optomechanical crystals (AlN, GaAs, LN, Si) coupling telecom optical, phononic breathing, and microwave coplanar modes.
+Modeled dynamical backaction: optical spring shift ($\delta\Omega_m$), damping ($\Gamma_{opt}$), ground-state sideband cooling ($\bar{n}_{eff} < 0.1$), and OMIT.
+Implemented linearized Quantum Langevin Equation (QLE) and continuous-time Lyapunov solvers evaluating steady-state covariance matrices.
+Formulated coherent bidirectional microwave-to-optical quantum state transduction achieving conversion efficiency $\eta > 50\%$ and added noise $N_{add} < 0.5$.
+Benchmarked optomechanical transducers against bulk EOMs and rare-earth transducers across cryogenic heat load ($< 1\,\mu\text{W}$ at 20 mK) and transmon link fidelity.
 
 ### Phase 40: Autonomous Multi-Physics Hardware-in-the-Loop (HIL) Flight Simulation & Physical Sensor Fusion
 Formulated 6-DOF rigid-body translational/rotational dynamics with unit quaternions, aerodynamic ground effect, and Dryden turbulent wind gust envelopes.

@@ -143,8 +143,11 @@ pub use photonic::{
     PhotodetectorType, RingResonatorType, TelecomAnalyzer,
 };
 pub use quantum::{
-    BandToBandTunnelingModel, Complex, DielectricTunnelingModel, GaaCrossSection, GaaNanowireModel,
-    QuantumChannel1D,
+    effective_damping_rate, effective_mechanical_frequency, is_ground_state_cooled,
+    omit_probe_transmission, optical_cooperativity, optical_spring_shift,
+    optomechanical_damping_rate, sideband_cooling_phonon_occupancy, BandToBandTunnelingModel,
+    Complex, DielectricTunnelingModel, GaaCrossSection, GaaNanowireModel, OmitTransmissionResult,
+    OptomechanicalHamiltonian, PiezoCrystalMaterial, PiezoOptomechanicalCrystal, QuantumChannel1D,
 };
 pub use radiation::{
     DiceCell, DisplacementDamageModel, HeavyIonStrikeModel, LatchupEvaluation,
