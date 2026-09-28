@@ -5,6 +5,7 @@ pub mod acoustic;
 pub mod assets;
 pub mod cavity_spintronics;
 pub mod cqed;
+pub mod diamond_nv;
 pub mod em;
 pub mod error;
 pub mod floquet;
@@ -57,6 +58,7 @@ pub use cqed::{
     CqedBenchmarkReport, CqedBenchmarkRunner, DispersiveReadoutResult, DispersiveReadoutSolver,
     TransmonSpectrumSolution, TransmonSpectrumSolver,
 };
+pub use diamond_nv::*;
 pub use em::{
     AntennaElectrodynamicSolver, EmBenchmarkReport, EmBenchmarkRunner, EmLinkResult,
     EmPropagationScene, EmWaveSolver, EmitterBenchmarkReport, EmitterBenchmarkRunner,
