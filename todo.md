@@ -4,14 +4,6 @@
 
 ## Future
 
-### Phase 52: Superconducting Traveling-Wave Parametric Amplifiers & Quantum-Limited Readout
-Develop an autonomous solver modeling Josephson traveling-wave parametric amplifiers (JTWPA) and SNAIL parametric devices.
-Formulate non-linear wave propagation across multi-junction Josephson transmission lines with periodic dispersion engineering.
-Model four-wave and three-wave mixing parametric processes, phase-matching conditions, and quantum-limited noise performance.
-Synthesize SNAIL arrays with Kerr-free third-order non-linearities and high saturation powers exceeding $-90\text{ dBm}$.
-Implement multi-threaded Rayon coupled-mode ODE integrators evaluating dynamic gain profiles across $4-8\text{ GHz}$ bandwidths.
-Benchmark quantum-limited readout amplification across 10,000 signal pulses with added noise photons $N_{add} \le 0.5$ and $> 20\text{ dB}$ gain.
-
 ### Phase 53: Cavity Optomechanics, Phonon Ground-State Cooling & Quantum Squeezing
 Develop an autonomous multi-physics solver modeling cavity optomechanics, radiation pressure dynamical back-action, and quantum squeezing.
 Formulate Fabry-Pérot and photonic crystal nanobeam optomechanical Hamiltonians with radiation pressure coupling rate $g_0$.
@@ -20,21 +12,37 @@ Synthesize optomechanically induced transparency (OMIT), ponderomotive squeezing
 Implement multi-threaded Rayon stochastic quantum master equation and Langevin stochastic differential equation (SDE) solvers.
 Benchmark optomechanical cooling and squeezed-state synthesis across 10,000 thermal phonon trajectories with quantum back-action limit.
 
+### Phase 54: Non-Hermitian Photonic Lattices, Exceptional Points & Topological Lasers
+Develop an autonomous multi-physics solver modeling non-Hermitian photonics, parity-time (PT) symmetry, and topological lasers.
+Formulate non-Hermitian coupled-mode Hamiltonians with spatially distributed gain and loss, exceptional point (EP) degeneracies, and chiral modes.
+Model topological edge states in Su-Schrieffer-Heeger (SSH) and Haldane photonic lattices with non-Hermitian topological invariants.
+Synthesize single-mode topological insulator lasers with robust single-frequency emission and immunity to back-scattering and defects.
+Implement multi-threaded Rayon finite-difference time-domain (FDTD) Maxwell-Bloch non-linear laser rate equation solvers.
+Benchmark non-Hermitian topological laser arrays across 10,000 temporal round-trips with side-mode suppression ratio $> 35\text{ dB}$.
+
 ---
 
 ## Current
 
-### Phase 51: Molecular Spintronics, Single-Molecule Magnetism & Spin-Torque Nano-Oscillators
-Develop an autonomous multi-scale solver modeling molecular spintronics, single-molecule magnets (SMM), and spin-torque nano-oscillators.
-Formulate giant spin Hamiltonians with uniaxial anisotropy, transverse crystal fields, and resonant quantum tunneling of magnetization.
-Model non-equilibrium Green's function (NEGF) transport through magnetic adatoms, molecules, and Kondo resonance splittings.
-Synthesize spin-transfer torque and spin-orbit torque nano-oscillators (STNO/SHNO) with non-linear damping and micromagnetic coupling.
-Implement multi-threaded Rayon stochastic Landau-Lifshitz-Gilbert (sLLG) Langevin integrators tracking phase noise and spectral linewidth.
-Benchmark molecular spin memory and RF oscillator co-simulation across 10,000 precession cycles with phase locking and zero drift.
+### Phase 52: Superconducting Traveling-Wave Parametric Amplifiers & Quantum-Limited Readout
+Develop an autonomous solver modeling Josephson traveling-wave parametric amplifiers (JTWPA) and SNAIL parametric devices.
+Formulate non-linear wave propagation across multi-junction Josephson transmission lines with periodic dispersion engineering.
+Model four-wave and three-wave mixing parametric processes, phase-matching conditions, and quantum-limited noise performance.
+Synthesize SNAIL arrays with Kerr-free third-order non-linearities and high saturation powers exceeding $-90\text{ dBm}$.
+Implement multi-threaded Rayon coupled-mode ODE integrators evaluating dynamic gain profiles across $4-8\text{ GHz}$ bandwidths.
+Benchmark quantum-limited readout amplification across 10,000 signal pulses with added noise photons $N_{add} \le 0.5$ and $> 20\text{ dB}$ gain.
 
 ---
 
 ## Done
+
+### Phase 51: Molecular Spintronics, Single-Molecule Magnetism & Spin-Torque Nano-Oscillators
+Formulated giant spin Hamiltonians with uniaxial/rhombic crystal fields, Zeeman shifts, and resonant quantum tunneling of magnetization.
+Modeled NEGF quantum transport across magnetic adatoms/molecules with Abrikosov-Suhl Kondo resonance and Zeeman peak splittings.
+Synthesized spin-transfer torque and spin-orbit torque nano-oscillators (STNO/SHNO) with non-linear damping and Hopf threshold currents.
+Formulated Adler RF injection locking bandwidths, mutual phase synchronization, and microwave power generation across 1-40 GHz.
+Implemented exact Jacobi eigensolvers, NEGF energy integration, and stochastic Landau-Lifshitz-Gilbert (sLLG) Langevin integrators.
+Benchmarked molecular spintronics and STNO auto-oscillators across 10,000 precession cycles with verified Adler locking and high throughput.
 
 ### Phase 50: Relativistic Plasma Wakefields, Laser-Driven Particle Acceleration & Synchrotron Radiation
 Formulated laser envelope dynamics with normalized vector potential $a_0$, peak intensity $I_0$, and 3D ponderomotive profiles.
