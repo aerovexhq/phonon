@@ -4,14 +4,6 @@
 
 ## Future
 
-### Phase 37: Unified Multi-Physics 3D Asset Ecosystem, Dielectric Material Library & Component Catalog
-Construct a unified multi-physics 3D asset and material registry supporting cross-domain electro-optical, acoustic, and mechanical simulations.
-Compile an authoritative library of 100+ standard materials specifying complex permittivity ($\epsilon_r$), permeability ($\mu_r$), conductivity ($\sigma$), acoustic impedance, and optical BRDF.
-Curate detailed 3D asset models for RF antennas, routers, electronic enclosures, discrete components, satellite chassis, and structural building elements.
-Implement high-throughput spatial acceleration indexing (Octree/BVH) and memory-mapped asset caching for ultra-fast scene loading.
-Provide automated material property assignment for imported 3D mesh formats (glTF, OBJ, USD) with physical validation checks.
-Benchmark memory footprint, spatial query latency, and multi-sensor query throughput across complex multi-kilometer urban and space simulation environments.
-
 ### Phase 38: Molecular Spintronics, Chiral-Induced Spin Selectivity (CISS) & Single-Molecule Magnet Synthesis
 Develop an autonomous solver exploring molecular spintronics, helicoidal chiral charge transport, and single-molecule magnets (SMMs).
 Formulate tight-binding multi-orbital Hamiltonians with microscopic spin-orbit coupling modeling the Chiral-Induced Spin Selectivity (CISS) effect across helical oligomers and DNA-like polymers.
@@ -32,17 +24,25 @@ Benchmark diamond NV quantum magnetometers against SQUID and Hall sensors across
 
 ## Current
 
-### Phase 36: Physics-Coupled Tactile/Force Sensors, Multi-Axis IMU & Aerovex Sim Architectural Integration
-Architect a direct bidirectional integration bridge coupling Phonon's multi-physics circuit solver directly with the Aerovex simulation kernel (`aerovex-sim`).
-Synthesize piezoresistive, capacitive, and elastomeric tactile force sensors driven directly by Aerovex rigid-body collision contact manifolds and normal forces.
-Synthesize 6-DOF and 9-DOF Inertial Measurement Units (IMUs): triaxial accelerometers, gyroscopes, and magnetometers coupled to Earth gravity and geomagnetic vectors.
-Model IMU stochastic noise processes: Allan variance parameters, white noise angle random walk, in-run bias instability, and thermal drift.
-Implement lock-free synchronized cosimulation clock stepping bridging Aerovex multi-world physics ticks with Phonon continuous MNA time integration.
-Benchmark coupled tactile-electronic feedback loops and IMU telemetry fidelity under high-dynamic aerospace and robotic flight trajectories.
+### Phase 37: Unified Multi-Physics 3D Asset Ecosystem, Dielectric Material Library & Component Catalog
+Construct a unified multi-physics 3D asset and material registry supporting cross-domain electro-optical, acoustic, and mechanical simulations.
+Compile an authoritative library of 100+ standard materials specifying complex permittivity ($\epsilon_r$), permeability ($\mu_r$), conductivity ($\sigma$), acoustic impedance, and optical BRDF.
+Curate detailed 3D asset models for RF antennas, routers, electronic enclosures, discrete components, satellite chassis, and structural building elements.
+Implement high-throughput spatial acceleration indexing (Octree/BVH) and memory-mapped asset caching for ultra-fast scene loading.
+Provide automated material property assignment for imported 3D mesh formats (glTF, OBJ, USD) with physical validation checks.
+Benchmark memory footprint, spatial query latency, and multi-sensor query throughput across complex multi-kilometer urban and space simulation environments.
 
 ---
 
 ## Done
+
+### Phase 36: Physics-Coupled Tactile/Force Sensors, Multi-Axis IMU & Aerovex Sim Architectural Integration
+Constructed bidirectional integration bridge coupling Phonon multi-physics circuit solver with Aerovex simulation kernel (aerovex-sim).
+Synthesized piezoresistive and capacitive tactile sensors driven by Aerovex rigid-body collision contact manifolds and normal forces.
+Synthesized 6-DOF and 9-DOF IMUs: triaxial accelerometers, gyroscopes, and magnetometers coupled to Earth gravity and geomagnetic vectors.
+Modeled IMU stochastic noise processes: Allan variance parameters, white noise angle/velocity random walk, in-run bias instability, and thermal drift.
+Implemented lock-free synchronized co-simulation clock stepping bridging Aerovex multi-world physics ticks with Phonon transducer models.
+Benchmarked 10,000-tick parallel Rayon co-simulation at 1.95M ticks/sec with < 0.08 m/s^2 accel RMSE and 100% tactile force fidelity.
 
 ### Phase 35: LiDAR Time-of-Flight Synthesis, Atmospheric Scattering & Aerovex BVH Acceleration
 Developed physically rigorous pulsed time-of-flight (ToF) LiDAR engine operating at 905 nm and 1550 nm eye-safe optical wavelengths.
