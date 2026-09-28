@@ -34,6 +34,7 @@ pub mod sensors;
 pub mod simd;
 pub mod space;
 pub mod spintronics;
+pub mod stno;
 pub mod superconducting;
 pub mod superconducting_spintronics;
 pub mod surrogate;
@@ -193,6 +194,7 @@ pub use spintronics::{
     LlgsConfig, LlgsSolver, MagneticMaterial, MultiBitNmlAdder, Nanomagnet, NmlAnd2,
     NmlFullAdderCell, NmlGateMetrics, NmlInverter, NmlMajority3, NmlOr2, Vec3,
 };
+pub use stno::{GiantSpinParams, InjectionLockingParams, NegfMolecularJunctionParams, StnoParams};
 pub use superconducting::{
     integrate_voltage_time, verify_flux_quantization, CryoOpticalEmitter, DcSquidModel,
     JosephsonRcsjModel, JtlStage, OptoToRsfqTransducer, PauliCorrection, RcsjCompanionStamp,

@@ -26,6 +26,7 @@ pub mod sensors;
 pub mod space;
 pub mod sparse;
 pub mod spintronics;
+pub mod stno;
 pub mod superconducting;
 pub mod superconducting_spintronics;
 pub mod synthesis;
@@ -135,6 +136,10 @@ pub use sparse::{
 pub use spintronics::{
     ClockPhase, Cmos3nmReference, MicromagneticArray, NmlBenchmarkRunner, NmlComparisonReport,
     NmlLogicSynthesizer, SynthesizedNmlLogic, TargetNmlFunction,
+};
+pub use stno::{
+    GiantSpinSolution, GiantSpinSolver, MacrospinState, NegfMolecularSolver, NegfTransportResult,
+    StnoBenchmarkReport, StnoBenchmarkRunner, StochasticLlgSolver,
 };
 pub use superconducting::{
     ClassicalCmosBaseline, CoprocessorComparisonReport, CryoDecoderEngine, CryoQecDecoder,
