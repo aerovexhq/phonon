@@ -16,6 +16,7 @@ pub mod mixed_signal;
 pub mod molecular;
 pub mod mosfet;
 pub mod mvl;
+pub mod net;
 pub mod optimization;
 pub mod parasitics;
 pub mod phononic;
@@ -91,6 +92,11 @@ pub use mvl::{
     MultiPeakRtdParams, MultiThresholdMosfet, MultiThresholdMosfetParams, Quat, RadixEfficiency,
     RtdEvaluation, TernaryFullAdderCell, TernaryGates, TernaryInverters,
     TernaryNoiseMarginAnalyzer, TernaryNoiseMargins, TfaOutput, ThermalRetentionReport, Trit,
+};
+pub use net::{
+    compute_internet_checksum, nic_reg, ArpOperation, ArpPacket, ArpTable, CpuInstruction,
+    IpProtocol, Ipv4Address, Ipv4Header, RouteEntry, RouterPort, RouterSwitch, SimulatedCpuNode,
+    UdpDatagram, VirtualNic,
 };
 pub use optimization::{
     evaluate_transistor_fitness, AdjointRefiner, ArchitectureType, ChannelMaterial, FastRng,
