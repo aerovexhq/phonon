@@ -4,14 +4,6 @@
 
 ## Future
 
-### Phase 53: Cavity Optomechanics, Phonon Ground-State Cooling & Quantum Squeezing
-Develop an autonomous multi-physics solver modeling cavity optomechanics, radiation pressure dynamical back-action, and quantum squeezing.
-Formulate Fabry-Pérot and photonic crystal nanobeam optomechanical Hamiltonians with radiation pressure coupling rate $g_0$.
-Model resolved-sideband dynamical back-action cooling down to the mechanical quantum ground state with mean phonon occupancy $\bar{n}_m < 0.1$.
-Synthesize optomechanically induced transparency (OMIT), ponderomotive squeezing of light, and two-mode quantum entanglement.
-Implement multi-threaded Rayon stochastic quantum master equation and Langevin stochastic differential equation (SDE) solvers.
-Benchmark optomechanical cooling and squeezed-state synthesis across 10,000 thermal phonon trajectories with quantum back-action limit.
-
 ### Phase 54: Non-Hermitian Photonic Lattices, Exceptional Points & Topological Lasers
 Develop an autonomous multi-physics solver modeling non-Hermitian photonics, parity-time (PT) symmetry, and topological lasers.
 Formulate non-Hermitian coupled-mode Hamiltonians with spatially distributed gain and loss, exceptional point (EP) degeneracies, and chiral modes.
@@ -20,21 +12,37 @@ Synthesize single-mode topological insulator lasers with robust single-frequency
 Implement multi-threaded Rayon finite-difference time-domain (FDTD) Maxwell-Bloch non-linear laser rate equation solvers.
 Benchmark non-Hermitian topological laser arrays across 10,000 temporal round-trips with side-mode suppression ratio $> 35\text{ dB}$.
 
+### Phase 55: Atomically Thin 2D Moiré Superlattices, Flat Bands & Correlated Insulators
+Develop an autonomous multi-physics solver modeling twisted 2D van der Waals heterostructures and moiré flat-band physics.
+Formulate continuum Bistritzer-MacDonald Hamiltonians for twisted bilayer graphene (TBG) and transition metal dichalcogenides (TMDs).
+Model magic-angle flat-band formation at $\theta \approx 1.08^\circ$ with Dirac velocity quenching and narrow bandwidth $W < 10\text{ meV}$.
+Synthesize correlated Mott insulator states, Hartree-Fock Coulomb interactions, and unconventional superconducting pairing domes.
+Implement multi-threaded Rayon momentum-space Hamiltonian diagonalizers and real-space local density of states (LDOS) mappers.
+Benchmark moiré flat-band dispersion and correlated gaps across 10,000 $k$-points with verified bandwidth quenching $< 5\text{ meV}$.
+
 ---
 
 ## Current
 
-### Phase 52: Superconducting Traveling-Wave Parametric Amplifiers & Quantum-Limited Readout
-Develop an autonomous solver modeling Josephson traveling-wave parametric amplifiers (JTWPA) and SNAIL parametric devices.
-Formulate non-linear wave propagation across multi-junction Josephson transmission lines with periodic dispersion engineering.
-Model four-wave and three-wave mixing parametric processes, phase-matching conditions, and quantum-limited noise performance.
-Synthesize SNAIL arrays with Kerr-free third-order non-linearities and high saturation powers exceeding $-90\text{ dBm}$.
-Implement multi-threaded Rayon coupled-mode ODE integrators evaluating dynamic gain profiles across $4-8\text{ GHz}$ bandwidths.
-Benchmark quantum-limited readout amplification across 10,000 signal pulses with added noise photons $N_{add} \le 0.5$ and $> 20\text{ dB}$ gain.
+### Phase 53: Cavity Optomechanics, Phonon Ground-State Cooling & Quantum Squeezing
+Develop an autonomous multi-physics solver modeling cavity optomechanics, radiation pressure dynamical back-action, and quantum squeezing.
+Formulate Fabry-Pérot and photonic crystal nanobeam optomechanical Hamiltonians with radiation pressure coupling rate $g_0$.
+Model resolved-sideband dynamical back-action cooling down to the mechanical quantum ground state with mean phonon occupancy $\bar{n}_m < 0.1$.
+Synthesize optomechanically induced transparency (OMIT), ponderomotive squeezing of light, and two-mode quantum entanglement.
+Implement multi-threaded Rayon stochastic quantum master equation and Langevin stochastic differential equation (SDE) solvers.
+Benchmark optomechanical cooling and squeezed-state synthesis across 10,000 thermal phonon trajectories with quantum back-action limit.
 
 ---
 
 ## Done
+
+### Phase 52: Superconducting Traveling-Wave Parametric Amplifiers & Quantum-Limited Readout
+Formulated periodic dispersion engineering with sub-wavelength resonant stubs and sign-matched phase mismatch $\Delta k$.
+Modeled SNAIL arrays with Kerr-free optimal flux bias $\Phi_{ext} \approx 0.4089\Phi_0$ eliminating fourth-order non-linearities.
+Synthesized three-wave and four-wave mixing parametric processes with 1-dB compression powers exceeding $-75\text{ dBm}$.
+Formulated bosonic field commutator preservation and quantum-limited Caves noise figure approaching $3.01\text{ dB}$.
+Implemented 4th-order Runge-Kutta coupled-mode spatial integrators enforcing exact Manley-Rowe photon balance.
+Benchmarked quantum readout amplification across 10,000 pulses with $> 20\text{ dB}$ gain, $\ge 2.5\text{ GHz}$ bandwidth, and $N_{add} \le 0.505$.
 
 ### Phase 51: Molecular Spintronics, Single-Molecule Magnetism & Spin-Torque Nano-Oscillators
 Formulated giant spin Hamiltonians with uniaxial/rhombic crystal fields, Zeeman shifts, and resonant quantum tunneling of magnetization.
