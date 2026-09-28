@@ -4,14 +4,6 @@
 
 ## Future
 
-### Phase 44: Autonomous Neuromorphic Reservoir Computing & Memristive Liquid State Machines
-Develop an autonomous solver modeling analog neuromorphic reservoir computing networks and physical liquid state machines.
-Formulate non-linear dynamical recurrent maps driven by crossbar memristor arrays (filamentary RRAM, PCM, FeFET) and chaotic delay oscillators.
-Model fading memory fading response, high-dimensional temporal feature projection, and echo-state property (ESP) convergence criteria.
-Synthesize physical memristive synaptic plasticity with spike-timing-dependent plasticity (STDP) and sub-femtojoule spike dissipation.
-Implement multi-threaded Rayon ridge-regression and pseudo-inverse read-out weight solvers tracking temporal sequence recognition and chaotic time-series forecasting.
-Benchmark neuromorphic reservoir processors against digital DSPs and GPUs across energy delay product (EDP), training throughput, and classification accuracy.
-
 ### Phase 45: Autonomous Multi-Physics Spacecraft GNC, Orbital Mechanics & Star Tracker Co-Simulation
 Develop an autonomous solver modeling spacecraft Guidance, Navigation, and Control (GNC), orbital mechanics, and attitude determination.
 Formulate Cowell two-body and perturbed gravity potential models ($J_2-J_4$, third-body lunar/solar ephemerides, atmospheric drag, solar radiation pressure).
@@ -20,21 +12,37 @@ Synthesize autonomous star tracker attitude determination with lost-in-space Tri
 Implement multi-threaded Rayon coupled orbit-attitude propagators and Multiplicative Extended Kalman Filters (MEKF) with unit quaternions.
 Benchmark GNC co-simulation across 10,000 orbital revolutions with closed-loop nadir pointing error $< 0.005^\circ$ and micro-arcsecond star centroiding.
 
+### Phase 46: Topological Quantum Computing, Non-Abelian Anyon Braiding & Surface Code Decoders
+Develop an autonomous solver modeling non-Abelian anyon braiding dynamics and topological surface code error correction decoders.
+Formulate microscopic Kitaev honeycomb and toric code lattice Hamiltonians supporting Ising and Fibonacci anyonic quasiparticles.
+Model topological fusion algebras, braid generators ($R$-matrices and $F$-matrices), and non-Abelian adiabatic geometric Berry phases.
+Synthesize minimum-weight perfect matching (MWPM) and neural belief-propagation decoders correcting syndrome extraction errors.
+Implement multi-threaded Rayon stabilizer syndrome graphs and Monte Carlo threshold simulators evaluating fault-tolerant logical error rates.
+Benchmark topological decoders against rotated surface codes and color codes across decoding latency ($< 1\,\mu\text{s}$), threshold ($p_{th} > 1\%$), and distance.
+
 ---
 
 ## Current
 
-### Phase 43: Cold Atom Interferometry, Optical Lattice Clocks & Relativistic Geodesy
-Develop an autonomous solver modeling matter-wave cold atom interferometers and optical lattice atomic clocks for quantum gravimetry.
-Formulate two-photon Raman and Bragg laser transition Hamiltonians manipulating ultracold Bose-Einstein condensates ($^{87}\text{Rb}$, $^{88}\text{Sr}$).
-Model Mach-Zehnder matter-wave phase accumulation measuring local gravitational acceleration ($g$), gravity gradients ($\nabla g$), and Sagnac rotations.
-Synthesize magic-wavelength 1D/3D optical lattices achieving fractional clock frequency instability below $10^{-18}$ for relativistic geodetic elevation mapping.
-Implement multi-threaded Rayon Gross-Pitaevskii and stochastic Schrödinger master-equation solvers tracking atomic dephasing and photon recoil.
-Benchmark cold atom quantum sensors against classical MEMS and quartz gravimeters across drift-free bias stability, sensitivity, and space readiness.
+### Phase 44: Autonomous Neuromorphic Reservoir Computing & Memristive Liquid State Machines
+Develop an autonomous solver modeling analog neuromorphic reservoir computing networks and physical liquid state machines.
+Formulate non-linear dynamical recurrent maps driven by crossbar memristor arrays (filamentary RRAM, PCM, FeFET) and chaotic delay oscillators.
+Model fading memory fading response, high-dimensional temporal feature projection, and echo-state property (ESP) convergence criteria.
+Synthesize physical memristive synaptic plasticity with spike-timing-dependent plasticity (STDP) and sub-femtojoule spike dissipation.
+Implement multi-threaded Rayon ridge-regression and pseudo-inverse read-out weight solvers tracking temporal sequence recognition and chaotic time-series forecasting.
+Benchmark neuromorphic reservoir processors against digital DSPs and GPUs across energy delay product (EDP), training throughput, and classification accuracy.
 
 ---
 
 ## Done
+
+### Phase 43: Cold Atom Interferometry, Optical Lattice Clocks & Relativistic Geodesy
+Formulated alkali ($^{87}\text{Rb}$) and alkaline-earth ($^{88}\text{Sr}$) atomic transitions with recoil dynamics and contact interactions.
+Synthesized two-photon Raman and Bragg transitions with Cayley-Klein unitary evolution matrices and Rabi oscillations.
+Modeled Mach-Zehnder matter-wave interferometers with gravitational phase accumulation, gravity gradient tensors, and Sagnac rotation.
+Synthesized magic-wavelength optical lattice clocks achieving $\Delta\alpha(\lambda_{magic}) = 0.0$ and sub-centimeter relativistic redshift mapping.
+Implemented Split-Step Fourier GPE wavepacket propagators, decoherence dephasing models, and Bayesian phase estimation.
+Benchmarked cold atom quantum gravimeters against superconducting, spring, and MEMS gravimeters with hybrid classical correlation.
 
 ### Phase 42: Terahertz Quantum Cascade Lasers, Polaritonic Waveguides & Sub-Millimeter Spectroscopy
 Formulated 1D Schrödinger BenDaniel-Duke solver evaluating MQW intersubband eigenstates $\psi_i(z)$, energies $E_i$, and dipole elements $z_{ij}$.
