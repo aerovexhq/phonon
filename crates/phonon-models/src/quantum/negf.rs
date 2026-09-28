@@ -81,6 +81,25 @@ impl Complex {
     pub fn abs(&self) -> f64 {
         self.norm_sq().sqrt()
     }
+
+    /// Computes $e^{i\theta} = \cos(\theta) + i\sin(\theta)$.
+    #[inline(always)]
+    pub fn cis(theta: f64) -> Self {
+        Self {
+            re: theta.cos(),
+            im: theta.sin(),
+        }
+    }
+
+    /// Computes the complex exponential $e^z = e^{re}(\cos(im) + i\sin(im))$.
+    #[inline(always)]
+    pub fn exp(&self) -> Self {
+        let r = self.re.exp();
+        Self {
+            re: r * self.im.cos(),
+            im: r * self.im.sin(),
+        }
+    }
 }
 
 impl std::ops::Add for Complex {

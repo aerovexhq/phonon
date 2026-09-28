@@ -1,10 +1,18 @@
-//! Cavity Quantum Optomechanics, Phonon-Photon Transduction & Superconducting Qubit Interconnects,
-//! and Terahertz Quantum Cascade Lasers (THz QCLs) & Polaritonic Waveguides.
-
+pub mod cold_atom_benchmark;
+pub mod cold_atom_solver;
 pub mod optomechanical_benchmark;
 pub mod optomechanical_solver;
 pub mod thz_qcl_benchmark;
 pub mod thz_qcl_solver;
+
+pub use cold_atom_benchmark::{
+    ColdAtomBenchmarkReport, ColdAtomBenchmarkRunner, GravimeterEvaluationPoint,
+    GravimeterTechnology, HybridVibrationCanceller,
+};
+pub use cold_atom_solver::{
+    BayesianPhaseEstimator, ColdAtomDecoherenceModel, ColdAtomFringeFitter, FringeFitResult,
+    Gpe1DPropagator, SafeFourierTransform,
+};
 
 pub use optomechanical_benchmark::{
     OptomechanicalBenchmarkReport, OptomechanicalBenchmarkRunner, TransducerTechnology,
