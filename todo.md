@@ -4,14 +4,6 @@
 
 ## Future
 
-### Phase 40: Autonomous Multi-Physics Hardware-in-the-Loop (HIL) Flight Simulation & Physical Sensor Fusion
-Develop an autonomous co-simulation testbed coupling multi-rotor and fixed-wing 6-DOF flight dynamics with real-time hardware-in-the-loop (HIL) interfaces.
-Synthesize coupled multi-physics sensor suites (9-DOF IMU, pulsed LiDAR, optical cameras, barometric altimeters) streaming into simulated flight controllers.
-Model aerodynamic ground effect, turbulent wind gust envelopes (Dryden and von Kármán models), and actuator servo saturation dynamics.
-Formulate extended Kalman filter (EKF) and unscented Kalman filter (UKF) state estimation engines fusing multi-rate asynchronous sensor measurements.
-Implement deterministic high-throughput microsecond clock synchronization between Aerovex flight physics, Phonon transducers, and PX4/ArduPilot autopilots.
-Benchmark closed-loop trajectory tracking, sensor fault injection, GPS spoofing resilience, and emergency failsafe recovery under extreme simulated conditions.
-
 ### Phase 41: Cavity Quantum Optomechanics, Phonon-Photon Transduction & Superconducting Qubit Interconnects
 Develop an autonomous multi-physics solver modeling cavity quantum optomechanics and coherent microwave-to-optical quantum state transduction.
 Formulate coupled Hamiltonian systems combining optical/microwave electromagnetic cavities, radiation pressure force, and localized acoustic phononic modes.
@@ -20,22 +12,37 @@ Synthesize piezoelectric optomechanical crystals (AlN, GaAs, LN) achieving bidir
 Implement multi-threaded Rayon quantum Langevin equation solvers tracking photon-phonon entanglement fidelities, thermal noise dissipation, and quantum state transfer rates.
 Benchmark optomechanical quantum transducers against electro-optic modulators across quantum conversion efficiency (> 50%), added noise quanta, and cryogenic heat load.
 
+### Phase 42: Terahertz Quantum Cascade Lasers, Polaritonic Waveguides & Sub-Millimeter Spectroscopy
+Develop an autonomous solver exploring terahertz (THz) quantum cascade lasers (QCLs), resonant intersubband optical transitions, and polaritonic waveguides.
+Formulate self-consistent Schrödinger-Poisson non-equilibrium Green's function (NEGF) transport models for semiconductor multiple-quantum-well active regions.
+Model resonant phonon depopulation schemes, optical gain spectra, and sub-millimeter electromagnetic cavity wave propagation (0.5 to 10 THz).
+Synthesize low-loss metal-metal and semi-insulating surface-plasmon polaritonic waveguides confining sub-millimeter radiation below the diffraction limit.
+Implement multi-threaded Rayon rate-equation solvers tracking continuous-wave and pulsed lasing thresholds, frequency comb dynamics, and thermal roll-off.
+Benchmark THz QCL sources against molecular gas lasers and optical parametric oscillators across wall-plug efficiency, spectral purity, and integration density.
 
 ---
 
 ## Current
 
-### Phase 39: Diamond Nitrogen-Vacancy (NV) Center Quantum Sensors, Optically Detected Magnetic Resonance & Nanoscale Magnetometry
-Develop an autonomous solver exploring diamond nitrogen-vacancy (NV) color centers, atomic spin dynamics, and quantum magnetometry.
-Formulate ground-state spin-triplet ($S=1$) Hamiltonians with zero-field splitting ($D \approx 2.87\text{ GHz}$), Zeeman coupling, and nitrogen nuclear hyperfine interaction.
-Model Optically Detected Magnetic Resonance (ODMR) spectra and green laser ($532\text{ nm}$) optical spin polarization with non-radiative intersystem crossing (ISC).
-Synthesize nanoscale magnetometry probe arrays resolving sub-picotesla magnetic fields ($\text{pT}/\sqrt{\text{Hz}}$) and nanoscale RF currents across operating IC dies.
-Implement multi-threaded Rayon quantum master-equation solvers tracking spin dephasing times ($T_2^*, T_2, T_1$) under dynamic decoupling sequences (Hahn echo, CPMG).
-Benchmark diamond NV quantum magnetometers against SQUID and Hall sensors across spatial resolution ($< 10\text{ nm}$), thermal range, and high-frequency microwave sensing bandwidth.
+### Phase 40: Autonomous Multi-Physics Hardware-in-the-Loop (HIL) Flight Simulation & Physical Sensor Fusion
+Develop an autonomous co-simulation testbed coupling multi-rotor and fixed-wing 6-DOF flight dynamics with real-time hardware-in-the-loop (HIL) interfaces.
+Synthesize coupled multi-physics sensor suites (9-DOF IMU, pulsed LiDAR, optical cameras, barometric altimeters) streaming into simulated flight controllers.
+Model aerodynamic ground effect, turbulent wind gust envelopes (Dryden and von Kármán models), and actuator servo saturation dynamics.
+Formulate extended Kalman filter (EKF) and unscented Kalman filter (UKF) state estimation engines fusing multi-rate asynchronous sensor measurements.
+Implement deterministic high-throughput microsecond clock synchronization between Aerovex flight physics, Phonon transducers, and PX4/ArduPilot autopilots.
+Benchmark closed-loop trajectory tracking, sensor fault injection, GPS spoofing resilience, and emergency failsafe recovery under extreme simulated conditions.
 
 ---
 
 ## Done
+
+### Phase 39: Diamond Nitrogen-Vacancy (NV) Center Quantum Sensors, Optically Detected Magnetic Resonance & Nanoscale Magnetometry
+Formulated ground-state spin-triplet ($S=1$) Hamiltonians with zero-field splitting ($D \approx 2.87\text{ GHz}$), Zeeman coupling, and nitrogen nuclear hyperfine interaction.
+Modeled 4 crystallographic diamond NV orientations enabling full 3D vector magnetic field reconstruction from multi-resonance ODMR spectra.
+Synthesized green laser ($532\text{ nm}$) optical spin polarization via intersystem crossing (ISC), initializing the spin state with > 85% fidelity.
+Implemented multi-threaded Rayon quantum master-equation solvers for dynamical decoupling sequences (Ramsey, Hahn echo, CPMG-N) reaching sub-picotesla sensitivity.
+Constructed 2D nanoscale magnetometry probe arrays with inverse Biot-Savart Fourier current density reconstruction for IC defect and short-circuit mapping.
+Benchmarked Diamond NV magnetometers against SQUID and Hall sensors across spatial resolution (< 10 nm), 0.1-650 K temperature range, and 0.0 W standby power.
 
 ### Phase 38: Molecular Spintronics, Chiral-Induced Spin Selectivity (CISS) & Single-Molecule Magnet Synthesis
 Formulated tight-binding multi-orbital Hamiltonians with microscopic spin-orbit coupling modeling Chiral-Induced Spin Selectivity across helical chains.
