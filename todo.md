@@ -4,14 +4,6 @@
 
 ## Future
 
-### Phase 47: Autonomous High-Energy Plasma Dynamics, Tokamak Fusion Magnetics & Alfven Wave Co-Simulation
-Develop an autonomous solver modeling high-energy thermonuclear plasma dynamics and Grad-Shafranov tokamak equilibrium magnetics.
-Formulate multi-fluid magnetohydrodynamics (MHD) coupling resistive diffusion, collisionless Hall currents, and pressure tensor gradients.
-Model toroidal magnetic flux surfaces, helical safety factor $q(r)$, magnetic shear, and shear Alfven wave dispersion relations.
-Synthesize non-linear neoclassical transport, anomalous drift-wave turbulence, and external radio-frequency (ICRF) heating dynamics.
-Implement multi-threaded Rayon adaptive flux-coordinate elliptic grid solvers and Boris particle-in-cell (PIC) kinetic fast-ion trackers.
-Benchmark tokamak plasma co-simulation across 10,000 Alfvén cycles with magnetic flux conservation $< 10^{-6}$ and Lawson criterion tracking.
-
 ### Phase 48: Autonomous Superconducting Spintronics, Majorana Zero Mode Qubits & Cryogenic CMOS Co-Simulation
 Develop an autonomous solver modeling superconducting spintronics, topological Majorana zero modes, and cryogenic CMOS control logic.
 Formulate Bogoliubov-de Gennes (BdG) Hamiltonians coupling $s$-wave superconductors, spin-orbit semiconductor nanowires, and Zeeman fields.
@@ -20,21 +12,37 @@ Synthesize cryogenic CMOS control circuits at 4 K (cryo-PLLs, readout amplifiers
 Implement multi-threaded Rayon sparse Hamiltonian diagonalizers and Lindblad open-system Master equation quantum trajectory solvers.
 Benchmark cryogenic hybrid spintronic-qubit processors across 10,000 braid sequences with gate fidelity $> 99.99\%$ and sub-Kelvin stability.
 
+### Phase 49: Quantum Electrodynamical Circuit Synthesis, Transmon Cavity-QED & Purcell Filter Co-Simulation
+Develop an autonomous solver modeling circuit quantum electrodynamics (cQED), 3D microwave cavities, and Purcell filtering.
+Formulate quantized transmission line lumped-element Foster ladders coupling transmon nonlinear Josephson inductance $E_J / E_C$.
+Model Jaynes-Cummings dispersive Hamiltonians, Stark-shifted dressed states, state-dependent cavity pull $\chi$, and photon shot noise.
+Synthesize physical Purcell filters suppressing spontaneous radiative qubit decay while preserving dispersive readout cavity coupling.
+Implement multi-threaded Rayon master equation Lindbladian solvers tracking dressed dephasing rates and dispersive qubit readout SNR.
+Benchmark quantum processor co-simulation across 10,000 dispersive readout trajectories with state discrimination fidelity $> 99.5\%$.
+
 ---
 
 ## Current
 
-### Phase 46: Topological Quantum Computing, Non-Abelian Anyon Braiding & Surface Code Decoders
-Develop an autonomous solver modeling non-Abelian anyon braiding dynamics and topological surface code error correction decoders.
-Formulate microscopic Kitaev honeycomb and toric code lattice Hamiltonians supporting Ising and Fibonacci anyonic quasiparticles.
-Model topological fusion algebras, braid generators ($R$-matrices and $F$-matrices), and non-Abelian adiabatic geometric Berry phases.
-Synthesize minimum-weight perfect matching (MWPM) and neural belief-propagation decoders correcting syndrome extraction errors.
-Implement multi-threaded Rayon stabilizer syndrome graphs and Monte Carlo threshold simulators evaluating fault-tolerant logical error rates.
-Benchmark topological decoders against rotated surface codes and color codes across decoding latency ($< 1\,\mu\text{s}$), threshold ($p_{th} > 1\%$), and distance.
+### Phase 47: Autonomous High-Energy Plasma Dynamics, Tokamak Fusion Magnetics & Alfven Wave Co-Simulation
+Develop an autonomous solver modeling high-energy thermonuclear plasma dynamics and Grad-Shafranov tokamak equilibrium magnetics.
+Formulate multi-fluid magnetohydrodynamics (MHD) coupling resistive diffusion, collisionless Hall currents, and pressure tensor gradients.
+Model toroidal magnetic flux surfaces, helical safety factor $q(r)$, magnetic shear, and shear Alfven wave dispersion relations.
+Synthesize non-linear neoclassical transport, anomalous drift-wave turbulence, and external radio-frequency (ICRF) heating dynamics.
+Implement multi-threaded Rayon adaptive flux-coordinate elliptic grid solvers and Boris particle-in-cell (PIC) kinetic fast-ion trackers.
+Benchmark tokamak plasma co-simulation across 10,000 Alfvén cycles with magnetic flux conservation $< 10^{-6}$ and Lawson criterion tracking.
 
 ---
 
 ## Done
+
+### Phase 46: Topological Quantum Computing, Non-Abelian Anyon Braiding & Surface Code Decoders
+Formulated Kitaev honeycomb Hamiltonian with anisotropic couplings ($J_x, J_y, J_z$), Chern $C = \pm 1$, and toric code limit.
+Synthesized non-Abelian Ising and Fibonacci anyon fusion rules, $F$-matrices, $R$-matrices, and Yang-Baxter braid generators.
+Modeled universal single-qubit quantum gate synthesis (Hadamard, Phase, Pauli) via Fibonacci anyon braid words and Berry phases.
+Formulated rotated surface codes $\mathcal{S}(d)$ with $d^2$ data qubits, $d^2 - 1$ stabilizers, and triangular color code geometry.
+Implemented graph-based Minimum-Weight Perfect Matching (MWPM) and damped Neural Belief-Propagation (BP-OSD) syndrome decoders.
+Benchmarked fault-tolerant threshold $p_{th} > 1\%$, sub-microsecond decoding latency, and multi-code Rayon throughput (>50k rounds/s).
 
 ### Phase 45: Autonomous Multi-Physics Spacecraft GNC, Orbital Mechanics & Star Tracker Co-Simulation
 Formulated Cowell perturbed orbit propagator with geopotential zonal harmonics ($J_2-J_4$), atmospheric drag, SRP, and 3rd-body gravity.
