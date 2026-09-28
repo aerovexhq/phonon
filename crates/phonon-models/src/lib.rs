@@ -41,6 +41,7 @@ pub mod synthesis;
 pub mod tcad;
 pub mod tline;
 pub mod topological;
+pub mod wakefield;
 
 pub use acoustic::{
     compute_acoustic_doppler, evaluate_acoustic_field, speed_of_sound_in_air,
@@ -225,3 +226,4 @@ pub use topological::{
     ArmId, BdGHamiltonian, BdGSolution, MajoranaNanowire, NanowireParams, QubitState,
     TJunctionNanowireNetwork, TopologicalQubit, TunnelingConductanceModel, QUANTUM_CONDUCTANCE,
 };
+pub use wakefield::{BetatronRadiation, BubbleRegime, LaserPulseParams, PlasmaChannelParams};

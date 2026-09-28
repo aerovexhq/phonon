@@ -32,6 +32,7 @@ pub mod synthesis;
 pub mod topological;
 pub mod transient;
 pub mod verification;
+pub mod wakefield;
 
 pub use acoustic::{
     AcousticBenchmarkReport, AcousticBenchmarkRunner, AcousticLinkSimulator, AcousticRealismTier,
@@ -162,4 +163,9 @@ pub use verification::{
     verify_energy_balance, verify_kcl, verify_kcl_dynamic, verify_kvl,
     verify_physical_conservation, verify_transient_kcl, verify_transient_kcl_with_context,
     EnergyBalanceReport, FullVerificationReport, KclReport, KvlReport,
+};
+pub use wakefield::{
+    BeamBunch, BorisPusher, PwfaBenchmarkReport, PwfaBenchmarkRunner, RelativisticParticle,
+    TrackingSummary, WakefieldAccelerator, ELECTRON_MASS_KG, ELEMENTARY_CHARGE, SPEED_OF_LIGHT,
+    VACUUM_PERMITTIVITY,
 };
