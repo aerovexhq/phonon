@@ -4,14 +4,6 @@
 
 ## Future
 
-### Phase 33: Acoustic Wave Propagation, Atmospheric Sound Transduction & Physical Microphone Synthesis
-Synthesize multi-medium acoustic wave equations modeling acoustic pressure waves $P(\mathbf{r}, t)$ through gases, solids, structural walls, and vacuum isolation.
-Model atmospheric sound parameters: temperature/humidity-dependent sonic speed ($c_s = \sqrt{\gamma R T / M}$), viscous acoustic absorption, and wall transmission loss.
-Synthesize physical microphone transducer models: capacitive condenser diaphragms with time-varying capacitance and piezoelectric voltage generators.
-Implement multi-tier acoustic solvers supporting 3D raycasting acoustic path tracing, Sabine geometric reverberation ($T_{60}$), and full wave PDEs.
-Simulate spatial sound attenuation, Doppler frequency shifts for high-speed moving sources, and strict acoustic silence in vacuum space environments.
-Benchmark microphone analog audio waveforms and acoustic frequency response against experimental measurements across complex indoor room geometries.
-
 ### Phase 34: Headless Vulkan Synthetic Perception, Multi-Tier Optical Cameras & CMOS APS Photodiode Arrays
 Construct a high-performance headless optical perception pipeline utilizing offscreen Vulkan rendering for synthetic environmental visual generation.
 Formulate microscopic CMOS Active Pixel Sensor (APS) models: silicon photodiode quantum efficiency $\eta_{QE}(\lambda)$, depletion full-well capacity, and dark current.
@@ -64,17 +56,25 @@ Benchmark diamond NV quantum magnetometers against SQUID and Hall sensors across
 
 ## Current
 
-### Phase 32: End-to-End CPU-to-Router Network Co-Simulation & Discrete Packet Switching
-Synthesize memory-mapped Virtual Network Interface Controllers (NICs) integrated directly into Phonon simulated CPU execution datapaths.
-Construct multi-node physical and logical network topologies connecting distinct CPU systems through simulated wireless/wired Router switches.
-Model full-stack packet handling: ARP address resolution, IPv4/IPv6 datagram framing, UDP/TCP socket transport, and hardware interrupt generation.
-Simulate router queue dynamics, packet collision, buffer exhaustion, and dynamic packet dropping under realistic wireless channel degradation.
-Implement Rayon-accelerated co-simulation stepping synchronized CPU instruction pipelines, NIC FIFOs, and physical RF channel propagation.
-Verify complete end-to-end data communication between dual CPUs operating across walls and simulated atmospheric interference with pure physical fidelity.
+### Phase 33: Acoustic Wave Propagation, Atmospheric Sound Transduction & Physical Microphone Synthesis
+Synthesize multi-medium acoustic wave equations modeling acoustic pressure waves $P(\mathbf{r}, t)$ through gases, solids, structural walls, and vacuum isolation.
+Model atmospheric sound parameters: temperature/humidity-dependent sonic speed ($c_s = \sqrt{\gamma R T / M}$), viscous acoustic absorption, and wall transmission loss.
+Synthesize physical microphone transducer models: capacitive condenser diaphragms with time-varying capacitance and piezoelectric voltage generators.
+Implement multi-tier acoustic solvers supporting 3D raycasting acoustic path tracing, Sabine geometric reverberation ($T_{60}$), and full wave PDEs.
+Simulate spatial sound attenuation, Doppler frequency shifts for high-speed moving sources, and strict acoustic silence in vacuum space environments.
+Benchmark microphone analog audio waveforms and acoustic frequency response against experimental measurements across complex indoor room geometries.
 
 ---
 
 ## Done
+
+### Phase 32: End-to-End CPU-to-Router Network Co-Simulation & Discrete Packet Switching
+Synthesized memory-mapped Virtual Network Interface Controllers (NICs) integrated directly into Phonon simulated CPU execution datapaths.
+Constructed multi-node physical and logical network topologies connecting distinct CPU systems through simulated wireless/wired Router switches.
+Modeled full-stack packet handling: ARP address resolution, IPv4 datagram framing, RFC 1071 internet checksums, and hardware interrupt generation.
+Simulated router queue dynamics, longest-prefix route matching, buffer exhaustion, and dynamic packet dropping under realistic wireless channel degradation.
+Implemented Rayon-accelerated co-simulation stepping synchronized CPU instruction pipelines, NIC FIFOs, and physical RF channel propagation.
+Verified complete end-to-end data communication between dual CPUs operating across concrete walls and simulated interference with pure physical fidelity.
 
 ### Phase 31: Multi-Tier RF Abstraction, Digital Baseband PHY Modulation & Wi-Fi/SDR Protocol Engines
 Architected a multi-tier RF abstraction engine supporting runtime switching between FullWave Maxwell, Raytraced Multipath, and Accelerated Path Loss tiers.
