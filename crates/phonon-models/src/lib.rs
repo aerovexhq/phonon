@@ -30,6 +30,7 @@ pub mod radiation;
 pub mod relay;
 pub mod sensors;
 pub mod simd;
+pub mod space;
 pub mod spintronics;
 pub mod superconducting;
 pub mod surrogate;
@@ -170,6 +171,12 @@ pub use sensors::{
     STANDARD_SEA_LEVEL_TEMP_K, STANDARD_TEMP_LAPSE_RATE_K_PER_M, UNIVERSAL_GAS_CONSTANT,
 };
 pub use simd::{batch_evaluate_diodes_simd, batch_evaluate_nmos_simd, MosfetBatchOutput};
+pub use space::{
+    earth_geomagnetic_field, CatalogStar, InertiaTensor, KeplerianElements, MagneticTorquerSystem,
+    OrbitalPerturbationSolver, ReactionWheel, ReactionWheelCluster, SpacecraftPhysicalProperties,
+    StarTrackerCamera, StarTrackerSystem, J2_EARTH, J3_EARTH, J4_EARTH, MU_EARTH, MU_MOON, MU_SUN,
+    R_EARTH,
+};
 pub use spintronics::{
     LlgsConfig, LlgsSolver, MagneticMaterial, MultiBitNmlAdder, Nanomagnet, NmlAnd2,
     NmlFullAdderCell, NmlGateMetrics, NmlInverter, NmlMajority3, NmlOr2, Vec3,
