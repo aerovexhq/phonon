@@ -8,6 +8,7 @@ pub mod mixed_signal;
 pub mod mna;
 pub mod molecular;
 pub mod mvl;
+pub mod net;
 pub mod optimization;
 pub mod parallel;
 pub mod phononic;
@@ -50,6 +51,9 @@ pub use molecular::{
 pub use mvl::{
     MvlBenchmarkReport, MvlBenchmarkRunner, TernaryAdderEngine, TernaryCircuitSolver,
     TernarySolverError,
+};
+pub use net::{
+    CoSimStepReport, NetworkBenchmarkReport, NetworkBenchmarkRunner, NetworkCoSimulator,
 };
 pub use optimization::{EngineConfig, InverseDesignEngine};
 pub use parallel::{
