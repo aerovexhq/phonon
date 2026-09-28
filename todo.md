@@ -4,14 +4,6 @@
 
 ## Future
 
-### Phase 51: Molecular Spintronics, Single-Molecule Magnetism & Spin-Torque Nano-Oscillators
-Develop an autonomous multi-scale solver modeling molecular spintronics, single-molecule magnets (SMM), and spin-torque nano-oscillators.
-Formulate giant spin Hamiltonians with uniaxial anisotropy, transverse crystal fields, and resonant quantum tunneling of magnetization.
-Model non-equilibrium Green's function (NEGF) transport through magnetic adatoms, molecules, and Kondo resonance splittings.
-Synthesize spin-transfer torque and spin-orbit torque nano-oscillators (STNO/SHNO) with non-linear damping and micromagnetic coupling.
-Implement multi-threaded Rayon stochastic Landau-Lifshitz-Gilbert (sLLG) Langevin integrators tracking phase noise and spectral linewidth.
-Benchmark molecular spin memory and RF oscillator co-simulation across 10,000 precession cycles with phase locking and zero drift.
-
 ### Phase 52: Superconducting Traveling-Wave Parametric Amplifiers & Quantum-Limited Readout
 Develop an autonomous solver modeling Josephson traveling-wave parametric amplifiers (JTWPA) and SNAIL parametric devices.
 Formulate non-linear wave propagation across multi-junction Josephson transmission lines with periodic dispersion engineering.
@@ -20,21 +12,37 @@ Synthesize SNAIL arrays with Kerr-free third-order non-linearities and high satu
 Implement multi-threaded Rayon coupled-mode ODE integrators evaluating dynamic gain profiles across $4-8\text{ GHz}$ bandwidths.
 Benchmark quantum-limited readout amplification across 10,000 signal pulses with added noise photons $N_{add} \le 0.5$ and $> 20\text{ dB}$ gain.
 
+### Phase 53: Cavity Optomechanics, Phonon Ground-State Cooling & Quantum Squeezing
+Develop an autonomous multi-physics solver modeling cavity optomechanics, radiation pressure dynamical back-action, and quantum squeezing.
+Formulate Fabry-Pérot and photonic crystal nanobeam optomechanical Hamiltonians with radiation pressure coupling rate $g_0$.
+Model resolved-sideband dynamical back-action cooling down to the mechanical quantum ground state with mean phonon occupancy $\bar{n}_m < 0.1$.
+Synthesize optomechanically induced transparency (OMIT), ponderomotive squeezing of light, and two-mode quantum entanglement.
+Implement multi-threaded Rayon stochastic quantum master equation and Langevin stochastic differential equation (SDE) solvers.
+Benchmark optomechanical cooling and squeezed-state synthesis across 10,000 thermal phonon trajectories with quantum back-action limit.
+
 ---
 
 ## Current
 
-### Phase 50: Relativistic Plasma Wakefields, Laser-Driven Particle Acceleration & Synchrotron Radiation
-Develop an autonomous multi-physics solver modeling relativistic plasma wakefield acceleration (PWFA) and laser-plasma interactions.
-Formulate relativistic Vlasov-Maxwell kinetics and ponderomotive envelope equations in underdense and overdense plasma channels.
-Model electron beam self-injection, blowout bubble regimes, multi-gigavolt-per-meter accelerating gradients, and dephasing lengths.
-Synthesize synchrotron and betatron X-ray radiation emission with non-linear quantum electrodynamical (QED) radiation reaction.
-Implement multi-threaded Rayon relativistic Boris particle-mesh pushers and spectral Fourier laser envelope propagators.
-Benchmark laser wakefield acceleration across 10,000 time steps with energy conservation $< 10^{-6}$ and sub-femtosecond bunch duration.
+### Phase 51: Molecular Spintronics, Single-Molecule Magnetism & Spin-Torque Nano-Oscillators
+Develop an autonomous multi-scale solver modeling molecular spintronics, single-molecule magnets (SMM), and spin-torque nano-oscillators.
+Formulate giant spin Hamiltonians with uniaxial anisotropy, transverse crystal fields, and resonant quantum tunneling of magnetization.
+Model non-equilibrium Green's function (NEGF) transport through magnetic adatoms, molecules, and Kondo resonance splittings.
+Synthesize spin-transfer torque and spin-orbit torque nano-oscillators (STNO/SHNO) with non-linear damping and micromagnetic coupling.
+Implement multi-threaded Rayon stochastic Landau-Lifshitz-Gilbert (sLLG) Langevin integrators tracking phase noise and spectral linewidth.
+Benchmark molecular spin memory and RF oscillator co-simulation across 10,000 precession cycles with phase locking and zero drift.
 
 ---
 
 ## Done
+
+### Phase 50: Relativistic Plasma Wakefields, Laser-Driven Particle Acceleration & Synchrotron Radiation
+Formulated laser envelope dynamics with normalized vector potential $a_0$, peak intensity $I_0$, and 3D ponderomotive profiles.
+Modeled underdense plasma channels, cold wave-breaking limits $E_{wb}$, critical density $n_c$, and parabolic optical guiding.
+Synthesized relativistic blowout bubble cavitation with multi-hundred GV/m accelerating gradients and dephasing length $L_d$.
+Formulated betatron oscillations, critical synchrotron X-ray photon energy $\hbar\omega_c$, and Larmor-Schwinger radiated power.
+Implemented 3D relativistic Boris leapfrog pusher with Landau-Lifshitz radiation reaction damping and beam bunch tracking.
+Benchmarked laser wakefield acceleration across 10,000 steps with energy conservation $< 10^{-6}$ and $< 5\text{ fs}$ bunch duration.
 
 ### Phase 49: Quantum Electrodynamical Circuit Synthesis, Transmon Cavity-QED & Purcell Filter Co-Simulation
 Formulated transmon charge-phase Hamiltonians, nonlinear Josephson inductance, and negative anharmonicity $\alpha \approx -E_C$.
