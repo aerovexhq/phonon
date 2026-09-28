@@ -8,6 +8,7 @@ pub mod atomistic;
 pub mod bjt;
 pub mod chemistry;
 pub mod common;
+pub mod cqed;
 pub mod cryogenic;
 pub mod diode;
 pub mod em;
@@ -69,6 +70,7 @@ pub use chemistry::{
     HeteroInterface, Silicon,
 };
 pub use common::{compute_vcrit, pn_junction_limit, safe_exp, smooth_max, smooth_min};
+pub use cqed::{DispersiveCqedSystem, MicrowaveCavity, PurcellFilter, TransmonParams};
 pub use cryogenic::{
     fermi_dirac_half, inverse_fermi_dirac_half, CryoMosfetModel, CryoMosfetOutput,
     CryogenicFreezeoutModel, CryogenicMobilityModel,
