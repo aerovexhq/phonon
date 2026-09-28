@@ -2,6 +2,7 @@
 //! Shockley Diodes, sub-micron MOSFETs with BSIM3/4 physics and Ward-Dutton charge conservation,
 //! and Gummel-Poon BJTs.
 
+pub mod acoustic;
 pub mod atomistic;
 pub mod bjt;
 pub mod chemistry;
@@ -33,6 +34,13 @@ pub mod tcad;
 pub mod tline;
 pub mod topological;
 
+pub use acoustic::{
+    compute_acoustic_doppler, evaluate_acoustic_field, speed_of_sound_in_air,
+    AcousticDopplerResult, AcousticFieldPoint, AcousticMedium, AcousticObserver, AcousticSource,
+    AcousticWall, CondenserMicrophone, MediumType, MicrophonePolarPattern, MicrophoneSignal,
+    PiezoelectricMicrophone, ADIABATIC_INDEX_AIR, GAS_CONSTANT_R, MOLAR_MASS_AIR, P_ATM_SEA_LEVEL,
+    P_REF_AIR, T_REF_KELVIN,
+};
 pub use atomistic::{
     CarbonNanotube, CntCharacter, ContactResistanceModel, ElectromigrationModel,
     InteratomicPotential, LennardJonesPotential, MdAtom, MolecularDynamicsSolver, MorsePotential,

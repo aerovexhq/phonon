@@ -4,14 +4,6 @@
 
 ## Future
 
-### Phase 34: Headless Vulkan Synthetic Perception, Multi-Tier Optical Cameras & CMOS APS Photodiode Arrays
-Construct a high-performance headless optical perception pipeline utilizing offscreen Vulkan rendering for synthetic environmental visual generation.
-Formulate microscopic CMOS Active Pixel Sensor (APS) models: silicon photodiode quantum efficiency $\eta_{QE}(\lambda)$, depletion full-well capacity, and dark current.
-Model sensor noise physics: photon shot noise, thermal Johnson-Nyquist read noise, correlated double sampling (CDS), and rolling/global shutter timing.
-Implement high-level abstracted camera models with configurable field of view (FOV), resolution, Brown-Conrady non-linear lens distortion, and exposure controls.
-Integrate seamlessly with Aerovex perception pipelines, supporting runtime selection between physical pixel-level CMOS physics and accelerated rasterization.
-Benchmark rendering throughput (FPS), optical dynamic range, and sensor noise characteristics across high-contrast daylight and dark environments.
-
 ### Phase 35: LiDAR Time-of-Flight Synthesis, Atmospheric Scattering & Aerovex BVH Acceleration
 Develop a physically rigorous pulsed time-of-flight (ToF) LiDAR sensor engine operating at 905 nm and 1550 nm eye-safe optical wavelengths.
 Model laser beam spatial profiles, Gaussian beam divergence, surface bidirectional reflectance (BRDF/albedo), and multi-echo optical pulse return.
@@ -56,17 +48,25 @@ Benchmark diamond NV quantum magnetometers against SQUID and Hall sensors across
 
 ## Current
 
-### Phase 33: Acoustic Wave Propagation, Atmospheric Sound Transduction & Physical Microphone Synthesis
-Synthesize multi-medium acoustic wave equations modeling acoustic pressure waves $P(\mathbf{r}, t)$ through gases, solids, structural walls, and vacuum isolation.
-Model atmospheric sound parameters: temperature/humidity-dependent sonic speed ($c_s = \sqrt{\gamma R T / M}$), viscous acoustic absorption, and wall transmission loss.
-Synthesize physical microphone transducer models: capacitive condenser diaphragms with time-varying capacitance and piezoelectric voltage generators.
-Implement multi-tier acoustic solvers supporting 3D raycasting acoustic path tracing, Sabine geometric reverberation ($T_{60}$), and full wave PDEs.
-Simulate spatial sound attenuation, Doppler frequency shifts for high-speed moving sources, and strict acoustic silence in vacuum space environments.
-Benchmark microphone analog audio waveforms and acoustic frequency response against experimental measurements across complex indoor room geometries.
+### Phase 34: Headless Vulkan Synthetic Perception, Multi-Tier Optical Cameras & CMOS APS Photodiode Arrays
+Construct a high-performance headless optical perception pipeline utilizing offscreen Vulkan rendering for synthetic environmental visual generation.
+Formulate microscopic CMOS Active Pixel Sensor (APS) models: silicon photodiode quantum efficiency $\eta_{QE}(\lambda)$, depletion full-well capacity, and dark current.
+Model sensor noise physics: photon shot noise, thermal Johnson-Nyquist read noise, correlated double sampling (CDS), and rolling/global shutter timing.
+Implement high-level abstracted camera models with configurable field of view (FOV), resolution, Brown-Conrady non-linear lens distortion, and exposure controls.
+Integrate seamlessly with Aerovex perception pipelines, supporting runtime selection between physical pixel-level CMOS physics and accelerated rasterization.
+Benchmark rendering throughput (FPS), optical dynamic range, and sensor noise characteristics across high-contrast daylight and dark environments.
 
 ---
 
 ## Done
+
+### Phase 33: Acoustic Wave Propagation, Atmospheric Sound Transduction & Physical Microphone Synthesis
+Synthesized multi-medium acoustic wave equations modeling acoustic pressure waves $P(\mathbf{r}, t)$ through gases, solids, structural walls, and vacuum isolation.
+Modeled atmospheric sound parameters: temperature/humidity-dependent sonic speed ($c_s = \sqrt{\gamma R T / M}$), viscous acoustic absorption, and wall transmission loss.
+Synthesized physical microphone transducer models: capacitive condenser diaphragms with time-varying capacitance and piezoelectric voltage generators.
+Implemented multi-tier acoustic solvers supporting 3D raycasting acoustic path tracing, Sabine geometric reverberation ($T_{60}$), and full wave PDEs.
+Simulated spatial sound attenuation, Doppler frequency shifts for high-speed moving sources, and strict acoustic silence in vacuum space environments.
+Benchmarked microphone analog audio waveforms and acoustic frequency response against experimental measurements across complex indoor room geometries.
 
 ### Phase 32: End-to-End CPU-to-Router Network Co-Simulation & Discrete Packet Switching
 Synthesized memory-mapped Virtual Network Interface Controllers (NICs) integrated directly into Phonon simulated CPU execution datapaths.
