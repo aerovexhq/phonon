@@ -7,6 +7,7 @@ pub mod cqed;
 pub mod em;
 pub mod error;
 pub mod hetero;
+pub mod jtwpa;
 pub mod lidar;
 pub mod mixed_signal;
 pub mod mna;
@@ -59,6 +60,10 @@ pub use error::SolverError;
 pub use hetero::{
     HeteroCpuBenchmarkResult, HeteroCpuBenchmarkRunner, HeteroCpuOptimizer,
     HeteroOptimizationCandidate, PipelineTimingReport, TimingPathAnalyzer,
+};
+pub use jtwpa::{
+    CoupledModeResult, CoupledModeSolver, JtwpaBenchmarkReport, JtwpaBenchmarkRunner,
+    QuantumNoiseResult, QuantumNoiseSolver,
 };
 pub use lidar::{
     Aabb, BvhHit, BvhNode, BvhPrimitive, BvhTree, LidarBenchmarkReport, LidarBenchmarkRunner,
