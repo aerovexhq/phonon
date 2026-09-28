@@ -1,6 +1,7 @@
 //! Phonon Solver: high-performance sparse linear algebra, Modified Nodal Analysis (MNA),
 //! Markowitz threshold pivoting, dynamic TR-BDF2 transient solver, and physical conservation probes.
 
+pub mod acoustic;
 pub mod em;
 pub mod error;
 pub mod hetero;
@@ -22,6 +23,10 @@ pub mod topological;
 pub mod transient;
 pub mod verification;
 
+pub use acoustic::{
+    AcousticBenchmarkReport, AcousticBenchmarkRunner, AcousticLinkSimulator, AcousticRealismTier,
+    AcousticRoom, AcousticStepResult, FdtdResult,
+};
 pub use em::{
     AntennaElectrodynamicSolver, EmBenchmarkReport, EmBenchmarkRunner, EmLinkResult,
     EmPropagationScene, EmWaveSolver, EmitterBenchmarkReport, EmitterBenchmarkRunner,
