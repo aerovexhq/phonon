@@ -21,6 +21,7 @@ pub mod quantum;
 pub mod relay;
 pub mod rf;
 pub mod sensors;
+pub mod space;
 pub mod sparse;
 pub mod spintronics;
 pub mod superconducting;
@@ -109,6 +110,10 @@ pub use sensors::{
     HilBenchmarkRunner, HilFlightBridge, HilGpsPacket, HilSensorPacket, Matrix15x15, Matrix3x3,
     MultiRateEskf, PhononTransducerOutput, PidGains, QuadFlightController, SensorBenchmarkReport,
     SensorBenchmarkRunner,
+};
+pub use space::{
+    GncBenchmarkReport, GncBenchmarkRunner, GncConfig, PointingMode, SpacecraftGncSolver,
+    SpacecraftState,
 };
 pub use sparse::{
     estimate_condition_1norm, find_markowitz_pivot, MarkowitzOptions, SparseLuFactorization,
