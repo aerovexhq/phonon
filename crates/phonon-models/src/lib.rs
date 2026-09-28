@@ -11,6 +11,7 @@ pub mod chemistry;
 pub mod common;
 pub mod cqed;
 pub mod cryogenic;
+pub mod diamond_nv;
 pub mod diode;
 pub mod em;
 pub mod floquet;
@@ -87,6 +88,7 @@ pub use cryogenic::{
     fermi_dirac_half, inverse_fermi_dirac_half, CryoMosfetModel, CryoMosfetOutput,
     CryogenicFreezeoutModel, CryogenicMobilityModel,
 };
+pub use diamond_nv::*;
 pub use diode::{DiodeEvaluation, DiodeModel};
 pub use em::{
     compute_crc32, erfc, q_function, AmplifierClass, AntennaGeometry, ChannelProfile, ChannelRng,

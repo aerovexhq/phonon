@@ -4,14 +4,6 @@
 
 ## Future
 
-### Phase 62: Superconducting Kinetic Inductance Traveling-Wave Parametric Amplifiers & Dark Matter Haloscopes
-Develop an autonomous multi-physics solver modeling kinetic inductance traveling-wave parametric amplifiers (KITWPA).
-Formulate non-linear kinetic inductance in disordered superconductors (NbTiN, granular aluminum) under DC/RF bias.
-Model four-wave mixing parametric gain, dispersion-engineered periodic loading, and phase mismatch.
-Synthesize quantum-limited sub-Kelvin microwave readout for axion dark matter haloscope cavity searches.
-Implement multi-threaded Rayon non-linear wave propagation integrators and quantum noise spectral solvers.
-Benchmark KITWPA signal gain, 1-dB saturation power, and added noise across 10,000 haloscope drive sweeps.
-
 ### Phase 63: Magnon Bose-Einstein Condensation, Spin Superfluidity & Long-Range Spin Transport
 Develop an autonomous multi-physics solver modeling non-equilibrium magnon Bose-Einstein condensates (BEC) in YIG films.
 Formulate parametric microwave pumping, four-magnon scattering thermalization, and critical magnon chemical potential.
@@ -20,21 +12,37 @@ Synthesize non-local spin injection and detection geometries across ultra-low-da
 Implement multi-threaded Rayon Gross-Pitaevskii non-linear Schrödinger equations for non-equilibrium magnons.
 Benchmark magnon BEC formation, spin superfluid critical velocities, and spin transport across 10,000 sweeps.
 
+### Phase 64: Chiral Phonon-Magnon Polaritons, Acoustic Spin Pumping & Terahertz Acoustoelectronics
+Develop an autonomous multi-physics solver modeling chiral phonon-magnon polaritons in magnetic metamaterials.
+Formulate magneto-elastic coupling tensors, acoustic angular momentum conservation, and chiral phonon generation.
+Model acoustic spin pumping across ferromagnet-heavy metal interfaces and transverse ISHE voltage generation.
+Synthesize coherent acoustic wave transduction, sub-diffraction phononic guiding, and non-reciprocal acoustic transport.
+Implement multi-threaded Rayon elastodynamic-micromagnetic coupled PDE integrators and S-matrix solvers.
+Benchmark chiral phonon-magnon polaritons across 10,000 drive cycles with verified isolation and high throughput.
+
 ---
 
 ## Current
 
-### Phase 61: Quantum Diamond Nitrogen-Vacancy Magnetometry, Nanoscale NMR & Spin Relaxation Probes
-Develop an autonomous multi-physics solver modeling nitrogen-vacancy (NV) center quantum sensors in diamond.
-Formulate ground-state spin Hamiltonian with zero-field splitting $D \approx 2.87\text{ GHz}$, hyperfine, and Zeeman shifts.
-Model optically detected magnetic resonance (ODMR), Hahn echo decoherence $T_2$, and dynamical decoupling.
-Synthesize nanoscale nuclear magnetic resonance (NMR) sensing of single-molecule nuclear spin precessions.
-Implement multi-threaded Rayon quantum trajectory solvers and master equations for multi-spin ensembles.
-Benchmark NV magnetometry and nanoscale NMR across 10,000 pulses with sub-picotesla sensitivity.
+### Phase 62: Superconducting Kinetic Inductance Traveling-Wave Parametric Amplifiers & Dark Matter Haloscopes
+Develop an autonomous multi-physics solver modeling kinetic inductance traveling-wave parametric amplifiers (KITWPA).
+Formulate non-linear kinetic inductance in disordered superconductors (NbTiN, granular aluminum) under DC/RF bias.
+Model four-wave mixing parametric gain, dispersion-engineered periodic loading, and phase mismatch.
+Synthesize quantum-limited sub-Kelvin microwave readout for axion dark matter haloscope cavity searches.
+Implement multi-threaded Rayon non-linear wave propagation integrators and quantum noise spectral solvers.
+Benchmark KITWPA signal gain, 1-dB saturation power, and added noise across 10,000 haloscope drive sweeps.
 
 ---
 
 ## Done
+
+### Phase 61: Quantum Diamond Nitrogen-Vacancy Magnetometry, Nanoscale NMR & Spin Relaxation Probes
+Formulated ground-state Spin-1 Hamiltonian with zero-field splitting $D \approx 2.87\text{ GHz}$ and strain $E \approx 2.0\text{ MHz}$.
+Modeled 4 diamond $\langle 111 \rangle$ crystallographic orientations and reconstructed 3D vector magnetic fields ($< 0.1\ \mu\text{T}$).
+Synthesized optically detected magnetic resonance (ODMR) spectra and intersystem crossing optical spin polarization.
+Formulated Ramsey dephasing ($T_2^*$), Hahn echo refocusing ($T_2$), and XY8-N dynamical decoupling lock-in filters.
+Modeled single-molecule nanoscale nuclear magnetic resonance (NMR) sensing of proton precessions with $B_{rms} \approx 150\text{ nT}$.
+Benchmarked NV magnetometry across 10,000 pulses with sub-picotesla AC sensitivity $\eta_{AC} < 10\text{ pT}/\sqrt{\text{Hz}}$.
 
 ### Phase 60: Chiral Phononics, Topological Acoustic Metamaterials & Non-Reciprocal Acoustic Diodes
 Formulated honeycomb metamaterials with broken spatial inversion symmetry opening valley gaps $\Delta\omega_v / \omega_0 > 5\%$.
