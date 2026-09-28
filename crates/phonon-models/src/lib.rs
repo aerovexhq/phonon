@@ -22,6 +22,7 @@ pub mod molecular;
 pub mod mosfet;
 pub mod mvl;
 pub mod net;
+pub mod non_hermitian;
 pub mod optics;
 pub mod optimization;
 pub mod optomechanics;
@@ -131,6 +132,10 @@ pub use net::{
     compute_internet_checksum, nic_reg, ArpOperation, ArpPacket, ArpTable, CpuInstruction,
     IpProtocol, Ipv4Address, Ipv4Header, RouteEntry, RouterPort, RouterSwitch, SimulatedCpuNode,
     UdpDatagram, VirtualNic,
+};
+pub use non_hermitian::{
+    LaserRateEquationParams, PtDimerParams, PtPhaseRegime, SshLatticeParams,
+    TopologicalLatticePhase,
 };
 pub use optics::{
     silicon_quantum_efficiency, transduce_cmos_pixel, CameraIntrinsics, CmosPixelConfig,

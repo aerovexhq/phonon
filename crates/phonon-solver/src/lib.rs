@@ -15,6 +15,7 @@ pub mod molecular;
 pub mod mvl;
 pub mod net;
 pub mod neuromorphic;
+pub mod non_hermitian;
 pub mod optics;
 pub mod optimization;
 pub mod optomechanics;
@@ -93,6 +94,10 @@ pub use net::{
 pub use neuromorphic::{
     generate_lorenz63, generate_mackey_glass, generate_narma10, LiquidStateMachine, LsmConfig,
     NeuromorphicBenchmarkReport, NeuromorphicBenchmarkRunner, ReservoirSolver, TrainedReadout,
+};
+pub use non_hermitian::{
+    LaserSimulationResult, MaxwellBlochSolver, NonHermitianEigenResult, NonHermitianEigensolver,
+    TopologicalLaserBenchmarkReport, TopologicalLaserBenchmarkRunner,
 };
 pub use optics::{
     AabbBox, CheckerPlane, LightSource, OffscreenPerceptionEngine, OpticalBenchmarkReport,
