@@ -2,7 +2,7 @@
 //! Witten effect anomalous Hall conductance, and dark-matter haloscopes.
 
 /// Physical constants for quantum axion electrodynamics.
-pub mod constants {
+pub mod axion_constants {
     /// Reduced Planck constant $\hbar$ in $\text{J}\cdot\text{s}$.
     pub const HBAR: f64 = 1.054_571_817e-34;
     /// Planck constant $h$ in $\text{J}\cdot\text{s}$.
