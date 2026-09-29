@@ -64,6 +64,7 @@ pub mod quantum;
 pub mod quantum_acoustic;
 pub mod quantum_plasmonics;
 pub mod quantum_time_crystal;
+pub mod quantum_topological_squeezing;
 pub mod radiation;
 pub mod relay;
 pub mod sensors;
@@ -254,6 +255,7 @@ pub use quantum_plasmonics::{
     SppHydrodynamicModel,
 };
 pub use quantum_time_crystal::*;
+pub use quantum_topological_squeezing::*;
 pub use radiation::{
     DiceCell, DisplacementDamageModel, HeavyIonStrikeModel, LatchupEvaluation,
     ParasiticThyristorModel, StandardSramCell, StrikeOutcome, TmrVoter, TotalIonizingDoseModel,
