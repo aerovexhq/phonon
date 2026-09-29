@@ -9,6 +9,7 @@ pub mod assets;
 pub mod axion_electrodynamics;
 pub mod cavity_acoustomagnonic;
 pub mod cavity_magnomechanics;
+pub mod cavity_magnon_polariton_comb;
 pub mod cavity_spintronics;
 pub mod chiral_phonon;
 pub mod chiral_phonon_sc;
@@ -106,6 +107,7 @@ pub use assets::{
 pub use axion_electrodynamics::*;
 pub use cavity_acoustomagnonic::*;
 pub use cavity_magnomechanics::*;
+pub use cavity_magnon_polariton_comb::*;
 pub use cavity_spintronics::*;
 pub use chiral_phonon::*;
 pub use chiral_phonon_sc::*;
