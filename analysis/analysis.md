@@ -532,6 +532,17 @@ Phonon integrates an autonomous multi-scale molecular spintronics, single-molecu
 
 ---
 
+### 11.31 Topological Chiral Phonon Heat Transport, Acoustic Quantum Hall Effect & Phonon Diodes
+- **Honeycomb Chiral Lattice & Spin-Phonon Coupling**: Formulates 2D honeycomb phononic crystal and magnetic oxide lattices ($\text{Fe}_2\text{Mo}_3\text{O}_8$) with broken time-reversal symmetry via Raman-type spin-phonon interactions and Coriolis gyroscopic acceleration $h_{sp}$, lifting acoustic mode degeneracies into circular phonon polarizations $\omega_\pm(\vec{k}) = \sqrt{v_s^2 k^2 + h_{sp}^2/4} \pm h_{sp}/2$.
+- **Acoustic Berry Curvature & Quantized Chern Invariants**: Models acoustic Berry curvature $\Omega_z(\vec{k}) = \frac{h_{sp} v_s^2}{2 (v_s^2 k^2 + h_{sp}^2/4)^{3/2}}$ centered around the Dirac valleys $K/K'$, integrating across the Brillouin zone to yield topological acoustic Chern invariants $\mathcal{C}_{ph} = \pm 1$ and quantized circular angular momentum $l_z = \pm \hbar$.
+- **Non-Equilibrium Green's Function (NEGF) Phonon Transport**: Implements acoustic retarded Green's functions $G^R(\omega) = [(\omega + i\eta)^2 I - K_D - \Sigma_L(\omega) - \Sigma_R(\omega)]^{-1}$ and Caroli transmission formula $\mathcal{T}_{ph}(\omega) = \text{Tr}[\Gamma_L G^R \Gamma_R G^A]$ coupled with Landauer-Büttiker heat current integration $J_Q(T_L, T_R) = \int \frac{\hbar\omega}{2\pi} \mathcal{T}(\omega) [f_B(\omega, T_L) - f_B(\omega, T_R)] d\omega$.
+- **Topological Phonon Diodes & Directional Thermal Rectification**: Synthesizes asymmetric chiral edge channel thermal rectifiers achieving rectification ratio $\mathcal{R} = |J_{Q,fwd}| / |J_{Q,rev}| \ge 10.0\times$ (nominal $24\times$) and demonstrating complete suppression of reverse thermal backflow.
+- **Topological Corner Bend Backscattering Immunity**: Models backscattering suppression for chiral edge phonons traversing sharp structural corners ($60^\circ - 120^\circ$), validating forward bend transmission $T_{bend} \ge 90\%$ and corner backscattering reflection $R_{back} \le 10\%$.
+- **Semiclassical Peierls-Boltzmann Thermal Hall Solver**: Formulates the anomalous wavepacket velocity $\vec{v}_n(\vec{k}) = \frac{1}{\hbar}\nabla_{\vec{k}} \omega_n - \dot{\vec{k}} \times \vec{\Omega}_n(\vec{k})$, computing longitudinal thermal conductivity $\kappa_{xx}(T)$ and transverse thermal Hall conductivity $\kappa_{xy}(T) = -\frac{k_B^2 T}{\hbar V} \sum c_2(f_B) \Omega_{n,z}(\vec{k})$, alongside the phonon Hall angle $\theta_{TH}$.
+- **Parallel Rayon Benchmark**: Benchmarks 10,000 thermal cycle sweeps across Rayon threads verifying 100% compliance with $\mathcal{R} \ge 10\times$, $T_{bend} \ge 90\%$, $R_{back} \le 10\%$, and high throughput.
+
+---
+
 ## 12. Comprehensive Technology Scaling Comparison
 
 | Dimension | 3nm GAA CMOS Baseline | Molecular QI Logic | Spintronic NML Logic | Cryogenic SOEN Coprocessor | Topological Majorana Qubit | Hypersonic Phononic Logic | **Phonon-Aerovex Multi-Tier RF & Sensor Stack** |
@@ -602,10 +613,11 @@ crates/
   - **Phase 65: Quantum Acoustic Cavity Resonators, Surface Acoustic Wave Qubits & Phonon-Mediated Entanglement** (Completed with piezoelectric IDT electromechanical admittance, Bragg mirrors with $R_m \ge 99.9\%$, cQAD transmon strong coupling with cooperativity $\mathcal{C}_{cqa} \gg 1$, Lindbladian RK4 master equation solver validating vacuum Rabi SWAP into phonon Fock state $|g, 1\rangle$ with fidelity $F_{swap} \ge 95\%$, virtual phonon-mediated remote Bell state entanglement with fidelity $F_{bell} \ge 95\%$ and concurrence $\mathcal{C} \ge 0.90$, 4-port SAW beam splitters with 100% HOM two-phonon bunching visibility, and 10,000-sweep parallel Rayon benchmark).
   - **Phase 66: Quantum Plasmonic Nanocircuits, Single-Photon Transistors & Sub-Diffraction Nanophotonics** (Completed with non-local hydrodynamic Drude electron gas, SPP dispersion blueshifts, Feibelman surface charge centroid shifts, deep sub-diffraction MIM slot waveguides with $V_{eff} \sim 10^{-5}\lambda_0^3$, all-optical single-photon transistor switching with contrast $C_{dB} \ge 20\text{ dB}$ and gain $G > 10\times$, time-dependent Maxwell-Bloch pulse solver, sub-micron directional couplers and bends, and 10,000-sweep parallel Rayon benchmark).
   - **Phase 67: Non-Abelian Braiding of Majorana Fermions in Hexagonal Superconducting Arrays** (Completed with 2D hexagonal nanowire honeycomb arrays, 120-degree tri-junctions, directional Rashba spin-orbit coupling, in-plane Zeeman splitting, Alicea 3-step adiabatic exchange protocols with $d_{min} > 0.3 L_{arm}$, minimum-jerk $C^2$-smooth quintic gate ramps, time-dependent Bogoliubov-de Gennes RK4 integration, 4-Majorana topological qubits with verified Clifford gates and non-Abelian statistics, and 10,000-sweep parallel Rayon benchmark).
-- **Active Phase in `todo.md`**: **Phase 68: Topological Chiral Phonon Heat Transport, Acoustic Quantum Hall Effect & Phonon Diodes**.
+  - **Phase 68: Topological Chiral Phonon Heat Transport, Acoustic Quantum Hall Effect & Phonon Diodes** (Completed with 2D honeycomb chiral lattices, Raman spin-phonon / Coriolis coupling $h_{sp}$, split circular polarizations $\omega_\pm(\vec{k})$, acoustic Berry curvature $\Omega_z(\vec{k})$, Chern numbers $\mathcal{C}_{ph} = \pm 1$, NEGF Caroli transmission, Landauer-Büttiker heat current integration, topological thermal diodes with rectification ratio $\mathcal{R} \ge 10\times$, corner bend transmission $T_{bend} \ge 90\%$, semiclassical Peierls-Boltzmann thermal Hall solver, and 10,000-cycle parallel Rayon benchmark).
+- **Active Phase in `todo.md`**: **Phase 69: Quantum Acoustoelectric Charge Transport & Single-Electron Acoustic Pumps**.
 - **Queued Phased Pipeline**:
-  - **Phase 69**: Quantum Acoustoelectric Charge Transport & Single-Electron Acoustic Pumps
   - **Phase 70**: Quantum Valleytronics, Berry Curvature Dipoles & Non-Linear Hall Transport
+  - **Phase 71**: Fractional Chern Insulators, Moiré Flat Bands & Anyonic Teleportation
 
 
 
