@@ -10,6 +10,7 @@ pub mod cavity_magnomechanics;
 pub mod cavity_spintronics;
 pub mod chiral_phonon;
 pub mod chiral_phonon_sc;
+pub mod chiral_phonon_spin_mechanics;
 pub mod chiral_polariton;
 pub mod chiral_spin_seebeck;
 pub mod cqed;
@@ -90,6 +91,7 @@ pub use cavity_magnomechanics::*;
 pub use cavity_spintronics::*;
 pub use chiral_phonon::*;
 pub use chiral_phonon_sc::*;
+pub use chiral_phonon_spin_mechanics::*;
 pub use chiral_polariton::*;
 pub use chiral_spin_seebeck::*;
 pub use cqed::{

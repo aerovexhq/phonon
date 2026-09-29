@@ -14,6 +14,7 @@ pub mod cavity_spintronics;
 pub mod chemistry;
 pub mod chiral_phonon;
 pub mod chiral_phonon_sc;
+pub mod chiral_phonon_spin_mechanics;
 pub mod chiral_polariton;
 pub mod chiral_spin_seebeck;
 pub mod common;
@@ -118,6 +119,7 @@ pub use chemistry::{
 };
 pub use chiral_phonon::*;
 pub use chiral_phonon_sc::*;
+pub use chiral_phonon_spin_mechanics::*;
 pub use chiral_polariton::*;
 pub use chiral_spin_seebeck::*;
 pub use common::{compute_vcrit, pn_junction_limit, safe_exp, smooth_max, smooth_min};
