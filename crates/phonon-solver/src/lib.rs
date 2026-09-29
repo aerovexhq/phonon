@@ -41,6 +41,7 @@ pub mod kitwpa;
 pub mod lidar;
 pub mod magnon_bec;
 pub mod majorana_chiral_phonon;
+pub mod majorana_surface_memory;
 pub mod metamaterial_circulator_cloak;
 pub mod mixed_signal;
 pub mod mna;
@@ -314,6 +315,7 @@ pub use topological_weyl_acoustics::*;
 pub use topological_majorana_braiding::*;
 pub use topological_chern_circulator::*;
 pub use programmable_chiral_graph::*;
+pub use majorana_surface_memory::*;
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
     IntegrationMethod, StepControlOptions, TimeWaveform, TransientOptions, TransientSolution,
