@@ -26,6 +26,7 @@ pub mod diamond_nv;
 pub mod diode;
 pub mod em;
 pub mod floquet;
+pub mod floquet_acoustic_chern;
 pub mod floquet_anyon_braiding;
 pub mod floquet_topological;
 pub mod fqh;
@@ -155,6 +156,7 @@ pub use em::{
     VACUUM_PERMEABILITY, WGS84_A_METERS, WGS84_B_METERS, WGS84_E_SQ, WGS84_FLATTENING,
 };
 pub use floquet::*;
+pub use floquet_acoustic_chern::*;
 pub use floquet_anyon_braiding::*;
 pub use floquet_topological::*;
 pub use fqh::*;
