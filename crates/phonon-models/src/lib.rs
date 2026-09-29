@@ -56,6 +56,7 @@ pub mod phononic_topological;
 pub mod photonic;
 pub mod plasma;
 pub mod polariton_condensate;
+pub mod polariton_exceptional_point;
 pub mod quantum;
 pub mod quantum_acoustic;
 pub mod quantum_plasmonics;
@@ -229,6 +230,7 @@ pub use plasma::{
     TRITON_MASS,
 };
 pub use polariton_condensate::*;
+pub use polariton_exceptional_point::*;
 pub use quantum::{
     effective_damping_rate, effective_mechanical_frequency, is_ground_state_cooled,
     omit_probe_transmission, optical_cooperativity, optical_spring_shift,

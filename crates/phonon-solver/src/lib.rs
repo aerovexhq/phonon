@@ -48,6 +48,7 @@ pub mod phononic_microcomb;
 pub mod phononic_topological;
 pub mod plasma;
 pub mod polariton_condensate;
+pub mod polariton_exceptional_point;
 pub mod quantum;
 pub mod quantum_acoustic;
 pub mod quantum_plasmonics;
@@ -181,6 +182,7 @@ pub use plasma::{
     TokamakBenchmarkReport, TokamakBenchmarkRunner, TokamakScenario,
 };
 pub use polariton_condensate::*;
+pub use polariton_exceptional_point::*;
 pub use quantum::{
     CovarianceMatrix4x4, OptomechanicalBenchmarkReport, OptomechanicalBenchmarkRunner,
     OptomechanicalQleSolver, QuantumTransductionMetrics, QuantumTransductionSolver,
