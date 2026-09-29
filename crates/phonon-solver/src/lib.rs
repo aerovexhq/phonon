@@ -12,6 +12,7 @@ pub mod error;
 pub mod floquet;
 pub mod fqh;
 pub mod hetero;
+pub mod hexagonal_majorana;
 pub mod jtwpa;
 pub mod kitwpa;
 pub mod lidar;
@@ -80,6 +81,7 @@ pub use hetero::{
     HeteroCpuBenchmarkResult, HeteroCpuBenchmarkRunner, HeteroCpuOptimizer,
     HeteroOptimizationCandidate, PipelineTimingReport, TimingPathAnalyzer,
 };
+pub use hexagonal_majorana::*;
 pub use jtwpa::{
     CoupledModeResult, CoupledModeSolver, JtwpaBenchmarkReport, JtwpaBenchmarkRunner,
     QuantumNoiseResult, QuantumNoiseSolver,
