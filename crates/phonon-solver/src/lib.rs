@@ -63,6 +63,7 @@ pub mod optimization;
 pub mod optomechanics;
 pub mod parallel;
 pub mod phononic;
+pub mod phononic_anyon_collider;
 pub mod phononic_microcomb;
 pub mod phononic_neural_annealer;
 pub mod phononic_topological;
@@ -316,6 +317,7 @@ pub use topological_majorana_braiding::*;
 pub use topological_chern_circulator::*;
 pub use programmable_chiral_graph::*;
 pub use majorana_surface_memory::*;
+pub use phononic_anyon_collider::*;
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
     IntegrationMethod, StepControlOptions, TimeWaveform, TransientOptions, TransientSolution,
