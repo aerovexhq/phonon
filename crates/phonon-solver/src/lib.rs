@@ -117,6 +117,7 @@ pub mod non_hermitian_skin_amplifier;
 pub mod non_hermitian_edge_soliton;
 pub mod phonon_exciton_polariton;
 pub mod floquet_synthetic_gauge;
+pub mod topological_time_crystal;
 pub mod transient;
 pub mod valley_acoustic;
 pub mod valleytronics;
@@ -352,6 +353,7 @@ pub use phonon_exciton_polariton::*;
 pub use floquet_synthetic_gauge::*;
 pub use holonomic_quantum_processor::*;
 pub use fractional_hall_parafermion::*;
+pub use topological_time_crystal::*;
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
     IntegrationMethod, StepControlOptions, TimeWaveform, TransientOptions, TransientSolution,
