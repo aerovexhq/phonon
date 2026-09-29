@@ -13,6 +13,7 @@ pub mod em;
 pub mod error;
 pub mod floquet;
 pub mod fqh;
+pub mod fractional_chern;
 pub mod hetero;
 pub mod hexagonal_majorana;
 pub mod jtwpa;
@@ -82,6 +83,7 @@ pub use em::{
 pub use error::SolverError;
 pub use floquet::*;
 pub use fqh::*;
+pub use fractional_chern::*;
 pub use hetero::{
     HeteroCpuBenchmarkResult, HeteroCpuBenchmarkRunner, HeteroCpuOptimizer,
     HeteroOptimizationCandidate, PipelineTimingReport, TimingPathAnalyzer,

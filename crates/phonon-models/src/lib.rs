@@ -19,6 +19,7 @@ pub mod diode;
 pub mod em;
 pub mod floquet;
 pub mod fqh;
+pub mod fractional_chern;
 pub mod hetero;
 pub mod hexagonal_majorana;
 pub mod hierarchical;
@@ -116,6 +117,7 @@ pub use em::{
 };
 pub use floquet::*;
 pub use fqh::*;
+pub use fractional_chern::*;
 pub use hetero::{
     BlackElectromigrationModel, BlockAllocationMap, BlockStressReport, CpuMacroBlock,
     HeteroMaterialProperties, HeteroMaterialType, ProcessorBlockType, ProcessorFloorplan,

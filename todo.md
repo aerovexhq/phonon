@@ -4,14 +4,6 @@
 
 ## Future
 
-### Phase 72: Non-Hermitian Skin Effect, Acoustic Exceptional Surfaces & Directed Wave Localization
-Develop an autonomous multi-physics solver modeling acoustic non-Hermitian skin effects and exceptional surfaces.
-Formulate non-Hermitian dynamical matrices with non-reciprocal coupling and point-gap topological invariants.
-Model generalized Brillouin zone deformation, localized boundary skin modes, and acoustic cloaking.
-Synthesize topological directional amplifiers, non-reciprocal acoustic diodes, and directed sensor arrays.
-Implement multi-threaded Rayon non-unitary Green's function and non-Bloch transfer matrix solvers.
-Benchmark skin effect localization factor > 30 dB and directional amplification across 10,000 parameter sweeps.
-
 ### Phase 73: Topological Floquet Engineering, Ultrafast Chiral Light & Dynamic Hall States
 Develop an autonomous multi-physics solver modeling dynamic Floquet engineering in 2D quantum materials.
 Formulate time-periodic drive Hamiltonians, Floquet-Bloch quasi-energy bands, and light-induced topological gaps.
@@ -20,21 +12,37 @@ Synthesize ultrafast Floquet topological switches, dynamic Hall routing channels
 Implement multi-threaded Rayon Floquet-Magnus expansion and time-evolution unitary propagator solvers.
 Benchmark Floquet bandgap opening > 50 meV and dynamic Hall current switching across 10,000 parameter sweeps.
 
+### Phase 74: Quantum Valley Acoustic Phonon Cavities, Pseudomagnetic Fields & Phonon Valleytronics
+Develop an autonomous multi-physics solver modeling quantum valley acoustic cavities and pseudomagnetic fields.
+Formulate strain-induced gauge vector potentials, valley pseudomagnetic fields B_ps > 100 T, and Landau levels.
+Model chiral acoustic phonon cavity confinement, valley polarization contrast, and valley-selective Purcell enhancement.
+Synthesize valley acoustic waveguide multiplexers, pseudomagnetic phonon traps, and chiral phonon routers.
+Implement multi-threaded Rayon acoustic wavepacket propagation and pseudomagnetic Landau level eigensolvers.
+Benchmark valley acoustic polarization contrast > 20 dB and Purcell factor across 10,000 parameter sweeps.
+
 ---
 
 ## Current
 
-### Phase 71: Fractional Chern Insulators, Moiré Flat Bands & Anyonic Teleportation
-Develop an autonomous multi-physics solver modeling fractional Chern insulators in moiré flat bands.
-Formulate fractional quantum Hall states without magnetic fields, flat-band Berry curvature, and quantum geometry.
-Model fractional anyon excitations, fractional charge e/3 and e/5, and non-Abelian braiding statistics.
-Synthesize anyonic quantum state teleportation protocols across topological twisted bilayer moiré channels.
-Implement multi-threaded Rayon exact diagonalization and many-body Chern number topological solvers.
-Benchmark anyonic teleportation state fidelity > 99% and spectral gap stability across 10,000 configurations.
+### Phase 72: Non-Hermitian Skin Effect, Acoustic Exceptional Surfaces & Directed Wave Localization
+Develop an autonomous multi-physics solver modeling acoustic non-Hermitian skin effects and exceptional surfaces.
+Formulate non-Hermitian dynamical matrices with non-reciprocal coupling and point-gap topological invariants.
+Model generalized Brillouin zone deformation, localized boundary skin modes, and acoustic cloaking.
+Synthesize topological directional amplifiers, non-reciprocal acoustic diodes, and directed sensor arrays.
+Implement multi-threaded Rayon non-unitary Green's function and non-Bloch transfer matrix solvers.
+Benchmark skin effect localization factor > 30 dB and directional amplification across 10,000 parameter sweeps.
 
 ---
 
 ## Done
+
+### Phase 71: Fractional Chern Insulators, Moiré Flat Bands & Anyonic Teleportation
+Formulated twisted bilayer moiré lattice Hamiltonian with quenched flat bands and strong correlation U/W > 3.0.
+Modeled quantum geometric tensor, Berry curvature, and Fubini-Study metric satisfying ideal LLL trace ratio.
+Synthesized fractional Chern insulator states at nu = 1/3, 2/3, 1/5, 2/5 with fractional charges e/3 and e/5.
+Modeled topological q-fold ground-state degeneracy and many-body Chern numbers C_mb = nu * C.
+Implemented anyonic quantum state teleportation protocol with generalized Pauli clock and shift feedforward.
+Benchmarked 10,000 parameter sweeps across Rayon threads verifying fidelity >= 99% and high throughput.
 
 ### Phase 70: Quantum Valleytronics, Berry Curvature Dipoles & Non-Linear Hall Transport
 Formulated 2D massive Dirac valley Hamiltonian with broken inversion symmetry and giant SOC.
