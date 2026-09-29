@@ -54,6 +54,7 @@ pub mod quantum_time_crystal;
 pub mod relay;
 pub mod rf;
 pub mod sensors;
+pub mod skyrmion_phonon_drag;
 pub mod snspd;
 pub mod space;
 pub mod sparse;
@@ -209,6 +210,7 @@ pub use sensors::{
     MultiRateEskf, PhononTransducerOutput, PidGains, QuadFlightController, SensorBenchmarkReport,
     SensorBenchmarkRunner,
 };
+pub use skyrmion_phonon_drag::*;
 pub use snspd::*;
 pub use space::{
     GncBenchmarkReport, GncBenchmarkRunner, GncConfig, PointingMode, SpacecraftGncSolver,
