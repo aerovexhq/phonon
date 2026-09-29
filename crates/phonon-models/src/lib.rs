@@ -3,6 +3,7 @@
 //! and Gummel-Poon BJTs.
 
 pub mod acoustic;
+pub mod acoustic_holonomic_processor;
 pub mod acoustic_metasurface_holography;
 pub mod acoustic_microcomb_soliton;
 pub mod acoustoelectric;
@@ -386,6 +387,7 @@ pub use phononic_anyon_collider::*;
 pub use quantum_acoustic_tensor_distillation::*;
 pub use opto_acoustic_quantum_repeater::*;
 pub use phonon_magnon_polariton::*;
+pub use acoustic_holonomic_processor::*;
 pub use valley_acoustic::*;
 pub use valleytronics::*;
 pub use wakefield::{BetatronRadiation, BubbleRegime, LaserPulseParams, PlasmaChannelParams};
