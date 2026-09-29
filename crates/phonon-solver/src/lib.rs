@@ -34,6 +34,7 @@ pub mod net;
 pub mod neuromorphic;
 pub mod non_hermitian;
 pub mod non_hermitian_skin;
+pub mod non_hermitian_topo;
 pub mod optics;
 pub mod optimization;
 pub mod optomechanics;
@@ -143,6 +144,7 @@ pub use non_hermitian::{
     TopologicalLaserBenchmarkReport, TopologicalLaserBenchmarkRunner,
 };
 pub use non_hermitian_skin::*;
+pub use non_hermitian_topo::*;
 pub use optics::{
     AabbBox, CheckerPlane, LightSource, OffscreenPerceptionEngine, OpticalBenchmarkReport,
     OpticalBenchmarkRunner, OpticalRealismTier, PerceptionFrame, RayHit, SceneObject, Sphere,
