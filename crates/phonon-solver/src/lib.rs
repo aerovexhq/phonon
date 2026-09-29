@@ -56,6 +56,7 @@ pub mod polariton_condensate;
 pub mod polariton_exceptional_point;
 pub mod quantum;
 pub mod quantum_acoustic;
+pub mod quantum_acoustic_anyons;
 pub mod quantum_plasmonics;
 pub mod quantum_time_crystal;
 pub mod quantum_topological_squeezing;
@@ -206,6 +207,7 @@ pub use quantum_acoustic::{
     QuantumAcousticSweepResult, QubitPhononDensityMatrix, TwoQubitDensityMatrix, FOCK_DIM,
     HILBERT_DIM, TWO_QUBIT_DIM,
 };
+pub use quantum_acoustic_anyons::*;
 pub use quantum_plasmonics::{
     evaluate_plasmonic_directional_coupler, evaluate_transistor_logic, evaluate_waveguide_bend,
     run_quantum_plasmonic_benchmark, BlochVector, PlasmonicCouplerReport,
