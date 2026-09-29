@@ -125,6 +125,7 @@ pub mod topological_moire_polariton;
 pub mod non_hermitian_skin_amplifier;
 pub mod non_hermitian_edge_soliton;
 pub mod phonon_exciton_polariton;
+pub mod floquet_synthetic_gauge;
 pub mod valley_acoustic;
 pub mod valleytronics;
 pub mod wakefield;
@@ -413,6 +414,9 @@ pub use non_hermitian_edge_soliton::{
 };
 pub use phonon_exciton_polariton::{
     PhononExcitonPolaritonMetrics, PhononExcitonPolaritonParams,
+};
+pub use floquet_synthetic_gauge::{
+    FloquetSyntheticGaugeMetrics, FloquetSyntheticGaugeParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
