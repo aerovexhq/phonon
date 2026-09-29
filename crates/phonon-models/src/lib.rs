@@ -4,6 +4,7 @@
 
 pub mod acoustic;
 pub mod acoustoelectric;
+pub mod afm_spintronics;
 pub mod assets;
 pub mod atomistic;
 pub mod bjt;
@@ -76,6 +77,7 @@ pub use acoustic::{
     P_REF_AIR, T_REF_KELVIN,
 };
 pub use acoustoelectric::*;
+pub use afm_spintronics::*;
 pub use assets::{
     create_cubesat_chassis, create_dipole_antenna, create_finned_heatsink, create_patch_antenna,
     create_quadrotor_frame, create_tactile_landing_gear, Aabb3D, AcousticProperties,

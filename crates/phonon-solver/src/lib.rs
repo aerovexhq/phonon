@@ -3,6 +3,7 @@
 
 pub mod acoustic;
 pub mod acoustoelectric;
+pub mod afm_spintronics;
 pub mod assets;
 pub mod cavity_spintronics;
 pub mod chiral_phonon;
@@ -64,6 +65,7 @@ pub use acoustic::{
     AcousticRoom, AcousticStepResult, FdtdResult,
 };
 pub use acoustoelectric::*;
+pub use afm_spintronics::*;
 pub use assets::{
     AcousticRayHit, AssetBenchmarkReport, AssetBenchmarkRunner, MeshInstance, MultiPhysicsBvh,
     MultiPhysicsBvhNode, MultiPhysicsScene, OpticalRayHit, RfTransmissionResult, WorldTriangle,
