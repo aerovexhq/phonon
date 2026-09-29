@@ -26,6 +26,7 @@ pub mod fqh;
 pub mod fractional_chern;
 pub mod hetero;
 pub mod hexagonal_majorana;
+pub mod high_harmonic_bloch;
 pub mod interfacial_superconductivity;
 pub mod jtwpa;
 pub mod kitwpa;
@@ -125,6 +126,7 @@ pub use hetero::{
     HeteroOptimizationCandidate, PipelineTimingReport, TimingPathAnalyzer,
 };
 pub use hexagonal_majorana::*;
+pub use high_harmonic_bloch::*;
 pub use interfacial_superconductivity::*;
 pub use jtwpa::{
     CoupledModeResult, CoupledModeSolver, JtwpaBenchmarkReport, JtwpaBenchmarkRunner,
