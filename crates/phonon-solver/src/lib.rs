@@ -45,6 +45,7 @@ pub mod net;
 pub mod neuromorphic;
 pub mod non_hermitian;
 pub mod non_hermitian_chiral_hoti;
+pub mod non_hermitian_ep_gyroscope;
 pub mod non_hermitian_pt_symmetry;
 pub mod non_hermitian_skin;
 pub mod non_hermitian_topo;
@@ -177,6 +178,7 @@ pub use non_hermitian::{
     TopologicalLaserBenchmarkReport, TopologicalLaserBenchmarkRunner,
 };
 pub use non_hermitian_chiral_hoti::*;
+pub use non_hermitian_ep_gyroscope::*;
 pub use non_hermitian_pt_symmetry::*;
 pub use non_hermitian_skin::*;
 pub use non_hermitian_topo::*;
