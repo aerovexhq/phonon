@@ -68,6 +68,7 @@ pub mod phononic_topological;
 pub mod plasma;
 pub mod polariton_condensate;
 pub mod polariton_exceptional_point;
+pub mod programmable_chiral_graph;
 pub mod quantum;
 pub mod quantum_acoustic;
 pub mod quantum_acoustic_anyons;
@@ -312,6 +313,7 @@ pub use topological_soliton_comb::*;
 pub use topological_weyl_acoustics::*;
 pub use topological_majorana_braiding::*;
 pub use topological_chern_circulator::*;
+pub use programmable_chiral_graph::*;
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
     IntegrationMethod, StepControlOptions, TimeWaveform, TransientOptions, TransientSolution,
