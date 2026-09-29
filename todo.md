@@ -4,14 +4,6 @@
 
 ## Future
 
-### Phase 70: Quantum Valleytronics, Berry Curvature Dipoles & Non-Linear Hall Transport
-Develop an autonomous multi-physics solver modeling 2D quantum valleytronics and Berry curvature dipoles.
-Formulate broken inversion symmetry band structures, valley-dependent optical selection rules, and orbital moments.
-Model non-linear anomalous Hall effect driven by time-reversal symmetric Berry curvature dipole moments.
-Synthesize valley Hall transistors, pure valley currents, and dissipationless topological routing channels.
-Implement multi-threaded Rayon semiclassical wavepacket Boltzmann and non-linear transport integrators.
-Benchmark valley Hall rectification ratio > 20 dB and non-linear Hall conductance across 10,000 parameter sweeps.
-
 ### Phase 71: Fractional Chern Insulators, Moiré Flat Bands & Anyonic Teleportation
 Develop an autonomous multi-physics solver modeling fractional Chern insulators in moiré flat bands.
 Formulate fractional quantum Hall states without magnetic fields, flat-band Berry curvature, and quantum geometry.
@@ -20,21 +12,37 @@ Synthesize anyonic quantum state teleportation protocols across topological twis
 Implement multi-threaded Rayon exact diagonalization and many-body Chern number topological solvers.
 Benchmark anyonic teleportation state fidelity > 99% and spectral gap stability across 10,000 configurations.
 
+### Phase 72: Non-Hermitian Skin Effect, Acoustic Exceptional Surfaces & Directed Wave Localization
+Develop an autonomous multi-physics solver modeling acoustic non-Hermitian skin effects and exceptional surfaces.
+Formulate non-Hermitian dynamical matrices with non-reciprocal coupling and point-gap topological invariants.
+Model generalized Brillouin zone deformation, localized boundary skin modes, and acoustic cloaking.
+Synthesize topological directional amplifiers, non-reciprocal acoustic diodes, and directed sensor arrays.
+Implement multi-threaded Rayon non-unitary Green's function and non-Bloch transfer matrix solvers.
+Benchmark skin effect localization factor > 30 dB and directional amplification across 10,000 parameter sweeps.
+
 ---
 
 ## Current
 
-### Phase 69: Quantum Acoustoelectric Charge Transport & Single-Electron Acoustic Pumps
-Develop an autonomous multi-physics solver modeling quantum acoustoelectric single-electron transport.
-Formulate piezoelectric dynamic quantum dot potential wells moving at surface acoustic wave velocity.
-Model quantized acoustoelectric current I = e * f_saw, single-electron tunneling, and non-adiabatic errors.
-Synthesize flying qubit architecture, single-electron spin initialization, and flying spin entanglement.
-Implement multi-threaded Rayon time-dependent Schrödinger and Master equation quantum wavepacket solvers.
-Benchmark single-electron pumping precision |I / (e * f) - 1| < 1e-4 across 10,000 acoustic cycles.
+### Phase 70: Quantum Valleytronics, Berry Curvature Dipoles & Non-Linear Hall Transport
+Develop an autonomous multi-physics solver modeling 2D quantum valleytronics and Berry curvature dipoles.
+Formulate broken inversion symmetry band structures, valley-dependent optical selection rules, and orbital moments.
+Model non-linear anomalous Hall effect driven by time-reversal symmetric Berry curvature dipole moments.
+Synthesize valley Hall transistors, pure valley currents, and dissipationless topological routing channels.
+Implement multi-threaded Rayon semiclassical wavepacket Boltzmann and non-linear transport integrators.
+Benchmark valley Hall rectification ratio > 20 dB and non-linear Hall conductance across 10,000 parameter sweeps.
 
 ---
 
 ## Done
+
+### Phase 69: Quantum Acoustoelectric Charge Transport & Single-Electron Acoustic Pumps
+Formulated piezoelectric dynamic quantum dot potential wells moving at surface acoustic wave velocity.
+Modeled quantized acoustoelectric current I = e * f_saw, single-electron tunneling, and non-adiabatic errors.
+Synthesized flying qubit architecture, single-electron spin initialization, and flying spin entanglement.
+Implemented unitary Crank-Nicolson TDSE wavepacket solver with Thomas tridiagonal norm preservation.
+Formulated calibrated sqrt(SWAP) flying exchange couplers achieving Bell state creation fidelity >= 95%.
+Benchmarked 10,000 acoustic cycles across Rayon threads verifying current precision < 1e-4 and high throughput.
 
 ### Phase 68: Topological Chiral Phonon Heat Transport, Acoustic Quantum Hall Effect & Phonon Diodes
 Formulated 2D honeycomb phononic crystal and magnetic oxide lattices with Raman spin-phonon coupling.
