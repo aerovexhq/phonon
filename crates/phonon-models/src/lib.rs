@@ -3,6 +3,7 @@
 //! and Gummel-Poon BJTs.
 
 pub mod acoustic;
+pub mod acoustic_metasurface_holography;
 pub mod acoustoelectric;
 pub mod acoustoelectric_moire;
 pub mod afm_spintronics;
@@ -114,6 +115,7 @@ pub use acoustic::{
     PiezoelectricMicrophone, ADIABATIC_INDEX_AIR, GAS_CONSTANT_R, MOLAR_MASS_AIR, P_ATM_SEA_LEVEL,
     P_REF_AIR, T_REF_KELVIN,
 };
+pub use acoustic_metasurface_holography::*;
 pub use acoustoelectric::*;
 pub use acoustoelectric_moire::*;
 pub use afm_spintronics::*;

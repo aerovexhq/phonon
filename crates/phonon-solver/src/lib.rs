@@ -2,6 +2,7 @@
 //! Markowitz threshold pivoting, dynamic TR-BDF2 transient solver, and physical conservation probes.
 
 pub mod acoustic;
+pub mod acoustic_metasurface_holography;
 pub mod acoustoelectric;
 pub mod acoustoelectric_moire;
 pub mod afm_spintronics;
@@ -102,6 +103,7 @@ pub use acoustic::{
     AcousticBenchmarkReport, AcousticBenchmarkRunner, AcousticLinkSimulator, AcousticRealismTier,
     AcousticRoom, AcousticStepResult, FdtdResult,
 };
+pub use acoustic_metasurface_holography::*;
 pub use acoustoelectric::*;
 pub use acoustoelectric_moire::*;
 pub use afm_spintronics::*;
