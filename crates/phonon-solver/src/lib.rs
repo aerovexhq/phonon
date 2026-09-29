@@ -96,6 +96,7 @@ pub mod topological_acoustic_axion;
 pub mod topological_soliton_comb;
 pub mod topological_weyl_acoustics;
 pub mod topological_majorana_braiding;
+pub mod topological_chern_circulator;
 pub mod transient;
 pub mod valley_acoustic;
 pub mod valleytronics;
@@ -310,6 +311,7 @@ pub use topological_acoustic_axion::*;
 pub use topological_soliton_comb::*;
 pub use topological_weyl_acoustics::*;
 pub use topological_majorana_braiding::*;
+pub use topological_chern_circulator::*;
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
     IntegrationMethod, StepControlOptions, TimeWaveform, TransientOptions, TransientSolution,
