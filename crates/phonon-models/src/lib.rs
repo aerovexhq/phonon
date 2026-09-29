@@ -8,6 +8,7 @@ pub mod afm_spintronics;
 pub mod assets;
 pub mod atomistic;
 pub mod bjt;
+pub mod cavity_magnomechanics;
 pub mod cavity_spintronics;
 pub mod chemistry;
 pub mod chiral_phonon;
@@ -94,6 +95,7 @@ pub use atomistic::{
 };
 
 pub use bjt::{BjtEvaluation, BjtModel, BjtType};
+pub use cavity_magnomechanics::*;
 pub use cavity_spintronics::*;
 pub use chemistry::{
     BandAlignmentType, Bandstructure, CarrierMobilityParams, ChemicalMaterial,
