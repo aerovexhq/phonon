@@ -41,6 +41,7 @@ pub mod photonic;
 pub mod plasma;
 pub mod quantum;
 pub mod quantum_acoustic;
+pub mod quantum_plasmonics;
 pub mod radiation;
 pub mod relay;
 pub mod sensors;
@@ -200,6 +201,10 @@ pub use quantum::{
 pub use quantum_acoustic::{
     BraggAcousticMirror, InterdigitalTransducer, SawBeamSplitter, SawCavity, SawQubitCoupling,
     SawSubstrateMaterial, TransmonQubit, VirtualPhononBus,
+};
+pub use quantum_plasmonics::{
+    NobleMetal, PlasmonicSlotWaveguide, QuantumEmitter, SinglePhotonTransistor,
+    SppHydrodynamicModel,
 };
 pub use radiation::{
     DiceCell, DisplacementDamageModel, HeavyIonStrikeModel, LatchupEvaluation,

@@ -33,6 +33,7 @@ pub mod phononic_topological;
 pub mod plasma;
 pub mod quantum;
 pub mod quantum_acoustic;
+pub mod quantum_plasmonics;
 pub mod relay;
 pub mod rf;
 pub mod sensors;
@@ -152,6 +153,12 @@ pub use quantum_acoustic::{
     HomRoutingReport, PhononEntanglementSolver, QuantumAcousticBenchmarkReport,
     QuantumAcousticSweepResult, QubitPhononDensityMatrix, TwoQubitDensityMatrix, FOCK_DIM,
     HILBERT_DIM, TWO_QUBIT_DIM,
+};
+pub use quantum_plasmonics::{
+    evaluate_plasmonic_directional_coupler, evaluate_transistor_logic, evaluate_waveguide_bend,
+    run_quantum_plasmonic_benchmark, BlochVector, PlasmonicCouplerReport,
+    PlasmonicMaxwellBlochSolver, PlasmonicSweepResult, QuantumPlasmonicBenchmarkReport,
+    TransistorLogicReport, WaveguideBendReport,
 };
 pub use relay::{
     AutonomousRelaySynthesizer, CoupledRelaySolver, CoupledRelayTransientResult,
