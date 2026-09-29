@@ -7,6 +7,7 @@ pub mod acoustoelectric;
 pub mod afm_spintronics;
 pub mod assets;
 pub mod atomistic;
+pub mod axion_electrodynamics;
 pub mod bjt;
 pub mod cavity_magnomechanics;
 pub mod cavity_spintronics;
@@ -95,6 +96,7 @@ pub use atomistic::{
     TddbPercolationModel, TmdMonolayer, WannierHamiltonian, WannierHopping, CARBON_BOND_LENGTH_M,
     GRAPHENE_HOPPING_EV, QUANTUM_CONDUCTANCE_SI, QUANTUM_RESISTANCE_CNT_OHMS,
 };
+pub use axion_electrodynamics::*;
 
 pub use bjt::{BjtEvaluation, BjtModel, BjtType};
 pub use cavity_magnomechanics::*;
