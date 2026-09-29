@@ -55,6 +55,7 @@ pub mod non_hermitian_ep_gyroscope;
 pub mod non_hermitian_pt_symmetry;
 pub mod non_hermitian_skin;
 pub mod non_hermitian_topo;
+pub mod non_reciprocal_phonon_amplifier;
 pub mod optics;
 pub mod optimization;
 pub mod optomechanics;
@@ -200,6 +201,7 @@ pub use non_hermitian_pt_symmetry::*;
 pub use non_hermitian_skin::*;
 pub use non_hermitian_topo::*;
 pub use non_hermitian_acoustic_laser::*;
+pub use non_reciprocal_phonon_amplifier::*;
 pub use optics::{
     AabbBox, CheckerPlane, LightSource, OffscreenPerceptionEngine, OpticalBenchmarkReport,
     OpticalBenchmarkRunner, OpticalRealismTier, PerceptionFrame, RayHit, SceneObject, Sphere,
