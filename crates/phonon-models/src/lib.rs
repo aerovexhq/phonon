@@ -19,6 +19,7 @@ pub mod fqh;
 pub mod hetero;
 pub mod hierarchical;
 pub mod jtwpa;
+pub mod kitwpa;
 pub mod lidar;
 pub mod memristor;
 pub mod mixed_signal;
@@ -111,6 +112,7 @@ pub use hetero::{
 };
 pub use hierarchical::{HierarchicalDiodeBuilder, HierarchicalTransistorBuilder};
 pub use jtwpa::{DispersionEngineeringParams, ParametricProcessParams, SnailElementParams};
+pub use kitwpa::*;
 pub use lidar::{
     AtmosphericCondition, EchoReturn, FogType, LaserPulseConfig, LaserRay, LidarScannerConfig,
     ScanningArchitecture, WAVELENGTH_1550_NM, WAVELENGTH_905_NM,
