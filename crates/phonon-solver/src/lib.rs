@@ -12,6 +12,7 @@ pub mod floquet;
 pub mod fqh;
 pub mod hetero;
 pub mod jtwpa;
+pub mod kitwpa;
 pub mod lidar;
 pub mod mixed_signal;
 pub mod mna;
@@ -78,6 +79,7 @@ pub use jtwpa::{
     CoupledModeResult, CoupledModeSolver, JtwpaBenchmarkReport, JtwpaBenchmarkRunner,
     QuantumNoiseResult, QuantumNoiseSolver,
 };
+pub use kitwpa::*;
 pub use lidar::{
     Aabb, BvhHit, BvhNode, BvhPrimitive, BvhTree, LidarBenchmarkReport, LidarBenchmarkRunner,
     LidarPoint, LidarPointCloud, TofLidarEngine,

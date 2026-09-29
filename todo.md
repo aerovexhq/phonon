@@ -4,14 +4,6 @@
 
 ## Future
 
-### Phase 63: Magnon Bose-Einstein Condensation, Spin Superfluidity & Long-Range Spin Transport
-Develop an autonomous multi-physics solver modeling non-equilibrium magnon Bose-Einstein condensates (BEC) in YIG films.
-Formulate parametric microwave pumping, four-magnon scattering thermalization, and critical magnon chemical potential.
-Model spin superfluid hydrodynamic transport equations, macroscopic phase coherence, and dissipationless spin currents.
-Synthesize non-local spin injection and detection geometries across ultra-low-damping magnetic insulator strips.
-Implement multi-threaded Rayon Gross-Pitaevskii non-linear Schrödinger equations for non-equilibrium magnons.
-Benchmark magnon BEC formation, spin superfluid critical velocities, and spin transport across 10,000 sweeps.
-
 ### Phase 64: Chiral Phonon-Magnon Polaritons, Acoustic Spin Pumping & Terahertz Acoustoelectronics
 Develop an autonomous multi-physics solver modeling chiral phonon-magnon polaritons in magnetic metamaterials.
 Formulate magneto-elastic coupling tensors, acoustic angular momentum conservation, and chiral phonon generation.
@@ -20,21 +12,37 @@ Synthesize coherent acoustic wave transduction, sub-diffraction phononic guiding
 Implement multi-threaded Rayon elastodynamic-micromagnetic coupled PDE integrators and S-matrix solvers.
 Benchmark chiral phonon-magnon polaritons across 10,000 drive cycles with verified isolation and high throughput.
 
+### Phase 65: Quantum Acoustic Cavity Resonators, Surface Acoustic Wave Qubits & Phonon-Mediated Entanglement
+Develop an autonomous multi-physics solver modeling quantum acoustic cavity resonators and surface acoustic wave (SAW) qubits.
+Formulate piezo-electric electro-mechanical coupling, interdigital transducer (IDT) microwave-to-phonon conversion, and SAW cavities.
+Model transmon qubit strong coupling to localized phononic Fock states in the quantum acoustic circuit QED regime.
+Synthesize phonon-mediated remote qubit entanglement, phononic quantum memory storage, and beam-splitter routing.
+Implement multi-threaded Rayon quantum master equation solvers with Lindblad phononic dissipation and dephasing.
+Benchmark phonon Fock state preparation, quantum fidelity > 95%, and coherent phonon routing across 10,000 cycles.
+
 ---
 
 ## Current
 
-### Phase 62: Superconducting Kinetic Inductance Traveling-Wave Parametric Amplifiers & Dark Matter Haloscopes
-Develop an autonomous multi-physics solver modeling kinetic inductance traveling-wave parametric amplifiers (KITWPA).
-Formulate non-linear kinetic inductance in disordered superconductors (NbTiN, granular aluminum) under DC/RF bias.
-Model four-wave mixing parametric gain, dispersion-engineered periodic loading, and phase mismatch.
-Synthesize quantum-limited sub-Kelvin microwave readout for axion dark matter haloscope cavity searches.
-Implement multi-threaded Rayon non-linear wave propagation integrators and quantum noise spectral solvers.
-Benchmark KITWPA signal gain, 1-dB saturation power, and added noise across 10,000 haloscope drive sweeps.
+### Phase 63: Magnon Bose-Einstein Condensation, Spin Superfluidity & Long-Range Spin Transport
+Develop an autonomous multi-physics solver modeling non-equilibrium magnon Bose-Einstein condensates (BEC) in YIG films.
+Formulate parametric microwave pumping, four-magnon scattering thermalization, and critical magnon chemical potential.
+Model spin superfluid hydrodynamic transport equations, macroscopic phase coherence, and dissipationless spin currents.
+Synthesize non-local spin injection and detection geometries across ultra-low-damping magnetic insulator strips.
+Implement multi-threaded Rayon Gross-Pitaevskii non-linear Schrödinger equations for non-equilibrium magnons.
+Benchmark magnon BEC formation, spin superfluid critical velocities, and spin transport across 10,000 sweeps.
 
 ---
 
 ## Done
+
+### Phase 62: Superconducting Kinetic Inductance Traveling-Wave Parametric Amplifiers & Dark Matter Haloscopes
+Formulated current-dependent non-linear kinetic inductance in disordered superconductors (NbTiN, granular aluminum).
+Modeled four-wave mixing (4WM) parametric gain, sub-wavelength periodic dispersion engineering, and phase matching.
+Synthesized Sikivie resonant cavity dark matter haloscope conversion and Caves quantum-limited added noise temperature.
+Formulated Dicke radiometer integration equation and achieved dark matter haloscope frequency scan rate speedup > 100x.
+Implemented spatial coupled-mode RK4 wave propagation solver validating Manley-Rowe photon balance |G_s - G_i - 1| < 1e-6.
+Benchmarked 10,000 parameter sweeps across Rayon threads verifying gain > 20 dB, bandwidth >= 4 GHz, and P_-1dB > -50 dBm.
 
 ### Phase 61: Quantum Diamond Nitrogen-Vacancy Magnetometry, Nanoscale NMR & Spin Relaxation Probes
 Formulated ground-state Spin-1 Hamiltonian with zero-field splitting $D \approx 2.87\text{ GHz}$ and strain $E \approx 2.0\text{ MHz}$.
