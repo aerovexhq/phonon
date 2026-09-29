@@ -96,6 +96,7 @@ pub mod tline;
 pub mod topological;
 pub mod topological_acoustic_axion;
 pub mod topological_soliton_comb;
+pub mod topological_weyl_acoustics;
 pub mod valley_acoustic;
 pub mod valleytronics;
 pub mod wakefield;
@@ -350,6 +351,7 @@ pub use topological::{
 };
 pub use topological_acoustic_axion::*;
 pub use topological_soliton_comb::*;
+pub use topological_weyl_acoustics::*;
 pub use valley_acoustic::*;
 pub use valleytronics::*;
 pub use wakefield::{BetatronRadiation, BubbleRegime, LaserPulseParams, PlasmaChannelParams};
