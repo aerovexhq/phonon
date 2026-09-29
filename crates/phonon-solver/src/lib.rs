@@ -72,6 +72,7 @@ pub mod quantum_phonon_teleportation;
 pub mod quantum_plasmonics;
 pub mod quantum_time_crystal;
 pub mod quantum_topological_squeezing;
+pub mod quantum_cavity_acoustomechanics;
 pub mod relay;
 pub mod rf;
 pub mod sensors;
@@ -244,6 +245,7 @@ pub use quantum_plasmonics::{
 };
 pub use quantum_time_crystal::*;
 pub use quantum_topological_squeezing::*;
+pub use quantum_cavity_acoustomechanics::*;
 pub use relay::{
     AutonomousRelaySynthesizer, CoupledRelaySolver, CoupledRelayTransientResult,
     CoupledSolverConfig, RelayBenchmarkReport, RelayBenchmarkRunner, RelaySynthesisTarget,
