@@ -59,6 +59,7 @@ pub mod optomechanics;
 pub mod parasitics;
 pub mod phononic;
 pub mod phononic_microcomb;
+pub mod phononic_neural_annealer;
 pub mod phononic_topological;
 pub mod photonic;
 pub mod plasma;
@@ -234,6 +235,7 @@ pub use phononic::{
     VoigtStress, EPSILON_0,
 };
 pub use phononic_microcomb::*;
+pub use phononic_neural_annealer::*;
 pub use phononic_topological::*;
 pub use photonic::{
     ElectroOpticModulatorModel, EyeMetrics, EyeSample, LaserDiodeModel, LaserDiodeState,
