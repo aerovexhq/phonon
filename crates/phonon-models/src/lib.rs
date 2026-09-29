@@ -18,6 +18,7 @@ pub mod diamond_nv;
 pub mod diode;
 pub mod em;
 pub mod floquet;
+pub mod floquet_topological;
 pub mod fqh;
 pub mod fractional_chern;
 pub mod hetero;
@@ -117,6 +118,7 @@ pub use em::{
     VACUUM_PERMEABILITY, WGS84_A_METERS, WGS84_B_METERS, WGS84_E_SQ, WGS84_FLATTENING,
 };
 pub use floquet::*;
+pub use floquet_topological::*;
 pub use fqh::*;
 pub use fractional_chern::*;
 pub use hetero::{
