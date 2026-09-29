@@ -28,6 +28,7 @@ pub mod mvl;
 pub mod net;
 pub mod neuromorphic;
 pub mod non_hermitian;
+pub mod non_hermitian_skin;
 pub mod optics;
 pub mod optimization;
 pub mod optomechanics;
@@ -128,6 +129,7 @@ pub use non_hermitian::{
     LaserSimulationResult, MaxwellBlochSolver, NonHermitianEigenResult, NonHermitianEigensolver,
     TopologicalLaserBenchmarkReport, TopologicalLaserBenchmarkRunner,
 };
+pub use non_hermitian_skin::*;
 pub use optics::{
     AabbBox, CheckerPlane, LightSource, OffscreenPerceptionEngine, OpticalBenchmarkReport,
     OpticalBenchmarkRunner, OpticalRealismTier, PerceptionFrame, RayHit, SceneObject, Sphere,

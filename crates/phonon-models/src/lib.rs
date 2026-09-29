@@ -35,6 +35,7 @@ pub mod mosfet;
 pub mod mvl;
 pub mod net;
 pub mod non_hermitian;
+pub mod non_hermitian_skin;
 pub mod optics;
 pub mod optimization;
 pub mod optomechanics;
@@ -166,6 +167,7 @@ pub use non_hermitian::{
     LaserRateEquationParams, PtDimerParams, PtPhaseRegime, SshLatticeParams,
     TopologicalLatticePhase,
 };
+pub use non_hermitian_skin::*;
 pub use optics::{
     silicon_quantum_efficiency, transduce_cmos_pixel, CameraIntrinsics, CmosPixelConfig,
     OpticalCamera, PixelOutput, ShutterType, SILICON_BANDGAP_JOULES, SILICON_CUTOFF_WAVELENGTH_NM,
