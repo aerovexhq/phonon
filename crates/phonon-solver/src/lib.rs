@@ -14,6 +14,7 @@ pub mod hetero;
 pub mod jtwpa;
 pub mod kitwpa;
 pub mod lidar;
+pub mod magnon_bec;
 pub mod mixed_signal;
 pub mod mna;
 pub mod moire;
@@ -84,6 +85,7 @@ pub use lidar::{
     Aabb, BvhHit, BvhNode, BvhPrimitive, BvhTree, LidarBenchmarkReport, LidarBenchmarkRunner,
     LidarPoint, LidarPointCloud, TofLidarEngine,
 };
+pub use magnon_bec::*;
 pub use mixed_signal::{
     solve_mixed_signal, DigitalTraceStep, MixedSignalCircuit, MixedSignalOptions,
     MixedSignalSolution,

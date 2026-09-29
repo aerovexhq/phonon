@@ -4,14 +4,6 @@
 
 ## Future
 
-### Phase 64: Chiral Phonon-Magnon Polaritons, Acoustic Spin Pumping & Terahertz Acoustoelectronics
-Develop an autonomous multi-physics solver modeling chiral phonon-magnon polaritons in magnetic metamaterials.
-Formulate magneto-elastic coupling tensors, acoustic angular momentum conservation, and chiral phonon generation.
-Model acoustic spin pumping across ferromagnet-heavy metal interfaces and transverse ISHE voltage generation.
-Synthesize coherent acoustic wave transduction, sub-diffraction phononic guiding, and non-reciprocal acoustic transport.
-Implement multi-threaded Rayon elastodynamic-micromagnetic coupled PDE integrators and S-matrix solvers.
-Benchmark chiral phonon-magnon polaritons across 10,000 drive cycles with verified isolation and high throughput.
-
 ### Phase 65: Quantum Acoustic Cavity Resonators, Surface Acoustic Wave Qubits & Phonon-Mediated Entanglement
 Develop an autonomous multi-physics solver modeling quantum acoustic cavity resonators and surface acoustic wave (SAW) qubits.
 Formulate piezo-electric electro-mechanical coupling, interdigital transducer (IDT) microwave-to-phonon conversion, and SAW cavities.
@@ -20,21 +12,37 @@ Synthesize phonon-mediated remote qubit entanglement, phononic quantum memory st
 Implement multi-threaded Rayon quantum master equation solvers with Lindblad phononic dissipation and dephasing.
 Benchmark phonon Fock state preparation, quantum fidelity > 95%, and coherent phonon routing across 10,000 cycles.
 
+### Phase 66: Quantum Plasmonic Nanocircuits, Single-Photon Transistors & Sub-Diffraction Nanophotonics
+Develop an autonomous multi-physics solver modeling quantum plasmonic circuits and metallic nanostructures.
+Formulate non-local hydrodynamic Drude-Lorentz electron gas models, spill-out effects, and surface plasmon polaritons.
+Model single-photon optical switching and gain in quantum emitter-plasmonic waveguide hybrid junctions.
+Synthesize sub-diffraction deep-nanoscale plasmonic routing, directional couplers, and nano-antenna resonators.
+Implement multi-threaded Rayon boundary element (BEM) and Maxwell-Bloch quantum electrodynamic integrators.
+Benchmark plasmonic single-photon switching contrast > 20 dB and sub-diffraction guiding across 10,000 cycles.
+
 ---
 
 ## Current
 
-### Phase 63: Magnon Bose-Einstein Condensation, Spin Superfluidity & Long-Range Spin Transport
-Develop an autonomous multi-physics solver modeling non-equilibrium magnon Bose-Einstein condensates (BEC) in YIG films.
-Formulate parametric microwave pumping, four-magnon scattering thermalization, and critical magnon chemical potential.
-Model spin superfluid hydrodynamic transport equations, macroscopic phase coherence, and dissipationless spin currents.
-Synthesize non-local spin injection and detection geometries across ultra-low-damping magnetic insulator strips.
-Implement multi-threaded Rayon Gross-Pitaevskii non-linear Schrödinger equations for non-equilibrium magnons.
-Benchmark magnon BEC formation, spin superfluid critical velocities, and spin transport across 10,000 sweeps.
+### Phase 64: Chiral Phonon-Magnon Polaritons, Acoustic Spin Pumping & Terahertz Acoustoelectronics
+Develop an autonomous multi-physics solver modeling chiral phonon-magnon polaritons in magnetic metamaterials.
+Formulate magneto-elastic coupling tensors, acoustic angular momentum conservation, and chiral phonon generation.
+Model acoustic spin pumping across ferromagnet-heavy metal interfaces and transverse ISHE voltage generation.
+Synthesize coherent acoustic wave transduction, sub-diffraction phononic guiding, and non-reciprocal acoustic transport.
+Implement multi-threaded Rayon elastodynamic-micromagnetic coupled PDE integrators and S-matrix solvers.
+Benchmark chiral phonon-magnon polaritons across 10,000 drive cycles with verified isolation and high throughput.
 
 ---
 
 ## Done
+
+### Phase 63: Magnon Bose-Einstein Condensation, Spin Superfluidity & Long-Range Spin Transport
+Formulated dipolar-exchange spin-wave dispersion in YIG thin films with finite wavevector energy minimum.
+Modeled four-magnon scattering conserving magnon number and driving non-equilibrium Bose-Einstein condensation.
+Synthesized chemical potential saturation mu_m -> E_min and critical parametric microwave pumping threshold.
+Formulated Gross-Pitaevskii non-linear Schrödinger spatial solver evaluating macroscopic condensate coherence.
+Modeled hydrodynamic spin superfluid velocity v_s, Landau critical velocity v_c, and algebraic 1/L transmission.
+Benchmarked 10,000 parameter sweeps across Rayon threads verifying long-range transport advantage > 1000x at 50 um.
 
 ### Phase 62: Superconducting Kinetic Inductance Traveling-Wave Parametric Amplifiers & Dark Matter Haloscopes
 Formulated current-dependent non-linear kinetic inductance in disordered superconductors (NbTiN, granular aluminum).
