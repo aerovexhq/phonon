@@ -2,6 +2,7 @@
 //! Markowitz threshold pivoting, dynamic TR-BDF2 transient solver, and physical conservation probes.
 
 pub mod acoustic;
+pub mod acoustic_holonomic_processor;
 pub mod acoustic_metasurface_holography;
 pub mod acoustic_microcomb_soliton;
 pub mod acoustoelectric;
@@ -324,6 +325,7 @@ pub use phononic_anyon_collider::*;
 pub use quantum_acoustic_tensor_distillation::*;
 pub use opto_acoustic_quantum_repeater::*;
 pub use phonon_magnon_polariton::*;
+pub use acoustic_holonomic_processor::*;
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
     IntegrationMethod, StepControlOptions, TimeWaveform, TransientOptions, TransientSolution,
