@@ -42,6 +42,7 @@ pub mod mosfet;
 pub mod mvl;
 pub mod net;
 pub mod non_hermitian;
+pub mod non_hermitian_chiral_hoti;
 pub mod non_hermitian_skin;
 pub mod non_hermitian_topo;
 pub mod optics;
@@ -186,6 +187,7 @@ pub use non_hermitian::{
     LaserRateEquationParams, PtDimerParams, PtPhaseRegime, SshLatticeParams,
     TopologicalLatticePhase,
 };
+pub use non_hermitian_chiral_hoti::*;
 pub use non_hermitian_skin::*;
 pub use non_hermitian_topo::*;
 pub use optics::{
