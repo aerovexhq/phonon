@@ -1,7 +1,7 @@
 //! Solvers for quantum axion electrodynamics, axion-polariton dispersion,
 //! Witten effect anomalous Hall conductivity, and dark matter haloscope transducers.
 
-use phonon_models::axion_electrodynamics::constants::*;
+use phonon_models::axion_electrodynamics::axion_constants::*;
 use phonon_models::axion_electrodynamics::{AxionConversionMetrics, AxionElectrodynamicsParams};
 
 /// Solver for quantum axion electrodynamics and axion-polariton interactions.
