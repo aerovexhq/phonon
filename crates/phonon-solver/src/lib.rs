@@ -14,6 +14,7 @@ pub mod cavity_acoustomagnonic;
 pub mod cavity_magnomechanics;
 pub mod cavity_magnon_polariton_comb;
 pub mod cavity_spintronics;
+pub mod chiral_acoustic_router;
 pub mod chiral_phonon;
 pub mod chiral_phonon_sc;
 pub mod chiral_phonon_spin_mechanics;
@@ -330,6 +331,7 @@ pub use phonon_magnon_polariton::*;
 pub use acoustic_holonomic_processor::*;
 pub use floquet_majorana_braiding_processor::*;
 pub use opto_electro_phononic_translator::*;
+pub use chiral_acoustic_router::*;
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
     IntegrationMethod, StepControlOptions, TimeWaveform, TransientOptions, TransientSolution,
