@@ -37,6 +37,7 @@ pub mod lidar;
 pub mod magnon_bec;
 pub mod majorana_chiral_phonon;
 pub mod memristor;
+pub mod metamaterial_circulator_cloak;
 pub mod mixed_signal;
 pub mod moire;
 pub mod molecular;
@@ -165,6 +166,7 @@ pub use memristor::{
     MemristiveReservoir, MemristorTechnology, NeuronState, PhaseChangeMemoryModel,
     ReservoirActivation, ReservoirRng, SpikeTimingPlasticityModel, SpikingNeuronModel,
 };
+pub use metamaterial_circulator_cloak::*;
 pub use mixed_signal::{
     A2dBridge, D2aBridge, D2aCompanion, DFlipFlop, DigitalNetwork, LogicGate, LogicGateType,
     PeriodicClock, SarController,

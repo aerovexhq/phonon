@@ -29,6 +29,7 @@ pub mod kitwpa;
 pub mod lidar;
 pub mod magnon_bec;
 pub mod majorana_chiral_phonon;
+pub mod metamaterial_circulator_cloak;
 pub mod mixed_signal;
 pub mod mna;
 pub mod moire;
@@ -126,6 +127,7 @@ pub use lidar::{
 };
 pub use magnon_bec::*;
 pub use majorana_chiral_phonon::*;
+pub use metamaterial_circulator_cloak::*;
 pub use mixed_signal::{
     solve_mixed_signal, DigitalTraceStep, MixedSignalCircuit, MixedSignalOptions,
     MixedSignalSolution,
