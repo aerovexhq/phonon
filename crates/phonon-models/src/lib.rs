@@ -72,6 +72,7 @@ pub mod polariton_exceptional_point;
 pub mod quantum;
 pub mod quantum_acoustic;
 pub mod quantum_acoustic_anyons;
+pub mod quantum_acoustic_waveguide;
 pub mod quantum_phonon_teleportation;
 pub mod quantum_plasmonics;
 pub mod quantum_time_crystal;
@@ -273,6 +274,7 @@ pub use quantum_acoustic::{
     SawSubstrateMaterial, TransmonQubit, VirtualPhononBus,
 };
 pub use quantum_acoustic_anyons::*;
+pub use quantum_acoustic_waveguide::*;
 pub use quantum_phonon_teleportation::*;
 pub use quantum_plasmonics::{
     NobleMetal, PlasmonicSlotWaveguide, QuantumEmitter, SinglePhotonTransistor,
