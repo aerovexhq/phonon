@@ -78,6 +78,7 @@ pub mod phononic;
 pub mod phononic_anyon_collider;
 pub mod phononic_microcomb;
 pub mod phononic_neural_annealer;
+pub mod phononic_superconducting_majorana;
 pub mod phononic_topological;
 pub mod plasma;
 pub mod polariton_condensate;
@@ -362,6 +363,7 @@ pub use cavity_acoustodynamical_spin::*;
 pub use topological_acoustic_skyrmion::*;
 pub use non_hermitian_quadrupole_laser::*;
 pub use chiral_holographic_beamforming::*;
+pub use phononic_superconducting_majorana::*;
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
     IntegrationMethod, StepControlOptions, TimeWaveform, TransientOptions, TransientSolution,

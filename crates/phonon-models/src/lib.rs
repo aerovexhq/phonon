@@ -85,6 +85,7 @@ pub mod phononic;
 pub mod phononic_anyon_collider;
 pub mod phononic_microcomb;
 pub mod phononic_neural_annealer;
+pub mod phononic_superconducting_majorana;
 pub mod phononic_topological;
 pub mod photonic;
 pub mod plasma;
@@ -445,6 +446,9 @@ pub use non_hermitian_quadrupole_laser::{
 };
 pub use chiral_holographic_beamforming::{
     ChiralHolographicBeamformingMetrics, ChiralHolographicBeamformingParams,
+};
+pub use phononic_superconducting_majorana::{
+    PhononicSuperconductingMajoranaMetrics, PhononicSuperconductingMajoranaParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
