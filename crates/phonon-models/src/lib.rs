@@ -34,6 +34,7 @@ pub mod jtwpa;
 pub mod kitwpa;
 pub mod lidar;
 pub mod magnon_bec;
+pub mod majorana_chiral_phonon;
 pub mod memristor;
 pub mod mixed_signal;
 pub mod moire;
@@ -154,6 +155,7 @@ pub use lidar::{
     ScanningArchitecture, WAVELENGTH_1550_NM, WAVELENGTH_905_NM,
 };
 pub use magnon_bec::*;
+pub use majorana_chiral_phonon::*;
 pub use memristor::{
     CrossbarCellType, DelayOscillatorType, DelayedFeedbackReservoir, FerroelectricFetModel,
     FilamentaryRramModel, MemristiveCrossbarModel, MemristiveNonIdealityConfig,
