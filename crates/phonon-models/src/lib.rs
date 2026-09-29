@@ -60,6 +60,7 @@ pub mod synthesis;
 pub mod tcad;
 pub mod tline;
 pub mod topological;
+pub mod valleytronics;
 pub mod wakefield;
 
 pub use acoustic::{
@@ -276,4 +277,5 @@ pub use topological::{
     ArmId, BdGHamiltonian, BdGSolution, MajoranaNanowire, NanowireParams, QubitState,
     TJunctionNanowireNetwork, TopologicalQubit, TunnelingConductanceModel, QUANTUM_CONDUCTANCE,
 };
+pub use valleytronics::*;
 pub use wakefield::{BetatronRadiation, BubbleRegime, LaserPulseParams, PlasmaChannelParams};

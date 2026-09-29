@@ -4,14 +4,6 @@
 
 ## Future
 
-### Phase 71: Fractional Chern Insulators, Moiré Flat Bands & Anyonic Teleportation
-Develop an autonomous multi-physics solver modeling fractional Chern insulators in moiré flat bands.
-Formulate fractional quantum Hall states without magnetic fields, flat-band Berry curvature, and quantum geometry.
-Model fractional anyon excitations, fractional charge e/3 and e/5, and non-Abelian braiding statistics.
-Synthesize anyonic quantum state teleportation protocols across topological twisted bilayer moiré channels.
-Implement multi-threaded Rayon exact diagonalization and many-body Chern number topological solvers.
-Benchmark anyonic teleportation state fidelity > 99% and spectral gap stability across 10,000 configurations.
-
 ### Phase 72: Non-Hermitian Skin Effect, Acoustic Exceptional Surfaces & Directed Wave Localization
 Develop an autonomous multi-physics solver modeling acoustic non-Hermitian skin effects and exceptional surfaces.
 Formulate non-Hermitian dynamical matrices with non-reciprocal coupling and point-gap topological invariants.
@@ -20,21 +12,37 @@ Synthesize topological directional amplifiers, non-reciprocal acoustic diodes, a
 Implement multi-threaded Rayon non-unitary Green's function and non-Bloch transfer matrix solvers.
 Benchmark skin effect localization factor > 30 dB and directional amplification across 10,000 parameter sweeps.
 
+### Phase 73: Topological Floquet Engineering, Ultrafast Chiral Light & Dynamic Hall States
+Develop an autonomous multi-physics solver modeling dynamic Floquet engineering in 2D quantum materials.
+Formulate time-periodic drive Hamiltonians, Floquet-Bloch quasi-energy bands, and light-induced topological gaps.
+Model circularly polarized ultrafast laser pulse driving, synthetic gauge fields, and photo-induced Chern numbers.
+Synthesize ultrafast Floquet topological switches, dynamic Hall routing channels, and optical Floquet transistors.
+Implement multi-threaded Rayon Floquet-Magnus expansion and time-evolution unitary propagator solvers.
+Benchmark Floquet bandgap opening > 50 meV and dynamic Hall current switching across 10,000 parameter sweeps.
+
 ---
 
 ## Current
 
-### Phase 70: Quantum Valleytronics, Berry Curvature Dipoles & Non-Linear Hall Transport
-Develop an autonomous multi-physics solver modeling 2D quantum valleytronics and Berry curvature dipoles.
-Formulate broken inversion symmetry band structures, valley-dependent optical selection rules, and orbital moments.
-Model non-linear anomalous Hall effect driven by time-reversal symmetric Berry curvature dipole moments.
-Synthesize valley Hall transistors, pure valley currents, and dissipationless topological routing channels.
-Implement multi-threaded Rayon semiclassical wavepacket Boltzmann and non-linear transport integrators.
-Benchmark valley Hall rectification ratio > 20 dB and non-linear Hall conductance across 10,000 parameter sweeps.
+### Phase 71: Fractional Chern Insulators, Moiré Flat Bands & Anyonic Teleportation
+Develop an autonomous multi-physics solver modeling fractional Chern insulators in moiré flat bands.
+Formulate fractional quantum Hall states without magnetic fields, flat-band Berry curvature, and quantum geometry.
+Model fractional anyon excitations, fractional charge e/3 and e/5, and non-Abelian braiding statistics.
+Synthesize anyonic quantum state teleportation protocols across topological twisted bilayer moiré channels.
+Implement multi-threaded Rayon exact diagonalization and many-body Chern number topological solvers.
+Benchmark anyonic teleportation state fidelity > 99% and spectral gap stability across 10,000 configurations.
 
 ---
 
 ## Done
+
+### Phase 70: Quantum Valleytronics, Berry Curvature Dipoles & Non-Linear Hall Transport
+Formulated 2D massive Dirac valley Hamiltonian with broken inversion symmetry and giant SOC.
+Modeled valley-dependent Berry curvature, orbital magnetic moments, and 100% circular dichroism.
+Synthesized Berry curvature dipole tensor D_xz for tilted/strained TMDs breaking in-plane mirror symmetry.
+Formulated second-order non-linear Hall current j_y^(2w) and non-linear susceptibility chi_yxx.
+Implemented semiclassical Peierls-Boltzmann transport and gate-tunable valley Hall transistor solvers.
+Benchmarked 10,000 parameter sweeps across Rayon threads verifying rectification >= 20 dB and high throughput.
 
 ### Phase 69: Quantum Acoustoelectric Charge Transport & Single-Electron Acoustic Pumps
 Formulated piezoelectric dynamic quantum dot potential wells moving at surface acoustic wave velocity.
