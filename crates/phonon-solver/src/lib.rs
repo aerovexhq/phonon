@@ -85,6 +85,7 @@ pub mod synthesis;
 pub mod topological;
 pub mod topological_acoustic_axion;
 pub mod topological_soliton_comb;
+pub mod topological_weyl_acoustics;
 pub mod transient;
 pub mod valley_acoustic;
 pub mod valleytronics;
@@ -288,6 +289,7 @@ pub use topological::{
 };
 pub use topological_acoustic_axion::*;
 pub use topological_soliton_comb::*;
+pub use topological_weyl_acoustics::*;
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
     IntegrationMethod, StepControlOptions, TimeWaveform, TransientOptions, TransientSolution,
