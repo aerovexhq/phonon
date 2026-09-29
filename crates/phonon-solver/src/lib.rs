@@ -36,6 +36,7 @@ pub mod floquet_topological;
 pub mod fqh;
 pub mod fqh_acoustic_interferometer;
 pub mod fractional_chern;
+pub mod fractional_hall_parafermion;
 pub mod hetero;
 pub mod hexagonal_majorana;
 pub mod high_harmonic_bloch;
@@ -350,6 +351,7 @@ pub use non_hermitian_edge_soliton::*;
 pub use phonon_exciton_polariton::*;
 pub use floquet_synthetic_gauge::*;
 pub use holonomic_quantum_processor::*;
+pub use fractional_hall_parafermion::*;
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
     IntegrationMethod, StepControlOptions, TimeWaveform, TransientOptions, TransientSolution,
