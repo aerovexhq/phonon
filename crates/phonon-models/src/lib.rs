@@ -75,6 +75,7 @@ pub mod radiation;
 pub mod relay;
 pub mod sensors;
 pub mod simd;
+pub mod skyrmion_braiding_memory;
 pub mod skyrmion_phonon_drag;
 pub mod snspd;
 pub mod space;
@@ -288,6 +289,7 @@ pub use sensors::{
     STANDARD_SEA_LEVEL_TEMP_K, STANDARD_TEMP_LAPSE_RATE_K_PER_M, UNIVERSAL_GAS_CONSTANT,
 };
 pub use simd::{batch_evaluate_diodes_simd, batch_evaluate_nmos_simd, MosfetBatchOutput};
+pub use skyrmion_braiding_memory::*;
 pub use skyrmion_phonon_drag::*;
 pub use snspd::*;
 pub use space::{
