@@ -18,6 +18,7 @@ pub mod em;
 pub mod floquet;
 pub mod fqh;
 pub mod hetero;
+pub mod hexagonal_majorana;
 pub mod hierarchical;
 pub mod jtwpa;
 pub mod kitwpa;
@@ -115,6 +116,7 @@ pub use hetero::{
     HeteroMaterialProperties, HeteroMaterialType, ProcessorBlockType, ProcessorFloorplan,
     RiscVFloorplanBuilder, ThermalHotspotReport, ThermalHotspotSolver, ThermoMechanicalStressModel,
 };
+pub use hexagonal_majorana::*;
 pub use hierarchical::{HierarchicalDiodeBuilder, HierarchicalTransistorBuilder};
 pub use jtwpa::{DispersionEngineeringParams, ParametricProcessParams, SnailElementParams};
 pub use kitwpa::*;

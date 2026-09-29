@@ -4,14 +4,6 @@
 
 ## Future
 
-### Phase 68: Topological Chiral Phonon Heat Transport, Acoustic Quantum Hall Effect & Phonon Diodes
-Develop an autonomous multi-physics solver modeling topological chiral phonon heat transport and thermal Hall effects.
-Formulate Raman-type spin-phonon interactions, Berry curvature of acoustic bands, and non-zero thermal Hall conductivity.
-Model directional phononic heat currents, acoustic boundary reflection immunity, and phononic diodes.
-Synthesize nanostructured thermal rectifiers and non-equilibrium thermal transport across topological interfaces.
-Implement multi-threaded Rayon non-equilibrium Green's function (NEGF) and Boltzmann transport solvers.
-Benchmark thermal rectification ratio > 10x and topological edge heat flux across 10,000 thermal cycles.
-
 ### Phase 69: Quantum Acoustoelectric Charge Transport & Single-Electron Acoustic Pumps
 Develop an autonomous multi-physics solver modeling quantum acoustoelectric single-electron transport.
 Formulate piezoelectric dynamic quantum dot potential wells moving at surface acoustic wave velocity.
@@ -20,21 +12,37 @@ Synthesize flying qubit architecture, single-electron spin initialization, and f
 Implement multi-threaded Rayon time-dependent Schrödinger and Master equation quantum wavepacket solvers.
 Benchmark single-electron pumping precision |I / (e * f) - 1| < 1e-4 across 10,000 acoustic cycles.
 
+### Phase 70: Quantum Valleytronics, Berry Curvature Dipoles & Non-Linear Hall Transport
+Develop an autonomous multi-physics solver modeling 2D quantum valleytronics and Berry curvature dipoles.
+Formulate broken inversion symmetry band structures, valley-dependent optical selection rules, and orbital moments.
+Model non-linear anomalous Hall effect driven by time-reversal symmetric Berry curvature dipole moments.
+Synthesize valley Hall transistors, pure valley currents, and dissipationless topological routing channels.
+Implement multi-threaded Rayon semiclassical wavepacket Boltzmann and non-linear transport integrators.
+Benchmark valley Hall rectification ratio > 20 dB and non-linear Hall conductance across 10,000 parameter sweeps.
+
 ---
 
 ## Current
 
-### Phase 67: Non-Abelian Braiding of Majorana Fermions in Hexagonal Superconducting Arrays
-Develop an autonomous multi-physics solver modeling non-Abelian Majorana zero modes in hexagonal 2D arrays.
-Formulate proximity-induced topological superconductivity, Rashba spin-orbit coupling, and Zeeman field splitting.
-Model adiabatic geometric braiding gates across tri-junction networks and verify non-Abelian braid statistics.
-Synthesize parity measurement readout, dynamical decoherence suppression, and topological qubit encoding.
-Implement multi-threaded Rayon time-dependent Bogoliubov-de Gennes differential equation integrators.
-Benchmark non-Abelian braiding operations across 10,000 braid trajectories with quantum state fidelity > 99%.
+### Phase 68: Topological Chiral Phonon Heat Transport, Acoustic Quantum Hall Effect & Phonon Diodes
+Develop an autonomous multi-physics solver modeling topological chiral phonon heat transport and thermal Hall effects.
+Formulate Raman-type spin-phonon interactions, Berry curvature of acoustic bands, and non-zero thermal Hall conductivity.
+Model directional phononic heat currents, acoustic boundary reflection immunity, and phononic diodes.
+Synthesize nanostructured thermal rectifiers and non-equilibrium thermal transport across topological interfaces.
+Implement multi-threaded Rayon non-equilibrium Green's function (NEGF) and Boltzmann transport solvers.
+Benchmark thermal rectification ratio > 10x and topological edge heat flux across 10,000 thermal cycles.
 
 ---
 
 ## Done
+
+### Phase 67: Non-Abelian Braiding of Majorana Fermions in Hexagonal Superconducting Arrays
+Formulated proximity-induced topological superconductivity in 2D hexagonal nanowire arrays.
+Modeled directional Rashba spin-orbit coupling and orientation-dependent topological minigaps.
+Synthesized 120-degree tri-junction vertices and Alicea 3-step adiabatic exchange protocols.
+Implemented time-dependent Bogoliubov-de Gennes RK4 solver with unitary wavepacket propagation.
+Formulated 4-Majorana topological qubit registers, Clifford gates, and quantum capacitance readout.
+Benchmarked 10,000 braid sweeps across Rayon threads verifying fidelity >= 99% and high throughput.
 
 ### Phase 66: Quantum Plasmonic Nanocircuits, Single-Photon Transistors & Sub-Diffraction Nanophotonics
 Formulated non-local hydrodynamic Drude electron gas models with quantum pressure velocity beta_nl.
