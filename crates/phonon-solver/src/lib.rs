@@ -107,6 +107,7 @@ pub mod topological_soliton_comb;
 pub mod topological_weyl_acoustics;
 pub mod topological_majorana_braiding;
 pub mod topological_chern_circulator;
+pub mod topological_corner_laser;
 pub mod transient;
 pub mod valley_acoustic;
 pub mod valleytronics;
@@ -332,6 +333,7 @@ pub use acoustic_holonomic_processor::*;
 pub use floquet_majorana_braiding_processor::*;
 pub use opto_electro_phononic_translator::*;
 pub use chiral_acoustic_router::*;
+pub use topological_corner_laser::*;
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
     IntegrationMethod, StepControlOptions, TimeWaveform, TransientOptions, TransientSolution,
