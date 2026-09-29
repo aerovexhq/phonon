@@ -32,6 +32,7 @@ pub mod phononic;
 pub mod phononic_topological;
 pub mod plasma;
 pub mod quantum;
+pub mod quantum_acoustic;
 pub mod relay;
 pub mod rf;
 pub mod sensors;
@@ -145,6 +146,12 @@ pub use quantum::{
     CovarianceMatrix4x4, OptomechanicalBenchmarkReport, OptomechanicalBenchmarkRunner,
     OptomechanicalQleSolver, QuantumTransductionMetrics, QuantumTransductionSolver,
     TransducerTechnology, TransductionEvaluationPoint,
+};
+pub use quantum_acoustic::{
+    evaluate_saw_beam_splitter, run_quantum_acoustic_benchmark, CqaMasterEquationSolver,
+    HomRoutingReport, PhononEntanglementSolver, QuantumAcousticBenchmarkReport,
+    QuantumAcousticSweepResult, QubitPhononDensityMatrix, TwoQubitDensityMatrix, FOCK_DIM,
+    HILBERT_DIM, TWO_QUBIT_DIM,
 };
 pub use relay::{
     AutonomousRelaySynthesizer, CoupledRelaySolver, CoupledRelayTransientResult,
