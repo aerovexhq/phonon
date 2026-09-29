@@ -33,6 +33,7 @@ pub mod fractional_chern;
 pub mod hetero;
 pub mod hexagonal_majorana;
 pub mod hierarchical;
+pub mod high_harmonic_bloch;
 pub mod interfacial_superconductivity;
 pub mod jtwpa;
 pub mod kitwpa;
@@ -161,6 +162,7 @@ pub use hetero::{
 };
 pub use hexagonal_majorana::*;
 pub use hierarchical::{HierarchicalDiodeBuilder, HierarchicalTransistorBuilder};
+pub use high_harmonic_bloch::*;
 pub use interfacial_superconductivity::*;
 pub use jtwpa::{DispersionEngineeringParams, ParametricProcessParams, SnailElementParams};
 pub use kitwpa::*;
