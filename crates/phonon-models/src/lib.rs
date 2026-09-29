@@ -22,6 +22,7 @@ pub mod cavity_spintronics;
 pub mod chemistry;
 pub mod chiral_acoustic_router;
 pub mod chiral_chern_anyon_braiding;
+pub mod chiral_holographic_beamforming;
 pub mod chiral_phonon;
 pub mod chiral_phonon_sc;
 pub mod chiral_phonon_spin_mechanics;
@@ -441,6 +442,9 @@ pub use topological_acoustic_skyrmion::{
 };
 pub use non_hermitian_quadrupole_laser::{
     NonHermitianQuadrupoleLaserMetrics, NonHermitianQuadrupoleLaserParams,
+};
+pub use chiral_holographic_beamforming::{
+    ChiralHolographicBeamformingMetrics, ChiralHolographicBeamformingParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
