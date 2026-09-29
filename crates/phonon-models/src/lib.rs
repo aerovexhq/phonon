@@ -83,6 +83,7 @@ pub mod quantum_plasmonics;
 pub mod quantum_time_crystal;
 pub mod quantum_topological_squeezing;
 pub mod quantum_cavity_acoustomechanics;
+pub mod quantum_teleportation_waveguide;
 pub mod radiation;
 pub mod relay;
 pub mod sensors;
@@ -296,6 +297,7 @@ pub use quantum_plasmonics::{
 pub use quantum_time_crystal::*;
 pub use quantum_topological_squeezing::*;
 pub use quantum_cavity_acoustomechanics::*;
+pub use quantum_teleportation_waveguide::*;
 pub use radiation::{
     DiceCell, DisplacementDamageModel, HeavyIonStrikeModel, LatchupEvaluation,
     ParasiticThyristorModel, StandardSramCell, StrikeOutcome, TmrVoter, TotalIonizingDoseModel,
