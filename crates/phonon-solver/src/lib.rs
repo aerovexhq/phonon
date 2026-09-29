@@ -64,6 +64,7 @@ pub mod optics;
 pub mod optimization;
 pub mod optomechanics;
 pub mod opto_acoustic_quantum_repeater;
+pub mod opto_electro_phononic_translator;
 pub mod phonon_magnon_polariton;
 pub mod parallel;
 pub mod phononic;
@@ -328,6 +329,7 @@ pub use opto_acoustic_quantum_repeater::*;
 pub use phonon_magnon_polariton::*;
 pub use acoustic_holonomic_processor::*;
 pub use floquet_majorana_braiding_processor::*;
+pub use opto_electro_phononic_translator::*;
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
     IntegrationMethod, StepControlOptions, TimeWaveform, TransientOptions, TransientSolution,
