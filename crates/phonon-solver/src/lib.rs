@@ -68,6 +68,7 @@ pub mod superconducting;
 pub mod superconducting_spintronics;
 pub mod synthesis;
 pub mod topological;
+pub mod topological_soliton_comb;
 pub mod transient;
 pub mod valley_acoustic;
 pub mod valleytronics;
@@ -254,6 +255,7 @@ pub use topological::{
     BenchmarkComparisonReport, BraidingStepResult, FermionParitySolver, MajoranaBraidingSolver,
     ParityTrackingReport, TopologicalBenchmarkRunner,
 };
+pub use topological_soliton_comb::*;
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
     IntegrationMethod, StepControlOptions, TimeWaveform, TransientOptions, TransientSolution,
