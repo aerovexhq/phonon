@@ -32,6 +32,7 @@ pub mod hetero;
 pub mod hexagonal_majorana;
 pub mod high_harmonic_bloch;
 pub mod interfacial_superconductivity;
+pub mod josephson_vortex_ratchet;
 pub mod jtwpa;
 pub mod kitwpa;
 pub mod lidar;
@@ -144,6 +145,7 @@ pub use hetero::{
 pub use hexagonal_majorana::*;
 pub use high_harmonic_bloch::*;
 pub use interfacial_superconductivity::*;
+pub use josephson_vortex_ratchet::*;
 pub use jtwpa::{
     CoupledModeResult, CoupledModeSolver, JtwpaBenchmarkReport, JtwpaBenchmarkRunner,
     QuantumNoiseResult, QuantumNoiseSolver,
