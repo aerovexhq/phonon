@@ -62,6 +62,7 @@ pub mod optics;
 pub mod optimization;
 pub mod optomechanics;
 pub mod opto_acoustic_quantum_repeater;
+pub mod phonon_magnon_polariton;
 pub mod parallel;
 pub mod phononic;
 pub mod phononic_anyon_collider;
@@ -322,6 +323,7 @@ pub use majorana_surface_memory::*;
 pub use phononic_anyon_collider::*;
 pub use quantum_acoustic_tensor_distillation::*;
 pub use opto_acoustic_quantum_repeater::*;
+pub use phonon_magnon_polariton::*;
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
     IntegrationMethod, StepControlOptions, TimeWaveform, TransientOptions, TransientSolution,
