@@ -14,6 +14,7 @@ pub mod assets;
 pub mod atomistic;
 pub mod axion_electrodynamics;
 pub mod bjt;
+pub mod cavity_acoustodynamical_spin;
 pub mod cavity_acoustomagnonic;
 pub mod cavity_magnomechanics;
 pub mod cavity_magnon_polariton_comb;
@@ -429,6 +430,9 @@ pub use fractional_hall_parafermion::{
 };
 pub use topological_time_crystal::{
     TopologicalTimeCrystalMetrics, TopologicalTimeCrystalParams,
+};
+pub use cavity_acoustodynamical_spin::{
+    CavityAcoustodynamicalSpinMetrics, CavityAcoustodynamicalSpinParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
