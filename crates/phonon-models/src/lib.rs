@@ -124,6 +124,7 @@ pub mod topological_corner_laser;
 pub mod topological_moire_polariton;
 pub mod non_hermitian_skin_amplifier;
 pub mod non_hermitian_edge_soliton;
+pub mod phonon_exciton_polariton;
 pub mod valley_acoustic;
 pub mod valleytronics;
 pub mod wakefield;
@@ -409,6 +410,9 @@ pub use topological_moire_polariton::{
 };
 pub use non_hermitian_edge_soliton::{
     NonHermitianEdgeSolitonMetrics, NonHermitianEdgeSolitonParams,
+};
+pub use phonon_exciton_polariton::{
+    PhononExcitonPolaritonMetrics, PhononExcitonPolaritonParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
