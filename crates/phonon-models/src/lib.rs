@@ -123,6 +123,7 @@ pub mod topological_chern_circulator;
 pub mod topological_corner_laser;
 pub mod topological_moire_polariton;
 pub mod non_hermitian_skin_amplifier;
+pub mod non_hermitian_edge_soliton;
 pub mod valley_acoustic;
 pub mod valleytronics;
 pub mod wakefield;
@@ -405,6 +406,9 @@ pub use chiral_chern_anyon_braiding::*;
 pub use acoustomagnonic_comb::{AcoustomagnonicCombMetrics, AcoustomagnonicCombParams};
 pub use topological_moire_polariton::{
     TopologicalMoirePolaritonMetrics, TopologicalMoirePolaritonParams,
+};
+pub use non_hermitian_edge_soliton::{
+    NonHermitianEdgeSolitonMetrics, NonHermitianEdgeSolitonParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
