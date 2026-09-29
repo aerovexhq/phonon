@@ -1,64 +1,76 @@
-//! Multi-threaded Rayon benchmark verification for chiral acoustic Majorana braiding across 10,000 parameter sweeps.
+//! Automated 10,000-sweep parallel benchmark and physical compliance test
+//! for topological Majorana braiding across multi-threaded Rayon workers.
 
-use phonon_solver::majorana_chiral_phonon::MajoranaBraidingBenchmarkRunner;
+use phonon_solver::topological_majorana_braiding::MajoranaBraidingBenchmarkRunner;
 
 #[test]
-fn test_majorana_braiding_parallel_benchmark() {
-    let runner = MajoranaBraidingBenchmarkRunner::new(10_000);
-    let report = runner.run_benchmark();
+fn test_10k_majorana_braiding_parallel_sweep() {
+    let cycles = 10_000;
+    let result = MajoranaBraidingBenchmarkRunner::run_benchmark(cycles);
 
-    println!("\n=== Chiral Acoustic Majorana Braiding 10,000 Parameter Sweep Benchmark ===");
-    println!("Total sweeps:                 {}", report.total_cycles);
-    println!(
-        "Elapsed time:                 {:.4} s",
-        report.elapsed_seconds
-    );
-    println!(
-        "Throughput:                   {:.2} sweeps/s",
-        report.throughput_cycles_per_sec
-    );
-    println!(
-        "Mean Braiding Fidelity:       {:.3}% (min: {:.3}%, max: {:.3}%)",
-        report.mean_braiding_fidelity_pct,
-        report.min_braiding_fidelity_pct,
-        report.max_braiding_fidelity_pct
-    );
-    println!(
-        "Mean Non-Abelian Phase:       {:.4} rad (ideal: {:.4} rad)",
-        report.mean_non_abelian_phase_rad,
-        std::f64::consts::FRAC_PI_2
-    );
-    println!(
-        "Max Phase Error:              {:.4} rad (threshold: <= 0.05 rad)",
-        report.max_phase_error_rad
-    );
-    println!(
-        "Mean Landau-Zener Leakage:    {:.4e} (max: {:.4e})",
-        report.mean_landau_zener_leakage, report.max_landau_zener_leakage
-    );
-    println!(
-        "Mean Parity Readout SNR:      {:.2} dB (min: {:.2} dB)",
-        report.mean_parity_readout_snr_db, report.min_parity_readout_snr_db
-    );
-    println!(
-        "Mean Dephasing Time:          {:.2} us",
-        report.mean_dephasing_time_us
-    );
-    println!(
-        "Physical Compliance Fraction: {:.4} (100% required)",
-        report.compliance_fraction
-    );
-
-    assert_eq!(report.total_cycles, 10_000);
-    assert!(report.mean_braiding_fidelity_pct >= 99.0);
-    assert!(report.min_braiding_fidelity_pct >= 99.0);
-    assert!(report.max_phase_error_rad <= 0.05);
-    assert!(report.max_landau_zener_leakage <= 1.0e-3);
-    assert!(report.mean_parity_readout_snr_db >= 20.0);
-    assert!(report.min_parity_readout_snr_db >= 20.0);
-    assert!(report.mean_dephasing_time_us >= 10.0);
     assert_eq!(
-        report.compliance_fraction, 1.0,
-        "All 10,000 parameter sweeps must satisfy physical bounds"
+        result.total_cycles, cycles,
+        "Total benchmark cycles must equal requested 10,000"
+    );
+
+    // Verify 100% physical compliance across all parameter sweep variations
+    assert!(
+        (result.physical_compliance_fraction - 1.0).abs() < 1.0e-6,
+        "Physical compliance fraction must be 100.0%, got {:.2}%",
+        result.physical_compliance_fraction * 100.0
+    );
+
+    // Assert braiding gate fidelity >= 99.90%
+    assert!(
+        result.mean_braiding_fidelity >= 0.9990,
+        "Mean braiding gate fidelity must be >= 99.90%, got {:.4}%",
+        result.mean_braiding_fidelity * 100.0
+    );
+    assert!(
+        result.min_braiding_fidelity >= 0.9990,
+        "Worst-case braiding gate fidelity must be >= 99.90%, got {:.4}%",
+        result.min_braiding_fidelity * 100.0
+    );
+
+    // Assert non-Abelian phase error <= 1.0e-4 rad
+    assert!(
+        result.mean_phase_error_rad <= 1.0e-4,
+        "Mean non-Abelian phase error must be <= 1.0e-4 rad, got {:.3e} rad",
+        result.mean_phase_error_rad
+    );
+    assert!(
+        result.max_phase_error_rad <= 1.0e-4,
+        "Worst-case non-Abelian phase error must be <= 1.0e-4 rad, got {:.3e} rad",
+        result.max_phase_error_rad
+    );
+
+    // Assert parity readout contrast >= 95.0%
+    assert!(
+        result.mean_parity_contrast >= 0.950,
+        "Mean parity readout contrast must be >= 95.0%, got {:.2}%",
+        result.mean_parity_contrast * 100.0
+    );
+    assert!(
+        result.min_parity_contrast >= 0.950,
+        "Worst-case parity readout contrast must be >= 95.0%, got {:.2}%",
+        result.min_parity_contrast * 100.0
+    );
+
+    // Assert braiding cycle period <= 50.0 ns
+    assert!(
+        result.mean_braiding_period_ns <= 50.0,
+        "Mean braiding cycle period must be <= 50.0 ns, got {:.2} ns",
+        result.mean_braiding_period_ns
+    );
+    assert!(
+        result.max_braiding_period_ns <= 50.0,
+        "Worst-case braiding cycle period must be <= 50.0 ns, got {:.2} ns",
+        result.max_braiding_period_ns
+    );
+
+    assert!(
+        result.throughput_sweeps_per_sec > 0.0,
+        "Throughput must be positive, got {:.2} sweeps/sec",
+        result.throughput_sweeps_per_sec
     );
 }
