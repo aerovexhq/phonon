@@ -11,6 +11,7 @@ pub mod acoustomagnonic_comb;
 pub mod afm_spintronics;
 pub mod assets;
 pub mod axion_electrodynamics;
+pub mod cavity_acoustodynamical_spin;
 pub mod cavity_acoustomagnonic;
 pub mod cavity_magnomechanics;
 pub mod cavity_magnon_polariton_comb;
@@ -354,6 +355,7 @@ pub use floquet_synthetic_gauge::*;
 pub use holonomic_quantum_processor::*;
 pub use fractional_hall_parafermion::*;
 pub use topological_time_crystal::*;
+pub use cavity_acoustodynamical_spin::*;
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
     IntegrationMethod, StepControlOptions, TimeWaveform, TransientOptions, TransientSolution,
