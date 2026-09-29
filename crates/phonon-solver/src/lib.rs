@@ -81,6 +81,7 @@ pub mod quantum_time_crystal;
 pub mod quantum_topological_squeezing;
 pub mod quantum_cavity_acoustomechanics;
 pub mod quantum_teleportation_waveguide;
+pub mod quantum_acoustic_tensor_distillation;
 pub mod relay;
 pub mod rf;
 pub mod sensors;
@@ -318,6 +319,7 @@ pub use topological_chern_circulator::*;
 pub use programmable_chiral_graph::*;
 pub use majorana_surface_memory::*;
 pub use phononic_anyon_collider::*;
+pub use quantum_acoustic_tensor_distillation::*;
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
     IntegrationMethod, StepControlOptions, TimeWaveform, TransientOptions, TransientSolution,
