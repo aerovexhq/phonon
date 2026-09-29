@@ -7,6 +7,7 @@ pub mod acoustic_metasurface_holography;
 pub mod acoustic_microcomb_soliton;
 pub mod acoustoelectric;
 pub mod acoustoelectric_moire;
+pub mod acoustomagnonic_comb;
 pub mod afm_spintronics;
 pub mod assets;
 pub mod axion_electrodynamics;
@@ -338,6 +339,7 @@ pub use chiral_acoustic_router::*;
 pub use topological_corner_laser::*;
 pub use non_hermitian_skin_amplifier::*;
 pub use chiral_chern_anyon_braiding::*;
+pub use acoustomagnonic_comb::*;
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
     IntegrationMethod, StepControlOptions, TimeWaveform, TransientOptions, TransientSolution,
