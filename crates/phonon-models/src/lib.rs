@@ -21,6 +21,7 @@ pub mod hierarchical;
 pub mod jtwpa;
 pub mod kitwpa;
 pub mod lidar;
+pub mod magnon_bec;
 pub mod memristor;
 pub mod mixed_signal;
 pub mod moire;
@@ -117,6 +118,7 @@ pub use lidar::{
     AtmosphericCondition, EchoReturn, FogType, LaserPulseConfig, LaserRay, LidarScannerConfig,
     ScanningArchitecture, WAVELENGTH_1550_NM, WAVELENGTH_905_NM,
 };
+pub use magnon_bec::*;
 pub use memristor::{
     CrossbarCellType, DelayOscillatorType, DelayedFeedbackReservoir, FerroelectricFetModel,
     FilamentaryRramModel, MemristiveCrossbarModel, MemristiveNonIdealityConfig,
