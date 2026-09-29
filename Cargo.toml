@@ -34,3 +34,12 @@ rayon = "1.10"
 eframe = "0.36"
 egui = "0.36"
 egui_plot = "0.37"
+
+[profile.dev]
+debug = 1
+incremental = false
+
+[profile.test]
+debug = 1
+incremental = false
+
