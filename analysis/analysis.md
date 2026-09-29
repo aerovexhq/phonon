@@ -507,15 +507,24 @@ Phonon integrates an autonomous multi-scale molecular spintronics, single-molecu
 - **Circuit Quantum Acoustodynamics (cQAD)**: Models strong coupling between superconducting transmon qubits ($E_J, E_C, \omega_q, \alpha$) and localized acoustic Fabry-Pérot cavity modes with vacuum Rabi frequency $\Omega_R = 2g$ ($g / 2\pi \approx 10 - 20\text{ MHz}$), loaded quality factors $Q_L \ge 10^4$ ($\kappa / 2\pi \sim 100\text{ kHz}$), and cooperativities $\mathcal{C}_{cqa} \gg 1$.
 - **Phonon Fock State Preparation & Quantum Memory**: Implements Lindbladian quantum master equation solver in the composite Hilbert space $\mathcal{H}_q \otimes \mathcal{H}_{ph}$ (truncated to $N_{fock} = 4$, $D = 8$) with exact 4th-order Runge-Kutta numerical integration preserving hermiticity and unit trace. Validates single-phonon Fock state $|g, 1\rangle$ synthesis via vacuum Rabi SWAP gate with fidelity $F_{swap} \ge 95\%$.
 - **Virtual Phonon-Mediated Remote Entanglement**: Formulates virtual phonon exchange between remote qubits detuned from the acoustic bus ($\Delta \gg g$), yielding effective exchange coupling $J_{eff} = g^2 / \Delta$. Simulates open-system two-qubit master equation generating maximally entangled Bell states $|\Psi^+\rangle = \frac{|eg\rangle - i |ge\rangle}{\sqrt{2}}$ at $t_{bell} = \pi / (4 J_{eff})$ with fidelity $F_{bell} \ge 95\%$ and concurrence $\mathcal{C} \ge 0.90$.
-- **Acoustic Beam Splitters & Hong-Ou-Mandel Interference**: Synthesizes 4-port SAW directional coupler beam splitters ($C_{bs} L_{bs} = \pi/4$), demonstrating exact 50:50 power routing ($T = R = 0.5$) and 100% two-phonon Hong-Ou-Mandel bunching visibility ($V_{HOM} = 1.0$) with vanishing coincidence probability ($P_{coinc} = 0.0$).
 - **Parallel Rayon Benchmark**: Benchmarks vacuum Rabi SWAP fidelity, remote Bell state entanglement, cooperativity margins, and HOM visibility across 10,000 parameter sweeps in parallel Rayon threads with 100% strong coupling fraction and high throughput ($> 50,000\text{ sweeps/sec}$).
+
+---
+
+### 11.29 Quantum Plasmonic Nanocircuits, Single-Photon Transistors & Sub-Diffraction Nanophotonics
+- **Non-Local Hydrodynamic Drude Electron Gas**: Formulates non-local quantum hydrodynamic pressure $\beta_{nl} = \sqrt{3/5} v_F$ in noble metals (Ag, Au, Cu, Al), yielding complex Drude permittivity $\epsilon_m(\omega)$, quantum blueshifts of surface plasmon polariton (SPP) resonance in sub-10 nm metallic gaps, and Feibelman surface charge centroid shifts $d_\perp$.
+- **Deep Sub-Diffraction Plasmonic Waveguides**: Synthesizes metal-insulator-metal (MIM) slot waveguides with deep sub-diffraction effective mode volumes $V_{eff} \sim 10^{-5} \lambda_0^3 \ll 10^{-3} \lambda_0^3$, Purcell factors $F_P \ge 100$, and high propagation figures of merit.
+- **Single-Photon Plasmonic Transistor Switching**: Models all-optical single-photon transistor switching driven by single quantum emitters coupled to MIM waveguides. Demonstrates on-resonance transmission extinction, switching contrast $C_{dB} \ge 20\text{ dB}$, and optical gain $G > 10\times$ mediated by metastable dark/spin states.
+- **Maxwell-Bloch Non-Linear Pulse Solver**: Implements coupled 4th-order Runge-Kutta Maxwell-Bloch solver for atomic Bloch vectors $(u, v, w)$ and propagating optical fields, capturing Rabi oscillations, dynamic saturation, and pulse switching transients.
+- **Sub-Micron Routing & Directional Couplers**: Synthesizes 3-dB plasmonic directional couplers and sharp sub-micron waveguide bends ($R_{bend} \sim 250\text{ nm}$) with exponential radiation loss suppression, keeping bend loss $< 1.0\text{ dB}$.
+- **Parallel Rayon Benchmark**: Benchmarks 10,000 parameter sweeps across Rayon threads verifying 100% sub-diffraction compliance ($V_{eff} < 10^{-3} \lambda_0^3$), switching contrast $\ge 20\text{ dB}$, and throughput $> 50,000\text{ sweeps/sec}$.
 
 ---
 
 ## 12. Comprehensive Technology Scaling Comparison
 
 | Dimension | 3nm GAA CMOS Baseline | Molecular QI Logic | Spintronic NML Logic | Cryogenic SOEN Coprocessor | Topological Majorana Qubit | Hypersonic Phononic Logic | **Phonon-Aerovex Multi-Tier RF & Sensor Stack** |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | **Primary Switching / Medium** | Field-effect channel pinch-off | Quantum interference anti-resonance | Magnetostatic stray field & STT | Somatic Josephson $2\pi$ phase slip | Non-Abelian adiabatic braiding ($B_{ij}$) | Coherent acoustic wavepacket interference | **3D Vector EM / Acoustic waves & Transducers** |
 | **Operating Voltage / Drive** | $0.70\text{ V}$ | $0.35\text{ V}$ | $0.15\text{ V}$ (Clock pulse) | $1.0\text{ mV}$ ($V_c = I_c R_n$) | Electrostatic gate ramp ($\Delta \mu \sim 3\text{ meV}$) | $0.0\text{ V}$ DC (Piezoelectric RF excitation) | **Microvolts (Antenna RF) to Standard Bus ($3.3\text{V}$)** |
 | **Logic / Transmission Energy** | $100 - 392\text{ aJ}$ ($2446\text{ meV}$) | **$0.006\text{ aJ}$ ($38.2\text{ meV}$)** | **$0.12\text{ fJ}$** | **$3.5\text{ aJ}$** ($3.5\text{ fJ}$ wall-plug) | **$\sim 0.01\text{ aJ}$ adiabatic steering** | **$12 - 25\text{ aJ}$** | **Friis path-loss scaled ($1\text{ nJ} - 10\text{ mJ}$ / packet)** |
@@ -535,8 +544,8 @@ Phonon is partitioned into modular Rust crates enforcing zero memory unsafety (`
 ```
 crates/
 ├── phonon-core/          # Graphs, node IDs, physical constants, SI units, digital event queue
-├── phonon-solver/        # MNA assembler, sparse LU, TR-BDF2, NEGF, LLGS, SOEN, QEC, MZM, Phononic, Plasma, Spintronics, cQED, Wakefield, STNO, Moire
-├── phonon-models/        # BSIM, Gummel-Poon, memristors, atomics, molecular, spintronics, SOEN, MZM, Phononic, Plasma, cQED, Wakefield, STNO, Moire
+├── phonon-solver/        # MNA assembler, sparse LU, TR-BDF2, NEGF, LLGS, SOEN, QEC, MZM, Phononic, Plasma, Spintronics, cQED, Wakefield, STNO, Moire, Plasmonics
+├── phonon-models/        # BSIM, Gummel-Poon, memristors, atomics, molecular, spintronics, SOEN, MZM, Phononic, Plasma, cQED, Wakefield, STNO, Moire, Plasmonics
 ├── phonon-thermal/       # Discretized 2D/3D thermal grid, Cauer/Foster ladders, electro-thermal Jacobian
 ├── phonon-netlist/       # SPICE 3f5 / HSPICE lexer, AST, netlist validator
 ├── phonon-cli/           # Headless engine, parametric sweeps, telemetry streaming (Arrow, VCD)
@@ -580,10 +589,12 @@ crates/
   - **Phase 63: Magnon Bose-Einstein Condensation, Spin Superfluidity & Long-Range Spin Transport** (Completed with dipolar-exchange spin-wave dispersion in YIG thin films, four-magnon scattering thermalization conserving particle number, chemical potential saturation $\mu_m \to E_{min}$, 1D Gross-Pitaevskii spatial solver for non-equilibrium condensate coherence, hydrodynamic spin superfluid transport, Landau critical velocity $v_c \approx 375\text{ m/s}$, algebraic $1/L$ transmission advantage $> 1000\times$ over exponential decay, non-local ISHE voltages, and 10,000-sweep parallel Rayon benchmark).
   - **Phase 64: Chiral Phonon-Magnon Polaritons, Acoustic Spin Pumping & Terahertz Acoustoelectronics** (Completed with magneto-elastic coupling tensors $B_1, B_2$, circular acoustic angular momentum conservation $L_{ph} = \pm\hbar$, chiral polariton hybridization with anti-crossing splitting $\Delta f \approx 84.3\text{ MHz}$, coherent acoustic spin pumping generating microvolt-scale ISHE voltages $V_{ISHE} \approx 947\ \mu\text{V}$, non-reciprocal acoustic diode isolation $\ge 20\text{ dB}$, and 10,000-sweep parallel Rayon benchmark).
   - **Phase 65: Quantum Acoustic Cavity Resonators, Surface Acoustic Wave Qubits & Phonon-Mediated Entanglement** (Completed with piezoelectric IDT electromechanical admittance, Bragg mirrors with $R_m \ge 99.9\%$, cQAD transmon strong coupling with cooperativity $\mathcal{C}_{cqa} \gg 1$, Lindbladian RK4 master equation solver validating vacuum Rabi SWAP into phonon Fock state $|g, 1\rangle$ with fidelity $F_{swap} \ge 95\%$, virtual phonon-mediated remote Bell state entanglement with fidelity $F_{bell} \ge 95\%$ and concurrence $\mathcal{C} \ge 0.90$, 4-port SAW beam splitters with 100% HOM two-phonon bunching visibility, and 10,000-sweep parallel Rayon benchmark).
-- **Active Phase in `todo.md`**: **Phase 66: Quantum Plasmonic Nanocircuits, Single-Photon Transistors & Sub-Diffraction Nanophotonics**.
+  - **Phase 66: Quantum Plasmonic Nanocircuits, Single-Photon Transistors & Sub-Diffraction Nanophotonics** (Completed with non-local hydrodynamic Drude electron gas, SPP dispersion blueshifts, Feibelman surface charge centroid shifts, deep sub-diffraction MIM slot waveguides with $V_{eff} \sim 10^{-5}\lambda_0^3$, all-optical single-photon transistor switching with contrast $C_{dB} \ge 20\text{ dB}$ and gain $G > 10\times$, time-dependent Maxwell-Bloch pulse solver, sub-micron directional couplers and bends, and 10,000-sweep parallel Rayon benchmark).
+- **Active Phase in `todo.md`**: **Phase 67: Non-Abelian Braiding of Majorana Fermions in Hexagonal Superconducting Arrays**.
 - **Queued Phased Pipeline**:
-  - **Phase 67**: Non-Abelian Braiding of Majorana Fermions in Hexagonal Superconducting Arrays
   - **Phase 68**: Topological Chiral Phonon Heat Transport, Acoustic Quantum Hall Effect & Phonon Diodes
+  - **Phase 69**: Quantum Acoustoelectric Charge Transport & Single-Electron Acoustic Pumps
+
 
 
 
