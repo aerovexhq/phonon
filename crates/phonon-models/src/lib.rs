@@ -128,6 +128,7 @@ pub mod non_hermitian_skin_amplifier;
 pub mod non_hermitian_edge_soliton;
 pub mod phonon_exciton_polariton;
 pub mod floquet_synthetic_gauge;
+pub mod topological_time_crystal;
 pub mod valley_acoustic;
 pub mod valleytronics;
 pub mod wakefield;
@@ -425,6 +426,9 @@ pub use holonomic_quantum_processor::{
 };
 pub use fractional_hall_parafermion::{
     FractionalHallParafermionMetrics, FractionalHallParafermionParams,
+};
+pub use topological_time_crystal::{
+    TopologicalTimeCrystalMetrics, TopologicalTimeCrystalParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
