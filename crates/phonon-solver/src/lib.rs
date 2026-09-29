@@ -2,6 +2,7 @@
 //! Markowitz threshold pivoting, dynamic TR-BDF2 transient solver, and physical conservation probes.
 
 pub mod acoustic;
+pub mod acoustoelectric;
 pub mod assets;
 pub mod cavity_spintronics;
 pub mod chiral_phonon;
@@ -56,6 +57,7 @@ pub use acoustic::{
     AcousticBenchmarkReport, AcousticBenchmarkRunner, AcousticLinkSimulator, AcousticRealismTier,
     AcousticRoom, AcousticStepResult, FdtdResult,
 };
+pub use acoustoelectric::*;
 pub use assets::{
     AcousticRayHit, AssetBenchmarkReport, AssetBenchmarkRunner, MeshInstance, MultiPhysicsBvh,
     MultiPhysicsBvhNode, MultiPhysicsScene, OpticalRayHit, RfTransmissionResult, WorldTriangle,
