@@ -41,6 +41,7 @@ pub mod mvl;
 pub mod net;
 pub mod non_hermitian;
 pub mod non_hermitian_skin;
+pub mod non_hermitian_topo;
 pub mod optics;
 pub mod optimization;
 pub mod optomechanics;
@@ -181,6 +182,7 @@ pub use non_hermitian::{
     TopologicalLatticePhase,
 };
 pub use non_hermitian_skin::*;
+pub use non_hermitian_topo::*;
 pub use optics::{
     silicon_quantum_efficiency, transduce_cmos_pixel, CameraIntrinsics, CmosPixelConfig,
     OpticalCamera, PixelOutput, ShutterType, SILICON_BANDGAP_JOULES, SILICON_CUTOFF_WAVELENGTH_NM,
