@@ -28,6 +28,7 @@ pub mod floquet;
 pub mod floquet_acoustic_chern;
 pub mod floquet_anyon_braiding;
 pub mod floquet_corner_transduction;
+pub mod floquet_majorana_braiding_processor;
 pub mod floquet_topological;
 pub mod fqh;
 pub mod fqh_acoustic_interferometer;
@@ -326,6 +327,7 @@ pub use quantum_acoustic_tensor_distillation::*;
 pub use opto_acoustic_quantum_repeater::*;
 pub use phonon_magnon_polariton::*;
 pub use acoustic_holonomic_processor::*;
+pub use floquet_majorana_braiding_processor::*;
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
     IntegrationMethod, StepControlOptions, TimeWaveform, TransientOptions, TransientSolution,
