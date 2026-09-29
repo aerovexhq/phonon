@@ -4,6 +4,7 @@
 pub mod acoustic;
 pub mod assets;
 pub mod cavity_spintronics;
+pub mod chiral_polariton;
 pub mod cqed;
 pub mod diamond_nv;
 pub mod em;
@@ -56,6 +57,7 @@ pub use assets::{
     MultiPhysicsBvhNode, MultiPhysicsScene, OpticalRayHit, RfTransmissionResult, WorldTriangle,
 };
 pub use cavity_spintronics::*;
+pub use chiral_polariton::*;
 pub use cqed::{
     CqedBenchmarkReport, CqedBenchmarkRunner, DispersiveReadoutResult, DispersiveReadoutSolver,
     TransmonSpectrumSolution, TransmonSpectrumSolver,
