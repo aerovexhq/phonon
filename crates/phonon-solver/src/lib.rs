@@ -52,6 +52,7 @@ pub mod optomechanics;
 pub mod parallel;
 pub mod phononic;
 pub mod phononic_microcomb;
+pub mod phononic_neural_annealer;
 pub mod phononic_topological;
 pub mod plasma;
 pub mod polariton_condensate;
@@ -193,6 +194,7 @@ pub use phononic::{
     ContinuumSolver2D, PhononicBenchmarkReport, PhononicBenchmarkRunner,
 };
 pub use phononic_microcomb::*;
+pub use phononic_neural_annealer::*;
 pub use phononic_topological::*;
 pub use plasma::{
     AlfvenFluxNode, AlfvenMhdConfig, AlfvenMhdStepper, BorisPicTracker, GradShafranovGrid,
