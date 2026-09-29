@@ -18,6 +18,7 @@ pub mod cavity_magnon_polariton_comb;
 pub mod cavity_spintronics;
 pub mod chiral_acoustic_router;
 pub mod chiral_chern_anyon_braiding;
+pub mod chiral_floquet_hall_transistor;
 pub mod chiral_holographic_beamforming;
 pub mod chiral_phonon;
 pub mod chiral_phonon_sc;
@@ -364,6 +365,7 @@ pub use topological_acoustic_skyrmion::*;
 pub use non_hermitian_quadrupole_laser::*;
 pub use chiral_holographic_beamforming::*;
 pub use phononic_superconducting_majorana::*;
+pub use chiral_floquet_hall_transistor::*;
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
     IntegrationMethod, StepControlOptions, TimeWaveform, TransientOptions, TransientSolution,
