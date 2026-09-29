@@ -49,6 +49,7 @@ pub mod polariton_condensate;
 pub mod quantum;
 pub mod quantum_acoustic;
 pub mod quantum_plasmonics;
+pub mod quantum_time_crystal;
 pub mod relay;
 pub mod rf;
 pub mod sensors;
@@ -192,6 +193,7 @@ pub use quantum_plasmonics::{
     PlasmonicMaxwellBlochSolver, PlasmonicSweepResult, QuantumPlasmonicBenchmarkReport,
     TransistorLogicReport, WaveguideBendReport,
 };
+pub use quantum_time_crystal::*;
 pub use relay::{
     AutonomousRelaySynthesizer, CoupledRelaySolver, CoupledRelayTransientResult,
     CoupledSolverConfig, RelayBenchmarkReport, RelayBenchmarkRunner, RelaySynthesisTarget,

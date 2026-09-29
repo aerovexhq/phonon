@@ -57,6 +57,7 @@ pub mod polariton_condensate;
 pub mod quantum;
 pub mod quantum_acoustic;
 pub mod quantum_plasmonics;
+pub mod quantum_time_crystal;
 pub mod radiation;
 pub mod relay;
 pub mod sensors;
@@ -238,6 +239,7 @@ pub use quantum_plasmonics::{
     NobleMetal, PlasmonicSlotWaveguide, QuantumEmitter, SinglePhotonTransistor,
     SppHydrodynamicModel,
 };
+pub use quantum_time_crystal::*;
 pub use radiation::{
     DiceCell, DisplacementDamageModel, HeavyIonStrikeModel, LatchupEvaluation,
     ParasiticThyristorModel, StandardSramCell, StrikeOutcome, TmrVoter, TotalIonizingDoseModel,
