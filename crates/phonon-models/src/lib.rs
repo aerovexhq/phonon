@@ -22,6 +22,7 @@ pub mod cavity_spintronics;
 pub mod chemistry;
 pub mod chiral_acoustic_router;
 pub mod chiral_chern_anyon_braiding;
+pub mod chiral_floquet_hall_transistor;
 pub mod chiral_holographic_beamforming;
 pub mod chiral_phonon;
 pub mod chiral_phonon_sc;
@@ -449,6 +450,9 @@ pub use chiral_holographic_beamforming::{
 };
 pub use phononic_superconducting_majorana::{
     PhononicSuperconductingMajoranaMetrics, PhononicSuperconductingMajoranaParams,
+};
+pub use chiral_floquet_hall_transistor::{
+    ChiralFloquetHallTransistorMetrics, ChiralFloquetHallTransistorParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
