@@ -47,6 +47,7 @@ pub mod phononic;
 pub mod phononic_topological;
 pub mod photonic;
 pub mod plasma;
+pub mod polariton_condensate;
 pub mod quantum;
 pub mod quantum_acoustic;
 pub mod quantum_plasmonics;
@@ -209,6 +210,7 @@ pub use plasma::{
     DT_TOTAL_ENERGY_JOULES, EV_TO_JOULES, KEV_TO_JOULES, PLASMA_ADIABATIC_INDEX, PROTON_MASS,
     TRITON_MASS,
 };
+pub use polariton_condensate::*;
 pub use quantum::{
     effective_damping_rate, effective_mechanical_frequency, is_ground_state_cooled,
     omit_probe_transmission, optical_cooperativity, optical_spring_shift,
