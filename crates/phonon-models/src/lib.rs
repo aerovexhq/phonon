@@ -42,6 +42,7 @@ pub mod floquet_topological;
 pub mod fqh;
 pub mod fqh_acoustic_interferometer;
 pub mod fractional_chern;
+pub mod fractional_hall_parafermion;
 pub mod hetero;
 pub mod hexagonal_majorana;
 pub mod hierarchical;
@@ -421,6 +422,9 @@ pub use floquet_synthetic_gauge::{
 };
 pub use holonomic_quantum_processor::{
     HolonomicQuantumProcessorMetrics, HolonomicQuantumProcessorParams,
+};
+pub use fractional_hall_parafermion::{
+    FractionalHallParafermionMetrics, FractionalHallParafermionParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
