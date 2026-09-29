@@ -112,6 +112,7 @@ pub mod topological_chern_circulator;
 pub mod topological_corner_laser;
 pub mod topological_moire_polariton;
 pub mod non_hermitian_skin_amplifier;
+pub mod non_hermitian_edge_soliton;
 pub mod transient;
 pub mod valley_acoustic;
 pub mod valleytronics;
@@ -342,6 +343,7 @@ pub use non_hermitian_skin_amplifier::*;
 pub use chiral_chern_anyon_braiding::*;
 pub use acoustomagnonic_comb::*;
 pub use topological_moire_polariton::*;
+pub use non_hermitian_edge_soliton::*;
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
     IntegrationMethod, StepControlOptions, TimeWaveform, TransientOptions, TransientSolution,
