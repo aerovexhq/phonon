@@ -46,6 +46,7 @@ pub mod hetero;
 pub mod hexagonal_majorana;
 pub mod hierarchical;
 pub mod high_harmonic_bloch;
+pub mod holonomic_quantum_processor;
 pub mod interfacial_superconductivity;
 pub mod josephson_vortex_ratchet;
 pub mod jtwpa;
@@ -417,6 +418,9 @@ pub use phonon_exciton_polariton::{
 };
 pub use floquet_synthetic_gauge::{
     FloquetSyntheticGaugeMetrics, FloquetSyntheticGaugeParams,
+};
+pub use holonomic_quantum_processor::{
+    HolonomicQuantumProcessorMetrics, HolonomicQuantumProcessorParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
