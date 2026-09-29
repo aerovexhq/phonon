@@ -53,6 +53,7 @@ pub mod mosfet;
 pub mod mvl;
 pub mod net;
 pub mod non_hermitian;
+pub mod non_hermitian_acoustic_laser;
 pub mod non_hermitian_chiral_hoti;
 pub mod non_hermitian_ep_gyroscope;
 pub mod non_hermitian_pt_symmetry;
@@ -227,6 +228,7 @@ pub use non_hermitian_ep_gyroscope::*;
 pub use non_hermitian_pt_symmetry::*;
 pub use non_hermitian_skin::*;
 pub use non_hermitian_topo::*;
+pub use non_hermitian_acoustic_laser::*;
 pub use optics::{
     silicon_quantum_efficiency, transduce_cmos_pixel, CameraIntrinsics, CmosPixelConfig,
     OpticalCamera, PixelOutput, ShutterType, SILICON_BANDGAP_JOULES, SILICON_CUTOFF_WAVELENGTH_NM,
