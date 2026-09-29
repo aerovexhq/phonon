@@ -23,6 +23,7 @@ pub mod floquet;
 pub mod floquet_anyon_braiding;
 pub mod floquet_topological;
 pub mod fqh;
+pub mod fqh_acoustic_interferometer;
 pub mod fractional_chern;
 pub mod hetero;
 pub mod hexagonal_majorana;
@@ -123,6 +124,7 @@ pub use floquet::*;
 pub use floquet_anyon_braiding::*;
 pub use floquet_topological::*;
 pub use fqh::*;
+pub use fqh_acoustic_interferometer::*;
 pub use fractional_chern::*;
 pub use hetero::{
     HeteroCpuBenchmarkResult, HeteroCpuBenchmarkRunner, HeteroCpuOptimizer,
