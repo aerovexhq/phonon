@@ -4,14 +4,6 @@
 
 ## Future
 
-### Phase 75: High-Tc Interfacial Superconductivity, Nematic Fluctuations & Josephson Diode Arrays
-Develop an autonomous multi-physics solver modeling interfacial high-Tc superconductivity and nematicity.
-Formulate cross-interface forward-scattering electron-phonon coupling and enhanced Cooper pairing in FeSe/STO.
-Model electronic nematic order parameter fluctuations, anisotropic gaps, and elastoresistance coefficients.
-Synthesize non-reciprocal Josephson diode arrays with finite-momentum supercurrents and giant diode efficiency.
-Implement multi-threaded Rayon self-consistent Bogoliubov-de Gennes gap and Josephson junction array solvers.
-Benchmark superconducting critical temperature Tc > 65 K and Josephson rectification ratio across 10,000 sweeps.
-
 ### Phase 76: Terahertz Magnon Polaritons, Quantum Paramagnons & Antiferromagnetic Spintronics
 Develop an autonomous multi-physics solver modeling THz antiferromagnetic magnon polaritons.
 Formulate exchange-dominated spin wave dispersion, sub-picosecond Néel vector dynamics, and damping.
@@ -20,21 +12,37 @@ Synthesize ultrafast spin-torque Néel domain wall memristive synapses and THz m
 Implement multi-threaded Rayon Landau-Lifshitz-Gilbert-Néel stochastic differential equation solvers.
 Benchmark polariton Rabi splitting > 100 GHz and sub-picosecond domain wall velocity across 10,000 sweeps.
 
+### Phase 77: Quantum Topological Polariton Condensates, Optomechanical Vortices & Non-Equilibrium Superfluids
+Develop an autonomous multi-physics solver modeling microcavity exciton-polariton condensates.
+Formulate Gross-Pitaevskii non-equilibrium open-dissipative dynamics and optomechanical coupling.
+Model topological polariton vortex nucleation, quantized circulation, and non-Hermitian Berry phases.
+Synthesize polaritonic logic gates, superfluid acoustic black hole horizons, and chiral polariton circuits.
+Implement multi-threaded Rayon 2D Split-Step Fourier non-linear Schrödinger-Bogoliubov solvers.
+Benchmark polariton superfluid fraction > 80% and topological vortex stability across 10,000 sweeps.
+
 ---
 
 ## Current
 
-### Phase 74: Quantum Valley Acoustic Phonon Cavities, Pseudomagnetic Fields & Phonon Valleytronics
-Develop an autonomous multi-physics solver modeling quantum valley acoustic cavities and pseudomagnetic fields.
-Formulate strain-induced gauge vector potentials, valley pseudomagnetic fields B_ps > 100 T, and Landau levels.
-Model chiral acoustic phonon cavity confinement, valley polarization contrast, and valley-selective Purcell enhancement.
-Synthesize valley acoustic waveguide multiplexers, pseudomagnetic phonon traps, and chiral phonon routers.
-Implement multi-threaded Rayon acoustic wavepacket propagation and pseudomagnetic Landau level eigensolvers.
-Benchmark valley acoustic polarization contrast > 20 dB and Purcell factor across 10,000 parameter sweeps.
+### Phase 75: High-Tc Interfacial Superconductivity, Nematic Fluctuations & Josephson Diode Arrays
+Develop an autonomous multi-physics solver modeling interfacial high-Tc superconductivity and nematicity.
+Formulate cross-interface forward-scattering electron-phonon coupling and enhanced Cooper pairing in FeSe/STO.
+Model electronic nematic order parameter fluctuations, anisotropic gaps, and elastoresistance coefficients.
+Synthesize non-reciprocal Josephson diode arrays with finite-momentum supercurrents and giant diode efficiency.
+Implement multi-threaded Rayon self-consistent Bogoliubov-de Gennes gap and Josephson junction array solvers.
+Benchmark superconducting critical temperature Tc > 65 K and Josephson rectification ratio across 10,000 sweeps.
 
 ---
 
 ## Done
+
+### Phase 74: Quantum Valley Acoustic Phonon Cavities, Pseudomagnetic Fields & Phonon Valleytronics
+Formulated triaxial strain gauge vector potentials and valley pseudomagnetic fields B_ps > 100 T.
+Modeled relativistic acoustic pseudo-Landau levels, Dirac phonon dispersion, and valley zero-modes.
+Synthesized chiral acoustic phonon cavity confinement and valley-selective Purcell enhancement F_P > 10.
+Formulated 3-port valley acoustic waveguide multiplexers with corner transmission T_bend >= 90%.
+Implemented multi-threaded Rayon pseudo-Landau level eigensolvers and cavity mode scattering solvers.
+Benchmarked 10,000 parameter sweeps across Rayon threads verifying contrast >= 20 dB and F_P > 10.
 
 ### Phase 73: Topological Floquet Engineering, Ultrafast Chiral Light & Dynamic Hall States
 Formulated time-periodic Dirac Hamiltonians, Floquet-Bloch quasi-energies, and Floquet-Magnus expansion.
