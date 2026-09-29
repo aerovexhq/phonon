@@ -3,6 +3,7 @@
 
 pub mod acoustic;
 pub mod acoustoelectric;
+pub mod acoustoelectric_moire;
 pub mod afm_spintronics;
 pub mod assets;
 pub mod axion_electrodynamics;
@@ -83,6 +84,7 @@ pub use acoustic::{
     AcousticRoom, AcousticStepResult, FdtdResult,
 };
 pub use acoustoelectric::*;
+pub use acoustoelectric_moire::*;
 pub use afm_spintronics::*;
 pub use assets::{
     AcousticRayHit, AssetBenchmarkReport, AssetBenchmarkRunner, MeshInstance, MultiPhysicsBvh,
