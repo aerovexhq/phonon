@@ -4,14 +4,6 @@
 
 ## Future
 
-### Phase 74: Quantum Valley Acoustic Phonon Cavities, Pseudomagnetic Fields & Phonon Valleytronics
-Develop an autonomous multi-physics solver modeling quantum valley acoustic cavities and pseudomagnetic fields.
-Formulate strain-induced gauge vector potentials, valley pseudomagnetic fields B_ps > 100 T, and Landau levels.
-Model chiral acoustic phonon cavity confinement, valley polarization contrast, and valley-selective Purcell enhancement.
-Synthesize valley acoustic waveguide multiplexers, pseudomagnetic phonon traps, and chiral phonon routers.
-Implement multi-threaded Rayon acoustic wavepacket propagation and pseudomagnetic Landau level eigensolvers.
-Benchmark valley acoustic polarization contrast > 20 dB and Purcell factor across 10,000 parameter sweeps.
-
 ### Phase 75: High-Tc Interfacial Superconductivity, Nematic Fluctuations & Josephson Diode Arrays
 Develop an autonomous multi-physics solver modeling interfacial high-Tc superconductivity and nematicity.
 Formulate cross-interface forward-scattering electron-phonon coupling and enhanced Cooper pairing in FeSe/STO.
@@ -20,21 +12,37 @@ Synthesize non-reciprocal Josephson diode arrays with finite-momentum supercurre
 Implement multi-threaded Rayon self-consistent Bogoliubov-de Gennes gap and Josephson junction array solvers.
 Benchmark superconducting critical temperature Tc > 65 K and Josephson rectification ratio across 10,000 sweeps.
 
+### Phase 76: Terahertz Magnon Polaritons, Quantum Paramagnons & Antiferromagnetic Spintronics
+Develop an autonomous multi-physics solver modeling THz antiferromagnetic magnon polaritons.
+Formulate exchange-dominated spin wave dispersion, sub-picosecond Néel vector dynamics, and damping.
+Model strong coupling between THz split-ring microcavity photons and antiferromagnetic magnons.
+Synthesize ultrafast spin-torque Néel domain wall memristive synapses and THz magnon diodes.
+Implement multi-threaded Rayon Landau-Lifshitz-Gilbert-Néel stochastic differential equation solvers.
+Benchmark polariton Rabi splitting > 100 GHz and sub-picosecond domain wall velocity across 10,000 sweeps.
+
 ---
 
 ## Current
 
-### Phase 73: Topological Floquet Engineering, Ultrafast Chiral Light & Dynamic Hall States
-Develop an autonomous multi-physics solver modeling dynamic Floquet engineering in 2D quantum materials.
-Formulate time-periodic drive Hamiltonians, Floquet-Bloch quasi-energy bands, and light-induced topological gaps.
-Model circularly polarized ultrafast laser pulse driving, synthetic gauge fields, and photo-induced Chern numbers.
-Synthesize ultrafast Floquet topological switches, dynamic Hall routing channels, and optical Floquet transistors.
-Implement multi-threaded Rayon Floquet-Magnus expansion and time-evolution unitary propagator solvers.
-Benchmark Floquet bandgap opening > 50 meV and dynamic Hall current switching across 10,000 parameter sweeps.
+### Phase 74: Quantum Valley Acoustic Phonon Cavities, Pseudomagnetic Fields & Phonon Valleytronics
+Develop an autonomous multi-physics solver modeling quantum valley acoustic cavities and pseudomagnetic fields.
+Formulate strain-induced gauge vector potentials, valley pseudomagnetic fields B_ps > 100 T, and Landau levels.
+Model chiral acoustic phonon cavity confinement, valley polarization contrast, and valley-selective Purcell enhancement.
+Synthesize valley acoustic waveguide multiplexers, pseudomagnetic phonon traps, and chiral phonon routers.
+Implement multi-threaded Rayon acoustic wavepacket propagation and pseudomagnetic Landau level eigensolvers.
+Benchmark valley acoustic polarization contrast > 20 dB and Purcell factor across 10,000 parameter sweeps.
 
 ---
 
 ## Done
+
+### Phase 73: Topological Floquet Engineering, Ultrafast Chiral Light & Dynamic Hall States
+Formulated time-periodic Dirac Hamiltonians, Floquet-Bloch quasi-energies, and Floquet-Magnus expansion.
+Modeled light-induced topological mass gap opening > 50 meV in circularly driven 2D Dirac materials.
+Synthesized ultrafast Floquet topological switches, dynamic Hall routing channels, and optical transistors.
+Implemented exact unitary one-period Floquet propagators preserving unitarity to < 1e-14 error.
+Constructed multi-threaded Rayon Floquet-Magnus expansion and dynamic Hall switching solvers.
+Benchmarked 10,000 parameter sweeps across Rayon threads verifying gap > 50 meV and contrast > 30 dB.
 
 ### Phase 72: Non-Hermitian Skin Effect, Acoustic Exceptional Surfaces & Directed Wave Localization
 Formulated non-reciprocal acoustic lattice Hamiltonian with asymmetric hopping and deformed GBZ radius.
