@@ -4,14 +4,6 @@
 
 ## Future
 
-### Phase 76: Terahertz Magnon Polaritons, Quantum Paramagnons & Antiferromagnetic Spintronics
-Develop an autonomous multi-physics solver modeling THz antiferromagnetic magnon polaritons.
-Formulate exchange-dominated spin wave dispersion, sub-picosecond Néel vector dynamics, and damping.
-Model strong coupling between THz split-ring microcavity photons and antiferromagnetic magnons.
-Synthesize ultrafast spin-torque Néel domain wall memristive synapses and THz magnon diodes.
-Implement multi-threaded Rayon Landau-Lifshitz-Gilbert-Néel stochastic differential equation solvers.
-Benchmark polariton Rabi splitting > 100 GHz and sub-picosecond domain wall velocity across 10,000 sweeps.
-
 ### Phase 77: Quantum Topological Polariton Condensates, Optomechanical Vortices & Non-Equilibrium Superfluids
 Develop an autonomous multi-physics solver modeling microcavity exciton-polariton condensates.
 Formulate Gross-Pitaevskii non-equilibrium open-dissipative dynamics and optomechanical coupling.
@@ -20,21 +12,37 @@ Synthesize polaritonic logic gates, superfluid acoustic black hole horizons, and
 Implement multi-threaded Rayon 2D Split-Step Fourier non-linear Schrödinger-Bogoliubov solvers.
 Benchmark polariton superfluid fraction > 80% and topological vortex stability across 10,000 sweeps.
 
+### Phase 78: Chiral Phonon-Driven Superconductivity, Dynamic Inversion Breaking & Non-Equilibrium Pairing
+Develop an autonomous multi-physics solver modeling chiral phonon-mediated non-equilibrium superconductivity.
+Formulate circularly polarized coherent optical phonon drive inducing dynamic structural inversion breaking.
+Model non-adiabatic electron-phonon matrix element enhancement and dynamic pair-density wave nucleation.
+Synthesize light-driven parametric superconducting amplifiers, ultrafast Josephson modulators, and chiral switches.
+Implement multi-threaded Rayon non-equilibrium Eliashberg Green's function and dynamic pairing solvers.
+Benchmark transient pairing enhancement > 50% and non-equilibrium gap stabilization across 10,000 sweeps.
+
 ---
 
 ## Current
 
-### Phase 75: High-Tc Interfacial Superconductivity, Nematic Fluctuations & Josephson Diode Arrays
-Develop an autonomous multi-physics solver modeling interfacial high-Tc superconductivity and nematicity.
-Formulate cross-interface forward-scattering electron-phonon coupling and enhanced Cooper pairing in FeSe/STO.
-Model electronic nematic order parameter fluctuations, anisotropic gaps, and elastoresistance coefficients.
-Synthesize non-reciprocal Josephson diode arrays with finite-momentum supercurrents and giant diode efficiency.
-Implement multi-threaded Rayon self-consistent Bogoliubov-de Gennes gap and Josephson junction array solvers.
-Benchmark superconducting critical temperature Tc > 65 K and Josephson rectification ratio across 10,000 sweeps.
+### Phase 76: Terahertz Magnon Polaritons, Quantum Paramagnons & Antiferromagnetic Spintronics
+Develop an autonomous multi-physics solver modeling THz antiferromagnetic magnon polaritons.
+Formulate exchange-dominated spin wave dispersion, sub-picosecond Néel vector dynamics, and damping.
+Model strong coupling between THz split-ring microcavity photons and antiferromagnetic magnons.
+Synthesize ultrafast spin-torque Néel domain wall memristive synapses and THz magnon diodes.
+Implement multi-threaded Rayon Landau-Lifshitz-Gilbert-Néel stochastic differential equation solvers.
+Benchmark polariton Rabi splitting > 100 GHz and sub-picosecond domain wall velocity across 10,000 sweeps.
 
 ---
 
 ## Done
+
+### Phase 75: High-Tc Interfacial Superconductivity, Nematic Fluctuations & Josephson Diode Arrays
+Formulated cross-interface forward-scattering electron-phonon coupling and enhanced Cooper pairing in FeSe/STO.
+Modeled enhanced critical temperature Tc > 65 K and strong-coupling BCS gap ratio 2Delta0 / kBTc >= 3.8.
+Formulated electronic nematic order parameter fluctuations, Curie-Weiss elastoresistance, and anisotropic gaps.
+Synthesized non-reciprocal Josephson diode arrays with broken inversion/time-reversal symmetry and giant efficiency.
+Implemented multi-threaded Rayon self-consistent Bogoliubov-de Gennes gap and Josephson junction array solvers.
+Benchmarked 10,000 parameter sweeps across Rayon threads verifying Tc > 65 K, diode efficiency >= 20%, and R >= 3 dB.
 
 ### Phase 74: Quantum Valley Acoustic Phonon Cavities, Pseudomagnetic Fields & Phonon Valleytronics
 Formulated triaxial strain gauge vector potentials and valley pseudomagnetic fields B_ps > 100 T.
