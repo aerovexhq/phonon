@@ -39,6 +39,7 @@ pub mod fractional_chern;
 pub mod hetero;
 pub mod hexagonal_majorana;
 pub mod high_harmonic_bloch;
+pub mod holonomic_quantum_processor;
 pub mod interfacial_superconductivity;
 pub mod josephson_vortex_ratchet;
 pub mod jtwpa;
@@ -348,6 +349,7 @@ pub use topological_moire_polariton::*;
 pub use non_hermitian_edge_soliton::*;
 pub use phonon_exciton_polariton::*;
 pub use floquet_synthetic_gauge::*;
+pub use holonomic_quantum_processor::*;
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
     IntegrationMethod, StepControlOptions, TimeWaveform, TransientOptions, TransientSolution,
