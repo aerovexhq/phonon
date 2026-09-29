@@ -11,6 +11,7 @@ pub mod cavity_spintronics;
 pub mod chiral_phonon;
 pub mod chiral_phonon_sc;
 pub mod chiral_polariton;
+pub mod chiral_spin_seebeck;
 pub mod cqed;
 pub mod diamond_nv;
 pub mod em;
@@ -82,6 +83,7 @@ pub use cavity_spintronics::*;
 pub use chiral_phonon::*;
 pub use chiral_phonon_sc::*;
 pub use chiral_polariton::*;
+pub use chiral_spin_seebeck::*;
 pub use cqed::{
     CqedBenchmarkReport, CqedBenchmarkRunner, DispersiveReadoutResult, DispersiveReadoutSolver,
     TransmonSpectrumSolution, TransmonSpectrumSolver,

@@ -2,7 +2,7 @@
 //! axion-polariton dispersion, Witten effect anomalous Hall conductance, and dark-matter haloscopes.
 
 use phonon_models::axion_electrodynamics::{
-    constants::QUANTUM_CONDUCTANCE, AxionElectrodynamicsParams,
+    axion_constants::QUANTUM_CONDUCTANCE, AxionElectrodynamicsParams,
 };
 use phonon_solver::axion_electrodynamics::AxionPolaritonSolver;
 
