@@ -8,6 +8,7 @@ pub mod atomistic;
 pub mod bjt;
 pub mod cavity_spintronics;
 pub mod chemistry;
+pub mod chiral_phonon;
 pub mod chiral_polariton;
 pub mod common;
 pub mod cqed;
@@ -88,6 +89,7 @@ pub use chemistry::{
     Crystallography, DielectricMaterial, DielectricSpecies, DopantSpecies, DopantType,
     HeteroInterface, Silicon,
 };
+pub use chiral_phonon::*;
 pub use chiral_polariton::*;
 pub use common::{compute_vcrit, pn_junction_limit, safe_exp, smooth_max, smooth_min};
 pub use cqed::{DispersiveCqedSystem, MicrowaveCavity, PurcellFilter, TransmonParams};
