@@ -12,6 +12,7 @@ pub mod diamond_nv;
 pub mod em;
 pub mod error;
 pub mod floquet;
+pub mod floquet_topological;
 pub mod fqh;
 pub mod fractional_chern;
 pub mod hetero;
@@ -83,6 +84,7 @@ pub use em::{
 };
 pub use error::SolverError;
 pub use floquet::*;
+pub use floquet_topological::*;
 pub use fqh::*;
 pub use fractional_chern::*;
 pub use hetero::{
