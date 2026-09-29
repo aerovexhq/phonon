@@ -7,6 +7,7 @@ pub mod afm_spintronics;
 pub mod assets;
 pub mod cavity_spintronics;
 pub mod chiral_phonon;
+pub mod chiral_phonon_sc;
 pub mod chiral_polariton;
 pub mod cqed;
 pub mod diamond_nv;
@@ -73,6 +74,7 @@ pub use assets::{
 };
 pub use cavity_spintronics::*;
 pub use chiral_phonon::*;
+pub use chiral_phonon_sc::*;
 pub use chiral_polariton::*;
 pub use cqed::{
     CqedBenchmarkReport, CqedBenchmarkRunner, DispersiveReadoutResult, DispersiveReadoutSolver,
