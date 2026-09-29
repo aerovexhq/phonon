@@ -86,6 +86,7 @@ pub mod synthesis;
 pub mod tcad;
 pub mod tline;
 pub mod topological;
+pub mod topological_acoustic_axion;
 pub mod topological_soliton_comb;
 pub mod valley_acoustic;
 pub mod valleytronics;
@@ -331,6 +332,7 @@ pub use topological::{
     ArmId, BdGHamiltonian, BdGSolution, MajoranaNanowire, NanowireParams, QubitState,
     TJunctionNanowireNetwork, TopologicalQubit, TunnelingConductanceModel, QUANTUM_CONDUCTANCE,
 };
+pub use topological_acoustic_axion::*;
 pub use topological_soliton_comb::*;
 pub use valley_acoustic::*;
 pub use valleytronics::*;
