@@ -5,6 +5,7 @@ pub mod acoustic;
 pub mod acoustoelectric;
 pub mod afm_spintronics;
 pub mod assets;
+pub mod cavity_magnomechanics;
 pub mod cavity_spintronics;
 pub mod chiral_phonon;
 pub mod chiral_phonon_sc;
@@ -72,6 +73,7 @@ pub use assets::{
     AcousticRayHit, AssetBenchmarkReport, AssetBenchmarkRunner, MeshInstance, MultiPhysicsBvh,
     MultiPhysicsBvhNode, MultiPhysicsScene, OpticalRayHit, RfTransmissionResult, WorldTriangle,
 };
+pub use cavity_magnomechanics::*;
 pub use cavity_spintronics::*;
 pub use chiral_phonon::*;
 pub use chiral_phonon_sc::*;
