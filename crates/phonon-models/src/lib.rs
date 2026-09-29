@@ -40,6 +40,7 @@ pub mod phononic_topological;
 pub mod photonic;
 pub mod plasma;
 pub mod quantum;
+pub mod quantum_acoustic;
 pub mod radiation;
 pub mod relay;
 pub mod sensors;
@@ -195,6 +196,10 @@ pub use quantum::{
     optomechanical_damping_rate, sideband_cooling_phonon_occupancy, BandToBandTunnelingModel,
     Complex, DielectricTunnelingModel, GaaCrossSection, GaaNanowireModel, OmitTransmissionResult,
     OptomechanicalHamiltonian, PiezoCrystalMaterial, PiezoOptomechanicalCrystal, QuantumChannel1D,
+};
+pub use quantum_acoustic::{
+    BraggAcousticMirror, InterdigitalTransducer, SawBeamSplitter, SawCavity, SawQubitCoupling,
+    SawSubstrateMaterial, TransmonQubit, VirtualPhononBus,
 };
 pub use radiation::{
     DiceCell, DisplacementDamageModel, HeavyIonStrikeModel, LatchupEvaluation,
