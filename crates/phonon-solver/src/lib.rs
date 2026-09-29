@@ -50,6 +50,7 @@ pub mod superconducting_spintronics;
 pub mod synthesis;
 pub mod topological;
 pub mod transient;
+pub mod valleytronics;
 pub mod verification;
 pub mod wakefield;
 
@@ -219,6 +220,7 @@ pub use transient::{
     IntegrationMethod, StepControlOptions, TimeWaveform, TransientOptions, TransientSolution,
     TransientStep, TR_BDF2_GAMMA,
 };
+pub use valleytronics::*;
 pub use verification::{
     verify_energy_balance, verify_kcl, verify_kcl_dynamic, verify_kvl,
     verify_physical_conservation, verify_transient_kcl, verify_transient_kcl_with_context,
