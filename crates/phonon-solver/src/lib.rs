@@ -120,6 +120,7 @@ pub mod phonon_exciton_polariton;
 pub mod floquet_synthetic_gauge;
 pub mod topological_time_crystal;
 pub mod topological_acoustic_skyrmion;
+pub mod non_hermitian_quadrupole_laser;
 pub mod transient;
 pub mod valley_acoustic;
 pub mod valleytronics;
@@ -358,6 +359,7 @@ pub use fractional_hall_parafermion::*;
 pub use topological_time_crystal::*;
 pub use cavity_acoustodynamical_spin::*;
 pub use topological_acoustic_skyrmion::*;
+pub use non_hermitian_quadrupole_laser::*;
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
     IntegrationMethod, StepControlOptions, TimeWaveform, TransientOptions, TransientSolution,

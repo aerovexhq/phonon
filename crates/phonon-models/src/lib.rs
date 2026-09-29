@@ -131,6 +131,7 @@ pub mod phonon_exciton_polariton;
 pub mod floquet_synthetic_gauge;
 pub mod topological_time_crystal;
 pub mod topological_acoustic_skyrmion;
+pub mod non_hermitian_quadrupole_laser;
 pub mod valley_acoustic;
 pub mod valleytronics;
 pub mod wakefield;
@@ -437,6 +438,9 @@ pub use cavity_acoustodynamical_spin::{
 };
 pub use topological_acoustic_skyrmion::{
     TopologicalAcousticSkyrmionMetrics, TopologicalAcousticSkyrmionParams,
+};
+pub use non_hermitian_quadrupole_laser::{
+    NonHermitianQuadrupoleLaserMetrics, NonHermitianQuadrupoleLaserParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
