@@ -7,6 +7,7 @@ pub mod acoustoelectric_moire;
 pub mod afm_spintronics;
 pub mod assets;
 pub mod axion_electrodynamics;
+pub mod cavity_acoustomagnonic;
 pub mod cavity_magnomechanics;
 pub mod cavity_spintronics;
 pub mod chiral_phonon;
@@ -101,6 +102,7 @@ pub use assets::{
     MultiPhysicsBvhNode, MultiPhysicsScene, OpticalRayHit, RfTransmissionResult, WorldTriangle,
 };
 pub use axion_electrodynamics::*;
+pub use cavity_acoustomagnonic::*;
 pub use cavity_magnomechanics::*;
 pub use cavity_spintronics::*;
 pub use chiral_phonon::*;
