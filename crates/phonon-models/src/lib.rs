@@ -86,6 +86,7 @@ pub mod surface_code_decoder;
 pub mod floquet_majorana_engine;
 pub mod monopole_harmonic_teleporter;
 pub mod skyrmion_neural_processor;
+pub mod anyonic_knot_coprocessor;
 pub mod majorana_surface_memory;
 pub mod memristor;
 pub mod metamaterial_circulator_cloak;
@@ -597,6 +598,9 @@ pub use monopole_harmonic_teleporter::{
 };
 pub use skyrmion_neural_processor::{
     SkyrmionNeuralProcessorMetrics, SkyrmionNeuralProcessorParams,
+};
+pub use anyonic_knot_coprocessor::{
+    AnyonicKnotCoprocessorMetrics, AnyonicKnotCoprocessorParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
