@@ -54,6 +54,7 @@ pub mod interfacial_superconductivity;
 pub mod josephson_vortex_ratchet;
 pub mod jtwpa;
 pub mod kitwpa;
+pub mod kitaev_spin_liquid_braiding;
 pub mod lidar;
 pub mod magnon_bec;
 pub mod majorana_chiral_phonon;
@@ -384,6 +385,7 @@ pub use quantum_acoustic_spin_liquid::*;
 pub use chiral_skyrmion_magnon_polaron::*;
 pub use floquet_exceptional_ring_sensor::*;
 pub use chiral_quantum_hall_pfaffian::*;
+pub use kitaev_spin_liquid_braiding::*;
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
     IntegrationMethod, StepControlOptions, TimeWaveform, TransientOptions, TransientSolution,
