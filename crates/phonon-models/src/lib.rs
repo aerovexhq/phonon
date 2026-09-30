@@ -105,6 +105,7 @@ pub mod mask_tapeout;
 pub mod cryo_testbed;
 pub mod quantum_digital_twin;
 pub mod cloud_deployment;
+pub mod quantum_transceiver;
 pub mod floquet_majorana_engine;
 pub mod monopole_harmonic_teleporter;
 pub mod skyrmion_neural_processor;
@@ -709,6 +710,9 @@ pub use quantum_digital_twin::{
 };
 pub use cloud_deployment::{
     CloudDeploymentMetrics, CloudDeploymentParams,
+};
+pub use quantum_transceiver::{
+    QuantumTransceiverMetrics, QuantumTransceiverParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
