@@ -81,6 +81,7 @@ pub mod monopole_harmonic_teleporter;
 pub mod skyrmion_neural_processor;
 pub mod anyonic_knot_coprocessor;
 pub mod quasicrystal_phason_router;
+pub mod spin_phonon_braiding;
 pub mod majorana_surface_memory;
 pub mod metamaterial_circulator_cloak;
 pub mod mixed_signal;
@@ -485,6 +486,9 @@ pub use anyonic_knot_coprocessor::{
 pub use quasicrystal_phason_router::{
     QuasicrystalPhasonRouterSolver, QuasicrystalRouterBenchmarkResult,
     QuasicrystalRouterBenchmarkRunner,
+};
+pub use spin_phonon_braiding::{
+    SpinPhononBenchmarkResult, SpinPhononBenchmarkRunner, SpinPhononBraidingSolver,
 };
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
