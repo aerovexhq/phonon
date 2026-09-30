@@ -113,6 +113,7 @@ pub mod exceptional_surface;
 pub mod floquet_anyon;
 pub mod skyrmionic_memory;
 pub mod quadrupole_qubit;
+pub mod spin_valley;
 pub mod floquet_majorana_engine;
 pub mod monopole_harmonic_teleporter;
 pub mod skyrmion_neural_processor;
@@ -741,6 +742,9 @@ pub use skyrmionic_memory::{
 };
 pub use quadrupole_qubit::{
     QuadrupoleQubitMetrics, QuadrupoleQubitParams,
+};
+pub use spin_valley::{
+    SpinValleyMetrics, SpinValleyParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
