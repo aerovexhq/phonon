@@ -183,6 +183,7 @@ pub mod levitated_diamond_magnetometer;
 pub mod skyrmion_synaptic_router;
 pub mod topological_polariton_synapse;
 pub mod acoustic_snspd_detector;
+pub mod superconducting_quatrit;
 pub mod chiral_skyrmion_magnon_polaron;
 pub mod floquet_exceptional_ring_sensor;
 pub mod relay;
@@ -713,6 +714,7 @@ pub use levitated_diamond_magnetometer::*;
 pub use skyrmion_synaptic_router::*;
 pub use topological_polariton_synapse::*;
 pub use acoustic_snspd_detector::*;
+pub use superconducting_quatrit::*;
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
     IntegrationMethod, StepControlOptions, TimeWaveform, TransientOptions, TransientSolution,
