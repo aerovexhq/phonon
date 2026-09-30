@@ -185,6 +185,7 @@ pub mod quantum_acoustic_tensor_distillation;
 pub mod quantum_acoustic_spin_liquid;
 pub mod quantum_dot_spin_shuttle;
 pub mod flux_qubit_coupler;
+pub mod acoustic_frequency_synthesizer;
 pub mod chiral_skyrmion_magnon_polaron;
 pub mod floquet_exceptional_ring_sensor;
 pub mod radiation;
@@ -799,6 +800,9 @@ pub use quantum_dot_spin_shuttle::{
 };
 pub use flux_qubit_coupler::{
     FluxQubitCouplerMetrics, FluxQubitCouplerParams,
+};
+pub use acoustic_frequency_synthesizer::{
+    AcousticFrequencySynthesizerMetrics, AcousticFrequencySynthesizerParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
