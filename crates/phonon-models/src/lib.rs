@@ -36,6 +36,7 @@ pub mod chiral_moire_fractional_chern;
 pub mod chiral_phonon;
 pub mod chiral_phonon_sc;
 pub mod chiral_phonon_spin_mechanics;
+pub mod chiral_phonon_magnon_isolator;
 pub mod chiral_polariton;
 pub mod chiral_quantum_hall_pfaffian;
 pub mod chiral_spin_seebeck;
@@ -783,6 +784,9 @@ pub use acoustomagnonic_haloscope::{
 };
 pub use polariton_quantum_memory::{
     PolaritonQuantumMemoryMetrics, PolaritonQuantumMemoryParams,
+};
+pub use chiral_phonon_magnon_isolator::{
+    ChiralPhononMagnonIsolatorMetrics, ChiralPhononMagnonIsolatorParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
