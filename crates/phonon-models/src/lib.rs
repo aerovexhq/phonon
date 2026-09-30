@@ -118,6 +118,7 @@ pub mod holonomic_quantum;
 pub mod acoustomagnonic_squeezing;
 pub mod tripartite_router;
 pub mod acoustoelectric_transistor;
+pub mod teleportation_network;
 pub mod floquet_majorana_engine;
 pub mod monopole_harmonic_teleporter;
 pub mod skyrmion_neural_processor;
@@ -761,6 +762,9 @@ pub use tripartite_router::{
 };
 pub use acoustoelectric_transistor::{
     AcoustoelectricTransistorMetrics, AcoustoelectricTransistorParams,
+};
+pub use teleportation_network::{
+    TeleportationNetworkMetrics, TeleportationNetworkParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
