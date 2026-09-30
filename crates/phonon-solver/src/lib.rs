@@ -78,6 +78,7 @@ pub mod skyrmion_anyonic_repeater;
 pub mod surface_code_decoder;
 pub mod floquet_majorana_engine;
 pub mod monopole_harmonic_teleporter;
+pub mod skyrmion_neural_processor;
 pub mod majorana_surface_memory;
 pub mod metamaterial_circulator_cloak;
 pub mod mixed_signal;
@@ -471,6 +472,10 @@ pub use floquet_majorana_engine::{
 pub use monopole_harmonic_teleporter::{
     MonopoleHarmonicBenchmarkResult, MonopoleHarmonicBenchmarkRunner,
     MonopoleHarmonicTeleporterSolver,
+};
+pub use skyrmion_neural_processor::{
+    SkyrmionNeuralBenchmarkResult, SkyrmionNeuralBenchmarkRunner,
+    SkyrmionNeuralProcessorSolver,
 };
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
