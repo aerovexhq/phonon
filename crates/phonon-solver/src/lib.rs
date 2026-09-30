@@ -101,6 +101,7 @@ pub mod quantum_topological_squeezing;
 pub mod quantum_cavity_acoustomechanics;
 pub mod quantum_teleportation_waveguide;
 pub mod quantum_acoustic_tensor_distillation;
+pub mod quantum_acoustic_spin_liquid;
 pub mod relay;
 pub mod rf;
 pub mod sensors;
@@ -376,6 +377,7 @@ pub use fractional_josephson_parafermion::*;
 pub use acoustomagnonic_polariton_laser::*;
 pub use chiral_hinge_axion_soliton::*;
 pub use chiral_moire_fractional_chern::*;
+pub use quantum_acoustic_spin_liquid::*;
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
     IntegrationMethod, StepControlOptions, TimeWaveform, TransientOptions, TransientSolution,
