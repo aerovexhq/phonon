@@ -1,3 +1,5 @@
+#![deny(unsafe_code)]
+
 //! Phonon Solver: high-performance sparse linear algebra, Modified Nodal Analysis (MNA),
 //! Markowitz threshold pivoting, dynamic TR-BDF2 transient solver, and physical conservation probes.
 
@@ -112,6 +114,7 @@ pub mod acoustomagnonic_squeezing;
 pub mod tripartite_router;
 pub mod acoustoelectric_transistor;
 pub mod teleportation_network;
+pub mod valley_heat_pump;
 pub mod floquet_majorana_engine;
 pub mod monopole_harmonic_teleporter;
 pub mod skyrmion_neural_processor;
@@ -679,6 +682,10 @@ pub use acoustoelectric_transistor::{
 pub use teleportation_network::{
     TeleportationNetworkBenchmarkResult, TeleportationNetworkBenchmarkRunner,
     TeleportationNetworkSolver,
+};
+pub use valley_heat_pump::{
+    ValleyHeatPumpBenchmarkResult, ValleyHeatPumpBenchmarkRunner,
+    ValleyHeatPumpSolver,
 };
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
