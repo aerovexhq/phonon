@@ -111,6 +111,7 @@ pub mod quantum_teleportation_waveguide;
 pub mod quantum_acoustic_tensor_distillation;
 pub mod quantum_acoustic_spin_liquid;
 pub mod chiral_skyrmion_magnon_polaron;
+pub mod floquet_exceptional_ring_sensor;
 pub mod radiation;
 pub mod relay;
 pub mod sensors;
@@ -481,6 +482,9 @@ pub use quantum_acoustic_spin_liquid::{
 };
 pub use chiral_skyrmion_magnon_polaron::{
     ChiralSkyrmionMagnonPolaronMetrics, ChiralSkyrmionMagnonPolaronParams,
+};
+pub use floquet_exceptional_ring_sensor::{
+    FloquetExceptionalRingSensorMetrics, FloquetExceptionalRingSensorParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
