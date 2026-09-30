@@ -81,6 +81,7 @@ pub mod skyrmion_vortex_polariton;
 pub mod twist_defect_lattice;
 pub mod pfaffian_quantum_resonator;
 pub mod axion_string_memristor;
+pub mod skyrmion_anyonic_repeater;
 pub mod majorana_surface_memory;
 pub mod memristor;
 pub mod metamaterial_circulator_cloak;
@@ -577,6 +578,9 @@ pub use pfaffian_quantum_resonator::{
 };
 pub use axion_string_memristor::{
     AxionStringMemristorMetrics, AxionStringMemristorParams,
+};
+pub use skyrmion_anyonic_repeater::{
+    SkyrmionAnyonicRepeaterMetrics, SkyrmionAnyonicRepeaterParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
