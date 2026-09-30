@@ -122,6 +122,7 @@ pub mod tripartite_router;
 pub mod acoustoelectric_transistor;
 pub mod teleportation_network;
 pub mod valley_heat_pump;
+pub mod majorana_braiding_processor;
 pub mod floquet_majorana_engine;
 pub mod monopole_harmonic_teleporter;
 pub mod skyrmion_neural_processor;
@@ -771,6 +772,9 @@ pub use teleportation_network::{
 };
 pub use valley_heat_pump::{
     ValleyHeatPumpMetrics, ValleyHeatPumpParams,
+};
+pub use majorana_braiding_processor::{
+    MajoranaBraidingProcessorMetrics, MajoranaBraidingProcessorParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
