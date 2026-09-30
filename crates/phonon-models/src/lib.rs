@@ -99,6 +99,7 @@ pub mod collaboration_fabric;
 pub mod gpu_tensor_mesh;
 pub mod distributed_mesh;
 pub mod neural_circuit_copilot;
+pub mod holographic_telemetry;
 pub mod floquet_majorana_engine;
 pub mod monopole_harmonic_teleporter;
 pub mod skyrmion_neural_processor;
@@ -685,6 +686,9 @@ pub use distributed_mesh::{
 };
 pub use neural_circuit_copilot::{
     NeuralCircuitCopilotMetrics, NeuralCircuitCopilotParams,
+};
+pub use holographic_telemetry::{
+    HolographicTelemetryMetrics, HolographicTelemetryParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
