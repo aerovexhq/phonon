@@ -103,6 +103,7 @@ pub mod holographic_telemetry;
 pub mod generative_diffusion;
 pub mod mask_tapeout;
 pub mod cryo_testbed;
+pub mod quantum_digital_twin;
 pub mod floquet_majorana_engine;
 pub mod monopole_harmonic_teleporter;
 pub mod skyrmion_neural_processor;
@@ -701,6 +702,9 @@ pub use mask_tapeout::{
 };
 pub use cryo_testbed::{
     CryoTestbedMetrics, CryoTestbedParams,
+};
+pub use quantum_digital_twin::{
+    QuantumDigitalTwinMetrics, QuantumDigitalTwinParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
