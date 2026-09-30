@@ -210,6 +210,7 @@ pub mod axion_polariton_transceiver;
 pub mod superconducting_ququint;
 pub mod topological_valley_hall_router;
 pub mod phonon_magnon_polariton_comb;
+pub mod quantum_metamaterial_transceiver;
 pub mod chiral_skyrmion_magnon_polaron;
 pub mod floquet_exceptional_ring_sensor;
 pub mod radiation;
@@ -899,6 +900,9 @@ pub use topological_valley_hall_router::{
 };
 pub use phonon_magnon_polariton_comb::{
     PhononMagnonPolaritonCombMetrics, PhononMagnonPolaritonCombParams,
+};
+pub use quantum_metamaterial_transceiver::{
+    QuantumMetamaterialTransceiverMetrics, QuantumMetamaterialTransceiverParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
