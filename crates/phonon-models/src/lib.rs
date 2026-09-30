@@ -110,6 +110,7 @@ pub mod quantum_cavity_acoustomechanics;
 pub mod quantum_teleportation_waveguide;
 pub mod quantum_acoustic_tensor_distillation;
 pub mod quantum_acoustic_spin_liquid;
+pub mod chiral_skyrmion_magnon_polaron;
 pub mod radiation;
 pub mod relay;
 pub mod sensors;
@@ -477,6 +478,9 @@ pub use chiral_moire_fractional_chern::{
 };
 pub use quantum_acoustic_spin_liquid::{
     QuantumAcousticSpinLiquidMetrics, QuantumAcousticSpinLiquidParams,
+};
+pub use chiral_skyrmion_magnon_polaron::{
+    ChiralSkyrmionMagnonPolaronMetrics, ChiralSkyrmionMagnonPolaronParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
