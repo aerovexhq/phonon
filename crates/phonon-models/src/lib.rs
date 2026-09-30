@@ -117,6 +117,7 @@ pub mod spin_valley;
 pub mod holonomic_quantum;
 pub mod acoustomagnonic_squeezing;
 pub mod tripartite_router;
+pub mod acoustoelectric_transistor;
 pub mod floquet_majorana_engine;
 pub mod monopole_harmonic_teleporter;
 pub mod skyrmion_neural_processor;
@@ -757,6 +758,9 @@ pub use acoustomagnonic_squeezing::{
 };
 pub use tripartite_router::{
     TripartiteRouterMetrics, TripartiteRouterParams,
+};
+pub use acoustoelectric_transistor::{
+    AcoustoelectricTransistorMetrics, AcoustoelectricTransistorParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
