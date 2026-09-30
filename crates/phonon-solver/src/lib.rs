@@ -83,6 +83,7 @@ pub mod anyonic_knot_coprocessor;
 pub mod quasicrystal_phason_router;
 pub mod spin_phonon_braiding;
 pub mod anyon_condensation;
+pub mod corner_state_memory;
 pub mod majorana_surface_memory;
 pub mod metamaterial_circulator_cloak;
 pub mod mixed_signal;
@@ -493,6 +494,9 @@ pub use spin_phonon_braiding::{
 };
 pub use anyon_condensation::{
     AnyonCondensationBenchmarkResult, AnyonCondensationBenchmarkRunner, AnyonCondensationSolver,
+};
+pub use corner_state_memory::{
+    CornerStateMemoryBenchmarkResult, CornerStateMemoryBenchmarkRunner, CornerStateMemorySolver,
 };
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
