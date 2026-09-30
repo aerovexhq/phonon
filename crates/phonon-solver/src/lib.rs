@@ -84,6 +84,7 @@ pub mod majorana_transmon_hybrid;
 pub mod anyonic_neural_synapse;
 pub mod chern_heat_engine;
 pub mod optomechanical_switchyard;
+pub mod saw_soliton_routing;
 pub mod floquet_majorana_engine;
 pub mod monopole_harmonic_teleporter;
 pub mod skyrmion_neural_processor;
@@ -539,6 +540,10 @@ pub use chern_heat_engine::{
 pub use optomechanical_switchyard::{
     OptomechanicalSwitchyardBenchmarkResult, OptomechanicalSwitchyardBenchmarkRunner,
     OptomechanicalSwitchyardSolver,
+};
+pub use saw_soliton_routing::{
+    SawSolitonRoutingBenchmarkResult, SawSolitonRoutingBenchmarkRunner,
+    SawSolitonRoutingSolver,
 };
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
