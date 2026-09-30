@@ -1,60 +1,92 @@
-//! Multi-threaded Rayon benchmark verification for Floquet anyon braiding across 10,000 parameter sweeps.
+#![deny(unsafe_code)]
 
-use phonon_solver::floquet_anyon_braiding::FloquetAnyonBenchmarkRunner;
+//! Automated 10,000-sweep parallel benchmark and physical compliance test
+//! for the Phonon Universal Multi-Scale Visual Studio Autonomous Floquet-Engineered
+//! Non-Abelian Anyon Weaving Fabric & Fractional Quantum Hall Acoustic Engine
+//! across multi-threaded Rayon workers.
+
+use phonon_solver::floquet_anyon::FloquetAnyonBenchmarkRunner;
 
 #[test]
-fn test_floquet_anyon_parallel_benchmark() {
-    let runner = FloquetAnyonBenchmarkRunner::new(10_000);
-    let report = runner.run_benchmark();
+fn test_10k_floquet_anyon_parallel_sweep() {
+    let cycles = 10_000;
+    let result = FloquetAnyonBenchmarkRunner::run_benchmark(cycles);
 
-    println!("\n=== Floquet-Engineered Anyon Braiding 10,000 Parameter Sweep Benchmark ===");
-    println!("Total sweeps:                 {}", report.total_cycles);
+    println!("--- Phase 216 Phonon Universal Multi-Scale Visual Studio Autonomous Floquet-Engineered Non-Abelian Anyon Weaving Fabric & Fractional Quantum Hall Acoustic Engine Benchmark Results ---");
+    println!("Total Cycles: {}", result.total_cycles);
+    println!("Elapsed Seconds: {:.6} s", result.elapsed_seconds);
+    println!("Throughput: {:.2} sweeps/sec", result.throughput_sweeps_per_sec);
     println!(
-        "Elapsed time:                 {:.4} s",
-        report.elapsed_seconds
+        "Physical Compliance Fraction: {:.2}%",
+        result.physical_compliance_fraction * 100.0
     );
     println!(
-        "Throughput:                   {:.2} sweeps/s",
-        report.throughput_cycles_per_sec
+        "Braiding Fidelity: mean = {:.6}, min = {:.6}, max = {:.6}",
+        result.mean_braiding_fidelity,
+        result.min_braiding_fidelity,
+        result.max_braiding_fidelity
     );
     println!(
-        "Mean Braiding Gate Fidelity:  {:.4}% (min: {:.4}%, max: {:.4}%)",
-        report.mean_braiding_gate_fidelity_pct,
-        report.min_braiding_gate_fidelity_pct,
-        report.max_braiding_gate_fidelity_pct
+        "Anyonic State Retention Fraction: mean = {:.6}, min = {:.6}, max = {:.6}",
+        result.mean_anyonic_state_retention_fraction,
+        result.min_anyonic_state_retention_fraction,
+        result.max_anyonic_state_retention_fraction
     );
     println!(
-        "Mean Leakage Error Rate:      {:.4e} (max: {:.4e})",
-        report.mean_leakage_error_rate, report.max_leakage_error_rate
+        "Topological Protection Gap (MHz): mean = {:.4}, min = {:.4}, max = {:.4}",
+        result.mean_topological_protection_gap_mhz,
+        result.min_topological_protection_gap_mhz,
+        result.max_topological_protection_gap_mhz
     );
     println!(
-        "Mean Gauge Commutator Norm:   {:.3} (min: {:.3})",
-        report.mean_synthetic_gauge_commutator_norm, report.min_synthetic_gauge_commutator_norm
+        "Inter-Braid Crosstalk Isolation (dB): mean = {:.4}, min = {:.4}, max = {:.4}",
+        result.mean_inter_braid_crosstalk_isolation_db,
+        result.min_inter_braid_crosstalk_isolation_db,
+        result.max_inter_braid_crosstalk_isolation_db
     );
     println!(
-        "Mean Floquet Bandgap:         {:.1} kHz",
-        report.mean_floquet_gap_khz
-    );
-    println!(
-        "Mean Logical Readout SNR:     {:.2} dB (min: {:.2} dB)",
-        report.mean_logical_readout_snr_db, report.min_logical_readout_snr_db
-    );
-    println!(
-        "Physical Compliance Fraction: {:.4} (100% required)",
-        report.compliance_fraction
+        "Topological Mode Dephasing Rate (Hz): mean = {:.4}, min = {:.4}, max = {:.4}",
+        result.mean_topological_mode_dephasing_rate_hz,
+        result.min_topological_mode_dephasing_rate_hz,
+        result.max_topological_mode_dephasing_rate_hz
     );
 
-    assert_eq!(report.total_cycles, 10_000);
-    assert!(report.mean_braiding_gate_fidelity_pct >= 99.50);
-    assert!(report.min_braiding_gate_fidelity_pct >= 99.50);
-    assert!(report.max_leakage_error_rate <= 1.0e-4);
-    assert!(report.mean_synthetic_gauge_commutator_norm >= 0.50);
-    assert!(report.min_synthetic_gauge_commutator_norm >= 0.50);
-    assert!(report.mean_floquet_gap_khz >= 50.0);
-    assert!(report.mean_logical_readout_snr_db >= 25.0);
-    assert!(report.min_logical_readout_snr_db >= 25.0);
     assert_eq!(
-        report.compliance_fraction, 1.0,
-        "All 10,000 parameter sweeps must satisfy physical bounds"
+        result.total_cycles, cycles,
+        "Total benchmark cycles must equal requested 10,000"
+    );
+
+    // Verify 100% physical compliance across all parameter sweep variations
+    assert!(
+        (result.physical_compliance_fraction - 1.0).abs() < 1.0e-6,
+        "Physical compliance must be 100.0%, got {:.2}%",
+        result.physical_compliance_fraction * 100.0
+    );
+
+    // Verify roadmap thresholds
+    assert!(
+        result.min_braiding_fidelity >= 0.9980,
+        "Minimum braiding fidelity must be >= 0.9980, got {:.6}",
+        result.min_braiding_fidelity
+    );
+    assert!(
+        result.min_anyonic_state_retention_fraction >= 0.9970,
+        "Minimum anyonic state retention fraction must be >= 0.9970, got {:.6}",
+        result.min_anyonic_state_retention_fraction
+    );
+    assert!(
+        result.min_topological_protection_gap_mhz >= 45.0,
+        "Minimum topological protection gap must be >= 45.0 MHz, got {:.4} MHz",
+        result.min_topological_protection_gap_mhz
+    );
+    assert!(
+        result.min_inter_braid_crosstalk_isolation_db >= 55.0,
+        "Minimum inter-braid crosstalk isolation must be >= 55.0 dB, got {:.4} dB",
+        result.min_inter_braid_crosstalk_isolation_db
+    );
+    assert!(
+        result.max_topological_mode_dephasing_rate_hz <= 12.0,
+        "Maximum topological mode dephasing rate must be <= 12.0 Hz, got {:.4} Hz",
+        result.max_topological_mode_dephasing_rate_hz
     );
 }
