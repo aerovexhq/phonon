@@ -22,6 +22,7 @@ pub mod cavity_magnon_polariton_comb;
 pub mod cavity_spintronics;
 pub mod chemistry;
 pub mod chiral_acoustic_router;
+pub mod chiral_axion_circulator;
 pub mod chiral_chern_anyon_braiding;
 pub mod chiral_floquet_hall_transistor;
 pub mod chiral_frequency_bin_bell_analyzer;
@@ -509,6 +510,9 @@ pub use tensor_gauge_monopole_sensor::{
 };
 pub use quantum_acoustic_surface_code::{
     QuantumAcousticSurfaceCodeMetrics, QuantumAcousticSurfaceCodeParams,
+};
+pub use chiral_axion_circulator::{
+    ChiralAxionCirculatorMetrics, ChiralAxionCirculatorParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
