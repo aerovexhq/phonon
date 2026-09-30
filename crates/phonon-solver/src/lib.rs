@@ -8,6 +8,7 @@ pub mod acoustic_microcomb_soliton;
 pub mod acoustoelectric;
 pub mod acoustoelectric_moire;
 pub mod acoustomagnonic_comb;
+pub mod acoustomagnonic_polariton_laser;
 pub mod afm_spintronics;
 pub mod assets;
 pub mod axion_electrodynamics;
@@ -370,6 +371,7 @@ pub use phononic_superconducting_majorana::*;
 pub use chiral_floquet_hall_transistor::*;
 pub use chiral_frequency_bin_bell_analyzer::*;
 pub use fractional_josephson_parafermion::*;
+pub use acoustomagnonic_polariton_laser::*;
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
     IntegrationMethod, StepControlOptions, TimeWaveform, TransientOptions, TransientSolution,

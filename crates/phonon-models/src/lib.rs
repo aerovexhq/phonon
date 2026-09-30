@@ -9,6 +9,7 @@ pub mod acoustic_microcomb_soliton;
 pub mod acoustoelectric;
 pub mod acoustoelectric_moire;
 pub mod acoustomagnonic_comb;
+pub mod acoustomagnonic_polariton_laser;
 pub mod afm_spintronics;
 pub mod assets;
 pub mod atomistic;
@@ -461,6 +462,9 @@ pub use chiral_frequency_bin_bell_analyzer::{
 };
 pub use fractional_josephson_parafermion::{
     FractionalJosephsonParafermionMetrics, FractionalJosephsonParafermionParams,
+};
+pub use acoustomagnonic_polariton_laser::{
+    AcoustomagnonicPolaritonLaserMetrics, AcoustomagnonicPolaritonLaserParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
