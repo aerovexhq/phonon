@@ -195,6 +195,7 @@ pub mod superconducting_quatrit;
 pub mod ultracold_fermi_gas_sensor;
 pub mod anyon_fusion_synthesizer;
 pub mod bec_soliton_interferometer;
+pub mod axion_magnon_memory;
 pub mod chiral_skyrmion_magnon_polaron;
 pub mod floquet_exceptional_ring_sensor;
 pub mod radiation;
@@ -839,6 +840,9 @@ pub use anyon_fusion_synthesizer::{
 };
 pub use bec_soliton_interferometer::{
     BecSolitonInterferometerMetrics, BecSolitonInterferometerParams,
+};
+pub use axion_magnon_memory::{
+    AxionMagnonMemoryMetrics, AxionMagnonMemoryParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
