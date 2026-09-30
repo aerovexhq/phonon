@@ -167,6 +167,7 @@ pub mod photonic;
 pub mod plasma;
 pub mod polariton_condensate;
 pub mod polariton_exceptional_point;
+pub mod polariton_quantum_memory;
 pub mod programmable_chiral_graph;
 pub mod quantum;
 pub mod quantum_acoustic;
@@ -779,6 +780,9 @@ pub use majorana_braiding_processor::{
 };
 pub use acoustomagnonic_haloscope::{
     AcoustomagnonicHaloscopeMetrics, AcoustomagnonicHaloscopeParams,
+};
+pub use polariton_quantum_memory::{
+    PolaritonQuantumMemoryMetrics, PolaritonQuantumMemoryParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
