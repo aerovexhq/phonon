@@ -106,6 +106,7 @@ pub mod cryo_testbed;
 pub mod quantum_digital_twin;
 pub mod cloud_deployment;
 pub mod quantum_transceiver;
+pub mod molecular_spintronics;
 pub mod floquet_majorana_engine;
 pub mod monopole_harmonic_teleporter;
 pub mod skyrmion_neural_processor;
@@ -713,6 +714,9 @@ pub use cloud_deployment::{
 };
 pub use quantum_transceiver::{
     QuantumTransceiverMetrics, QuantumTransceiverParams,
+};
+pub use molecular_spintronics::{
+    MolecularSpintronicsMetrics, MolecularSpintronicsParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
