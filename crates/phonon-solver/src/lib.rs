@@ -95,6 +95,7 @@ pub mod neural_circuit_copilot;
 pub mod holographic_telemetry;
 pub mod generative_diffusion;
 pub mod mask_tapeout;
+pub mod cryo_testbed;
 pub mod floquet_majorana_engine;
 pub mod monopole_harmonic_teleporter;
 pub mod skyrmion_neural_processor;
@@ -594,6 +595,10 @@ pub use generative_diffusion::{
 pub use mask_tapeout::{
     MaskTapeoutBenchmarkResult, MaskTapeoutBenchmarkRunner,
     MaskTapeoutSolver,
+};
+pub use cryo_testbed::{
+    CryoTestbedBenchmarkResult, CryoTestbedBenchmarkRunner,
+    CryoTestbedSolver,
 };
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
