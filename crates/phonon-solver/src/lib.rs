@@ -51,6 +51,7 @@ pub mod hetero;
 pub mod hexagonal_majorana;
 pub mod high_harmonic_bloch;
 pub mod holonomic_quantum_processor;
+pub mod hotp_quadrupole_octupole_metasurface;
 pub mod interfacial_superconductivity;
 pub mod josephson_vortex_ratchet;
 pub mod jtwpa;
@@ -396,6 +397,7 @@ pub use twisted_bilayer_moire_polariton::*;
 pub use tensor_gauge_monopole_sensor::*;
 pub use quantum_acoustic_surface_code::*;
 pub use chiral_axion_circulator::*;
+pub use hotp_quadrupole_octupole_metasurface::*;
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
     IntegrationMethod, StepControlOptions, TimeWaveform, TransientOptions, TransientSolution,
