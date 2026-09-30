@@ -136,6 +136,7 @@ pub mod topological_acoustic_skyrmion;
 pub mod topological_acoustic_fracton;
 pub mod twisted_bilayer_moire_polariton;
 pub mod tensor_gauge_monopole_sensor;
+pub mod quantum_acoustic_surface_code;
 pub mod non_hermitian_quadrupole_laser;
 pub mod transient;
 pub mod valley_acoustic;
@@ -392,6 +393,7 @@ pub use kitaev_spin_liquid_braiding::*;
 pub use topological_acoustic_fracton::*;
 pub use twisted_bilayer_moire_polariton::*;
 pub use tensor_gauge_monopole_sensor::*;
+pub use quantum_acoustic_surface_code::*;
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
     IntegrationMethod, StepControlOptions, TimeWaveform, TransientOptions, TransientSolution,

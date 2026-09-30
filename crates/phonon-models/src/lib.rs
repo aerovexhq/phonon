@@ -147,6 +147,7 @@ pub mod topological_acoustic_skyrmion;
 pub mod topological_acoustic_fracton;
 pub mod twisted_bilayer_moire_polariton;
 pub mod tensor_gauge_monopole_sensor;
+pub mod quantum_acoustic_surface_code;
 pub mod non_hermitian_quadrupole_laser;
 pub mod valley_acoustic;
 pub mod valleytronics;
@@ -505,6 +506,9 @@ pub use twisted_bilayer_moire_polariton::{
 };
 pub use tensor_gauge_monopole_sensor::{
     TensorGaugeMonopoleSensorMetrics, TensorGaugeMonopoleSensorParams,
+};
+pub use quantum_acoustic_surface_code::{
+    QuantumAcousticSurfaceCodeMetrics, QuantumAcousticSurfaceCodeParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
