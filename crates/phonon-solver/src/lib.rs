@@ -159,6 +159,7 @@ pub mod phononic_topological;
 pub mod plasma;
 pub mod polariton_condensate;
 pub mod polariton_exceptional_point;
+pub mod polariton_quantum_memory;
 pub mod programmable_chiral_graph;
 pub mod quantum;
 pub mod quantum_acoustic;
@@ -691,6 +692,7 @@ pub use valley_heat_pump::{
 };
 pub use majorana_braiding_processor::*;
 pub use acoustomagnonic_haloscope::*;
+pub use polariton_quantum_memory::*;
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
     IntegrationMethod, StepControlOptions, TimeWaveform, TransientOptions, TransientSolution,
