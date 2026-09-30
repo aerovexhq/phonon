@@ -48,6 +48,7 @@ pub mod fractional_chern;
 pub mod fractional_hall_parafermion;
 pub mod fractional_josephson_parafermion;
 pub mod fractional_chern_simons_viscometer;
+pub mod moire_skyrmion_anyon_braiding;
 pub mod hetero;
 pub mod hexagonal_majorana;
 pub mod high_harmonic_bloch;
@@ -402,6 +403,9 @@ pub use chiral_axion_circulator::*;
 pub use hotp_quadrupole_octupole_metasurface::*;
 pub use twisted_bilayer_topological_superfluid::*;
 pub use fractional_chern_simons_viscometer::*;
+pub use moire_skyrmion_anyon_braiding::{
+    MoireSkyrmionAnyonBraidingSolver, MoireSkyrmionBenchmarkResult, MoireSkyrmionBenchmarkRunner,
+};
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
     IntegrationMethod, StepControlOptions, TimeWaveform, TransientOptions, TransientSolution,
