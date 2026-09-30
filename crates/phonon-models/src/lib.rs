@@ -208,6 +208,7 @@ pub mod skyrmion_majorana_crossbar;
 pub mod parafermion_surface_code;
 pub mod axion_polariton_transceiver;
 pub mod superconducting_ququint;
+pub mod topological_valley_hall_router;
 pub mod chiral_skyrmion_magnon_polaron;
 pub mod floquet_exceptional_ring_sensor;
 pub mod radiation;
@@ -891,6 +892,9 @@ pub use axion_polariton_transceiver::{
 };
 pub use superconducting_ququint::{
     SuperconductingQuquintMetrics, SuperconductingQuquintParams,
+};
+pub use topological_valley_hall_router::{
+    TopologicalValleyHallRouterMetrics, TopologicalValleyHallRouterParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
