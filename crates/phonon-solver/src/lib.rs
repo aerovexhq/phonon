@@ -137,6 +137,7 @@ pub mod topological_time_crystal;
 pub mod topological_acoustic_skyrmion;
 pub mod topological_acoustic_fracton;
 pub mod twisted_bilayer_moire_polariton;
+pub mod twisted_bilayer_topological_superfluid;
 pub mod tensor_gauge_monopole_sensor;
 pub mod quantum_acoustic_surface_code;
 pub mod non_hermitian_quadrupole_laser;
@@ -398,6 +399,7 @@ pub use tensor_gauge_monopole_sensor::*;
 pub use quantum_acoustic_surface_code::*;
 pub use chiral_axion_circulator::*;
 pub use hotp_quadrupole_octupole_metasurface::*;
+pub use twisted_bilayer_topological_superfluid::*;
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
     IntegrationMethod, StepControlOptions, TimeWaveform, TransientOptions, TransientSolution,

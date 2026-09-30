@@ -148,6 +148,7 @@ pub mod topological_time_crystal;
 pub mod topological_acoustic_skyrmion;
 pub mod topological_acoustic_fracton;
 pub mod twisted_bilayer_moire_polariton;
+pub mod twisted_bilayer_topological_superfluid;
 pub mod tensor_gauge_monopole_sensor;
 pub mod quantum_acoustic_surface_code;
 pub mod non_hermitian_quadrupole_laser;
@@ -517,6 +518,9 @@ pub use chiral_axion_circulator::{
 };
 pub use hotp_quadrupole_octupole_metasurface::{
     HotpQuadrupoleOctupoleMetrics, HotpQuadrupoleOctupoleParams,
+};
+pub use twisted_bilayer_topological_superfluid::{
+    TwistedBilayerTopologicalSuperfluidMetrics, TwistedBilayerTopologicalSuperfluidParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
