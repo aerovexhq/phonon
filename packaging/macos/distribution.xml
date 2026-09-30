@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Phonon macOS Distribution XML Specification
+  For building guided multi-step installer wizard packages (.pkg) via Apple productbuild
+-->
+<installer-gui-script minSpecVersion="2">
+    <title>Phonon Simulation Studio</title>
+    
+    <options customize="allow"
+             require-scripts="true"
+             rootVolumeOnly="true"
+             hostArchitectures="x86_64,arm64" />
+    
+    <!-- Presentation & Branding -->
+    <welcome file="welcome.html" mime-type="text/html" />
+    <license file="license.txt" mime-type="text/plain" />
+    
+    <!-- Target Domains: Per-machine administrator install -->
+    <domains enable_anywhere="false"
+             enable_currentUserHome="false"
+             enable_localSystem="true" />
+    
+    <choices-outline>
+        <line choice="default">
+            <line choice="net.aerovex.phonon.app" />
+            <line choice="net.aerovex.phonon.cli" />
+        </line>
+    </choices-outline>
+    
+    <choice id="default" />
+    
+    <choice id="net.aerovex.phonon.app"
+            visible="true"
+            title="Phonon Studio Desktop Application"
+            description="Installs Phonon Studio.app into /Applications for graphical CAD simulation."
+            start_selected="true">
+        <pkg-ref id="net.aerovex.phonon.app" />
+    </choice>
+    
+    <choice id="net.aerovex.phonon.cli"
+            visible="true"
+            title="Phonon Command Line Interface &amp; Completions"
+            description="Configures /usr/local/bin/phonon symlink and shell completions."
+            start_selected="true">
+        <pkg-ref id="net.aerovex.phonon.cli" />
+    </choice>
+    
+    <pkg-ref id="net.aerovex.phonon.app"
+             version="0.1.0"
+             onConclusion="none">phonon-app.pkg</pkg-ref>
+             
+    <pkg-ref id="net.aerovex.phonon.cli"
+             version="0.1.0"
+             onConclusion="none">phonon-cli.pkg</pkg-ref>
+</installer-gui-script>

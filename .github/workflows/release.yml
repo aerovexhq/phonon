@@ -1,4 +1,4 @@
-name: Release Build & Distribution Pipeline
+name: Multi-OS Release Packaging Pipeline
 
 on:
   push:
@@ -10,10 +10,9 @@ permissions:
   contents: write
 
 jobs:
-  build-and-release:
-    name: Build & Package Linux Distro Assets
+  build-linux:
+    name: Build & Package Linux Assets
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -35,19 +34,154 @@ jobs:
         run: |
           cargo build --release -p phonon-cli
 
-      - name: Execute Release Packaging Pipeline
+      - name: Execute Linux Release Packaging Pipeline
         run: |
           bash packaging/build_packages.sh
 
-      - name: Publish GitHub Release Assets
+      - name: Upload Linux Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-dist
+          path: dist/*
+          if-no-files-found: error
+
+  build-windows:
+    name: Build & Package Windows Assets (EXE Wizard & MSI)
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust Stable Toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-pc-windows-msvc
+
+      - name: Rust Cache
+        uses: Swatinem/rust-cache@v2
+
+      - name: Compile Unified Phonon Windows Binary
+        run: |
+          cargo build --release -p phonon-cli --target x86_64-pc-windows-msvc
+
+      - name: Prepare Windows Staging Directory
+        shell: bash
+        run: |
+          mkdir -p dist/windows
+          cp target/x86_64-pc-windows-msvc/release/phonon.exe dist/windows/phonon.exe
+
+      - name: Install Inno Setup
+        run: |
+          choco install innosetup --no-progress
+
+      - name: Build Inno Setup Interactive EXE Wizard
+        shell: bash
+        run: |
+          ISCC.exe packaging/windows/inno_setup.iss
+
+      - name: Install WiX Toolset
+        run: |
+          dotnet tool install --global wix
+
+      - name: Build Enterprise MSI Installer
+        shell: pwsh
+        run: |
+          wix extension add WixToolset.UI.wixext
+          wix build packaging/windows/phonon.wxs `
+            -d BinSourceDir="dist/windows" `
+            -d DocSourceDir="." `
+            -ext WixToolset.UI.wixext `
+            -o dist/phonon-0.1.0-x64.msi
+
+      - name: Create Portable Windows ZIP
+        shell: pwsh
+        run: |
+          Compress-Archive -Path dist/windows/phonon.exe, README.md, LICENSE -DestinationPath dist/phonon-v0.1.0-x86_64-pc-windows-msvc.zip
+
+      - name: Upload Windows Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-dist
+          path: |
+            dist/*.exe
+            dist/*.msi
+            dist/*.zip
+          if-no-files-found: warn
+
+  build-macos:
+    name: Build & Package macOS Assets (DMG & PKG Wizard)
+    runs-on: macos-14
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust Stable Toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-darwin
+
+      - name: Rust Cache
+        uses: Swatinem/rust-cache@v2
+
+      - name: Compile Unified Phonon macOS Binary
+        run: |
+          cargo build --release -p phonon-cli --target aarch64-apple-darwin
+
+      - name: Assemble Phonon Studio.app Bundle
+        run: |
+          bash packaging/macos/build_app_bundle.sh target/aarch64-apple-darwin/release/phonon
+
+      - name: Build Styled Drag-and-Drop DMG
+        run: |
+          bash packaging/macos/create_dmg.sh
+
+      - name: Build Guided Multi-Step PKG Wizard
+        run: |
+          mkdir -p dist/pkg-staging
+          pkgbuild --root "dist/macos/Phonon Studio.app" \
+                   --install-location "/Applications/Phonon Studio.app" \
+                   --scripts packaging/macos/scripts \
+                   --identifier net.aerovex.phonon.app \
+                   --version 0.1.0 \
+                   dist/pkg-staging/phonon-app.pkg
+
+          productbuild --distribution packaging/macos/distribution.xml \
+                       --package-path dist/pkg-staging \
+                       --resources packaging/macos \
+                       dist/Phonon-0.1.0.pkg || true
+
+      - name: Upload macOS Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-dist
+          path: |
+            dist/*.dmg
+            dist/*.pkg
+            dist/*.tar.gz
+          if-no-files-found: warn
+
+  release:
+    name: Publish Multi-OS GitHub Release
+    needs: [build-linux, build-windows, build-macos]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download All Distribution Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: all-dist
+          merge-multiple: true
+
+      - name: Compute Cryptographic SHA256SUMS Manifest
+        run: |
+          cd all-dist
+          rm -f SHA256SUMS
+          find . -maxdepth 1 -type f ! -name "SHA256SUMS" ! -name ".*" -exec sha256sum {} + | sort -k 2 > SHA256SUMS
+          cat SHA256SUMS
+
+      - name: Publish Multi-OS GitHub Release Assets
         uses: softprops/action-gh-release@v2
         with:
-          files: |
-            dist/phonon_*_amd64.deb
-            dist/phonon-*-x86_64-unknown-linux-gnu.tar.gz
-            dist/phonon-x86_64
-            dist/install.sh
-            dist/SHA256SUMS
+          files: all-dist/*
           name: "Phonon Release ${{ github.ref_name }}"
           draft: false
           prerelease: false

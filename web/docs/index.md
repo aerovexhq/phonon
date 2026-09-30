@@ -16,7 +16,7 @@ hero:
       text: Get Started
       link: /guide/getting-started
     - theme: alt
-      text: Install v0.1.0 (.deb)
+      text: Download & Install (All OS)
       link: /guide/installation
 
 features:
@@ -36,34 +36,26 @@ features:
 
 ## Quick Start in 60 Seconds
 
-### Install via Single Debian (.deb) Package
+### Linux Installation Options
 
 ```bash
-# Download and install Debian/Ubuntu package
+# Option A: Fast universal one-line installer (all popular distros)
+curl -fsSL https://phonon.aerovex.net/install.sh | bash
+
+# Option B: Single Debian/Ubuntu package (.deb)
 wget https://github.com/aerovexsim/phonon/releases/download/v0.1.0/phonon_0.1.0_amd64.deb
 sudo dpkg -i phonon_0.1.0_amd64.deb
 
-# Launch the visual CAD Studio
-phonon ui
-
-# Or run headless CLI circuit validation
-phonon validate circuit.cir
-```
-
-### Universal Fast One-Line Installer (All Popular Distros)
-
-```bash
-# Supports Ubuntu, Debian, Fedora, Arch, RHEL, openSUSE, Alpine, Void, NixOS
-curl -fsSL https://phonon.aerovex.net/install.sh | bash
-```
-
-### Run Standalone Binary Directly
-
-```bash
+# Option C: Standalone portable executable
 wget https://github.com/aerovexsim/phonon/releases/download/v0.1.0/phonon-x86_64
-chmod +x phonon-x86_64
-./phonon-x86_64 ui
+chmod +x phonon-x86_64 && ./phonon-x86_64 ui
 ```
+
+### Windows & macOS Setup Wizards
+
+- **Windows**: Download interactive setup wizard [`phonon-setup-0.1.0-x64.exe`](/guide/installation#method-5-windows-setup-wizard--enterprise-msi) or enterprise [`phonon-0.1.0-x64.msi`](/guide/installation#method-5-windows-setup-wizard--enterprise-msi).
+- **macOS**: Download drag-and-drop disk image [`Phonon-0.1.0.dmg`](/guide/installation#method-6-macos-drag-and-drop-dmg--guided-pkg-wizard) or guided wizard [`Phonon-0.1.0.pkg`](/guide/installation#method-6-macos-drag-and-drop-dmg--guided-pkg-wizard).
+
 
 ### Open Static Web Studio in Browser
 
