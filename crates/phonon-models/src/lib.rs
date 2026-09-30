@@ -80,6 +80,7 @@ pub mod disclination_holonomic_processor;
 pub mod skyrmion_vortex_polariton;
 pub mod twist_defect_lattice;
 pub mod pfaffian_quantum_resonator;
+pub mod axion_string_memristor;
 pub mod majorana_surface_memory;
 pub mod memristor;
 pub mod metamaterial_circulator_cloak;
@@ -573,6 +574,9 @@ pub use twist_defect_lattice::{
 };
 pub use pfaffian_quantum_resonator::{
     PfaffianQuantumResonatorMetrics, PfaffianQuantumResonatorParams,
+};
+pub use axion_string_memristor::{
+    AxionStringMemristorMetrics, AxionStringMemristorParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
