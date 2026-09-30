@@ -211,6 +211,7 @@ pub mod superconducting_ququint;
 pub mod topological_valley_hall_router;
 pub mod phonon_magnon_polariton_comb;
 pub mod quantum_metamaterial_transceiver;
+pub mod levitated_nanodiamond_spin_sensor;
 pub mod chiral_skyrmion_magnon_polaron;
 pub mod floquet_exceptional_ring_sensor;
 pub mod radiation;
@@ -903,6 +904,9 @@ pub use phonon_magnon_polariton_comb::{
 };
 pub use quantum_metamaterial_transceiver::{
     QuantumMetamaterialTransceiverMetrics, QuantumMetamaterialTransceiverParams,
+};
+pub use levitated_nanodiamond_spin_sensor::{
+    LevitatedNanodiamondSpinSensorMetrics, LevitatedNanodiamondSpinSensorParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
