@@ -21,6 +21,7 @@ pub mod chiral_acoustic_router;
 pub mod chiral_chern_anyon_braiding;
 pub mod chiral_floquet_hall_transistor;
 pub mod chiral_frequency_bin_bell_analyzer;
+pub mod chiral_hinge_axion_soliton;
 pub mod chiral_holographic_beamforming;
 pub mod chiral_phonon;
 pub mod chiral_phonon_sc;
@@ -372,6 +373,7 @@ pub use chiral_floquet_hall_transistor::*;
 pub use chiral_frequency_bin_bell_analyzer::*;
 pub use fractional_josephson_parafermion::*;
 pub use acoustomagnonic_polariton_laser::*;
+pub use chiral_hinge_axion_soliton::*;
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
     IntegrationMethod, StepControlOptions, TimeWaveform, TransientOptions, TransientSolution,

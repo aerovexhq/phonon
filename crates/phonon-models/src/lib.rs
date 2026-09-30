@@ -25,6 +25,7 @@ pub mod chiral_acoustic_router;
 pub mod chiral_chern_anyon_braiding;
 pub mod chiral_floquet_hall_transistor;
 pub mod chiral_frequency_bin_bell_analyzer;
+pub mod chiral_hinge_axion_soliton;
 pub mod chiral_holographic_beamforming;
 pub mod chiral_phonon;
 pub mod chiral_phonon_sc;
@@ -465,6 +466,9 @@ pub use fractional_josephson_parafermion::{
 };
 pub use acoustomagnonic_polariton_laser::{
     AcoustomagnonicPolaritonLaserMetrics, AcoustomagnonicPolaritonLaserParams,
+};
+pub use chiral_hinge_axion_soliton::{
+    ChiralHingeAxionSolitonMetrics, ChiralHingeAxionSolitonParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
