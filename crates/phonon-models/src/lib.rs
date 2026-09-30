@@ -53,6 +53,7 @@ pub mod fqh_acoustic_interferometer;
 pub mod fractional_chern;
 pub mod fractional_hall_parafermion;
 pub mod fractional_josephson_parafermion;
+pub mod fractional_chern_simons_viscometer;
 pub mod hetero;
 pub mod hexagonal_majorana;
 pub mod hierarchical;
@@ -521,6 +522,9 @@ pub use hotp_quadrupole_octupole_metasurface::{
 };
 pub use twisted_bilayer_topological_superfluid::{
     TwistedBilayerTopologicalSuperfluidMetrics, TwistedBilayerTopologicalSuperfluidParams,
+};
+pub use fractional_chern_simons_viscometer::{
+    FractionalChernSimonsViscometerMetrics, FractionalChernSimonsViscometerParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
