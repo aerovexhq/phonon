@@ -32,6 +32,7 @@ pub mod chiral_moire_fractional_chern;
 pub mod chiral_phonon;
 pub mod chiral_phonon_sc;
 pub mod chiral_phonon_spin_mechanics;
+pub mod chiral_phonon_magnon_isolator;
 pub mod chiral_polariton;
 pub mod chiral_quantum_hall_pfaffian;
 pub mod chiral_spin_seebeck;
@@ -693,6 +694,7 @@ pub use valley_heat_pump::{
 pub use majorana_braiding_processor::*;
 pub use acoustomagnonic_haloscope::*;
 pub use polariton_quantum_memory::*;
+pub use chiral_phonon_magnon_isolator::*;
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
     IntegrationMethod, StepControlOptions, TimeWaveform, TransientOptions, TransientSolution,
