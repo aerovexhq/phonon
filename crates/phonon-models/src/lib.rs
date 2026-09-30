@@ -111,6 +111,7 @@ pub mod superradiance_laser;
 pub mod topological_axion;
 pub mod exceptional_surface;
 pub mod floquet_anyon;
+pub mod skyrmionic_memory;
 pub mod floquet_majorana_engine;
 pub mod monopole_harmonic_teleporter;
 pub mod skyrmion_neural_processor;
@@ -733,6 +734,9 @@ pub use exceptional_surface::{
 };
 pub use floquet_anyon::{
     FloquetAnyonMetrics, FloquetAnyonParams,
+};
+pub use skyrmionic_memory::{
+    SkyrmionicMemoryMetrics, SkyrmionicMemoryParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
