@@ -204,6 +204,7 @@ pub mod levitated_qubit_teleporter;
 pub mod parafermion_braiding_router;
 pub mod levitated_qubit_network;
 pub mod spin_valley_polariton;
+pub mod skyrmion_majorana_crossbar;
 pub mod chiral_skyrmion_magnon_polaron;
 pub mod floquet_exceptional_ring_sensor;
 pub mod radiation;
@@ -875,6 +876,9 @@ pub use levitated_qubit_network::{
 };
 pub use spin_valley_polariton::{
     SpinValleyPolaritonMetrics, SpinValleyPolaritonParams,
+};
+pub use skyrmion_majorana_crossbar::{
+    SkyrmionMajoranaCrossbarMetrics, SkyrmionMajoranaCrossbarParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
