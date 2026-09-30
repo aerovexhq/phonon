@@ -61,6 +61,7 @@ pub mod interfacial_superconductivity;
 pub mod josephson_vortex_ratchet;
 pub mod jtwpa;
 pub mod kitwpa;
+pub mod kitaev_spin_liquid_braiding;
 pub mod lidar;
 pub mod magnon_bec;
 pub mod majorana_chiral_phonon;
@@ -489,6 +490,9 @@ pub use floquet_exceptional_ring_sensor::{
 };
 pub use chiral_quantum_hall_pfaffian::{
     ChiralQuantumHallPfaffianMetrics, ChiralQuantumHallPfaffianParams,
+};
+pub use kitaev_spin_liquid_braiding::{
+    KitaevSpinLiquidBraidingMetrics, KitaevSpinLiquidBraidingParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
