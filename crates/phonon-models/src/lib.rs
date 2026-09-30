@@ -47,6 +47,7 @@ pub mod fqh;
 pub mod fqh_acoustic_interferometer;
 pub mod fractional_chern;
 pub mod fractional_hall_parafermion;
+pub mod fractional_josephson_parafermion;
 pub mod hetero;
 pub mod hexagonal_majorana;
 pub mod hierarchical;
@@ -457,6 +458,9 @@ pub use chiral_floquet_hall_transistor::{
 };
 pub use chiral_frequency_bin_bell_analyzer::{
     ChiralFrequencyBinBellAnalyzerMetrics, ChiralFrequencyBinBellAnalyzerParams,
+};
+pub use fractional_josephson_parafermion::{
+    FractionalJosephsonParafermionMetrics, FractionalJosephsonParafermionParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
