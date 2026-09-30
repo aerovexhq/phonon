@@ -69,6 +69,7 @@ pub mod magnon_bec;
 pub mod majorana_chiral_phonon;
 pub mod majorana_kramers_network;
 pub mod fracton_quadrupole_router;
+pub mod disclination_holonomic_processor;
 pub mod majorana_surface_memory;
 pub mod metamaterial_circulator_cloak;
 pub mod mixed_signal;
@@ -434,6 +435,9 @@ pub use majorana_kramers_network::{
 };
 pub use fracton_quadrupole_router::{
     FractonBenchmarkResult, FractonBenchmarkRunner, FractonQuadrupoleRouterSolver,
+};
+pub use disclination_holonomic_processor::{
+    DisclinationBenchmarkResult, DisclinationBenchmarkRunner, DisclinationHolonomicProcessorSolver,
 };
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
