@@ -1,0 +1,54 @@
+name: Release Build & Distribution Pipeline
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    name: Build & Package Linux Distro Assets
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install System Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y dpkg-dev binutils libasound2-dev libudev-dev pkg-config
+
+      - name: Install Rust Stable Toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-unknown-linux-gnu
+
+      - name: Rust Cache
+        uses: Swatinem/rust-cache@v2
+
+      - name: Compile Unified Phonon Binary (Release Mode)
+        run: |
+          cargo build --release -p phonon-cli
+
+      - name: Execute Release Packaging Pipeline
+        run: |
+          bash packaging/build_packages.sh
+
+      - name: Publish GitHub Release Assets
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/phonon_*_amd64.deb
+            dist/phonon-*-x86_64-unknown-linux-gnu.tar.gz
+            dist/phonon-x86_64
+            dist/install.sh
+            dist/SHA256SUMS
+          name: "Phonon Release ${{ github.ref_name }}"
+          draft: false
+          prerelease: false
+          generate_release_notes: true

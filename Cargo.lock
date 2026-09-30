@@ -2490,6 +2490,7 @@ version = "0.1.0"
 dependencies = [
  "clap",
  "phonon-core",
+ "phonon-gui",
  "phonon-models",
  "phonon-netlist",
  "phonon-solver",

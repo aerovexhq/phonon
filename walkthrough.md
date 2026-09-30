@@ -7283,6 +7283,45 @@ Per the system engineering governance mandate, the comprehensive transistor spee
 - **Zero Allocations in Critical Loop**: Parallel Rayon sweep executing at over 91k sweeps/sec.
 - **Strictly Zero Unicode Emojis**: Conforming with aerospace platform engineering rules.
 
+---
+
+# Phonon Phase 250 Walkthrough: Unified CLI/UI Binary, Single-Command Debian/Linux Distro Distribution & Automated GitHub Release v0.1.0 Packaging Engine
+
+---
+
+## 1. Overview & Delivered Capabilities
+
+**Phase 250** delivers a production-grade unified executable architecture and automated release packaging pipeline for Phonon:
+1. **Unified Binary Dispatch (`crates/phonon-cli`)**:
+   - Running `phonon` headless displays an interactive ASCII banner, version, and usage guide when invoked without arguments, and executes commands (`validate`, `run`, `sweep`, `mc`) without overhead.
+   - Running `phonon ui` (or `phonon gui`) launches the native GPU-accelerated desktop CAD interface (`phonon_gui::run_gui()`).
+2. **Debian Package (`dist/phonon_0.1.0_amd64.deb`)**:
+   - Single-command installation and seamless replacement with `sudo dpkg -i phonon_0.1.0_amd64.deb`.
+   - Complete XDG desktop integration: `/usr/share/applications/phonon.desktop`, scalable SVG icon `/usr/share/icons/hicolor/scalable/apps/phonon.svg`, and shell completions.
+3. **Universal Multi-Distro Support & Installer (`dist/install.sh`)**:
+   - Standalone installer supporting Ubuntu, Debian, Fedora, Arch, RHEL, openSUSE, Alpine, Void, and NixOS.
+   - Portable stripped binary (`phonon-x86_64`) and multi-distro archive (`phonon-v0.1.0-x86_64-unknown-linux-gnu.tar.gz`).
+   - Automated cryptographic SHA-256 validation.
+4. **GitHub Actions Release Pipeline (`.github/workflows/release.yml`)**:
+   - Automatically triggered on push tags `v*` to build, package, and upload all release artifacts.
+
+---
+
+# Phonon Phase 251 Walkthrough: GitHub Pages Static Dual-Deployment Engine (VitePress Documentation Portal & Standalone /studio Web CAD Environment with phonon.aerovex.net CNAME)
+
+---
+
+## 1. Overview & Delivered Capabilities
+
+**Phase 251** establishes the production static web deployment for Phonon hosted at `https://phonon.aerovex.net`:
+1. **VitePress Documentation Portal (`web/docs/`)**:
+   - Comprehensive multi-tier documentation covering all 6 Realism Tiers, installation guides, CLI command reference, and architecture.
+2. **Standalone Static Web CAD Studio (`web/studio/`)**:
+   - Built with React 18, TypeScript, and Vite, mounted statically at `/studio`.
+   - Interactive circuit schematic designer, component placement, virtual oscilloscope waveform visualizer, 2D thermal contour heatmap, and live SPICE netlist export.
+3. **Unified Static Bundling Pipeline (`web/build.sh`) & GitHub Pages Deployment (`.github/workflows/deploy-pages.yml`)**:
+   - Bundles Web Studio to `dist/studio`, VitePress docs to `dist/`, adds custom CNAME `phonon.aerovex.net` and `.nojekyll`, and automatically deploys via GitHub Actions.
+
 
 
 
