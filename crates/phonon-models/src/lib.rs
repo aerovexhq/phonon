@@ -95,6 +95,7 @@ pub mod saw_soliton_routing;
 pub mod spin_optomechanical_bridge;
 pub mod braiding_circuit_compiler;
 pub mod visual_studio_engine;
+pub mod collaboration_fabric;
 pub mod floquet_majorana_engine;
 pub mod monopole_harmonic_teleporter;
 pub mod skyrmion_neural_processor;
@@ -669,6 +670,9 @@ pub use braiding_circuit_compiler::{
 };
 pub use visual_studio_engine::{
     VisualStudioEngineMetrics, VisualStudioEngineParams,
+};
+pub use collaboration_fabric::{
+    CollaborationFabricMetrics, CollaborationFabricParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
