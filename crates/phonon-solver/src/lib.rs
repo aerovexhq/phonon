@@ -93,6 +93,7 @@ pub mod gpu_tensor_mesh;
 pub mod distributed_mesh;
 pub mod neural_circuit_copilot;
 pub mod holographic_telemetry;
+pub mod generative_diffusion;
 pub mod floquet_majorana_engine;
 pub mod monopole_harmonic_teleporter;
 pub mod skyrmion_neural_processor;
@@ -584,6 +585,10 @@ pub use neural_circuit_copilot::{
 pub use holographic_telemetry::{
     HolographicTelemetryBenchmarkResult, HolographicTelemetryBenchmarkRunner,
     HolographicTelemetrySolver,
+};
+pub use generative_diffusion::{
+    GenerativeDiffusionBenchmarkResult, GenerativeDiffusionBenchmarkRunner,
+    GenerativeDiffusionSolver,
 };
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
