@@ -41,6 +41,7 @@ pub mod fqh;
 pub mod fqh_acoustic_interferometer;
 pub mod fractional_chern;
 pub mod fractional_hall_parafermion;
+pub mod fractional_josephson_parafermion;
 pub mod hetero;
 pub mod hexagonal_majorana;
 pub mod high_harmonic_bloch;
@@ -368,6 +369,7 @@ pub use chiral_holographic_beamforming::*;
 pub use phononic_superconducting_majorana::*;
 pub use chiral_floquet_hall_transistor::*;
 pub use chiral_frequency_bin_bell_analyzer::*;
+pub use fractional_josephson_parafermion::*;
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
     IntegrationMethod, StepControlOptions, TimeWaveform, TransientOptions, TransientSolution,
