@@ -15,6 +15,7 @@ pub mod assets;
 pub mod atomistic;
 pub mod axion_electrodynamics;
 pub mod bjt;
+pub mod braiding_switchyard;
 pub mod cavity_acoustodynamical_spin;
 pub mod cavity_acoustomagnonic;
 pub mod cavity_magnomechanics;
@@ -625,6 +626,9 @@ pub use axion_polariton_soliton::{
 };
 pub use fqh_interferometer::{
     FQHInterferometerMetrics, FQHInterferometerParams,
+};
+pub use braiding_switchyard::{
+    BraidingSwitchyardMetrics, BraidingSwitchyardParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;

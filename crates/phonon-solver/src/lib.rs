@@ -12,6 +12,7 @@ pub mod acoustomagnonic_polariton_laser;
 pub mod afm_spintronics;
 pub mod assets;
 pub mod axion_electrodynamics;
+pub mod braiding_switchyard;
 pub mod cavity_acoustodynamical_spin;
 pub mod cavity_acoustomagnonic;
 pub mod cavity_magnomechanics;
@@ -505,6 +506,9 @@ pub use axion_polariton_soliton::{
 };
 pub use fqh_interferometer::{
     FQHInterferometerBenchmarkResult, FQHInterferometerBenchmarkRunner, FQHInterferometerSolver,
+};
+pub use braiding_switchyard::{
+    BraidingSwitchyardBenchmarkResult, BraidingSwitchyardBenchmarkRunner, BraidingSwitchyardSolver,
 };
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
