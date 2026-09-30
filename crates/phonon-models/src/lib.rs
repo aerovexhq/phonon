@@ -87,6 +87,7 @@ pub mod skyrmion_anyonic_repeater;
 pub mod surface_code_decoder;
 pub mod surface_code_transceiver;
 pub mod hyperbolic_crystallizer;
+pub mod majorana_transmon_hybrid;
 pub mod floquet_majorana_engine;
 pub mod monopole_harmonic_teleporter;
 pub mod skyrmion_neural_processor;
@@ -637,6 +638,9 @@ pub use surface_code_transceiver::{
 };
 pub use hyperbolic_crystallizer::{
     HyperbolicCrystallizerMetrics, HyperbolicCrystallizerParams,
+};
+pub use majorana_transmon_hybrid::{
+    MajoranaTransmonMetrics, MajoranaTransmonParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
