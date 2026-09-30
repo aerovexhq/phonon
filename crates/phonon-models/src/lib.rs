@@ -75,6 +75,7 @@ pub mod lidar;
 pub mod magnon_bec;
 pub mod majorana_chiral_phonon;
 pub mod majorana_kramers_network;
+pub mod fracton_quadrupole_router;
 pub mod majorana_surface_memory;
 pub mod memristor;
 pub mod metamaterial_circulator_cloak;
@@ -553,6 +554,9 @@ pub use parafermionic_josephson_interferometer::{
 };
 pub use majorana_kramers_network::{
     MajoranaKramersNetworkMetrics, MajoranaKramersNetworkParams,
+};
+pub use fracton_quadrupole_router::{
+    FractonQuadrupoleRouterMetrics, FractonQuadrupoleRouterParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
