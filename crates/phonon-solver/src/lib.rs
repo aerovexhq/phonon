@@ -204,6 +204,7 @@ pub mod topological_valley_hall_router;
 pub mod phonon_magnon_polariton_comb;
 pub mod quantum_metamaterial_transceiver;
 pub mod levitated_nanodiamond_spin_sensor;
+pub mod majorana_parafermion_hybrid;
 pub mod chiral_skyrmion_magnon_polaron;
 pub mod floquet_exceptional_ring_sensor;
 pub mod relay;
@@ -755,6 +756,7 @@ pub use topological_valley_hall_router::*;
 pub use phonon_magnon_polariton_comb::*;
 pub use quantum_metamaterial_transceiver::*;
 pub use levitated_nanodiamond_spin_sensor::*;
+pub use majorana_parafermion_hybrid::*;
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
     IntegrationMethod, StepControlOptions, TimeWaveform, TransientOptions, TransientSolution,
