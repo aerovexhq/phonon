@@ -116,6 +116,7 @@ pub mod quadrupole_qubit;
 pub mod spin_valley;
 pub mod holonomic_quantum;
 pub mod acoustomagnonic_squeezing;
+pub mod tripartite_router;
 pub mod floquet_majorana_engine;
 pub mod monopole_harmonic_teleporter;
 pub mod skyrmion_neural_processor;
@@ -753,6 +754,9 @@ pub use holonomic_quantum::{
 };
 pub use acoustomagnonic_squeezing::{
     AcoustomagnonicSqueezingMetrics, AcoustomagnonicSqueezingParams,
+};
+pub use tripartite_router::{
+    TripartiteRouterMetrics, TripartiteRouterParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;

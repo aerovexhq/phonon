@@ -109,6 +109,7 @@ pub mod quadrupole_qubit;
 pub mod spin_valley;
 pub mod holonomic_quantum;
 pub mod acoustomagnonic_squeezing;
+pub mod tripartite_router;
 pub mod floquet_majorana_engine;
 pub mod monopole_harmonic_teleporter;
 pub mod skyrmion_neural_processor;
@@ -664,6 +665,10 @@ pub use holonomic_quantum::{
 pub use acoustomagnonic_squeezing::{
     AcoustomagnonicSqueezingBenchmarkResult, AcoustomagnonicSqueezingBenchmarkRunner,
     AcoustomagnonicSqueezingSolver,
+};
+pub use tripartite_router::{
+    TripartiteRouterBenchmarkResult, TripartiteRouterBenchmarkRunner,
+    TripartiteRouterSolver,
 };
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
