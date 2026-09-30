@@ -74,6 +74,7 @@ pub mod kitaev_spin_liquid_braiding;
 pub mod lidar;
 pub mod magnon_bec;
 pub mod majorana_chiral_phonon;
+pub mod majorana_kramers_network;
 pub mod majorana_surface_memory;
 pub mod memristor;
 pub mod metamaterial_circulator_cloak;
@@ -549,6 +550,9 @@ pub use fractional_qh_entanglement_swapper::{
 };
 pub use parafermionic_josephson_interferometer::{
     ParafermionicJosephsonInterferometerMetrics, ParafermionicJosephsonInterferometerParams,
+};
+pub use majorana_kramers_network::{
+    MajoranaKramersNetworkMetrics, MajoranaKramersNetworkParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
