@@ -175,6 +175,7 @@ pub mod quantum_cavity_acoustomechanics;
 pub mod quantum_teleportation_waveguide;
 pub mod quantum_acoustic_tensor_distillation;
 pub mod quantum_acoustic_spin_liquid;
+pub mod quantum_dot_spin_shuttle;
 pub mod chiral_skyrmion_magnon_polaron;
 pub mod floquet_exceptional_ring_sensor;
 pub mod relay;
@@ -697,6 +698,7 @@ pub use acoustomagnonic_haloscope::*;
 pub use polariton_quantum_memory::*;
 pub use chiral_phonon_magnon_isolator::*;
 pub use acoustically_levitated_nanoparticle::*;
+pub use quantum_dot_spin_shuttle::*;
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
     IntegrationMethod, StepControlOptions, TimeWaveform, TransientOptions, TransientSolution,
