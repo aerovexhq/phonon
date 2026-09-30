@@ -8,6 +8,7 @@ pub mod acoustic;
 pub mod acoustic_holonomic_processor;
 pub mod acoustic_metasurface_holography;
 pub mod acoustic_microcomb_soliton;
+pub mod acoustically_levitated_nanoparticle;
 pub mod acoustoelectric;
 pub mod acoustoelectric_moire;
 pub mod acoustomagnonic_comb;
@@ -787,6 +788,9 @@ pub use polariton_quantum_memory::{
 };
 pub use chiral_phonon_magnon_isolator::{
     ChiralPhononMagnonIsolatorMetrics, ChiralPhononMagnonIsolatorParams,
+};
+pub use acoustically_levitated_nanoparticle::{
+    AcousticallyLevitatedNanoparticleMetrics, AcousticallyLevitatedNanoparticleParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
