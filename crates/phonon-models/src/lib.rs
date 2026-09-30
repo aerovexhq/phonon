@@ -184,6 +184,7 @@ pub mod quantum_teleportation_waveguide;
 pub mod quantum_acoustic_tensor_distillation;
 pub mod quantum_acoustic_spin_liquid;
 pub mod quantum_dot_spin_shuttle;
+pub mod flux_qubit_coupler;
 pub mod chiral_skyrmion_magnon_polaron;
 pub mod floquet_exceptional_ring_sensor;
 pub mod radiation;
@@ -795,6 +796,9 @@ pub use acoustically_levitated_nanoparticle::{
 };
 pub use quantum_dot_spin_shuttle::{
     QuantumDotSpinShuttleMetrics, QuantumDotSpinShuttleParams,
+};
+pub use flux_qubit_coupler::{
+    FluxQubitCouplerMetrics, FluxQubitCouplerParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
