@@ -195,6 +195,7 @@ pub mod anyon_braiding_processor;
 pub mod levitated_qubit_teleporter;
 pub mod parafermion_braiding_router;
 pub mod levitated_qubit_network;
+pub mod spin_valley_polariton;
 pub mod chiral_skyrmion_magnon_polaron;
 pub mod floquet_exceptional_ring_sensor;
 pub mod relay;
@@ -737,6 +738,7 @@ pub use anyon_braiding_processor::*;
 pub use levitated_qubit_teleporter::*;
 pub use parafermion_braiding_router::*;
 pub use levitated_qubit_network::*;
+pub use spin_valley_polariton::*;
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
     IntegrationMethod, StepControlOptions, TimeWaveform, TransientOptions, TransientSolution,
