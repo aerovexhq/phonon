@@ -188,6 +188,7 @@ pub mod flux_qubit_coupler;
 pub mod acoustic_frequency_synthesizer;
 pub mod magnon_phonon_repeater;
 pub mod levitated_diamond_magnetometer;
+pub mod skyrmion_synaptic_router;
 pub mod chiral_skyrmion_magnon_polaron;
 pub mod floquet_exceptional_ring_sensor;
 pub mod radiation;
@@ -811,6 +812,9 @@ pub use magnon_phonon_repeater::{
 };
 pub use levitated_diamond_magnetometer::{
     LevitatedDiamondMagnetometerMetrics, LevitatedDiamondMagnetometerParams,
+};
+pub use skyrmion_synaptic_router::{
+    SkyrmionSynapticRouterMetrics, SkyrmionSynapticRouterParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
