@@ -82,6 +82,7 @@ pub mod twist_defect_lattice;
 pub mod pfaffian_quantum_resonator;
 pub mod axion_string_memristor;
 pub mod skyrmion_anyonic_repeater;
+pub mod surface_code_decoder;
 pub mod majorana_surface_memory;
 pub mod memristor;
 pub mod metamaterial_circulator_cloak;
@@ -581,6 +582,9 @@ pub use axion_string_memristor::{
 };
 pub use skyrmion_anyonic_repeater::{
     SkyrmionAnyonicRepeaterMetrics, SkyrmionAnyonicRepeaterParams,
+};
+pub use surface_code_decoder::{
+    SurfaceCodeDecoderMetrics, SurfaceCodeDecoderParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
