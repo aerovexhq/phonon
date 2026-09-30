@@ -87,6 +87,7 @@ pub mod optomechanical_switchyard;
 pub mod saw_soliton_routing;
 pub mod spin_optomechanical_bridge;
 pub mod braiding_circuit_compiler;
+pub mod visual_studio_engine;
 pub mod floquet_majorana_engine;
 pub mod monopole_harmonic_teleporter;
 pub mod skyrmion_neural_processor;
@@ -554,6 +555,10 @@ pub use spin_optomechanical_bridge::{
 pub use braiding_circuit_compiler::{
     BraidingCircuitCompilerBenchmarkResult, BraidingCircuitCompilerBenchmarkRunner,
     BraidingCircuitCompilerSolver,
+};
+pub use visual_studio_engine::{
+    VisualStudioBenchmarkResult, VisualStudioBenchmarkRunner,
+    VisualStudioEngineSolver,
 };
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
