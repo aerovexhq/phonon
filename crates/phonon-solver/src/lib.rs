@@ -18,6 +18,7 @@ pub mod cavity_magnomechanics;
 pub mod cavity_magnon_polariton_comb;
 pub mod cavity_spintronics;
 pub mod chiral_acoustic_router;
+pub mod chiral_axion_circulator;
 pub mod chiral_chern_anyon_braiding;
 pub mod chiral_floquet_hall_transistor;
 pub mod chiral_frequency_bin_bell_analyzer;
@@ -394,6 +395,7 @@ pub use topological_acoustic_fracton::*;
 pub use twisted_bilayer_moire_polariton::*;
 pub use tensor_gauge_monopole_sensor::*;
 pub use quantum_acoustic_surface_code::*;
+pub use chiral_axion_circulator::*;
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
     IntegrationMethod, StepControlOptions, TimeWaveform, TransientOptions, TransientSolution,
