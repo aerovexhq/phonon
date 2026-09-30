@@ -198,6 +198,7 @@ pub mod bec_soliton_interferometer;
 pub mod axion_magnon_memory;
 pub mod superconducting_anyon_interferometer;
 pub mod levitated_superconducting_qubit;
+pub mod spin_orbit_majorana_qubit;
 pub mod chiral_skyrmion_magnon_polaron;
 pub mod floquet_exceptional_ring_sensor;
 pub mod radiation;
@@ -851,6 +852,9 @@ pub use superconducting_anyon_interferometer::{
 };
 pub use levitated_superconducting_qubit::{
     LevitatedSuperconductingQubitMetrics, LevitatedSuperconductingQubitParams,
+};
+pub use spin_orbit_majorana_qubit::{
+    SpinOrbitMajoranaQubitMetrics, SpinOrbitMajoranaQubitParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
