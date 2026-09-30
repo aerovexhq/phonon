@@ -94,6 +94,7 @@ pub mod optomechanical_switchyard;
 pub mod saw_soliton_routing;
 pub mod spin_optomechanical_bridge;
 pub mod braiding_circuit_compiler;
+pub mod visual_studio_engine;
 pub mod floquet_majorana_engine;
 pub mod monopole_harmonic_teleporter;
 pub mod skyrmion_neural_processor;
@@ -665,6 +666,9 @@ pub use spin_optomechanical_bridge::{
 };
 pub use braiding_circuit_compiler::{
     BraidingCircuitCompilerMetrics, BraidingCircuitCompilerParams,
+};
+pub use visual_studio_engine::{
+    VisualStudioEngineMetrics, VisualStudioEngineParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
