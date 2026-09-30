@@ -58,6 +58,7 @@ pub mod hexagonal_majorana;
 pub mod hierarchical;
 pub mod high_harmonic_bloch;
 pub mod holonomic_quantum_processor;
+pub mod hotp_quadrupole_octupole_metasurface;
 pub mod interfacial_superconductivity;
 pub mod josephson_vortex_ratchet;
 pub mod jtwpa;
@@ -513,6 +514,9 @@ pub use quantum_acoustic_surface_code::{
 };
 pub use chiral_axion_circulator::{
     ChiralAxionCirculatorMetrics, ChiralAxionCirculatorParams,
+};
+pub use hotp_quadrupole_octupole_metasurface::{
+    HotpQuadrupoleOctupoleMetrics, HotpQuadrupoleOctupoleParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
