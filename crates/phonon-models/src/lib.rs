@@ -54,6 +54,7 @@ pub mod fractional_chern;
 pub mod fractional_hall_parafermion;
 pub mod fractional_josephson_parafermion;
 pub mod fractional_chern_simons_viscometer;
+pub mod moire_skyrmion_anyon_braiding;
 pub mod hetero;
 pub mod hexagonal_majorana;
 pub mod hierarchical;
@@ -525,6 +526,9 @@ pub use twisted_bilayer_topological_superfluid::{
 };
 pub use fractional_chern_simons_viscometer::{
     FractionalChernSimonsViscometerMetrics, FractionalChernSimonsViscometerParams,
+};
+pub use moire_skyrmion_anyon_braiding::{
+    MoireSkyrmionAnyonBraidingMetrics, MoireSkyrmionAnyonBraidingParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
