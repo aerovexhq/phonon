@@ -201,6 +201,7 @@ pub mod parafermion_surface_code;
 pub mod axion_polariton_transceiver;
 pub mod superconducting_ququint;
 pub mod topological_valley_hall_router;
+pub mod phonon_magnon_polariton_comb;
 pub mod chiral_skyrmion_magnon_polaron;
 pub mod floquet_exceptional_ring_sensor;
 pub mod relay;
@@ -749,6 +750,7 @@ pub use parafermion_surface_code::*;
 pub use axion_polariton_transceiver::*;
 pub use superconducting_ququint::*;
 pub use topological_valley_hall_router::*;
+pub use phonon_magnon_polariton_comb::*;
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
     IntegrationMethod, StepControlOptions, TimeWaveform, TransientOptions, TransientSolution,
