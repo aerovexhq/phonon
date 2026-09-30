@@ -1,0 +1,284 @@
+#![deny(unsafe_code)]
+
+//! Automated unit and multi-physics validation tests for the Phonon
+//! Universal Multi-Scale Visual Studio Autonomous Second-Order Topological Quadrupole Insulator &
+//! Corner-State Qubit Engine.
+
+use phonon_models::quadrupole_qubit::QuadrupoleQubitParams;
+use phonon_solver::quadrupole_qubit::QuadrupoleQubitSolver;
+
+#[test]
+fn test_parameter_boundary_clamping() {
+    // Test values strictly below physical minimum bounds
+    let underflow = QuadrupoleQubitParams::new(
+        0.5,   // below 1.0 meV
+        1.0,   // below 2.0 meV
+        0.5,   // below 1.0 GHz
+        100.0, // below 200.0 m/s
+        0.5,   // below 1.0 mK
+        0.2,   // below 0.5 uW
+        0.5,   // below 1.0 factor
+        0.2,   // below 0.5 um
+    );
+    assert_eq!(underflow.quadrupole_coupling_mev, 1.0);
+    assert_eq!(underflow.topological_corner_gap_mev, 2.0);
+    assert_eq!(underflow.acoustic_drive_frequency_ghz, 1.0);
+    assert_eq!(underflow.corner_shuttle_dispatch_speed_m_per_s, 200.0);
+    assert_eq!(underflow.cryogenic_temperature_mk, 1.0);
+    assert_eq!(underflow.microwave_probe_power_uw, 0.5);
+    assert_eq!(underflow.synthetic_quadrupole_cells_factor, 1.0);
+    assert_eq!(underflow.lattice_cell_pitch_um, 0.5);
+
+    // Test values strictly above physical maximum bounds
+    let overflow = QuadrupoleQubitParams::new(
+        50.0,   // above 35.0 meV
+        60.0,   // above 45.0 meV
+        20.0,   // above 12.0 GHz
+        4000.0, // above 3000.0 m/s
+        75.0,   // above 50.0 mK
+        45.0,   // above 30.0 uW
+        12.0,   // above 8.0 factor
+        30.0,   // above 20.0 um
+    );
+    assert_eq!(overflow.quadrupole_coupling_mev, 35.0);
+    assert_eq!(overflow.topological_corner_gap_mev, 45.0);
+    assert_eq!(overflow.acoustic_drive_frequency_ghz, 12.0);
+    assert_eq!(overflow.corner_shuttle_dispatch_speed_m_per_s, 3000.0);
+    assert_eq!(overflow.cryogenic_temperature_mk, 50.0);
+    assert_eq!(overflow.microwave_probe_power_uw, 30.0);
+    assert_eq!(overflow.synthetic_quadrupole_cells_factor, 8.0);
+    assert_eq!(overflow.lattice_cell_pitch_um, 20.0);
+}
+
+#[test]
+fn test_default_parameters_and_compliance() {
+    let params = QuadrupoleQubitParams::default();
+    assert_eq!(params.quadrupole_coupling_mev, 25.0);
+    assert_eq!(params.topological_corner_gap_mev, 31.0);
+    assert_eq!(params.acoustic_drive_frequency_ghz, 10.0);
+    assert_eq!(params.corner_shuttle_dispatch_speed_m_per_s, 2200.0);
+    assert_eq!(params.cryogenic_temperature_mk, 10.0);
+    assert_eq!(params.microwave_probe_power_uw, 10.0);
+    assert_eq!(params.synthetic_quadrupole_cells_factor, 4.0);
+    assert_eq!(params.lattice_cell_pitch_um, 9.0);
+
+    let solver = QuadrupoleQubitSolver::new(params);
+    let metrics = solver.evaluate_metrics();
+
+    // Verify all 5 physical roadmap targets for default parameters
+    assert!(
+        metrics.corner_localization_fidelity >= 0.9980,
+        "Corner localization fidelity must be >= 0.9980, got {:.6}",
+        metrics.corner_localization_fidelity
+    );
+    assert!(
+        metrics.qubit_state_retention_fraction >= 0.9970,
+        "Qubit state retention fraction must be >= 0.9970, got {:.6}",
+        metrics.qubit_state_retention_fraction
+    );
+    assert!(
+        metrics.topological_protection_gap_mhz >= 45.0,
+        "Topological protection gap must be >= 45.0 MHz, got {:.4} MHz",
+        metrics.topological_protection_gap_mhz
+    );
+    assert!(
+        metrics.inter_corner_crosstalk_isolation_db >= 55.0,
+        "Inter-corner crosstalk isolation must be >= 55.0 dB, got {:.4} dB",
+        metrics.inter_corner_crosstalk_isolation_db
+    );
+    assert!(
+        metrics.topological_mode_dephasing_rate_hz <= 12.0,
+        "Topological mode dephasing rate must be <= 12.0 Hz, got {:.4} Hz",
+        metrics.topological_mode_dephasing_rate_hz
+    );
+    assert!(
+        metrics.is_physically_compliant,
+        "Default parameter set must be strictly physically compliant"
+    );
+}
+
+#[test]
+fn test_quadrupole_coupling_scaling() {
+    let mut p_low = QuadrupoleQubitParams::default();
+    p_low.quadrupole_coupling_mev = 2.0;
+    let mut p_high = QuadrupoleQubitParams::default();
+    p_high.quadrupole_coupling_mev = 34.0;
+
+    let solver_low = QuadrupoleQubitSolver::new(p_low);
+    let solver_high = QuadrupoleQubitSolver::new(p_high);
+
+    assert!(
+        solver_high.compute_corner_localization_fidelity()
+            > solver_low.compute_corner_localization_fidelity(),
+        "Higher quadrupole coupling energy should enhance corner localization fidelity"
+    );
+    assert!(
+        solver_high.compute_topological_protection_gap_mhz()
+            > solver_low.compute_topological_protection_gap_mhz(),
+        "Higher quadrupole coupling energy should increase protection gap"
+    );
+    assert!(
+        solver_high.compute_topological_mode_dephasing_rate_hz()
+            < solver_low.compute_topological_mode_dephasing_rate_hz(),
+        "Higher quadrupole coupling energy should suppress dephasing rate"
+    );
+}
+
+#[test]
+fn test_topological_corner_gap_scaling() {
+    let mut p_low = QuadrupoleQubitParams::default();
+    p_low.topological_corner_gap_mev = 3.0;
+    let mut p_high = QuadrupoleQubitParams::default();
+    p_high.topological_corner_gap_mev = 44.0;
+
+    let solver_low = QuadrupoleQubitSolver::new(p_low);
+    let solver_high = QuadrupoleQubitSolver::new(p_high);
+
+    assert!(
+        solver_high.compute_qubit_state_retention_fraction()
+            > solver_low.compute_qubit_state_retention_fraction(),
+        "Wider topological corner gap should improve retention fraction"
+    );
+    assert!(
+        solver_high.compute_topological_protection_gap_mhz()
+            > solver_low.compute_topological_protection_gap_mhz(),
+        "Wider topological corner gap should increase protection gap"
+    );
+    assert!(
+        solver_high.compute_topological_mode_dephasing_rate_hz()
+            < solver_low.compute_topological_mode_dephasing_rate_hz(),
+        "Wider topological corner gap should reduce dephasing rate"
+    );
+}
+
+#[test]
+fn test_acoustic_drive_frequency_scaling() {
+    let mut p_low = QuadrupoleQubitParams::default();
+    p_low.acoustic_drive_frequency_ghz = 2.0;
+    let mut p_high = QuadrupoleQubitParams::default();
+    p_high.acoustic_drive_frequency_ghz = 11.0;
+
+    let solver_low = QuadrupoleQubitSolver::new(p_low);
+    let solver_high = QuadrupoleQubitSolver::new(p_high);
+
+    assert!(
+        solver_high.compute_corner_localization_fidelity()
+            > solver_low.compute_corner_localization_fidelity(),
+        "Higher acoustic drive frequency should enhance corner localization fidelity"
+    );
+    assert!(
+        solver_high.compute_inter_corner_crosstalk_isolation_db()
+            > solver_low.compute_inter_corner_crosstalk_isolation_db(),
+        "Higher acoustic drive frequency should enhance crosstalk isolation"
+    );
+}
+
+#[test]
+fn test_corner_shuttle_dispatch_speed_scaling() {
+    let mut p_low = QuadrupoleQubitParams::default();
+    p_low.corner_shuttle_dispatch_speed_m_per_s = 300.0;
+    let mut p_high = QuadrupoleQubitParams::default();
+    p_high.corner_shuttle_dispatch_speed_m_per_s = 2900.0;
+
+    let solver_low = QuadrupoleQubitSolver::new(p_low);
+    let solver_high = QuadrupoleQubitSolver::new(p_high);
+
+    assert!(
+        solver_high.compute_corner_localization_fidelity()
+            > solver_low.compute_corner_localization_fidelity(),
+        "Higher corner shuttle dispatch speed should increase corner localization fidelity"
+    );
+    assert!(
+        solver_high.compute_qubit_state_retention_fraction()
+            > solver_low.compute_qubit_state_retention_fraction(),
+        "Higher corner shuttle dispatch speed should increase state retention fraction"
+    );
+}
+
+#[test]
+fn test_cryogenic_temperature_scaling() {
+    let mut p_cold = QuadrupoleQubitParams::default();
+    p_cold.cryogenic_temperature_mk = 2.0;
+    let mut p_warm = QuadrupoleQubitParams::default();
+    p_warm.cryogenic_temperature_mk = 48.0;
+
+    let solver_cold = QuadrupoleQubitSolver::new(p_cold);
+    let solver_warm = QuadrupoleQubitSolver::new(p_warm);
+
+    assert!(
+        solver_cold.compute_corner_localization_fidelity()
+            > solver_warm.compute_corner_localization_fidelity(),
+        "Lower cryogenic temperature should improve corner localization fidelity"
+    );
+    assert!(
+        solver_cold.compute_topological_mode_dephasing_rate_hz()
+            < solver_warm.compute_topological_mode_dephasing_rate_hz(),
+        "Lower cryogenic temperature should reduce dephasing rate"
+    );
+}
+
+#[test]
+fn test_microwave_probe_power_scaling() {
+    let mut p_low = QuadrupoleQubitParams::default();
+    p_low.microwave_probe_power_uw = 1.0;
+    let mut p_high = QuadrupoleQubitParams::default();
+    p_high.microwave_probe_power_uw = 28.0;
+
+    let solver_low = QuadrupoleQubitSolver::new(p_low);
+    let solver_high = QuadrupoleQubitSolver::new(p_high);
+
+    assert!(
+        solver_high.compute_corner_localization_fidelity()
+            > solver_low.compute_corner_localization_fidelity(),
+        "Higher microwave probe power should enhance corner localization fidelity"
+    );
+    assert!(
+        solver_high.compute_qubit_state_retention_fraction()
+            > solver_low.compute_qubit_state_retention_fraction(),
+        "Higher microwave probe power should enhance state retention fraction"
+    );
+}
+
+#[test]
+fn test_synthetic_quadrupole_cells_scaling() {
+    let mut p_low = QuadrupoleQubitParams::default();
+    p_low.synthetic_quadrupole_cells_factor = 1.5;
+    let mut p_high = QuadrupoleQubitParams::default();
+    p_high.synthetic_quadrupole_cells_factor = 7.5;
+
+    let solver_low = QuadrupoleQubitSolver::new(p_low);
+    let solver_high = QuadrupoleQubitSolver::new(p_high);
+
+    assert!(
+        solver_high.compute_inter_corner_crosstalk_isolation_db()
+            > solver_low.compute_inter_corner_crosstalk_isolation_db(),
+        "Higher synthetic quadrupole cells factor should increase crosstalk isolation"
+    );
+    assert!(
+        solver_high.compute_topological_protection_gap_mhz()
+            > solver_low.compute_topological_protection_gap_mhz(),
+        "Higher synthetic quadrupole cells factor should increase protection gap"
+    );
+}
+
+#[test]
+fn test_lattice_cell_pitch_scaling() {
+    let mut p_narrow = QuadrupoleQubitParams::default();
+    p_narrow.lattice_cell_pitch_um = 1.0;
+    let mut p_wide = QuadrupoleQubitParams::default();
+    p_wide.lattice_cell_pitch_um = 18.0;
+
+    let solver_narrow = QuadrupoleQubitSolver::new(p_narrow);
+    let solver_wide = QuadrupoleQubitSolver::new(p_wide);
+
+    assert!(
+        solver_wide.compute_inter_corner_crosstalk_isolation_db()
+            > solver_narrow.compute_inter_corner_crosstalk_isolation_db(),
+        "Larger lattice cell pitch should improve inter-corner crosstalk isolation"
+    );
+    assert!(
+        solver_wide.compute_topological_mode_dephasing_rate_hz()
+            < solver_narrow.compute_topological_mode_dephasing_rate_hz(),
+        "Larger lattice cell pitch should reduce dephasing rate"
+    );
+}
