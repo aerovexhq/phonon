@@ -76,6 +76,7 @@ pub mod pfaffian_quantum_resonator;
 pub mod axion_string_memristor;
 pub mod skyrmion_anyonic_repeater;
 pub mod surface_code_decoder;
+pub mod floquet_majorana_engine;
 pub mod majorana_surface_memory;
 pub mod metamaterial_circulator_cloak;
 pub mod mixed_signal;
@@ -462,6 +463,9 @@ pub use skyrmion_anyonic_repeater::{
 };
 pub use surface_code_decoder::{
     SurfaceCodeBenchmarkResult, SurfaceCodeBenchmarkRunner, SurfaceCodeDecoderSolver,
+};
+pub use floquet_majorana_engine::{
+    FloquetMajoranaBenchmarkResult, FloquetMajoranaBenchmarkRunner, FloquetMajoranaEngineSolver,
 };
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
