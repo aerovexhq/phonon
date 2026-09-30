@@ -67,6 +67,7 @@ pub mod kitaev_spin_liquid_braiding;
 pub mod lidar;
 pub mod magnon_bec;
 pub mod majorana_chiral_phonon;
+pub mod majorana_kramers_network;
 pub mod majorana_surface_memory;
 pub mod metamaterial_circulator_cloak;
 pub mod mixed_signal;
@@ -426,6 +427,9 @@ pub use fractional_qh_entanglement_swapper::{
 pub use parafermionic_josephson_interferometer::{
     ParafermionBenchmarkResult, ParafermionBenchmarkRunner,
     ParafermionicJosephsonInterferometerSolver,
+};
+pub use majorana_kramers_network::{
+    KramersBenchmarkResult, KramersBenchmarkRunner, MajoranaKramersNetworkSolver,
 };
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
