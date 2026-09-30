@@ -80,6 +80,7 @@ pub mod floquet_majorana_engine;
 pub mod monopole_harmonic_teleporter;
 pub mod skyrmion_neural_processor;
 pub mod anyonic_knot_coprocessor;
+pub mod quasicrystal_phason_router;
 pub mod majorana_surface_memory;
 pub mod metamaterial_circulator_cloak;
 pub mod mixed_signal;
@@ -480,6 +481,10 @@ pub use skyrmion_neural_processor::{
 };
 pub use anyonic_knot_coprocessor::{
     AnyonicKnotBenchmarkResult, AnyonicKnotBenchmarkRunner, AnyonicKnotCoprocessorSolver,
+};
+pub use quasicrystal_phason_router::{
+    QuasicrystalPhasonRouterSolver, QuasicrystalRouterBenchmarkResult,
+    QuasicrystalRouterBenchmarkRunner,
 };
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
