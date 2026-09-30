@@ -193,6 +193,7 @@ pub mod levitated_superconducting_qubit;
 pub mod spin_orbit_majorana_qubit;
 pub mod anyon_braiding_processor;
 pub mod levitated_qubit_teleporter;
+pub mod parafermion_braiding_router;
 pub mod chiral_skyrmion_magnon_polaron;
 pub mod floquet_exceptional_ring_sensor;
 pub mod relay;
@@ -733,6 +734,7 @@ pub use levitated_superconducting_qubit::*;
 pub use spin_orbit_majorana_qubit::*;
 pub use anyon_braiding_processor::*;
 pub use levitated_qubit_teleporter::*;
+pub use parafermion_braiding_router::*;
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
     IntegrationMethod, StepControlOptions, TimeWaveform, TransientOptions, TransientSolution,
