@@ -88,6 +88,7 @@ pub mod monopole_harmonic_teleporter;
 pub mod skyrmion_neural_processor;
 pub mod anyonic_knot_coprocessor;
 pub mod quasicrystal_phason_router;
+pub mod spin_phonon_braiding;
 pub mod majorana_surface_memory;
 pub mod memristor;
 pub mod metamaterial_circulator_cloak;
@@ -605,6 +606,9 @@ pub use anyonic_knot_coprocessor::{
 };
 pub use quasicrystal_phason_router::{
     QuasicrystalPhasonRouterMetrics, QuasicrystalPhasonRouterParams,
+};
+pub use spin_phonon_braiding::{
+    SpinPhononBraidingMetrics, SpinPhononBraidingParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
