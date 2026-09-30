@@ -102,6 +102,7 @@ pub mod quantum_transceiver;
 pub mod molecular_spintronics;
 pub mod superradiance_laser;
 pub mod topological_axion;
+pub mod exceptional_surface;
 pub mod floquet_majorana_engine;
 pub mod monopole_harmonic_teleporter;
 pub mod skyrmion_neural_processor;
@@ -629,6 +630,10 @@ pub use superradiance_laser::{
 pub use topological_axion::{
     TopologicalAxionBenchmarkResult, TopologicalAxionBenchmarkRunner,
     TopologicalAxionSolver,
+};
+pub use exceptional_surface::{
+    ExceptionalSurfaceBenchmarkResult, ExceptionalSurfaceBenchmarkRunner,
+    ExceptionalSurfaceSolver,
 };
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
