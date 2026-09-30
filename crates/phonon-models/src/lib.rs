@@ -83,6 +83,7 @@ pub mod pfaffian_quantum_resonator;
 pub mod axion_string_memristor;
 pub mod skyrmion_anyonic_repeater;
 pub mod surface_code_decoder;
+pub mod floquet_majorana_engine;
 pub mod majorana_surface_memory;
 pub mod memristor;
 pub mod metamaterial_circulator_cloak;
@@ -585,6 +586,9 @@ pub use skyrmion_anyonic_repeater::{
 };
 pub use surface_code_decoder::{
     SurfaceCodeDecoderMetrics, SurfaceCodeDecoderParams,
+};
+pub use floquet_majorana_engine::{
+    FloquetMajoranaEngineMetrics, FloquetMajoranaEngineParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
