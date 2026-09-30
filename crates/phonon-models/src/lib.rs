@@ -109,6 +109,7 @@ pub mod quantum_topological_squeezing;
 pub mod quantum_cavity_acoustomechanics;
 pub mod quantum_teleportation_waveguide;
 pub mod quantum_acoustic_tensor_distillation;
+pub mod quantum_acoustic_spin_liquid;
 pub mod radiation;
 pub mod relay;
 pub mod sensors;
@@ -473,6 +474,9 @@ pub use chiral_hinge_axion_soliton::{
 };
 pub use chiral_moire_fractional_chern::{
     ChiralMoireFractionalChernMetrics, ChiralMoireFractionalChernParams,
+};
+pub use quantum_acoustic_spin_liquid::{
+    QuantumAcousticSpinLiquidMetrics, QuantumAcousticSpinLiquidParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
