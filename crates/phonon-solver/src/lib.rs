@@ -188,6 +188,7 @@ pub mod ultracold_fermi_gas_sensor;
 pub mod anyon_fusion_synthesizer;
 pub mod bec_soliton_interferometer;
 pub mod axion_magnon_memory;
+pub mod superconducting_anyon_interferometer;
 pub mod chiral_skyrmion_magnon_polaron;
 pub mod floquet_exceptional_ring_sensor;
 pub mod relay;
@@ -723,6 +724,7 @@ pub use ultracold_fermi_gas_sensor::*;
 pub use anyon_fusion_synthesizer::*;
 pub use bec_soliton_interferometer::*;
 pub use axion_magnon_memory::*;
+pub use superconducting_anyon_interferometer::*;
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
     IntegrationMethod, StepControlOptions, TimeWaveform, TransientOptions, TransientSolution,
