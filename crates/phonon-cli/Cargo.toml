@@ -16,6 +16,7 @@ phonon-models = { path = "../phonon-models" }
 phonon-solver = { path = "../phonon-solver" }
 phonon-thermal = { path = "../phonon-thermal" }
 phonon-netlist = { path = "../phonon-netlist" }
+phonon-gui = { path = "../phonon-gui" }
 clap = { workspace = true }
 rayon = { workspace = true }
 thiserror = { workspace = true }

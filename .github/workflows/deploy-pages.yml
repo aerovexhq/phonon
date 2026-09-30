@@ -1,0 +1,72 @@
+name: Deploy GitHub Pages (Docs & Studio)
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'web/**'
+      - '.github/workflows/deploy-pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: 'pages'
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: |
+            web/docs/package.json
+            web/studio/package.json
+
+      - name: Build Web CAD Studio (/studio)
+        run: |
+          cd web/studio
+          npm ci
+          npm run build
+
+      - name: Build VitePress Docs (/)
+        run: |
+          cd web/docs
+          npm ci
+          npm run build
+
+      - name: Assemble Static Site with CNAME
+        run: |
+          mkdir -p web/public_dist
+          cp -r web/docs/.vitepress/dist/* web/public_dist/
+          mkdir -p web/public_dist/studio
+          cp -r web/studio/dist/* web/public_dist/studio/
+          echo "phonon.aerovex.net" > web/public_dist/CNAME
+          touch web/public_dist/.nojekyll
+
+      - name: Setup GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages Artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: web/public_dist
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

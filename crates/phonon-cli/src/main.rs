@@ -16,11 +16,14 @@ use std::process::ExitCode;
 )]
 struct Cli {
     #[command(subcommand)]
-    command: Commands,
+    command: Option<Commands>,
 }
 
 #[derive(Subcommand, Debug)]
 enum Commands {
+    /// Launches the native desktop CAD interface and interactive visual studio
+    #[command(alias = "gui")]
+    Ui,
     /// Validates circuit topology and electrical rules (ERC)
     Validate {
         /// Path to the SPICE netlist file
@@ -82,10 +85,52 @@ enum Commands {
     },
 }
 
+fn print_banner() {
+    println!(
+r#"  ____  _   _  ___  _   _  ___  _   _ 
+ |  _ \| | | |/ _ \| \ | |/ _ \| \ | |
+ | |_) | |_| | | | |  \| | | | |  \| |
+ |  __/|  _  | |_| | |\  | |_| | |\  |
+ |_|   |_| |_|\___/|_| \_|\___/|_| \_|
+ Phonon Universal Multi-Scale Visual CAD Studio & Semiconductor Solver (v{})
+ Documentation: https://phonon.aerovex.net
+
+Usage:
+  phonon [COMMAND]
+  phonon ui          Launch native GPU-accelerated desktop CAD studio
+  phonon --help      Display full CLI commands and flag options
+
+Commands:
+  ui, gui            Launch desktop CAD visual studio
+  validate <netlist> Validate circuit topology and electrical rules (ERC)
+  run <netlist>      Execute simulation (.OP, .DC, .TRAN) and stream telemetry
+  sweep <netlist>    Execute parallel parametric component sweep
+  mc <netlist>       Execute Monte Carlo statistical tolerance analysis
+
+Run 'phonon --help' or 'phonon <command> --help' for detailed syntax."#,
+        env!("CARGO_PKG_VERSION")
+    );
+}
+
 fn main() -> ExitCode {
     let args = Cli::parse();
 
-    match args.command {
+    let command = match args.command {
+        Some(cmd) => cmd,
+        None => {
+            print_banner();
+            return ExitCode::SUCCESS;
+        }
+    };
+
+    match command {
+        Commands::Ui => match phonon_gui::run_gui() {
+            Ok(()) => ExitCode::SUCCESS,
+            Err(e) => {
+                eprintln!("Phonon GUI runtime error: {e}");
+                ExitCode::FAILURE
+            }
+        },
         Commands::Validate { netlist } => match execute_validate(&netlist) {
             Ok(report) => {
                 println!(

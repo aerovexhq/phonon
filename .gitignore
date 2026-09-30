@@ -4,3 +4,10 @@
 *.bak
 .DS_Store
 teach/
+dist/
+node_modules/
+web/**/node_modules/
+web/**/dist/
+web/docs/.vitepress/dist/
+web/docs/.vitepress/cache/
+web/public_dist/

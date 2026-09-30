@@ -1,0 +1,13 @@
+[Desktop Entry]
+Name=Phonon CAD Studio
+GenericName=Circuit Simulator & CAD Studio
+Comment=Universal Multi-Scale Visual CAD Studio & Semiconductor Solver
+Exec=phonon ui %F
+Icon=phonon
+Terminal=false
+Type=Application
+Categories=Development;Engineering;Science;Electronics;
+MimeType=application/x-spice;text/x-spice;
+StartupNotify=true
+StartupWMClass=Phonon CAD
+Keywords=spice;cad;circuit;simulator;tcad;semiconductor;quantum;phonon;
