@@ -81,7 +81,66 @@ sudo bash install.sh
 
 ---
 
-## Method 5: Build from Source
+## Method 5: Windows Setup Wizard & Enterprise MSI
+
+### Graphical Setup Wizard (.exe)
+Download the Inno Setup interactive installer:
+- **File**: `phonon-setup-0.1.0-x64.exe`
+- **Features**: Step-by-step graphical wizard, directory selection, automatic `PATH` environment registration, Start Menu & Desktop shortcuts, file associations (`.phonon`, `.sp`, `.cir`), and complete uninstallation support.
+- **Silent Install Switch**: `phonon-setup-0.1.0-x64.exe /VERYSILENT /SUPPRESSMSGBOXES /NORESTART`
+
+### Enterprise MSI Package (.msi)
+For IT administrators, Microsoft Intune, Active Directory Group Policy (GPO), and SCCM:
+- **File**: `phonon-0.1.0-x64.msi`
+- **Features**: Native Windows Installer database compiled via WiX Toolset v4/v5 with standard Windows Installer properties and clean UAC elevation.
+- **Silent Deployment**:
+  ```cmd
+  msiexec /i phonon-0.1.0-x64.msi /qn /l*v install.log
+  ```
+
+---
+
+## Method 6: macOS Drag-and-Drop DMG & Guided PKG Wizard
+
+### Styled Disk Image (.dmg)
+- **File**: `Phonon-0.1.0.dmg`
+- **Installation**: Double-click to mount the disk image, then drag `Phonon Studio.app` into your `Applications` directory.
+- Supports Apple Silicon (`aarch64-apple-darwin`) and Intel (`x86_64-apple-darwin`).
+
+### Guided Installer Package (.pkg)
+- **File**: `Phonon-0.1.0.pkg`
+- **Features**: Interactive Apple multi-step guided installer wizard with license acceptance, target volume selection, `/usr/local/bin/phonon` CLI symlink creation, and zsh shell completions setup.
+- **Silent Command-Line Deployment**:
+  ```bash
+  sudo installer -pkg Phonon-0.1.0.pkg -target /
+  ```
+
+---
+
+## Method 7: Linux Universal AppImage & RPM Package
+
+### Portable AppImage (.AppImage)
+Runs on any modern Linux distribution without installation:
+```bash
+wget https://github.com/aerovexsim/phonon/releases/download/v0.1.0/Phonon-0.1.0-x86_64.AppImage
+chmod +x Phonon-0.1.0-x86_64.AppImage
+./Phonon-0.1.0-x86_64.AppImage
+```
+
+### Fedora / RHEL / openSUSE RPM (.rpm)
+```bash
+sudo dnf install https://github.com/aerovexsim/phonon/releases/download/v0.1.0/phonon-0.1.0-1.x86_64.rpm
+```
+
+### Interactive Linux Setup Wizard (GUI / TUI)
+For an interactive installation experience with automatic Zenity (GTK) / Whiptail (terminal) detection:
+```bash
+bash packaging/linux/setup_wizard.sh
+```
+
+---
+
+## Method 8: Build from Source
 
 Requirements:
 - Rust 1.80+ (`cargo`, `rustc`)
@@ -99,3 +158,4 @@ cargo build --release -p phonon-cli
 # Run local binary
 ./target/release/phonon ui
 ```
+

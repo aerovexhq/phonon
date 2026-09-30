@@ -76,16 +76,20 @@ chmod +x "${TAR_STAGING}/install.sh"
 tar -czf "${DIST_DIR}/phonon-v${VERSION}-x86_64-unknown-linux-gnu.tar.gz" -C "${TAR_STAGING}" .
 rm -rf "${TAR_STAGING}"
 
-echo "[5/6] Copying installer script..."
+echo "[5/7] Copying installer scripts and setup wizards..."
 cp -f "${SCRIPT_DIR}/install.sh" "${DIST_DIR}/install.sh"
 chmod +x "${DIST_DIR}/install.sh"
 
-echo "[6/6] Computing SHA256 checksums..."
+cp -f "${SCRIPT_DIR}/linux/setup_wizard.sh" "${DIST_DIR}/setup_wizard.sh"
+chmod +x "${DIST_DIR}/setup_wizard.sh"
+
+echo "[6/7] Building standalone AppImage (if tools available)..."
+bash "${SCRIPT_DIR}/linux/build_appimage.sh" || true
+
+echo "[7/7] Computing cryptographic SHA256 checksums..."
 cd "${DIST_DIR}"
-sha256sum phonon_${VERSION}_amd64.deb \
-          phonon-v${VERSION}-x86_64-unknown-linux-gnu.tar.gz \
-          phonon-x86_64 \
-          install.sh > SHA256SUMS
+rm -f SHA256SUMS
+find . -maxdepth 1 -type f ! -name "SHA256SUMS" ! -name ".*" -exec sha256sum {} + | sort -k 2 > SHA256SUMS
 
 echo "Packaging complete! Built assets in ${DIST_DIR}:"
 ls -lh "${DIST_DIR}"

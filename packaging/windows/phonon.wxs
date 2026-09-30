@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Phonon Universal Multi-Scale Visual Studio Enterprise MSI Installer Configuration
+  Engine: WiX Toolset v4 / v5
+  Target: Windows 10/11 x64 (x86_64-pc-windows-msvc)
+  Silent Deployment: msiexec /i phonon-0.1.0-x64.msi /qn /l*v install.log
+-->
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
+     xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
+
+  <Package Name="Phonon Simulation Studio"
+           Manufacturer="Aerovex Technologies"
+           Version="0.1.0"
+           UpgradeCode="B7651C5E-4B07-4C78-9892-A85150DE7321"
+           Scope="perMachine"
+           Language="1033"
+           InstallerVersion="500">
+
+    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed."
+                  AllowSameVersionUpgrades="yes" />
+
+    <MediaTemplate EmbedCab="yes" CompressionLevel="high" />
+
+    <Icon Id="PhononIcon" SourceFile="phonon.ico" />
+    <Property Id="ARPPRODUCTICON" Value="PhononIcon" />
+    <Property Id="ARPHELPLINK" Value="https://phonon.aerovex.net" />
+    <Property Id="ARPURLINFOABOUT" Value="https://phonon.aerovex.net" />
+    <Property Id="ARPURLUPDATEINFO" Value="https://github.com/aerovexsim/aerovex/releases" />
+
+    <!-- Standard Directory Layout -->
+    <StandardDirectory Id="ProgramFiles64Folder">
+      <Directory Id="AerovexFolder" Name="Aerovex">
+        <Directory Id="INSTALLFOLDER" Name="Phonon">
+          <Directory Id="BinFolder" Name="bin" />
+          <Directory Id="DocFolder" Name="docs" />
+        </Directory>
+      </Directory>
+    </StandardDirectory>
+
+    <StandardDirectory Id="ProgramMenuFolder">
+      <Directory Id="ApplicationProgramsFolder" Name="Phonon Studio" />
+    </StandardDirectory>
+
+    <StandardDirectory Id="DesktopFolder" />
+
+    <!-- Components -->
+    <ComponentGroup Id="ProductComponents">
+      <!-- Main CLI & Studio Binary -->
+      <Component Id="PhononBinary" Directory="BinFolder" Guid="D2A68741-2601-44DC-9A57-7977462B6490" Bitness="always64">
+        <File Id="PhononExe"
+              Source="$(var.BinSourceDir)\phonon.exe"
+              KeyPath="yes"
+              Checksum="yes" />
+
+        <!-- Add bin to System PATH -->
+        <Environment Id="UpdatePath"
+                     Name="PATH"
+                     Value="[BinFolder]"
+                     Permanent="no"
+                     Part="last"
+                     Action="set"
+                     System="yes" />
+      </Component>
+
+      <!-- Desktop & Start Menu Shortcuts -->
+      <Component Id="ProgramMenuShortcuts" Directory="ApplicationProgramsFolder" Guid="F338902A-85C1-4D3B-BA61-71E152865910">
+        <Shortcut Id="ApplicationStartMenuShortcut"
+                  Name="Phonon Studio"
+                  Description="Phonon Universal Multi-Scale Quantum CAD Studio"
+                  Target="[BinFolder]phonon.exe"
+                  Arguments="ui"
+                  WorkingDirectory="BinFolder"
+                  Icon="PhononIcon" />
+
+        <Shortcut Id="CliStartMenuShortcut"
+                  Name="Phonon CLI Prompt"
+                  Description="Phonon Command Line Interface"
+                  Target="[System64Folder]cmd.exe"
+                  Arguments="/k &quot;&quot;[BinFolder]phonon.exe&quot; --help&quot;"
+                  WorkingDirectory="BinFolder"
+                  Icon="PhononIcon" />
+
+        <Shortcut Id="UninstallProduct"
+                  Name="Uninstall Phonon Studio"
+                  Description="Uninstalls Phonon Simulation Studio"
+                  Target="[System64Folder]msiexec.exe"
+                  Arguments="/x [ProductCode]" />
+
+        <RemoveFolder Id="RemoveApplicationProgramsFolder"
+                      Directory="ApplicationProgramsFolder"
+                      On="uninstall" />
+
+        <RegistryValue Root="HKCU"
+                       Key="Software\Aerovex\Phonon"
+                       Name="StartMenuInstalled"
+                       Type="integer"
+                       Value="1"
+                       KeyPath="yes" />
+      </Component>
+
+      <Component Id="DesktopShortcutComponent" Directory="DesktopFolder" Guid="98EF112B-0723-45AE-868C-2D9183424103">
+        <Shortcut Id="ApplicationDesktopShortcut"
+                  Name="Phonon Studio"
+                  Description="Phonon Universal Multi-Scale Quantum CAD Studio"
+                  Target="[BinFolder]phonon.exe"
+                  Arguments="ui"
+                  WorkingDirectory="BinFolder"
+                  Icon="PhononIcon" />
+
+        <RegistryValue Root="HKCU"
+                       Key="Software\Aerovex\Phonon"
+                       Name="DesktopShortcutInstalled"
+                       Type="integer"
+                       Value="1"
+                       KeyPath="yes" />
+      </Component>
+
+      <!-- File Associations for .phonon, .sp, .cir files -->
+      <Component Id="FileAssociations" Directory="BinFolder" Guid="4187C1D8-9128-40F1-9488-825002C93751">
+        <ProgId Id="Phonon.Project" Description="Phonon CAD Project File" Icon="PhononIcon">
+          <Extension Id="phonon" ContentType="application/x-phonon-project">
+            <Verb Id="open" Command="Open with Phonon Studio" TargetFile="PhononExe" Argument="ui &quot;%1&quot;" />
+          </Extension>
+        </ProgId>
+
+        <RegistryValue Root="HKLM"
+                       Key="Software\Classes\.phonon"
+                       Type="string"
+                       Value="Phonon.Project"
+                       KeyPath="yes" />
+      </Component>
+
+      <!-- Documentation & Legal -->
+      <Component Id="DocumentationFiles" Directory="DocFolder" Guid="7245BBA1-0498-4BDE-BE52-192518F94602">
+        <File Id="ReadmeDoc" Source="$(var.DocSourceDir)\README.md" KeyPath="yes" />
+        <File Id="LicenseDoc" Source="$(var.DocSourceDir)\LICENSE" />
+      </Component>
+    </ComponentGroup>
+
+    <!-- Installation Features -->
+    <Feature Id="Complete" Title="Phonon Simulation Studio" Level="1" Display="expand" ConfigurableDirectory="INSTALLFOLDER">
+      <Feature Id="MainEngine" Title="Core Simulation Engine and Studio UI" Level="1" Absent="disallow">
+        <ComponentGroupRef Id="ProductComponents" />
+      </Feature>
+    </Feature>
+
+    <!-- UI Experience (WixUI) for Interactive Installations -->
+    <ui:WixUI Id="WixUI_InstallDir" InstallDirectory="INSTALLFOLDER" />
+    <WixVariable Id="WixUILicenseRtf" Value="license.rtf" />
+
+  </Package>
+</Wix>

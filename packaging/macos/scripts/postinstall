@@ -1,0 +1,34 @@
+#!/bin/bash
+# ==============================================================================
+# Phonon macOS PKG Post-Installation Script
+# Configures system CLI symlinks and zsh shell completions
+# ==============================================================================
+
+set -euo pipefail
+
+echo "Executing Phonon post-installation configuration..."
+
+TARGET_BIN_DIR="/usr/local/bin"
+mkdir -p "${TARGET_BIN_DIR}"
+
+APP_BIN="/Applications/Phonon Studio.app/Contents/MacOS/phonon"
+
+if [[ -f "${APP_BIN}" ]]; then
+    echo "Creating symlink: ${TARGET_BIN_DIR}/phonon -> ${APP_BIN}"
+    ln -sf "${APP_BIN}" "${TARGET_BIN_DIR}/phonon"
+    chmod 755 "${TARGET_BIN_DIR}/phonon"
+fi
+
+# Zsh completions setup
+ZSH_COMPLETIONS_DIR="/usr/local/share/zsh/site-functions"
+mkdir -p "${ZSH_COMPLETIONS_DIR}"
+
+COMPLETIONS_SRC="/Applications/Phonon Studio.app/Contents/Resources/completions/_phonon"
+if [[ -f "${COMPLETIONS_SRC}" ]]; then
+    echo "Installing zsh completion to ${ZSH_COMPLETIONS_DIR}/_phonon"
+    cp -f "${COMPLETIONS_SRC}" "${ZSH_COMPLETIONS_DIR}/_phonon"
+    chmod 644 "${ZSH_COMPLETIONS_DIR}/_phonon"
+fi
+
+echo "Phonon installation completed successfully."
+exit 0
