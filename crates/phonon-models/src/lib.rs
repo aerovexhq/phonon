@@ -63,6 +63,7 @@ pub mod holonomic_quantum_processor;
 pub mod hotp_quadrupole_octupole_metasurface;
 pub mod hotp_axion_hinge_circulator;
 pub mod fibonacci_anyon_quantum_memory;
+pub mod non_hermitian_skin_octupole_laser;
 pub mod interfacial_superconductivity;
 pub mod josephson_vortex_ratchet;
 pub mod jtwpa;
@@ -537,6 +538,9 @@ pub use hotp_axion_hinge_circulator::{
 };
 pub use fibonacci_anyon_quantum_memory::{
     FibonacciAnyonQuantumMemoryMetrics, FibonacciAnyonQuantumMemoryParams,
+};
+pub use non_hermitian_skin_octupole_laser::{
+    NonHermitianSkinOctupoleLaserMetrics, NonHermitianSkinOctupoleLaserParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
