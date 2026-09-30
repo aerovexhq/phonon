@@ -1,3 +1,5 @@
+#![deny(unsafe_code)]
+
 //! Phonon Models: physically rigorous compact semiconductor models including
 //! Shockley Diodes, sub-micron MOSFETs with BSIM3/4 physics and Ward-Dutton charge conservation,
 //! and Gummel-Poon BJTs.
@@ -119,6 +121,7 @@ pub mod acoustomagnonic_squeezing;
 pub mod tripartite_router;
 pub mod acoustoelectric_transistor;
 pub mod teleportation_network;
+pub mod valley_heat_pump;
 pub mod floquet_majorana_engine;
 pub mod monopole_harmonic_teleporter;
 pub mod skyrmion_neural_processor;
@@ -765,6 +768,9 @@ pub use acoustoelectric_transistor::{
 };
 pub use teleportation_network::{
     TeleportationNetworkMetrics, TeleportationNetworkParams,
+};
+pub use valley_heat_pump::{
+    ValleyHeatPumpMetrics, ValleyHeatPumpParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
