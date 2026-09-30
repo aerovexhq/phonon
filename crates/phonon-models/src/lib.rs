@@ -214,6 +214,7 @@ pub mod quantum_metamaterial_transceiver;
 pub mod levitated_nanodiamond_spin_sensor;
 pub mod majorana_parafermion_hybrid;
 pub mod quantum_metamaterial_beamformer;
+pub mod axion_polariton_beam_splitter;
 pub mod chiral_skyrmion_magnon_polaron;
 pub mod floquet_exceptional_ring_sensor;
 pub mod radiation;
@@ -915,6 +916,9 @@ pub use majorana_parafermion_hybrid::{
 };
 pub use quantum_metamaterial_beamformer::{
     QuantumMetamaterialBeamformerMetrics, QuantumMetamaterialBeamformerParams,
+};
+pub use axion_polariton_beam_splitter::{
+    AxionPolaritonBeamSplitterMetrics, AxionPolaritonBeamSplitterParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
