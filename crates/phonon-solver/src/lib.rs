@@ -181,6 +181,7 @@ pub mod acoustic_frequency_synthesizer;
 pub mod magnon_phonon_repeater;
 pub mod levitated_diamond_magnetometer;
 pub mod skyrmion_synaptic_router;
+pub mod topological_polariton_synapse;
 pub mod chiral_skyrmion_magnon_polaron;
 pub mod floquet_exceptional_ring_sensor;
 pub mod relay;
@@ -709,6 +710,7 @@ pub use acoustic_frequency_synthesizer::*;
 pub use magnon_phonon_repeater::*;
 pub use levitated_diamond_magnetometer::*;
 pub use skyrmion_synaptic_router::*;
+pub use topological_polariton_synapse::*;
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
     IntegrationMethod, StepControlOptions, TimeWaveform, TransientOptions, TransientSolution,
