@@ -97,6 +97,7 @@ pub mod generative_diffusion;
 pub mod mask_tapeout;
 pub mod cryo_testbed;
 pub mod quantum_digital_twin;
+pub mod cloud_deployment;
 pub mod floquet_majorana_engine;
 pub mod monopole_harmonic_teleporter;
 pub mod skyrmion_neural_processor;
@@ -604,6 +605,10 @@ pub use cryo_testbed::{
 pub use quantum_digital_twin::{
     QuantumDigitalTwinBenchmarkResult, QuantumDigitalTwinBenchmarkRunner,
     QuantumDigitalTwinSolver,
+};
+pub use cloud_deployment::{
+    CloudDeploymentBenchmarkResult, CloudDeploymentBenchmarkRunner,
+    CloudDeploymentSolver,
 };
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
