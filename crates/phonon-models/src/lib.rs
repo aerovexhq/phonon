@@ -32,6 +32,7 @@ pub mod chiral_phonon;
 pub mod chiral_phonon_sc;
 pub mod chiral_phonon_spin_mechanics;
 pub mod chiral_polariton;
+pub mod chiral_quantum_hall_pfaffian;
 pub mod chiral_spin_seebeck;
 pub mod chiral_spintronic_memristor;
 pub mod common;
@@ -485,6 +486,9 @@ pub use chiral_skyrmion_magnon_polaron::{
 };
 pub use floquet_exceptional_ring_sensor::{
     FloquetExceptionalRingSensorMetrics, FloquetExceptionalRingSensorParams,
+};
+pub use chiral_quantum_hall_pfaffian::{
+    ChiralQuantumHallPfaffianMetrics, ChiralQuantumHallPfaffianParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
