@@ -201,6 +201,7 @@ pub mod levitated_superconducting_qubit;
 pub mod spin_orbit_majorana_qubit;
 pub mod anyon_braiding_processor;
 pub mod levitated_qubit_teleporter;
+pub mod parafermion_braiding_router;
 pub mod chiral_skyrmion_magnon_polaron;
 pub mod floquet_exceptional_ring_sensor;
 pub mod radiation;
@@ -863,6 +864,9 @@ pub use anyon_braiding_processor::{
 };
 pub use levitated_qubit_teleporter::{
     LevitatedQubitTeleporterMetrics, LevitatedQubitTeleporterParams,
+};
+pub use parafermion_braiding_router::{
+    ParafermionBraidingRouterMetrics, ParafermionBraidingRouterParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
