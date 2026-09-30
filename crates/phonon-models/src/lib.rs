@@ -61,6 +61,7 @@ pub mod hierarchical;
 pub mod high_harmonic_bloch;
 pub mod holonomic_quantum_processor;
 pub mod hotp_quadrupole_octupole_metasurface;
+pub mod hotp_axion_hinge_circulator;
 pub mod interfacial_superconductivity;
 pub mod josephson_vortex_ratchet;
 pub mod jtwpa;
@@ -529,6 +530,9 @@ pub use fractional_chern_simons_viscometer::{
 };
 pub use moire_skyrmion_anyon_braiding::{
     MoireSkyrmionAnyonBraidingMetrics, MoireSkyrmionAnyonBraidingParams,
+};
+pub use hotp_axion_hinge_circulator::{
+    HotpAxionHingeCirculatorMetrics, HotpAxionHingeCirculatorParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
