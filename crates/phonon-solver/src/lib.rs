@@ -108,6 +108,7 @@ pub mod skyrmionic_memory;
 pub mod quadrupole_qubit;
 pub mod spin_valley;
 pub mod holonomic_quantum;
+pub mod acoustomagnonic_squeezing;
 pub mod floquet_majorana_engine;
 pub mod monopole_harmonic_teleporter;
 pub mod skyrmion_neural_processor;
@@ -659,6 +660,10 @@ pub use spin_valley::{
 pub use holonomic_quantum::{
     HolonomicQuantumBenchmarkResult, HolonomicQuantumBenchmarkRunner,
     HolonomicQuantumSolver,
+};
+pub use acoustomagnonic_squeezing::{
+    AcoustomagnonicSqueezingBenchmarkResult, AcoustomagnonicSqueezingBenchmarkRunner,
+    AcoustomagnonicSqueezingSolver,
 };
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
