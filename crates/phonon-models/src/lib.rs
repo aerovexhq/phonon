@@ -77,6 +77,7 @@ pub mod majorana_chiral_phonon;
 pub mod majorana_kramers_network;
 pub mod fracton_quadrupole_router;
 pub mod disclination_holonomic_processor;
+pub mod skyrmion_vortex_polariton;
 pub mod majorana_surface_memory;
 pub mod memristor;
 pub mod metamaterial_circulator_cloak;
@@ -561,6 +562,9 @@ pub use fracton_quadrupole_router::{
 };
 pub use disclination_holonomic_processor::{
     DisclinationHolonomicProcessorMetrics, DisclinationHolonomicProcessorParams,
+};
+pub use skyrmion_vortex_polariton::{
+    SkyrmionVortexPolaritonMetrics, SkyrmionVortexPolaritonParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
