@@ -44,6 +44,7 @@ pub mod floquet_majorana_braiding_processor;
 pub mod floquet_topological;
 pub mod fqh;
 pub mod fqh_acoustic_interferometer;
+pub mod fqh_interferometer;
 pub mod fractional_chern;
 pub mod fractional_hall_parafermion;
 pub mod fractional_josephson_parafermion;
@@ -501,6 +502,9 @@ pub use corner_state_memory::{
 };
 pub use axion_polariton_soliton::{
     AxionPolaritonBenchmarkResult, AxionPolaritonBenchmarkRunner, AxionPolaritonSolver,
+};
+pub use fqh_interferometer::{
+    FQHInterferometerBenchmarkResult, FQHInterferometerBenchmarkRunner, FQHInterferometerSolver,
 };
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
