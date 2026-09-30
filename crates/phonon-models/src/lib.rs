@@ -146,6 +146,7 @@ pub mod topological_time_crystal;
 pub mod topological_acoustic_skyrmion;
 pub mod topological_acoustic_fracton;
 pub mod twisted_bilayer_moire_polariton;
+pub mod tensor_gauge_monopole_sensor;
 pub mod non_hermitian_quadrupole_laser;
 pub mod valley_acoustic;
 pub mod valleytronics;
@@ -501,6 +502,9 @@ pub use topological_acoustic_fracton::{
 };
 pub use twisted_bilayer_moire_polariton::{
     TwistedBilayerMoirePolaritonMetrics, TwistedBilayerMoirePolaritonParams,
+};
+pub use tensor_gauge_monopole_sensor::{
+    TensorGaugeMonopoleSensorMetrics, TensorGaugeMonopoleSensorParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
