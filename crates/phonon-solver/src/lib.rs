@@ -82,6 +82,7 @@ pub mod surface_code_transceiver;
 pub mod hyperbolic_crystallizer;
 pub mod majorana_transmon_hybrid;
 pub mod anyonic_neural_synapse;
+pub mod chern_heat_engine;
 pub mod floquet_majorana_engine;
 pub mod monopole_harmonic_teleporter;
 pub mod skyrmion_neural_processor;
@@ -529,6 +530,10 @@ pub use majorana_transmon_hybrid::{
 pub use anyonic_neural_synapse::{
     AnyonicNeuralBenchmarkResult, AnyonicNeuralBenchmarkRunner,
     AnyonicNeuralSolver,
+};
+pub use chern_heat_engine::{
+    ChernHeatEngineBenchmarkResult, ChernHeatEngineBenchmarkRunner,
+    ChernHeatEngineSolver,
 };
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
