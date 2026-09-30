@@ -145,6 +145,7 @@ pub mod floquet_synthetic_gauge;
 pub mod topological_time_crystal;
 pub mod topological_acoustic_skyrmion;
 pub mod topological_acoustic_fracton;
+pub mod twisted_bilayer_moire_polariton;
 pub mod non_hermitian_quadrupole_laser;
 pub mod valley_acoustic;
 pub mod valleytronics;
@@ -497,6 +498,9 @@ pub use kitaev_spin_liquid_braiding::{
 };
 pub use topological_acoustic_fracton::{
     TopologicalAcousticFractonMetrics, TopologicalAcousticFractonParams,
+};
+pub use twisted_bilayer_moire_polariton::{
+    TwistedBilayerMoirePolaritonMetrics, TwistedBilayerMoirePolaritonParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
