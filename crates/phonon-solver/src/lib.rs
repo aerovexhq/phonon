@@ -57,6 +57,7 @@ pub mod hotp_quadrupole_octupole_metasurface;
 pub mod hotp_axion_hinge_circulator;
 pub mod fibonacci_anyon_quantum_memory;
 pub mod non_hermitian_skin_octupole_laser;
+pub mod fractional_qh_entanglement_swapper;
 pub mod interfacial_superconductivity;
 pub mod josephson_vortex_ratchet;
 pub mod jtwpa;
@@ -417,6 +418,9 @@ pub use fibonacci_anyon_quantum_memory::{
 };
 pub use non_hermitian_skin_octupole_laser::{
     NonHermitianSkinOctupoleLaserSolver, SkinOctupoleBenchmarkResult, SkinOctupoleBenchmarkRunner,
+};
+pub use fractional_qh_entanglement_swapper::{
+    FractionalQHEntanglementSwapperSolver, SwapperBenchmarkResult, SwapperBenchmarkRunner,
 };
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
