@@ -28,6 +28,7 @@ pub mod chiral_phonon;
 pub mod chiral_phonon_sc;
 pub mod chiral_phonon_spin_mechanics;
 pub mod chiral_polariton;
+pub mod chiral_quantum_hall_pfaffian;
 pub mod chiral_spin_seebeck;
 pub mod chiral_spintronic_memristor;
 pub mod cqed;
@@ -382,6 +383,7 @@ pub use chiral_moire_fractional_chern::*;
 pub use quantum_acoustic_spin_liquid::*;
 pub use chiral_skyrmion_magnon_polaron::*;
 pub use floquet_exceptional_ring_sensor::*;
+pub use chiral_quantum_hall_pfaffian::*;
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
     IntegrationMethod, StepControlOptions, TimeWaveform, TransientOptions, TransientSolution,
