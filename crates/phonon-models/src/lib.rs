@@ -62,6 +62,7 @@ pub mod high_harmonic_bloch;
 pub mod holonomic_quantum_processor;
 pub mod hotp_quadrupole_octupole_metasurface;
 pub mod hotp_axion_hinge_circulator;
+pub mod fibonacci_anyon_quantum_memory;
 pub mod interfacial_superconductivity;
 pub mod josephson_vortex_ratchet;
 pub mod jtwpa;
@@ -533,6 +534,9 @@ pub use moire_skyrmion_anyon_braiding::{
 };
 pub use hotp_axion_hinge_circulator::{
     HotpAxionHingeCirculatorMetrics, HotpAxionHingeCirculatorParams,
+};
+pub use fibonacci_anyon_quantum_memory::{
+    FibonacciAnyonQuantumMemoryMetrics, FibonacciAnyonQuantumMemoryParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
