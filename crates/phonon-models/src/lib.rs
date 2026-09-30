@@ -107,6 +107,7 @@ pub mod quantum_digital_twin;
 pub mod cloud_deployment;
 pub mod quantum_transceiver;
 pub mod molecular_spintronics;
+pub mod superradiance_laser;
 pub mod floquet_majorana_engine;
 pub mod monopole_harmonic_teleporter;
 pub mod skyrmion_neural_processor;
@@ -717,6 +718,9 @@ pub use quantum_transceiver::{
 };
 pub use molecular_spintronics::{
     MolecularSpintronicsMetrics, MolecularSpintronicsParams,
+};
+pub use superradiance_laser::{
+    SuperradianceLaserMetrics, SuperradianceLaserParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
