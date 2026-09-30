@@ -10,6 +10,7 @@ pub mod acoustic_microcomb_soliton;
 pub mod acoustoelectric;
 pub mod acoustoelectric_moire;
 pub mod acoustomagnonic_comb;
+pub mod acoustomagnonic_haloscope;
 pub mod acoustomagnonic_polariton_laser;
 pub mod afm_spintronics;
 pub mod assets;
@@ -689,6 +690,7 @@ pub use valley_heat_pump::{
     ValleyHeatPumpSolver,
 };
 pub use majorana_braiding_processor::*;
+pub use acoustomagnonic_haloscope::*;
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
     IntegrationMethod, StepControlOptions, TimeWaveform, TransientOptions, TransientSolution,
