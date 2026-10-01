@@ -1,6 +1,6 @@
 #![deny(unsafe_code)]
 
-//! Phonon GUI CAD interface, visual dynamics awareness widgets, and interactive simulation studio.
+//! Phonon GUI CAD interface, visual dynamics awareness widgets, custom window architecture, and interactive simulation studio.
 
 pub mod app;
 pub mod oscilloscope;
@@ -10,6 +10,10 @@ pub mod widgets;
 
 pub use app::PhononApp;
 pub use widgets::dynamics_status::DynamicsStatusBadge;
+pub use widgets::icon::{self, render_phonon_icon};
+pub use widgets::top_frame::{
+    self, render_top_frame, render_top_frame_with_app, TopFrameAction, TopFrameConfig,
+};
 
 use phonon_core::PhysicsDynamicsBackend;
 
@@ -19,12 +23,13 @@ pub fn run_gui() -> Result<(), Box<dyn std::error::Error>> {
         viewport: egui::ViewportBuilder::default()
             .with_inner_size([1280.0, 850.0])
             .with_min_inner_size([800.0, 600.0])
-            .with_title("Phonon - Electro-Thermal CAD & Circuit Simulator"),
+            .with_decorations(false)
+            .with_title("Phonon Studio - Electro-Thermal CAD & Circuit Simulator"),
         ..Default::default()
     };
 
     eframe::run_native(
-        "Phonon CAD",
+        "Phonon Studio",
         native_options,
         Box::new(|cc| Ok(Box::new(PhononApp::new(cc)))),
     )
@@ -39,12 +44,13 @@ pub fn run_gui_with_custom_backend(
         viewport: egui::ViewportBuilder::default()
             .with_inner_size([1280.0, 850.0])
             .with_min_inner_size([800.0, 600.0])
-            .with_title("Phonon - Electro-Thermal CAD & Circuit Simulator"),
+            .with_decorations(false)
+            .with_title("Phonon Studio - Electro-Thermal CAD & Circuit Simulator"),
         ..Default::default()
     };
 
     eframe::run_native(
-        "Phonon CAD",
+        "Phonon Studio",
         native_options,
         Box::new(move |cc| Ok(Box::new(PhononApp::with_backend(cc, backend)))),
     )

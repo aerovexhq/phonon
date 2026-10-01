@@ -8,7 +8,9 @@ use crate::schematic::{
     SchematicComponent, SchematicWire,
 };
 use crate::thermal::{Colormap, ThermalOverlay};
-use crate::widgets::DynamicsStatusBadge;
+use crate::widgets::{
+    render_top_frame_with_app, DynamicsStatusBadge, TopFrameAction, TopFrameConfig,
+};
 use eframe::{App, Frame};
 use egui::{
     CentralPanel, Color32, FontId, Key, Panel, PointerButton, Pos2, Sense, Stroke, Ui, Vec2,
@@ -54,6 +56,9 @@ pub struct PhononApp {
     // Drag tracking for selected component
     dragging_component: bool,
 
+    /// Configuration for the custom window top frame.
+    pub top_frame_config: TopFrameConfig,
+
     /// Active physics dynamics backend driving physical simulation state.
     pub dynamics_backend: Box<dyn PhysicsDynamicsBackend>,
 }
@@ -64,6 +69,7 @@ impl std::fmt::Debug for PhononApp {
             .field("next_comp_id", &self.next_comp_id)
             .field("next_wire_id", &self.next_wire_id)
             .field("selected_tool", &self.selected_tool)
+            .field("top_frame_config", &self.top_frame_config)
             .field("dynamics_backend", &self.dynamics_backend.info())
             .finish()
     }
@@ -86,12 +92,13 @@ impl Default for PhononApp {
             show_oscilloscope: true,
             show_thermal_overlay: true,
             show_netlist_window: false,
-            sim_status: "Ready".to_string(),
+            sim_status: String::new(),
             dc_node_voltages: HashMap::new(),
             component_temperatures: HashMap::new(),
             compiled_circuit: None,
             spice_netlist_text: String::new(),
             dragging_component: false,
+            top_frame_config: TopFrameConfig::default(),
             dynamics_backend: Box::new(AutoSelectingDynamicsBackend::new()),
         };
 
@@ -140,7 +147,7 @@ impl PhononApp {
         self.component_temperatures.clear();
         self.compiled_circuit = None;
         self.spice_netlist_text.clear();
-        self.sim_status = "Schematic cleared".to_string();
+        self.sim_status.clear();
     }
 
     /// Loads an interactive Voltage Divider demo circuit.
@@ -170,7 +177,7 @@ impl PhononApp {
         self.wires = vec![w1, w2, w3, w4];
         self.next_wire_id = 5;
 
-        self.sim_status = "Voltage Divider Demo loaded. Click 'Run DC' to simulate.".to_string();
+        self.sim_status.clear();
     }
 
     /// Loads an interactive Diode Limiter / Clipper demo circuit.
@@ -198,7 +205,7 @@ impl PhononApp {
         self.wires = vec![w1, w2, w3, w4];
         self.next_wire_id = 5;
 
-        self.sim_status = "Diode Clipper Demo loaded.".to_string();
+        self.sim_status.clear();
     }
 
     /// Compiles schematic and runs the non-linear DC Operating Point (.OP) solver.
@@ -321,8 +328,7 @@ impl PhononApp {
         self.oscilloscope.add_trace(trace_vout);
         self.oscilloscope.add_trace(trace_temp);
 
-        self.sim_status =
-            "Transient demo generated. Oscilloscope updated with 3,600 samples.".to_string();
+        self.sim_status = "Transient Solved: 3 traces, 3,600 samples".to_string();
     }
 
     /// Deletes the currently selected component or wire.
@@ -330,11 +336,11 @@ impl PhononApp {
         if let Some(cid) = self.selected_component_id {
             self.components.retain(|c| c.id != cid);
             self.selected_component_id = None;
-            self.sim_status = format!("Component {} deleted", cid);
+            self.sim_status.clear();
         } else if let Some(wid) = self.selected_wire_id {
             self.wires.retain(|w| w.id != wid);
             self.selected_wire_id = None;
-            self.sim_status = format!("Wire {} deleted", wid);
+            self.sim_status.clear();
         }
     }
 
@@ -343,7 +349,7 @@ impl PhononApp {
         if let Some(cid) = self.selected_component_id {
             if let Some(comp) = self.components.iter_mut().find(|c| c.id == cid) {
                 comp.rotate_clockwise();
-                self.sim_status = format!("Rotated component {}", comp.name);
+                self.sim_status.clear();
             }
         }
     }
@@ -762,67 +768,33 @@ impl PhononApp {
                 });
         });
     }
-}
 
-impl App for PhononApp {
-    fn ui(&mut self, ui: &mut Ui, _frame: &mut Frame) {
+    /// Evaluates one frame of the application UI, custom top frame, action toolbar, canvas, and docked panels.
+    pub fn update(&mut self, ui: &mut Ui, _frame: &mut Frame) {
         // Global keyboard hotkeys
         self.handle_shortcuts(ui.ctx());
 
-        // 1. Top Menu & Action Bar
-        Panel::top("top_panel").show(ui, |ui| {
-            ui.horizontal(|ui| {
-                ui.menu_button("File", |ui| {
-                    if ui.button("New / Clear").clicked() {
-                        self.clear_all();
-                        ui.close();
-                    }
-                    if ui.button("Load Voltage Divider").clicked() {
-                        self.load_voltage_divider_demo();
-                        ui.close();
-                    }
-                    if ui.button("Load Diode Clipper").clicked() {
-                        self.load_diode_clipper_demo();
-                        ui.close();
-                    }
-                    ui.separator();
-                    if ui.button("Export SPICE Netlist").clicked() {
-                        if let Ok(compiled) = compile_schematic(&self.components, &self.wires) {
-                            self.spice_netlist_text = compiled.spice_netlist;
-                        }
-                        self.show_netlist_window = true;
-                        ui.close();
-                    }
-                });
+        // 1. Bespoke Custom Top Frame
+        let mut top_config = self.top_frame_config.clone();
+        top_config.circuit_name = if self.components.is_empty() {
+            "Empty Schematic".to_string()
+        } else {
+            format!(
+                "Circuit ({} Components, {} Wires)",
+                self.components.len(),
+                self.wires.len()
+            )
+        };
 
-                ui.menu_button("Simulation", |ui| {
-                    if ui.button("Run DC Operating Point (.OP)").clicked() {
-                        self.run_dc_op();
-                        ui.close();
-                    }
-                    if ui.button("Run Transient Demo (.TRAN)").clicked() {
-                        self.run_transient_demo();
-                        ui.close();
-                    }
-                    if ui.button("Clear Oscilloscope Traces").clicked() {
-                        self.oscilloscope.clear();
-                        ui.close();
-                    }
-                });
+        Panel::top("custom_top_frame").show(ui, |ui| {
+            let action = render_top_frame_with_app(ui, &top_config, self);
+            if action == TopFrameAction::Close {
+                ui.ctx().send_viewport_cmd(egui::ViewportCommand::Close);
+            }
+        });
 
-                ui.menu_button("View", |ui| {
-                    ui.checkbox(&mut self.canvas.show_grid, "Show Grid");
-                    ui.checkbox(&mut self.show_oscilloscope, "Show Oscilloscope");
-                    ui.checkbox(&mut self.show_thermal_overlay, "Show Thermal Badges");
-                    if ui.button("Reset Canvas View").clicked() {
-                        self.canvas.pan = Vec2::new(100.0, 100.0);
-                        self.canvas.zoom = 1.0;
-                        ui.close();
-                    }
-                });
-            });
-
-            // Action Toolbar
+        // Action Toolbar
+        Panel::top("action_toolbar").show(ui, |ui| {
             ui.horizontal(|ui| {
                 if ui.button("Run DC (.OP)").clicked() {
                     self.run_dc_op();
@@ -836,7 +808,7 @@ impl App for PhononApp {
                     }
                     self.show_netlist_window = true;
                 }
-                if ui.button("Clear Schematic").clicked() {
+                if ui.button("Clear Canvas").clicked() {
                     self.clear_all();
                 }
 
@@ -845,7 +817,7 @@ impl App for PhononApp {
             });
         });
 
-        // 2. Bottom Status Bar
+        // 2. Unobtrusive Bottom Status Bar
         Panel::bottom("status_bar").show(ui, |ui| {
             ui.horizontal(|ui| {
                 ui.label(format!("Components: {}", self.components.len()));
@@ -853,8 +825,23 @@ impl App for PhononApp {
                 ui.label(format!("Wires: {}", self.wires.len()));
                 ui.separator();
                 ui.label(format!("Zoom: {:.1}x", self.canvas.zoom));
-                ui.separator();
-                ui.label(&self.sim_status);
+
+                if !self.sim_status.is_empty() {
+                    ui.separator();
+                    ui.label(&self.sim_status);
+                }
+
+                let telemetry = self.dynamics_backend.current_telemetry();
+                if telemetry.step_count > 0 {
+                    ui.separator();
+                    ui.label(format!(
+                        "Dynamics: t={:.3}s, steps={}, alt={:.1}m, spd={:.1}m/s",
+                        telemetry.sim_time_s,
+                        telemetry.step_count,
+                        telemetry.altitude_m(),
+                        telemetry.speed_m_per_s()
+                    ));
+                }
             });
         });
 
@@ -907,5 +894,11 @@ impl App for PhononApp {
                     });
                 });
         }
+    }
+}
+
+impl App for PhononApp {
+    fn ui(&mut self, ui: &mut Ui, frame: &mut Frame) {
+        self.update(ui, frame);
     }
 }
