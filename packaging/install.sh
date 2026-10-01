@@ -8,7 +8,7 @@
 set -euo pipefail
 
 VERSION="0.1.0"
-REPO="aerovexsim/phonon"
+REPO="aerovexhq/phonon"
 BASE_URL="https://github.com/${REPO}/releases/download/v${VERSION}"
 PAGES_URL="https://phonon.aerovex.net"
 

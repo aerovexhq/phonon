@@ -25,7 +25,7 @@
     <Property Id="ARPPRODUCTICON" Value="PhononIcon" />
     <Property Id="ARPHELPLINK" Value="https://phonon.aerovex.net" />
     <Property Id="ARPURLINFOABOUT" Value="https://phonon.aerovex.net" />
-    <Property Id="ARPURLUPDATEINFO" Value="https://github.com/aerovexsim/aerovex/releases" />
+    <Property Id="ARPURLUPDATEINFO" Value="https://github.com/aerovexhq/aerovex/releases" />
 
     <!-- Standard Directory Layout -->
     <StandardDirectory Id="ProgramFiles64Folder">
