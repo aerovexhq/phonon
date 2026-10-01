@@ -9,8 +9,10 @@ pub mod thermal;
 pub mod widgets;
 
 pub use app::{PhononApp, ToolMode};
+pub use schematic::categories::ComponentCategory;
 pub use widgets::dynamics_status::DynamicsStatusBadge;
 pub use widgets::icon::{self, render_phonon_icon};
+pub use widgets::palette::ComponentPalette;
 pub use widgets::top_frame::{
     self, render_top_frame, render_top_frame_with_app, TopFrameAction, TopFrameConfig,
 };
