@@ -2,6 +2,7 @@
 
 //! The central Phonon GUI application orchestrator, CAD layout, and interactive simulation.
 
+use crate::extraction::ExtractionWizardDialog;
 use crate::oscilloscope::{OscilloscopePanel, WaveformTrace};
 use crate::schematic::{
     compile_schematic, compute_junction_dots, deserialize_project, load_project_from_file,
@@ -89,6 +90,9 @@ pub struct PhononApp {
     /// Whether the visual ERC diagnostic overlay is rendered on canvas.
     pub show_erc_overlay: bool,
 
+    /// SPICE model parameter extraction wizard modal dialog.
+    pub extraction_wizard: ExtractionWizardDialog,
+
     // Drag tracking for selected component
     dragging_component: bool,
     drag_start_pos: Option<(usize, Pos2)>,
@@ -157,6 +161,7 @@ impl Default for PhononApp {
             netlist_sync: NetlistSyncEngine::new(),
             erc_diagnostics: Vec::new(),
             show_erc_overlay: true,
+            extraction_wizard: ExtractionWizardDialog::new(),
             dragging_component: false,
             drag_start_pos: None,
             history: HistoryStack::with_capacity(500, 64),
@@ -1412,6 +1417,9 @@ impl PhononApp {
                 }
             }
         }
+
+        // 8. SPICE Model Parameter Extraction Wizard Dialog
+        self.extraction_wizard.ui(ui.ctx());
     }
 }
 

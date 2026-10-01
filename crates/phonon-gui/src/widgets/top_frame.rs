@@ -331,6 +331,16 @@ fn render_top_frame_internal(
             }
         });
 
+        // Tools Menu
+        ui.menu_button("Tools", |ui| {
+            if ui.button("SPICE Model Extraction Wizard").clicked() {
+                if let Some(a) = app.as_deref_mut() {
+                    a.extraction_wizard.is_open = true;
+                }
+                ui.close();
+            }
+        });
+
         // Help Menu
         ui.menu_button("Help", |ui| {
             if ui.button("Documentation").clicked() {
