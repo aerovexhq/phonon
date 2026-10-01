@@ -19,6 +19,8 @@ pub enum TopFrameAction {
     Maximize,
     Close,
     DownloadDesktopApp,
+    SaveProject,
+    OpenProject,
     None,
 }
 
@@ -162,10 +164,12 @@ fn render_top_frame_internal(
                 }
                 ui.close();
             }
-            if ui.button("Open").clicked() {
+            if ui.button("Save Project (.phn)").clicked() {
+                action = TopFrameAction::SaveProject;
                 ui.close();
             }
-            if ui.button("Save").clicked() {
+            if ui.button("Open Project (.phn)").clicked() {
+                action = TopFrameAction::OpenProject;
                 ui.close();
             }
             ui.menu_button("Load Demos", |ui| {

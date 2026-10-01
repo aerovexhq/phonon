@@ -17,7 +17,7 @@ phonon-solver = { path = "../phonon-solver" }
 phonon-thermal = { path = "../phonon-thermal" }
 phonon-netlist = { path = "../phonon-netlist" }
 
-eframe = { workspace = true }
+eframe = { workspace = true, features = ["glow"] }
 egui = { workspace = true }
 egui_plot = { workspace = true }
 thiserror = { workspace = true }

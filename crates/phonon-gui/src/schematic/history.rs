@@ -153,21 +153,21 @@ impl Default for HistoryStack {
 }
 
 impl HistoryStack {
-    /// Creates a new `HistoryStack` with default max depth (500).
+    /// Creates a new `HistoryStack` with default max depth (500) and pre-allocated capacity (64).
     pub fn new() -> Self {
-        Self {
-            undo_stack: Vec::new(),
-            redo_stack: Vec::new(),
-            max_depth: 500,
-            clean_index: 0,
-        }
+        Self::with_capacity(500, 64)
     }
 
     /// Creates a new `HistoryStack` with a specified max depth limit.
     pub fn with_max_depth(max_depth: usize) -> Self {
+        Self::with_capacity(max_depth, 64)
+    }
+
+    /// Creates a new `HistoryStack` with specified max depth and pre-allocated capacity.
+    pub fn with_capacity(max_depth: usize, capacity: usize) -> Self {
         Self {
-            undo_stack: Vec::new(),
-            redo_stack: Vec::new(),
+            undo_stack: Vec::with_capacity(capacity),
+            redo_stack: Vec::with_capacity(capacity),
             max_depth,
             clean_index: 0,
         }
@@ -185,6 +185,11 @@ impl HistoryStack {
 
     /// Returns the number of commands currently available on the undo stack.
     pub fn undo_count(&self) -> usize {
+        self.undo_stack.len()
+    }
+
+    /// Alias for `undo_count()`.
+    pub fn undo_depth(&self) -> usize {
         self.undo_stack.len()
     }
 
