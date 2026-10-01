@@ -16,11 +16,17 @@ pub use schematic::binary_format::{
     save_project_to_file, serialize_project, BinaryFormatError, DeserializedProject,
     CURRENT_VERSION, PHONON_MAGIC,
 };
+pub use schematic::bus::{BusSignal, BusTapOff, SchematicBus};
 pub use schematic::categories::ComponentCategory;
 pub use schematic::components::{ComponentKind, SchematicComponent};
 pub use schematic::erc::{ErcCode, ErcDiagnostic, ErcEngine, ErcSeverity};
 pub use schematic::history::{CanvasCommand, HistoryStack};
 pub use schematic::netlist_sync::{NetlistSyncEngine, NetlistSyncError, SyncDelta};
+pub use schematic::sheet::{MultiSheetManager, SchematicSheet};
+pub use schematic::subcircuit::{
+    flatten_hierarchical_netlist, flatten_hierarchical_netlist_with_instances, PinDirection,
+    SubcircuitDefinition, SubcircuitInstance, SubcircuitPin,
+};
 pub use schematic::wire::{compute_junction_dots, SchematicWire, WireSegment};
 pub use widgets::dynamics_status::DynamicsStatusBadge;
 pub use widgets::icon::{self, render_phonon_icon};

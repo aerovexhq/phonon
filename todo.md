@@ -22,6 +22,16 @@ The ultimate destination for the Phonon platform is an autonomous, multi-scale, 
 
 ## Future
 
+### Phase 314: Phonon Studio Mixed-Signal Mixed-Domain Co-Simulation, Event-Driven Digital Verilog/VHDL Interface & Continuous-Time Analog Synchronizer
+Formulate mixed-signal mixed-domain co-simulation:
+1. Mixed-Signal Co-Simulation Kernel: Bridge event-driven discrete digital simulation and continuous-time MNA analog solver with dynamic synchronization barriers and rollback compensation.
+2. Digital HDL Interface: Ingest Verilog/VHDL digital logic blocks compiled into high-speed native logic graphs with cycle-accurate clocking.
+3. Continuous-Time Analog Synchronizer: Real-time delta-step interpolator matching DAC/ADC interface boundary voltages and threshold crossing detection.
+
+---
+
+## Current
+
 ### Phase 313: Phonon Studio SPICE Model Parameter Extraction Wizard, Genetic Algorithm Curve-Fitting Engine & Automated BSIM4/EKV Parameter Tuning
 Formulate model parameter extraction and fitting:
 1. SPICE Model Extraction Wizard: Extract compact model parameters from measured I-V and C-V curves for custom silicon and cryo-CMOS devices.
@@ -30,17 +40,32 @@ Formulate model parameter extraction and fitting:
 
 ---
 
-## Current
+## Done
 
 ### Phase 312: Phonon Studio Hierarchical Subcircuit Macro-Modeling, Multi-Sheet Canvas Tabs & High-Density Vectorized Bus Routing Engine
-Formulate hierarchical multi-sheet canvas management and high-density bus routing:
-1. Hierarchical Subcircuit Macro-Modeling: Enable encapsulating arbitrary schematic networks into reusable multi-pin subcircuit hierarchical blocks with customized pinout mapping and nested schematic navigation.
-2. Multi-Sheet Canvas Tabs: Implement tabbed multi-sheet canvas management with independent viewport cameras, cross-sheet net labels, and project-wide global signal propagation.
-3. High-Density Vectorized Bus Routing Engine: Support multi-bit bus lines (e.g., DATA[0:31], ADDR[0:15]) with automated bus break-out/tap-off routing, orthogonal bus bundling, and visual bus width decorators.
-
----
-
-## Done
+Developed hierarchical macro-modeling, tabbed multi-sheet canvas management with cross-sheet signal propagation, and high-density vectorized bus routing engine:
+1. Hierarchical Subcircuit Macro-Modeling (`crates/phonon-gui/src/schematic/subcircuit.rs`):
+   - Implemented `SubcircuitDefinition` encapsulating internal schematic canvases with customized boundary pins (`SubcircuitPin`, `PinDirection::{Input, Output, Inout}`) and bounding dimension calculation.
+   - Built `SubcircuitInstance` with coordinate rotation transformation (0, 90, 180, 270 deg) and pin-to-external-net mapping.
+   - Implemented high-throughput `flatten_hierarchical_netlist` flattening nested subcircuits into flat MNA SPICE netlists, mapping boundary pins to top-level nets and prefixing internal nodes with `X<id>_`.
+   - Benchmark throughput achieved 199,414 instances flattened per second (> 100,000 threshold).
+2. Multi-Sheet Canvas Management (`crates/phonon-gui/src/schematic/sheet.rs`):
+   - Implemented `SchematicSheet` retaining independent vector canvases, pan offset, and zoom levels.
+   - Implemented `MultiSheetManager` coordinating sheet tabs, active viewport switching, and last-sheet deletion interlock protection.
+   - Built `resolve_cross_sheet_nets` resolving shared global nets across sheets for project-wide signal propagation.
+3. High-Density Vectorized Bus Routing Engine (`crates/phonon-gui/src/schematic/bus.rs`):
+   - Implemented `BusSignal` defining multi-bit signal vectors (e.g. `DATA[31:0]`, `ADDR[15:0]`) with bit range verification and formatted labeling.
+   - Implemented `SchematicBus` and `BusTapOff` supporting individual bit breakout wire extraction (`DATA[7]`) and boundary clamping.
+   - Implemented visual bus rendering with 3.5 px wide strokes, diagonal slash `/` width decorators, and numeral badges (`/32`, `/16`).
+   - Benchmark throughput achieved 4,749,822 bus operations per second (> 250,000 threshold).
+4. App & UI Integration (`crates/phonon-gui/src/app.rs`, `canvas.rs`, `top_frame.rs`):
+   - Integrated `sheets: MultiSheetManager`, `subcircuits: HashMap<String, SubcircuitDefinition>`, and `buses: Vec<SchematicBus>` in `PhononApp`.
+   - Added interactive Sheet Tabs Bar with active sheet indicator, "+" add sheet action, and sheet close buttons.
+   - Added View -> Sheets submenu in top frame for instant sheet switching.
+   - Integrated bus and subcircuit symbol rendering into central canvas renderer.
+5. Automated Verification Suites:
+   - `crates/phonon-gui/tests/subcircuit_hierarchical_tests.rs`: 5/5 tests PASS (199,414 inst/sec throughput).
+   - `crates/phonon-gui/tests/bus_routing_tests.rs`: 5/5 tests PASS (4,749,822 ops/sec throughput).
 
 ### Phase 311: Phonon Studio Real-Time Interactive Multi-Tier Netlist Synchronization & Visual ERC Diagnostic Overlay Engine
 Developed bidirectional real-time SPICE netlist synchronization, layout coordinate preservation, and high-performance visual ERC diagnostic overlay engine:

@@ -2,13 +2,15 @@
 
 //! Infinite CAD schematic canvas with pan, zoom, grid rendering, and coordinate projection.
 
+use super::bus::SchematicBus;
 use super::components::SchematicComponent;
 use super::erc::{ErcDiagnostic, ErcSeverity};
+use super::subcircuit::SubcircuitInstance;
 use super::wire::SchematicWire;
 use egui::{Color32, FontId, Painter, Pos2, Rect, Stroke, StrokeKind, Vec2};
 
 /// Manages infinite vector canvas pan, zoom, coordinate transformations, and visual schematic objects.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct SchematicCanvas {
     pub pan: Vec2,
     pub zoom: f32,
@@ -16,6 +18,8 @@ pub struct SchematicCanvas {
     pub show_grid: bool,
     pub components: Vec<SchematicComponent>,
     pub wires: Vec<SchematicWire>,
+    pub subcircuit_instances: Vec<SubcircuitInstance>,
+    pub buses: Vec<SchematicBus>,
 }
 
 impl Default for SchematicCanvas {
@@ -27,6 +31,8 @@ impl Default for SchematicCanvas {
             show_grid: true,
             components: Vec::new(),
             wires: Vec::new(),
+            subcircuit_instances: Vec::new(),
+            buses: Vec::new(),
         }
     }
 }
@@ -46,10 +52,22 @@ impl SchematicCanvas {
         self.wires.push(wire);
     }
 
-    /// Clears all schematic components and wires from the canvas.
+    /// Adds a placed subcircuit instance to the canvas.
+    pub fn add_subcircuit_instance(&mut self, inst: SubcircuitInstance) {
+        self.subcircuit_instances.push(inst);
+    }
+
+    /// Adds a high-density bus route to the canvas.
+    pub fn add_bus(&mut self, bus: SchematicBus) {
+        self.buses.push(bus);
+    }
+
+    /// Clears all schematic components, wires, subcircuit instances, and buses from the canvas.
     pub fn clear(&mut self) {
         self.components.clear();
         self.wires.clear();
+        self.subcircuit_instances.clear();
+        self.buses.clear();
     }
 
     /// Renders visual ERC diagnostic overlay with color-coded pulsing rings and hover tooltips.
