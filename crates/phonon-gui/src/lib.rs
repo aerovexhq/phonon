@@ -8,7 +8,7 @@ pub mod schematic;
 pub mod thermal;
 pub mod widgets;
 
-pub use app::PhononApp;
+pub use app::{PhononApp, ToolMode};
 pub use widgets::dynamics_status::DynamicsStatusBadge;
 pub use widgets::icon::{self, render_phonon_icon};
 pub use widgets::top_frame::{

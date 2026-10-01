@@ -1,3 +1,5 @@
+#![deny(unsafe_code)]
+
 use phonon_cli::commands::{execute_run, execute_validate};
 use phonon_cli::telemetry::OutputFormat;
 
@@ -159,4 +161,25 @@ C1 out 0 1u
     assert!(jsonl_lines.len() >= 10);
     assert!(jsonl_lines[0].contains("\"time\": 0.0000000000e0"));
     assert!(jsonl_lines[0].contains("\"V(in)\": 5.0000000000e0"));
+}
+
+#[test]
+fn test_phonon_gui_command_parsing() {
+    use clap::Parser;
+    use phonon_cli::{Cli, Commands};
+
+    let cli = Cli::try_parse_from(["phonon", "gui"]).expect("phonon gui command should parse");
+    assert_eq!(cli.command, Some(Commands::Gui));
+}
+
+#[test]
+fn test_legacy_phonon_ui_command_rejected() {
+    use clap::Parser;
+    use phonon_cli::Cli;
+
+    let res = Cli::try_parse_from(["phonon", "ui"]);
+    assert!(
+        res.is_err(),
+        "Legacy phonon ui command must be rejected as an unrecognized subcommand"
+    );
 }

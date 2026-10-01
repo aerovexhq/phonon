@@ -25,7 +25,21 @@ pub enum ToolMode {
     Select,
     Wire,
     Place(ComponentKind),
+    PlaceComponent(ComponentKind),
     Probe,
+}
+
+impl ToolMode {
+    pub fn is_place(&self) -> bool {
+        matches!(self, ToolMode::Place(_) | ToolMode::PlaceComponent(_))
+    }
+
+    pub fn place_kind(&self) -> Option<&ComponentKind> {
+        match self {
+            ToolMode::Place(k) | ToolMode::PlaceComponent(k) => Some(k),
+            _ => None,
+        }
+    }
 }
 
 /// The unified Phonon desktop CAD application.
@@ -55,6 +69,9 @@ pub struct PhononApp {
 
     // Drag tracking for selected component
     dragging_component: bool,
+
+    /// Active rotation angle index for components being placed (0 = 0 deg, 1 = 90 deg, 2 = 180 deg, 3 = 270 deg).
+    pub placement_rotation: u8,
 
     /// Configuration for the custom window top frame.
     pub top_frame_config: TopFrameConfig,
@@ -98,6 +115,7 @@ impl Default for PhononApp {
             compiled_circuit: None,
             spice_netlist_text: String::new(),
             dragging_component: false,
+            placement_rotation: 0,
             top_frame_config: TopFrameConfig::default(),
             dynamics_backend: Box::new(AutoSelectingDynamicsBackend::new()),
         };
@@ -344,20 +362,30 @@ impl PhononApp {
         }
     }
 
-    /// Rotates the selected component clockwise by 90 degrees.
-    pub fn rotate_selected(&mut self) {
+    /// Rotates the active component (selected, being dragged, or held during placement) clockwise by 90 degrees.
+    pub fn rotate_active(&mut self) {
         if let Some(cid) = self.selected_component_id {
             if let Some(comp) = self.components.iter_mut().find(|c| c.id == cid) {
                 comp.rotate_clockwise();
                 self.sim_status.clear();
+                return;
             }
         }
+        if self.selected_tool.is_place() {
+            self.placement_rotation = (self.placement_rotation + 1) % 4;
+            self.sim_status.clear();
+        }
+    }
+
+    /// Rotates the selected component clockwise by 90 degrees.
+    pub fn rotate_selected(&mut self) {
+        self.rotate_active();
     }
 
     /// Handles global hotkeys and keyboard shortcuts.
     fn handle_shortcuts(&mut self, ctx: &egui::Context) {
         if ctx.input(|i| i.key_pressed(Key::R)) {
-            self.rotate_selected();
+            self.rotate_active();
         }
         if ctx.input(|i| i.key_pressed(Key::Delete) || i.key_pressed(Key::Backspace)) {
             self.delete_selected();
@@ -367,14 +395,17 @@ impl PhononApp {
             self.selected_tool = ToolMode::Select;
             self.selected_component_id = None;
             self.selected_wire_id = None;
+            self.placement_rotation = 0;
         }
         if ctx.input(|i| i.key_pressed(Key::W)) {
             self.selected_tool = ToolMode::Wire;
             self.active_wire_start = None;
+            self.placement_rotation = 0;
         }
         if ctx.input(|i| i.key_pressed(Key::S)) {
             self.selected_tool = ToolMode::Select;
             self.active_wire_start = None;
+            self.placement_rotation = 0;
         }
     }
 
@@ -453,14 +484,15 @@ impl PhononApp {
                             self.selected_wire_id = None;
                         }
                     }
-                    ToolMode::Place(kind) => {
+                    ToolMode::Place(kind) | ToolMode::PlaceComponent(kind) => {
                         let count = self.components.iter().filter(|c| c.kind == *kind).count() + 1;
-                        let new_comp = SchematicComponent::new(
+                        let mut new_comp = SchematicComponent::new(
                             self.next_comp_id,
                             kind.clone(),
                             snapped_world,
                             count,
                         );
+                        new_comp.rotation = self.placement_rotation;
                         self.components.push(new_comp);
                         self.next_comp_id += 1;
                         self.sim_status = format!("Placed {}", kind.prefix());
@@ -562,8 +594,9 @@ impl PhononApp {
             }
 
             // Render component placement ghost preview
-            if let ToolMode::Place(kind) = &self.selected_tool {
-                let ghost = SchematicComponent::new(0, kind.clone(), snapped_world, 0);
+            if let Some(kind) = self.selected_tool.place_kind() {
+                let mut ghost = SchematicComponent::new(0, kind.clone(), snapped_world, 0);
+                ghost.rotation = self.placement_rotation;
                 ghost.render(&painter, &self.canvas, true, None);
             }
         }
@@ -620,6 +653,7 @@ impl PhononApp {
                 .clicked()
             {
                 self.selected_tool = ToolMode::Select;
+                self.placement_rotation = 0;
                 self.active_wire_start = None;
             }
             if ui
@@ -627,6 +661,7 @@ impl PhononApp {
                 .clicked()
             {
                 self.selected_tool = ToolMode::Wire;
+                self.placement_rotation = 0;
                 self.active_wire_start = None;
             }
         });
@@ -637,6 +672,7 @@ impl PhononApp {
                 .clicked()
             {
                 self.selected_tool = ToolMode::Probe;
+                self.placement_rotation = 0;
                 self.active_wire_start = None;
             }
             if ui.button("Clear Wire").clicked() {
@@ -663,10 +699,13 @@ impl PhononApp {
             ];
 
             for (label, kind) in palette_items {
-                let is_selected = self.selected_tool == ToolMode::Place(kind.clone());
+                let is_selected = matches!(&self.selected_tool, ToolMode::Place(k) | ToolMode::PlaceComponent(k) if k == &kind);
                 if ui.selectable_label(is_selected, label).clicked() {
                     self.selected_tool = ToolMode::Place(kind);
+                    self.placement_rotation = 0;
                     self.active_wire_start = None;
+                    self.selected_component_id = None;
+                    self.selected_wire_id = None;
                 }
             }
 
@@ -697,10 +736,10 @@ impl PhononApp {
                         ui.label("Value:");
                         ui.text_edit_singleline(&mut comp.value_str);
                     });
-                    ui.label(format!("Rotation: {}°", comp.rotation * 90));
+                    ui.label(format!("Rotation: {} deg", (comp.rotation % 4) * 90));
 
                     ui.horizontal(|ui| {
-                        if ui.button("Rotate 90° (R)").clicked() {
+                        if ui.button("Rotate 90 deg (R)").clicked() {
                             comp.rotate_clockwise();
                         }
                     });
@@ -730,6 +769,21 @@ impl PhononApp {
                 if ui.button("Delete Wire").clicked() {
                     self.delete_selected();
                 }
+            }
+        } else if let Some(prefix) = self.selected_tool.place_kind().map(|k| k.prefix()) {
+            let rot_deg = (self.placement_rotation % 4) * 90;
+            let mut do_rotate = false;
+            ui.group(|ui| {
+                ui.label(format!("Placing: {}", prefix));
+                ui.label(format!("Rotation: {} deg", rot_deg));
+                ui.horizontal(|ui| {
+                    if ui.button("Rotate 90 deg (R)").clicked() {
+                        do_rotate = true;
+                    }
+                });
+            });
+            if do_rotate {
+                self.rotate_active();
             }
         } else {
             ui.label("No component or wire selected.");

@@ -23,7 +23,7 @@ features:
   - title: 6 Realism Tiers Accessible Visually
     details: Seamlessly scale from microscopic atomistic/semiconductor TCAD (1D/2D mesh Poisson-Drift-Diffusion) and BSIM4 SPICE to 4.2K Cryo-CMOS and topological non-Abelian quantum acoustic braiding lattices.
   - title: Unified CLI & Desktop CAD Binary
-    details: Single binary executable. Run 'phonon' for high-throughput headless simulation, parametric sweeps, and ERC validation, or 'phonon ui' to launch the native GPU-accelerated desktop CAD interface.
+    details: Single binary executable. Run 'phonon' for high-throughput headless simulation, parametric sweeps, and ERC validation, or 'phonon gui' to launch the native GPU-accelerated desktop CAD interface.
   - title: Instant One-Command Distro Setup
     details: Replace and install with a single Debian package ('phonon_0.1.0_amd64.deb') or run the universal single-command installer across Ubuntu, Debian, Fedora, Arch, RHEL, openSUSE, Alpine, and NixOS.
   - title: Dual-Platform Studio Deployment

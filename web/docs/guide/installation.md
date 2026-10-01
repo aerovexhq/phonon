@@ -156,6 +156,6 @@ cd phonon
 cargo build --release -p phonon-cli
 
 # Run local binary
-./target/release/phonon ui
+./target/release/phonon gui
 ```
 
