@@ -242,6 +242,7 @@ pub mod skyrmion_majorana_memory;
 pub mod fqh_moore_read_crossbar;
 pub mod skyrmion_parafermion_processor;
 pub mod fqh_moore_read_transceiver;
+pub mod floquet_parafermion_repeater;
 pub mod chiral_skyrmion_magnon_polaron;
 pub mod floquet_exceptional_ring_sensor;
 pub mod radiation;
@@ -1027,6 +1028,9 @@ pub use skyrmion_parafermion_processor::{
 };
 pub use fqh_moore_read_transceiver::{
     FqhMooreReadTransceiverMetrics, FqhMooreReadTransceiverParams,
+};
+pub use floquet_parafermion_repeater::{
+    FloquetParafermionRepeaterMetrics, FloquetParafermionRepeaterParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
