@@ -1,3 +1,5 @@
+#![deny(unsafe_code)]
+
 //! High-speed lexer and SPICE engineering number parser.
 
 use crate::error::NetlistError;
@@ -74,13 +76,27 @@ pub fn parse_spice_number(s: &str, line: usize) -> Result<f64, NetlistError> {
     let base_str = &lower[..num_end];
     let suffix = &lower[num_end..];
 
-    let base_val = base_str
-        .parse::<f64>()
-        .map_err(|e| NetlistError::InvalidNumber {
-            line,
-            literal: s.to_string(),
-            detail: e.to_string(),
-        })?;
+    let base_val = match base_str.parse::<f64>() {
+        Ok(v) => v,
+        Err(e) => {
+            let mut parts = base_str.split('.');
+            if let (Some(major), Some(minor)) = (parts.next(), parts.next()) {
+                let rest: String = parts.collect();
+                let combined = format!("{}.{}{}", major, minor, rest);
+                combined.parse::<f64>().map_err(|_| NetlistError::InvalidNumber {
+                    line,
+                    literal: s.to_string(),
+                    detail: e.to_string(),
+                })?
+            } else {
+                return Err(NetlistError::InvalidNumber {
+                    line,
+                    literal: s.to_string(),
+                    detail: e.to_string(),
+                });
+            }
+        }
+    };
 
     let mult = if suffix.starts_with("meg") {
         1e6

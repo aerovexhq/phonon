@@ -48,6 +48,7 @@ pub mod cryogenic;
 pub mod diamond_nv;
 pub mod diode;
 pub mod em;
+pub mod extraction;
 pub mod floquet;
 pub mod floquet_acoustic_chern;
 pub mod floquet_anyon_braiding;
@@ -1051,3 +1052,7 @@ pub use floquet_parafermion_processor::{
 pub use valley_acoustic::*;
 pub use valleytronics::*;
 pub use wakefield::{BetatronRadiation, BubbleRegime, LaserPulseParams, PlasmaChannelParams};
+pub use extraction::{
+    generate_bsim4_model_deck, validate_bsim4_model_deck, Bsim4TargetParams, ExtractionError,
+    FittingResult, GaOptimizer, MeasuredCurve, MeasurementPoint,
+};
