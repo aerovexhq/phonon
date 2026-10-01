@@ -21,7 +21,7 @@
 
     <MediaTemplate EmbedCab="yes" CompressionLevel="high" />
 
-    <Icon Id="PhononIcon" SourceFile="phonon.ico" />
+    <Icon Id="PhononIcon" SourceFile="$(var.PackagingDir)\phonon.ico" />
     <Property Id="ARPPRODUCTICON" Value="PhononIcon" />
     <Property Id="ARPHELPLINK" Value="https://phonon.aerovex.net" />
     <Property Id="ARPURLINFOABOUT" Value="https://phonon.aerovex.net" />
@@ -146,7 +146,7 @@
 
     <!-- UI Experience (WixUI) for Interactive Installations -->
     <ui:WixUI Id="WixUI_InstallDir" InstallDirectory="INSTALLFOLDER" />
-    <WixVariable Id="WixUILicenseRtf" Value="license.rtf" />
+    <WixVariable Id="WixUILicenseRtf" Value="$(var.PackagingDir)\license.rtf" />
 
   </Package>
 </Wix>

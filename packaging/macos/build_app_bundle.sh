@@ -51,6 +51,11 @@ elif [[ -f "${ROOT_DIR}/packaging/phonon.svg" ]]; then
     cp -f "${ROOT_DIR}/packaging/phonon.svg" "${APP_DIR}/Contents/Resources/phonon.svg"
 fi
 
+if [[ -d "${ROOT_DIR}/packaging/completions" ]]; then
+    mkdir -p "${APP_DIR}/Contents/Resources/completions"
+    cp -r "${ROOT_DIR}/packaging/completions/"* "${APP_DIR}/Contents/Resources/completions/"
+fi
+
 echo "[4/4] Verifying application bundle..."
 echo "Bundle successfully assembled at: ${APP_DIR}"
 ls -la "${APP_DIR}/Contents"
