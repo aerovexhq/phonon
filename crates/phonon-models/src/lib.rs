@@ -229,6 +229,7 @@ pub mod majorana_parafermion_lattice;
 pub mod floquet_chern_photonic_isolator;
 pub mod superconducting_quoctit_crossbar;
 pub mod floquet_chern_parafermion_transceiver;
+pub mod quantum_metamaterial_multiplexer;
 pub mod chiral_skyrmion_magnon_polaron;
 pub mod floquet_exceptional_ring_sensor;
 pub mod radiation;
@@ -975,6 +976,9 @@ pub use superconducting_quoctit_crossbar::{
 };
 pub use floquet_chern_parafermion_transceiver::{
     FloquetChernParafermionTransceiverMetrics, FloquetChernParafermionTransceiverParams,
+};
+pub use quantum_metamaterial_multiplexer::{
+    QuantumMetamaterialMultiplexerMetrics, QuantumMetamaterialMultiplexerParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
