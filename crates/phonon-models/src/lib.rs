@@ -217,6 +217,7 @@ pub mod quantum_metamaterial_beamformer;
 pub mod axion_polariton_beam_splitter;
 pub mod floquet_chern_isolator;
 pub mod valley_chiral_polariton_splitter;
+pub mod axion_magnon_polariton_isolator;
 pub mod chiral_skyrmion_magnon_polaron;
 pub mod floquet_exceptional_ring_sensor;
 pub mod radiation;
@@ -927,6 +928,9 @@ pub use floquet_chern_isolator::{
 };
 pub use valley_chiral_polariton_splitter::{
     ValleyChiralPolaritonSplitterMetrics, ValleyChiralPolaritonSplitterParams,
+};
+pub use axion_magnon_polariton_isolator::{
+    AxionMagnonPolaritonIsolatorMetrics, AxionMagnonPolaritonIsolatorParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
