@@ -6,7 +6,8 @@ use crate::oscilloscope::{OscilloscopePanel, WaveformTrace};
 use crate::schematic::{
     compile_schematic, compute_junction_dots, deserialize_project, load_project_from_file,
     save_project_to_file, serialize_project, BinaryFormatError, CanvasCommand, CompiledCircuit,
-    ComponentKind, HistoryStack, SchematicCanvas, SchematicComponent, SchematicWire,
+    ComponentKind, ErcDiagnostic, ErcEngine, ErcSeverity, HistoryStack, NetlistSyncEngine,
+    SchematicCanvas, SchematicComponent, SchematicWire,
 };
 use crate::thermal::{Colormap, ThermalOverlay};
 use crate::widgets::{
@@ -68,6 +69,15 @@ pub struct PhononApp {
     pub component_temperatures: HashMap<String, f64>,
     pub compiled_circuit: Option<CompiledCircuit>,
     pub spice_netlist_text: String,
+
+    /// Real-time bidirectional SPICE netlist synchronization engine.
+    pub netlist_sync: NetlistSyncEngine,
+
+    /// Active Electrical Rules Check (ERC) diagnostic findings.
+    pub erc_diagnostics: Vec<ErcDiagnostic>,
+
+    /// Whether the visual ERC diagnostic overlay is rendered on canvas.
+    pub show_erc_overlay: bool,
 
     // Drag tracking for selected component
     dragging_component: bool,
@@ -131,6 +141,9 @@ impl Default for PhononApp {
             component_temperatures: HashMap::with_capacity(32),
             compiled_circuit: None,
             spice_netlist_text: String::new(),
+            netlist_sync: NetlistSyncEngine::new(),
+            erc_diagnostics: Vec::new(),
+            show_erc_overlay: true,
             dragging_component: false,
             drag_start_pos: None,
             history: HistoryStack::with_capacity(500, 64),
@@ -193,6 +206,35 @@ impl PhononApp {
         self.sim_status.clear();
         self.drag_start_pos = None;
         self.editing_comp_value = None;
+        self.canvas.clear();
+        self.erc_diagnostics.clear();
+        self.netlist_sync.invalidate();
+    }
+
+    /// Synchronizes app components and wires into the canvas object.
+    pub fn sync_canvas_state(&mut self) {
+        self.canvas.components = self.components.clone();
+        self.canvas.wires = self.wires.clone();
+    }
+
+    /// Runs the Electrical Rules Check (ERC) diagnostic engine on the current schematic canvas.
+    pub fn run_erc(&mut self) {
+        self.sync_canvas_state();
+        self.erc_diagnostics = ErcEngine::evaluate_canvas(&self.canvas);
+        let error_count = self
+            .erc_diagnostics
+            .iter()
+            .filter(|d| d.severity == ErcSeverity::Error)
+            .count();
+        let warn_count = self
+            .erc_diagnostics
+            .iter()
+            .filter(|d| d.severity == ErcSeverity::Warning)
+            .count();
+        self.sim_status = format!(
+            "ERC Checked: {} errors, {} warnings",
+            error_count, warn_count
+        );
     }
 
     /// Clears the canvas, removing all components and wires, recording the action in history.
@@ -360,6 +402,8 @@ impl PhononApp {
         self.wires = vec![w1, w2, w3, w4];
         self.next_wire_id = 5;
 
+        self.sync_canvas_state();
+        self.run_erc();
         self.sim_status.clear();
     }
 
@@ -389,6 +433,8 @@ impl PhononApp {
         self.wires = vec![w1, w2, w3, w4];
         self.next_wire_id = 5;
 
+        self.sync_canvas_state();
+        self.run_erc();
         self.sim_status.clear();
     }
 
@@ -848,6 +894,14 @@ impl PhononApp {
                 }
             }
         }
+
+        // 7. Visual ERC Diagnostic Overlay
+        self.canvas.draw(
+            &painter,
+            &self.erc_diagnostics,
+            self.show_erc_overlay,
+            mouse_pos,
+        );
     }
 
     /// Renders the left tool and component palette panel.
@@ -1088,9 +1142,8 @@ impl PhononApp {
                     self.run_transient_demo();
                 }
                 if ui.button("Export Netlist").clicked() {
-                    if let Ok(compiled) = compile_schematic(&self.components, &self.wires) {
-                        self.spice_netlist_text = compiled.spice_netlist;
-                    }
+                    self.sync_canvas_state();
+                    self.spice_netlist_text = self.netlist_sync.sync_from_canvas(&self.canvas).to_string();
                     self.show_netlist_window = true;
                 }
                 if ui.button("Clear Canvas").clicked() {
@@ -1163,10 +1216,12 @@ impl PhononApp {
 
         // 7. Optional SPICE Netlist Window
         if self.show_netlist_window {
+            let mut is_open = self.show_netlist_window;
+            let mut sync_requested = false;
             egui::Window::new("Exported SPICE Netlist")
-                .open(&mut self.show_netlist_window)
+                .open(&mut is_open)
                 .resizable(true)
-                .default_size([450.0, 320.0])
+                .default_size([450.0, 360.0])
                 .show(ui.ctx(), |ui| {
                     ui.label("SPICE 3f5 Netlist representation of current schematic:");
                     egui::ScrollArea::vertical().show(ui, |ui| {
@@ -1177,7 +1232,28 @@ impl PhononApp {
                                 .lock_focus(true),
                         );
                     });
+                    ui.horizontal(|ui| {
+                        if ui.button("Sync to Canvas").clicked() {
+                            sync_requested = true;
+                        }
+                    });
                 });
+            self.show_netlist_window = is_open;
+
+            if sync_requested {
+                if let Ok(delta) = self
+                    .netlist_sync
+                    .sync_to_canvas(&self.spice_netlist_text, &mut self.canvas)
+                {
+                    self.components = self.canvas.components.clone();
+                    self.wires = self.canvas.wires.clone();
+                    self.run_erc();
+                    self.sim_status = format!(
+                        "Synced to Canvas: +{} updated {}, -{}",
+                        delta.added_count, delta.updated_count, delta.removed_count
+                    );
+                }
+            }
         }
     }
 }
