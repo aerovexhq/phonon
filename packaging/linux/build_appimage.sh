@@ -64,8 +64,9 @@ mkdir -p "${DIST_DIR}"
 
 if command -v appimagetool >/dev/null 2>&1; then
     echo "Found appimagetool. Compiling squashfs AppImage..."
+    ARCH=x86_64 appimagetool --appimage-extract-and-run "${APP_DIR}" "${OUTPUT_APPIMAGE}" 2>/dev/null || \
     ARCH=x86_64 appimagetool "${APP_DIR}" "${OUTPUT_APPIMAGE}"
-    chmod +x "${OUTPUT_APPIMAGE}"
+    chmod +x "${OUTPUT_APPIMAGE}" 2>/dev/null || true
     echo "AppImage created successfully at: ${OUTPUT_APPIMAGE}"
 else
     echo "appimagetool not found in PATH."

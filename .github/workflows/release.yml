@@ -21,6 +21,8 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y dpkg-dev binutils libasound2-dev libudev-dev pkg-config
+          sudo curl -L -o /usr/local/bin/appimagetool https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage || true
+          sudo chmod +x /usr/local/bin/appimagetool 2>/dev/null || true
 
       - name: Install Rust Stable Toolchain
         uses: dtolnay/rust-toolchain@stable
@@ -68,6 +70,7 @@ jobs:
         shell: bash
         run: |
           mkdir -p dist/windows
+          cp target/x86_64-pc-windows-msvc/release/phonon.exe dist/phonon.exe
           cp target/x86_64-pc-windows-msvc/release/phonon.exe dist/windows/phonon.exe
 
       - name: Install Inno Setup
@@ -90,6 +93,7 @@ jobs:
           wix build packaging/windows/phonon.wxs `
             -d BinSourceDir="dist/windows" `
             -d DocSourceDir="." `
+            -d PackagingDir="packaging/windows" `
             -ext WixToolset.UI.wixext `
             -o dist/phonon-0.1.0-x64.msi
 

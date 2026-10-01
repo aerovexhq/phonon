@@ -33,6 +33,7 @@ ArchitecturesInstallIn64BitMode=x64compatible
 DisableProgramGroupPage=auto
 ChangesEnvironment=yes
 UninstallDisplayIcon={app}\{#MyAppExeName}
+SetupIconFile=phonon.ico
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
