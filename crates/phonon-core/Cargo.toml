@@ -13,5 +13,10 @@ serde = { workspace = true, optional = true }
 default = []
 serde = ["dep:serde"]
 
+[dev-dependencies]
+phonon-models = { path = "../phonon-models" }
+phonon-solver = { path = "../phonon-solver" }
+phonon-thermal = { path = "../phonon-thermal" }
+
 [lints]
 workspace = true
