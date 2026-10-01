@@ -208,6 +208,7 @@ pub mod majorana_parafermion_hybrid;
 pub mod quantum_metamaterial_beamformer;
 pub mod axion_polariton_beam_splitter;
 pub mod floquet_chern_isolator;
+pub mod valley_chiral_polariton_splitter;
 pub mod chiral_skyrmion_magnon_polaron;
 pub mod floquet_exceptional_ring_sensor;
 pub mod relay;
@@ -763,6 +764,7 @@ pub use majorana_parafermion_hybrid::*;
 pub use quantum_metamaterial_beamformer::*;
 pub use axion_polariton_beam_splitter::*;
 pub use floquet_chern_isolator::*;
+pub use valley_chiral_polariton_splitter::*;
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
     IntegrationMethod, StepControlOptions, TimeWaveform, TransientOptions, TransientSolution,
