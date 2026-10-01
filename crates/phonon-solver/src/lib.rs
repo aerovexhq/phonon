@@ -221,6 +221,7 @@ pub mod majorana_parafermion_lattice;
 pub mod floquet_chern_photonic_isolator;
 pub mod superconducting_quoctit_crossbar;
 pub mod floquet_chern_parafermion_transceiver;
+pub mod quantum_metamaterial_multiplexer;
 pub mod chiral_skyrmion_magnon_polaron;
 pub mod floquet_exceptional_ring_sensor;
 pub mod relay;
@@ -789,6 +790,7 @@ pub use majorana_parafermion_lattice::*;
 pub use floquet_chern_photonic_isolator::*;
 pub use superconducting_quoctit_crossbar::*;
 pub use floquet_chern_parafermion_transceiver::*;
+pub use quantum_metamaterial_multiplexer::*;
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
     IntegrationMethod, StepControlOptions, TimeWaveform, TransientOptions, TransientSolution,
