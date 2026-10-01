@@ -2,7 +2,7 @@
 
 //! Physical parameter models and multi-physics evaluation metrics for the Phonon
 //! Universal Multi-Scale Visual Studio Autonomous Acoustically Driven Floquet-Chern
-//! Parafermion Frequency Comb Synthesizer & Soliton Router Engine (Phase 284).
+//! Parafermion Frequency Comb Synthesizer & Soliton Router Engine (Phase 296).
 
 /// Physical parameter configuration for the universal multi-scale visual studio
 /// autonomous acoustically driven Floquet-Chern parafermion frequency comb synthesizer
@@ -15,8 +15,8 @@ pub struct FloquetParafermionCombParams {
     pub topological_parafermion_gap_mev: f64,
     /// Acoustic drive frequency in GHz (clamp 1.0 to 12.0, default 12.0).
     pub acoustic_drive_frequency_ghz: f64,
-    /// Frequency comb dispatch speed in m/s (clamp 200.0 to 3000.0, default 3000.0).
-    pub comb_dispatch_speed_m_per_s: f64,
+    /// Soliton dispatch speed in m/s (clamp 200.0 to 3000.0, default 3000.0).
+    pub soliton_dispatch_speed_m_per_s: f64,
     /// Cryogenic dilution refrigerator temperature in milli-Kelvin (clamp 1.0 to 50.0, default 10.0).
     pub cryogenic_temperature_mk: f64,
     /// Optical pump power in microwatts (clamp 0.5 to 30.0, default 29.8).
@@ -33,7 +33,7 @@ impl Default for FloquetParafermionCombParams {
             comb_coupling_mev: 35.0,
             topological_parafermion_gap_mev: 45.0,
             acoustic_drive_frequency_ghz: 12.0,
-            comb_dispatch_speed_m_per_s: 3000.0,
+            soliton_dispatch_speed_m_per_s: 3000.0,
             cryogenic_temperature_mk: 10.0,
             optical_pump_power_uw: 29.8,
             synthetic_comb_lines_factor: 4.0,
@@ -48,7 +48,7 @@ impl FloquetParafermionCombParams {
         comb_coupling_mev: f64,
         topological_parafermion_gap_mev: f64,
         acoustic_drive_frequency_ghz: f64,
-        comb_dispatch_speed_m_per_s: f64,
+        soliton_dispatch_speed_m_per_s: f64,
         cryogenic_temperature_mk: f64,
         optical_pump_power_uw: f64,
         synthetic_comb_lines_factor: f64,
@@ -58,7 +58,7 @@ impl FloquetParafermionCombParams {
             comb_coupling_mev: comb_coupling_mev.clamp(1.0, 35.0),
             topological_parafermion_gap_mev: topological_parafermion_gap_mev.clamp(2.0, 45.0),
             acoustic_drive_frequency_ghz: acoustic_drive_frequency_ghz.clamp(1.0, 12.0),
-            comb_dispatch_speed_m_per_s: comb_dispatch_speed_m_per_s.clamp(200.0, 3000.0),
+            soliton_dispatch_speed_m_per_s: soliton_dispatch_speed_m_per_s.clamp(200.0, 3000.0),
             cryogenic_temperature_mk: cryogenic_temperature_mk.clamp(1.0, 50.0),
             optical_pump_power_uw: optical_pump_power_uw.clamp(0.5, 30.0),
             synthetic_comb_lines_factor: synthetic_comb_lines_factor.clamp(1.0, 8.0),
@@ -72,8 +72,8 @@ impl FloquetParafermionCombParams {
 /// Soliton Router Engine.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct FloquetParafermionCombMetrics {
-    /// Comb synthesizer fidelity (target >= 0.9980).
-    pub comb_synthesizer_fidelity: f64,
+    /// Comb fidelity (target >= 0.9980).
+    pub comb_fidelity: f64,
     /// Soliton state retention fraction (target >= 0.9970).
     pub soliton_state_retention_fraction: f64,
     /// Topological protection gap in MHz (target >= 45.0 MHz).

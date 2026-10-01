@@ -3,7 +3,7 @@
 //! Automated unit and multi-physics validation tests for the Phonon
 //! Universal Multi-Scale Visual Studio Autonomous Acoustically Driven
 //! Floquet-Chern Parafermion Frequency Comb Synthesizer & Soliton Router Engine
-//! (Phase 284).
+//! (Phase 296).
 
 use phonon_models::floquet_parafermion_comb::FloquetParafermionCombParams;
 use phonon_solver::floquet_parafermion_comb::FloquetParafermionCombSolver;
@@ -24,7 +24,7 @@ fn test_parameter_boundary_clamping() {
     assert_eq!(underflow.comb_coupling_mev, 1.0);
     assert_eq!(underflow.topological_parafermion_gap_mev, 2.0);
     assert_eq!(underflow.acoustic_drive_frequency_ghz, 1.0);
-    assert_eq!(underflow.comb_dispatch_speed_m_per_s, 200.0);
+    assert_eq!(underflow.soliton_dispatch_speed_m_per_s, 200.0);
     assert_eq!(underflow.cryogenic_temperature_mk, 1.0);
     assert_eq!(underflow.optical_pump_power_uw, 0.5);
     assert_eq!(underflow.synthetic_comb_lines_factor, 1.0);
@@ -44,7 +44,7 @@ fn test_parameter_boundary_clamping() {
     assert_eq!(overflow.comb_coupling_mev, 35.0);
     assert_eq!(overflow.topological_parafermion_gap_mev, 45.0);
     assert_eq!(overflow.acoustic_drive_frequency_ghz, 12.0);
-    assert_eq!(overflow.comb_dispatch_speed_m_per_s, 3000.0);
+    assert_eq!(overflow.soliton_dispatch_speed_m_per_s, 3000.0);
     assert_eq!(overflow.cryogenic_temperature_mk, 50.0);
     assert_eq!(overflow.optical_pump_power_uw, 30.0);
     assert_eq!(overflow.synthetic_comb_lines_factor, 8.0);
@@ -57,7 +57,7 @@ fn test_default_parameters_and_compliance() {
     assert_eq!(params.comb_coupling_mev, 35.0);
     assert_eq!(params.topological_parafermion_gap_mev, 45.0);
     assert_eq!(params.acoustic_drive_frequency_ghz, 12.0);
-    assert_eq!(params.comb_dispatch_speed_m_per_s, 3000.0);
+    assert_eq!(params.soliton_dispatch_speed_m_per_s, 3000.0);
     assert_eq!(params.cryogenic_temperature_mk, 10.0);
     assert_eq!(params.optical_pump_power_uw, 29.8);
     assert_eq!(params.synthetic_comb_lines_factor, 4.0);
@@ -68,9 +68,9 @@ fn test_default_parameters_and_compliance() {
 
     // Verify all 5 physical roadmap targets for default parameters
     assert!(
-        metrics.comb_synthesizer_fidelity >= 0.9980,
-        "Comb synthesizer fidelity must be >= 0.9980, got {:.6}",
-        metrics.comb_synthesizer_fidelity
+        metrics.comb_fidelity >= 0.9980,
+        "Comb fidelity must be >= 0.9980, got {:.6}",
+        metrics.comb_fidelity
     );
     assert!(
         metrics.soliton_state_retention_fraction >= 0.9970,
@@ -113,8 +113,8 @@ fn test_comb_coupling_monotonicity() {
     let s_high = FloquetParafermionCombSolver::new(p_high);
 
     assert!(
-        s_high.compute_comb_synthesizer_fidelity()
-            > s_low.compute_comb_synthesizer_fidelity()
+        s_high.compute_comb_fidelity()
+            > s_low.compute_comb_fidelity()
     );
     assert!(
         s_high.compute_soliton_state_retention_fraction()
@@ -149,8 +149,8 @@ fn test_topological_parafermion_gap_monotonicity() {
     let s_high = FloquetParafermionCombSolver::new(p_high);
 
     assert!(
-        s_high.compute_comb_synthesizer_fidelity()
-            > s_low.compute_comb_synthesizer_fidelity()
+        s_high.compute_comb_fidelity()
+            > s_low.compute_comb_fidelity()
     );
     assert!(
         s_high.compute_soliton_state_retention_fraction()
@@ -185,8 +185,8 @@ fn test_acoustic_drive_frequency_monotonicity() {
     let s_high = FloquetParafermionCombSolver::new(p_high);
 
     assert!(
-        s_high.compute_comb_synthesizer_fidelity()
-            > s_low.compute_comb_synthesizer_fidelity()
+        s_high.compute_comb_fidelity()
+            > s_low.compute_comb_fidelity()
     );
     assert!(
         s_high.compute_soliton_state_retention_fraction()
@@ -207,13 +207,13 @@ fn test_acoustic_drive_frequency_monotonicity() {
 }
 
 #[test]
-fn test_comb_dispatch_speed_monotonicity() {
+fn test_soliton_dispatch_speed_monotonicity() {
     let p_low = FloquetParafermionCombParams {
-        comb_dispatch_speed_m_per_s: 500.0,
+        soliton_dispatch_speed_m_per_s: 500.0,
         ..Default::default()
     };
     let p_high = FloquetParafermionCombParams {
-        comb_dispatch_speed_m_per_s: 2800.0,
+        soliton_dispatch_speed_m_per_s: 2800.0,
         ..Default::default()
     };
 
@@ -221,8 +221,8 @@ fn test_comb_dispatch_speed_monotonicity() {
     let s_high = FloquetParafermionCombSolver::new(p_high);
 
     assert!(
-        s_high.compute_comb_synthesizer_fidelity()
-            > s_low.compute_comb_synthesizer_fidelity()
+        s_high.compute_comb_fidelity()
+            > s_low.compute_comb_fidelity()
     );
     assert!(
         s_high.compute_soliton_state_retention_fraction()
@@ -257,8 +257,8 @@ fn test_optical_pump_power_monotonicity() {
     let s_high = FloquetParafermionCombSolver::new(p_high);
 
     assert!(
-        s_high.compute_comb_synthesizer_fidelity()
-            > s_low.compute_comb_synthesizer_fidelity()
+        s_high.compute_comb_fidelity()
+            > s_low.compute_comb_fidelity()
     );
     assert!(
         s_high.compute_soliton_state_retention_fraction()
@@ -293,8 +293,8 @@ fn test_synthetic_comb_lines_monotonicity() {
     let s_high = FloquetParafermionCombSolver::new(p_high);
 
     assert!(
-        s_high.compute_comb_synthesizer_fidelity()
-            > s_low.compute_comb_synthesizer_fidelity()
+        s_high.compute_comb_fidelity()
+            > s_low.compute_comb_fidelity()
     );
     assert!(
         s_high.compute_soliton_state_retention_fraction()
@@ -329,8 +329,8 @@ fn test_cryogenic_temperature_sensitivity() {
     let s_warm = FloquetParafermionCombSolver::new(p_warm);
 
     assert!(
-        s_cold.compute_comb_synthesizer_fidelity()
-            > s_warm.compute_comb_synthesizer_fidelity()
+        s_cold.compute_comb_fidelity()
+            > s_warm.compute_comb_fidelity()
     );
     assert!(
         s_cold.compute_soliton_state_retention_fraction()
@@ -365,8 +365,8 @@ fn test_microcomb_cavity_pitch_scaling() {
     let s_wide = FloquetParafermionCombSolver::new(p_wide);
 
     assert!(
-        s_wide.compute_comb_synthesizer_fidelity()
-            > s_narrow.compute_comb_synthesizer_fidelity()
+        s_wide.compute_comb_fidelity()
+            > s_narrow.compute_comb_fidelity()
     );
     assert!(
         s_wide.compute_soliton_state_retention_fraction()
@@ -394,7 +394,7 @@ fn test_extreme_physical_limits_compliance() {
     let solver_min = FloquetParafermionCombSolver::new(min_params);
     let metrics_min = solver_min.evaluate_metrics();
 
-    assert!(metrics_min.comb_synthesizer_fidelity >= 0.9980);
+    assert!(metrics_min.comb_fidelity >= 0.9980);
     assert!(metrics_min.soliton_state_retention_fraction >= 0.9970);
     assert!(metrics_min.topological_protection_gap_mhz >= 45.0);
     assert!(metrics_min.inter_comb_crosstalk_isolation_db >= 55.0);
@@ -407,7 +407,7 @@ fn test_extreme_physical_limits_compliance() {
     let solver_max = FloquetParafermionCombSolver::new(max_params);
     let metrics_max = solver_max.evaluate_metrics();
 
-    assert!(metrics_max.comb_synthesizer_fidelity >= 0.9980);
+    assert!(metrics_max.comb_fidelity >= 0.9980);
     assert!(metrics_max.soliton_state_retention_fraction >= 0.9970);
     assert!(metrics_max.topological_protection_gap_mhz >= 45.0);
     assert!(metrics_max.inter_comb_crosstalk_isolation_db >= 55.0);
