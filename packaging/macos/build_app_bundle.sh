@@ -33,7 +33,7 @@ cat <<'EOF' > "${APP_DIR}/Contents/MacOS/phonon-launcher"
 #!/usr/bin/env bash
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 if [ $# -eq 0 ]; then
-    exec "${DIR}/phonon" ui
+    exec "${DIR}/phonon" gui
 else
     exec "${DIR}/phonon" "$@"
 fi

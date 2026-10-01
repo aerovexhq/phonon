@@ -52,7 +52,7 @@ export XDG_DATA_DIRS="${HERE}/usr/share:${XDG_DATA_DIRS:-/usr/local/share:/usr/s
 # Dual-mode execution: launch Desktop UI if no arguments provided,
 # otherwise pass arguments directly to CLI engine.
 if [[ $# -eq 0 ]]; then
-    exec "${HERE}/usr/bin/phonon" ui
+    exec "${HERE}/usr/bin/phonon" gui
 else
     exec "${HERE}/usr/bin/phonon" "$@"
 fi

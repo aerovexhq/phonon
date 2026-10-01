@@ -61,17 +61,17 @@ Source: "..\..\LICENSE"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\completions\*"; DestDir: "{app}\completions"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: completions
 
 [Icons]
-Name: "{group}\Phonon Studio"; Filename: "{app}\{#MyAppExeName}"; Parameters: "ui"; Components: gui
+Name: "{group}\Phonon Studio"; Filename: "{app}\{#MyAppExeName}"; Parameters: "gui"; Components: gui
 Name: "{group}\Phonon CLI Prompt"; Filename: "{cmd}"; Parameters: "/K ""{app}\{#MyAppExeName}"""; Components: cli
 Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
-Name: "{autodesktop}\Phonon Studio"; Filename: "{app}\{#MyAppExeName}"; Parameters: "ui"; Tasks: desktopicon; Components: gui
+Name: "{autodesktop}\Phonon Studio"; Filename: "{app}\{#MyAppExeName}"; Parameters: "gui"; Tasks: desktopicon; Components: gui
 
 [Registry]
 ; File associations for .phonon
 Root: HKA; Subkey: "Software\Classes\.phonon"; ValueType: string; ValueName: ""; ValueData: "PhononCircuitTopology"; Flags: uninsdeletevalue; Tasks: associatefiles
 Root: HKA; Subkey: "Software\Classes\PhononCircuitTopology"; ValueType: string; ValueName: ""; ValueData: "Phonon Quantum Acoustic Circuit"; Flags: uninsdeletekey; Tasks: associatefiles
 Root: HKA; Subkey: "Software\Classes\PhononCircuitTopology\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\{#MyAppExeName},0"; Tasks: associatefiles
-Root: HKA; Subkey: "Software\Classes\PhononCircuitTopology\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\{#MyAppExeName}"" ui ""%1"""; Tasks: associatefiles
+Root: HKA; Subkey: "Software\Classes\PhononCircuitTopology\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\{#MyAppExeName}"" gui ""%1"""; Tasks: associatefiles
 
 ; File associations for .sp
 Root: HKA; Subkey: "Software\Classes\.sp"; ValueType: string; ValueName: ""; ValueData: "PhononSpiceNetlist"; Flags: uninsdeletevalue; Tasks: associatefiles
