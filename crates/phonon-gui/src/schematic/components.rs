@@ -158,6 +158,9 @@ impl ComponentKind {
         Self::SkyrmionRouter,
     ];
 
+    /// Alias for ALL variants.
+    pub const ALL_VARIANTS: &'static [Self] = Self::ALL;
+
     /// Precomputed lowercase search index string for zero-allocation query filtering.
     pub fn search_index(&self) -> &'static str {
         match self {
@@ -838,6 +841,7 @@ pub struct SchematicComponent {
     pub rotation: u8,
     pub value_str: String,
     pub model_name: Option<String>,
+    pub properties: Vec<(String, String)>,
 }
 
 impl SchematicComponent {
@@ -852,7 +856,22 @@ impl SchematicComponent {
             rotation: 0,
             value_str,
             model_name: None,
+            properties: Vec::new(),
         }
+    }
+
+    /// Builder method attaching a custom key-value metadata property.
+    pub fn with_property(mut self, key: impl Into<String>, value: impl Into<String>) -> Self {
+        self.properties.push((key.into(), value.into()));
+        self
+    }
+
+    /// Looks up a custom property value by key.
+    pub fn get_property(&self, key: &str) -> Option<&str> {
+        self.properties
+            .iter()
+            .find(|(k, _)| k == key)
+            .map(|(_, v)| v.as_str())
     }
 
     /// Rotates the component clockwise by 90 degrees.

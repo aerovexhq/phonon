@@ -4,8 +4,9 @@
 
 use crate::oscilloscope::{OscilloscopePanel, WaveformTrace};
 use crate::schematic::{
-    compile_schematic, compute_junction_dots, CanvasCommand, CompiledCircuit, ComponentKind,
-    HistoryStack, SchematicCanvas, SchematicComponent, SchematicWire,
+    compile_schematic, compute_junction_dots, deserialize_project, load_project_from_file,
+    save_project_to_file, serialize_project, BinaryFormatError, CanvasCommand, CompiledCircuit,
+    ComponentKind, HistoryStack, SchematicCanvas, SchematicComponent, SchematicWire,
 };
 use crate::thermal::{Colormap, ThermalOverlay};
 use crate::widgets::{
@@ -89,6 +90,9 @@ pub struct PhononApp {
 
     /// Hierarchical categorized component palette drawer.
     pub palette: ComponentPalette,
+
+    /// Instant boot theme configuration.
+    pub boot_theme_config: crate::BootThemeConfig,
 }
 
 impl std::fmt::Debug for PhononApp {
@@ -100,6 +104,7 @@ impl std::fmt::Debug for PhononApp {
             .field("top_frame_config", &self.top_frame_config)
             .field("dynamics_backend", &self.dynamics_backend.info())
             .field("palette", &self.palette)
+            .field("boot_theme_config", &self.boot_theme_config)
             .finish()
     }
 }
@@ -108,8 +113,8 @@ impl Default for PhononApp {
     fn default() -> Self {
         let mut app = Self {
             canvas: SchematicCanvas::new(),
-            components: Vec::new(),
-            wires: Vec::new(),
+            components: Vec::with_capacity(64),
+            wires: Vec::with_capacity(64),
             next_comp_id: 1,
             next_wire_id: 1,
             selected_tool: ToolMode::Select,
@@ -122,18 +127,19 @@ impl Default for PhononApp {
             show_thermal_overlay: true,
             show_netlist_window: false,
             sim_status: String::new(),
-            dc_node_voltages: HashMap::new(),
-            component_temperatures: HashMap::new(),
+            dc_node_voltages: HashMap::with_capacity(32),
+            component_temperatures: HashMap::with_capacity(32),
             compiled_circuit: None,
             spice_netlist_text: String::new(),
             dragging_component: false,
             drag_start_pos: None,
-            history: HistoryStack::new(),
+            history: HistoryStack::with_capacity(500, 64),
             editing_comp_value: None,
             placement_rotation: 0,
             top_frame_config: TopFrameConfig::default(),
             dynamics_backend: Box::new(AutoSelectingDynamicsBackend::new()),
             palette: ComponentPalette::new(),
+            boot_theme_config: crate::default_boot_theme_config(),
         };
 
         // Initialize with default Voltage Divider demo
@@ -145,15 +151,17 @@ impl Default for PhononApp {
 
 impl PhononApp {
     /// Creates a default `PhononApp` with an auto-selecting dynamics backend.
-    pub fn new(_cc: &eframe::CreationContext<'_>) -> Self {
+    pub fn new(cc: &eframe::CreationContext<'_>) -> Self {
+        cc.egui_ctx.set_theme(egui::Theme::Dark);
         Self::default()
     }
 
     /// Creates a `PhononApp` instance with an injected custom physics dynamics backend.
     pub fn with_backend(
-        _cc: &eframe::CreationContext<'_>,
+        cc: &eframe::CreationContext<'_>,
         backend: Box<dyn PhysicsDynamicsBackend>,
     ) -> Self {
+        cc.egui_ctx.set_theme(egui::Theme::Dark);
         let mut app = Self::default();
         app.dynamics_backend = backend;
         app
@@ -251,6 +259,77 @@ impl PhononApp {
                 });
             }
         }
+    }
+
+    /// Serializes current schematic project into ultra-compact binary format (.phn).
+    pub fn save_to_bytes(&self) -> Vec<u8> {
+        let title = &self.top_frame_config.circuit_name;
+        serialize_project(title, &self.components, &self.wires)
+    }
+
+    /// Loads schematic project from ultra-compact binary format (.phn) bytes, resetting history clean index.
+    pub fn load_from_bytes(&mut self, bytes: &[u8]) -> Result<(), BinaryFormatError> {
+        let proj = deserialize_project(bytes)?;
+        self.components = proj.components;
+        self.wires = proj.wires;
+        self.history.clear();
+        let max_c_id = self.components.iter().map(|c| c.id).max().unwrap_or(0);
+        self.next_comp_id = max_c_id + 1;
+        let max_w_id = self.wires.iter().map(|w| w.id).max().unwrap_or(0);
+        self.next_wire_id = max_w_id + 1;
+        self.selected_component_id = None;
+        self.selected_wire_id = None;
+        self.active_wire_start = None;
+        self.dc_node_voltages.clear();
+        self.component_temperatures.clear();
+        self.compiled_circuit = None;
+        self.spice_netlist_text.clear();
+        self.top_frame_config.circuit_name = proj.title.clone();
+        self.sim_status = format!("Loaded project: {}", proj.title);
+        Ok(())
+    }
+
+    /// Serializes project and resets the history clean index to mark current state as saved.
+    pub fn save_project(&mut self) -> Vec<u8> {
+        self.history.mark_clean();
+        self.save_to_bytes()
+    }
+
+    /// Saves project state to disk at `path` and resets history clean index.
+    pub fn save_project_file<P: AsRef<std::path::Path>>(
+        &mut self,
+        path: P,
+    ) -> Result<(), BinaryFormatError> {
+        self.history.mark_clean();
+        let title = &self.top_frame_config.circuit_name;
+        save_project_to_file(path, title, &self.components, &self.wires)?;
+        self.sim_status = "Saved project (.phn)".to_string();
+        Ok(())
+    }
+
+    /// Loads project state from disk at `path` and resets history clean index.
+    pub fn load_project_file<P: AsRef<std::path::Path>>(
+        &mut self,
+        path: P,
+    ) -> Result<(), BinaryFormatError> {
+        let proj = load_project_from_file(path)?;
+        self.components = proj.components;
+        self.wires = proj.wires;
+        self.history.clear();
+        let max_c_id = self.components.iter().map(|c| c.id).max().unwrap_or(0);
+        self.next_comp_id = max_c_id + 1;
+        let max_w_id = self.wires.iter().map(|w| w.id).max().unwrap_or(0);
+        self.next_wire_id = max_w_id + 1;
+        self.selected_component_id = None;
+        self.selected_wire_id = None;
+        self.active_wire_start = None;
+        self.dc_node_voltages.clear();
+        self.component_temperatures.clear();
+        self.compiled_circuit = None;
+        self.spice_netlist_text.clear();
+        self.top_frame_config.circuit_name = proj.title.clone();
+        self.sim_status = format!("Loaded project: {}", proj.title);
+        Ok(())
     }
 
     /// Loads an interactive Voltage Divider demo circuit.
@@ -985,8 +1064,17 @@ impl PhononApp {
 
         Panel::top("custom_top_frame").show(ui, |ui| {
             let action = render_top_frame_with_app(ui, &top_config, self);
-            if action == TopFrameAction::Close {
-                ui.ctx().send_viewport_cmd(egui::ViewportCommand::Close);
+            match action {
+                TopFrameAction::Close => {
+                    ui.ctx().send_viewport_cmd(egui::ViewportCommand::Close);
+                }
+                TopFrameAction::SaveProject => {
+                    let _ = self.save_project_file("project.phn");
+                }
+                TopFrameAction::OpenProject => {
+                    let _ = self.load_project_file("project.phn");
+                }
+                _ => {}
             }
         });
 

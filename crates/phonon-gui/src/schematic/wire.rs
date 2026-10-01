@@ -1,3 +1,5 @@
+#![deny(unsafe_code)]
+
 //! Orthogonal Manhattan wire routing, segment management, and junction detection.
 
 use super::canvas::SchematicCanvas;
@@ -55,11 +57,32 @@ impl WireSegment {
 pub struct SchematicWire {
     pub id: usize,
     pub segments: Vec<WireSegment>,
+    pub net_name: Option<String>,
 }
 
 impl SchematicWire {
     pub fn new(id: usize, segments: Vec<WireSegment>) -> Self {
-        Self { id, segments }
+        Self {
+            id,
+            segments,
+            net_name: None,
+        }
+    }
+
+    /// Builder method attaching an optional or explicit net name.
+    pub fn with_net_name(mut self, net_name: impl Into<String>) -> Self {
+        self.net_name = Some(net_name.into());
+        self
+    }
+
+    /// Returns the start point of the first wire segment, or (0, 0) if empty.
+    pub fn start_point(&self) -> Pos2 {
+        self.segments.first().map(|s| s.start).unwrap_or(Pos2::ZERO)
+    }
+
+    /// Returns the end point of the last wire segment, or (0, 0) if empty.
+    pub fn end_point(&self) -> Pos2 {
+        self.segments.last().map(|s| s.end).unwrap_or(Pos2::ZERO)
     }
 
     /// Creates an orthogonal Manhattan route between two points (horizontal then vertical).
@@ -72,7 +95,23 @@ impl SchematicWire {
         } else if (from.x - to.x).abs() > 0.1 || (from.y - to.y).abs() > 0.1 {
             segments.push(WireSegment::new(from, to));
         }
-        Self { id, segments }
+        Self {
+            id,
+            segments,
+            net_name: None,
+        }
+    }
+
+    /// Creates an orthogonal Manhattan route with an explicit net name.
+    pub fn manhattan_route_with_net(
+        id: usize,
+        from: Pos2,
+        to: Pos2,
+        net_name: Option<String>,
+    ) -> Self {
+        let mut w = Self::manhattan_route(id, from, to);
+        w.net_name = net_name;
+        w
     }
 
     /// Hit testing for wire selection.
