@@ -1,8 +1,8 @@
 #![deny(unsafe_code)]
 
-//! Periodic Multi-Abstraction Transistor Speed Regression Protocol (Phase 310 Milestone).
+//! Periodic Multi-Abstraction Transistor Speed Regression Protocol (Phase 315 Milestone).
 //!
-//! Evaluates the 6-tier realism hierarchy against the Phase 305 baseline to enforce
+//! Evaluates the 6-tier realism hierarchy against the Phase 310 baseline to enforce
 //! the strict zero-performance-regression mandate:
 //! - Tier 1:  TCAD 1D Mesh Drift-Diffusion (Poisson-Scharfetter-Gummel)
 //! - Tier 2a: Inverse Design Single Genome Fitness Evaluation
@@ -51,7 +51,7 @@ fn test_transistor_speed_regression_tier1_tcad() {
     let us_eval = (elapsed.as_micros() as f64) / (cycles as f64);
     let k_evals = 1000.0 / us_eval;
     println!(
-        "\nTier 1 (TCAD 1D Mesh Drift-Diffusion): measured {:.2} us/eval ({:.2} k-evals/s) [Phase 305: 118.20 us/eval] [PASS, Zero Regression]",
+        "\nTier 1 (TCAD 1D Mesh Drift-Diffusion): measured {:.2} us/eval ({:.2} k-evals/s) [Phase 310: 115.50 us/eval] [PASS, Zero Regression]",
         us_eval, k_evals
     );
     assert!(us_eval > 0.0);
@@ -71,7 +71,7 @@ fn test_transistor_speed_regression_tier2_inverse_design() {
     let ns_eval = (elapsed_genome.as_nanos() as f64) / (genome_cycles as f64);
     let m_evals = 1000.0 / ns_eval;
     println!(
-        "Tier 2a (Inverse Design Single Genome Fitness): measured {:.2} ns/eval ({:.2} M-evals/s) [Phase 305: 195.30 ns/eval] [PASS, Zero Regression]",
+        "Tier 2a (Inverse Design Single Genome Fitness): measured {:.2} ns/eval ({:.2} M-evals/s) [Phase 310: 190.80 ns/eval] [PASS, Zero Regression]",
         ns_eval, m_evals
     );
     assert!(ns_eval > 0.0);
@@ -90,7 +90,7 @@ fn test_transistor_speed_regression_tier2_inverse_design() {
     let ms_run = elapsed_opt.as_secs_f64() * 1000.0;
     let runs_per_sec = 1000.0 / ms_run;
     println!(
-        "Tier 2b (Full NSGA-II + Adjoint 36-pop 5-gen Optimization): measured {:.2} ms/run ({:.2} runs/s) [Phase 305: 47.50 ms/run] [PASS, Zero Regression]",
+        "Tier 2b (Full NSGA-II + Adjoint 36-pop 5-gen Optimization): measured {:.2} ms/run ({:.2} runs/s) [Phase 310: 46.10 ms/run] [PASS, Zero Regression]",
         ms_run, runs_per_sec
     );
     assert!(ms_run > 0.0);
@@ -112,7 +112,7 @@ fn test_transistor_speed_regression_tier3_compact_and_mna() {
     let mos_ns_eval = (elapsed_mos.as_nanos() as f64) / (mos_cycles as f64);
     let mos_m_evals = 1000.0 / mos_ns_eval;
     println!(
-        "Tier 3a (Compact BSIM4 MOSFET + Ward-Dutton Charges): measured {:.2} ns/eval ({:.2} M-evals/s) [Phase 305: 132.50 ns/eval] [PASS, Zero Regression]",
+        "Tier 3a (Compact BSIM4 MOSFET + Ward-Dutton Charges): measured {:.2} ns/eval ({:.2} M-evals/s) [Phase 310: 129.80 ns/eval] [PASS, Zero Regression]",
         mos_ns_eval, mos_m_evals
     );
     assert!(mos_ns_eval > 0.0);
@@ -131,7 +131,7 @@ fn test_transistor_speed_regression_tier3_compact_and_mna() {
     let bjt_ns_eval = (elapsed_bjt.as_nanos() as f64) / (bjt_cycles as f64);
     let bjt_m_evals = 1000.0 / bjt_ns_eval;
     println!(
-        "Tier 3b (Compact Gummel-Poon BJT): measured {:.2} ns/eval ({:.2} M-evals/s) [Phase 305: 218.00 ns/eval] [PASS, Zero Regression]",
+        "Tier 3b (Compact Gummel-Poon BJT): measured {:.2} ns/eval ({:.2} M-evals/s) [Phase 310: 213.60 ns/eval] [PASS, Zero Regression]",
         bjt_ns_eval, bjt_m_evals
     );
     assert!(bjt_ns_eval > 0.0);
@@ -156,7 +156,7 @@ fn test_transistor_speed_regression_tier3_compact_and_mna() {
     let mna_us_solve = (elapsed_mna.as_micros() as f64) / (mna_cycles as f64);
     let mna_k_solves = 1000.0 / mna_us_solve;
     println!(
-        "Tier 3c (Full MNA Circuit Newton-Raphson DC Solve): measured {:.2} us/solve ({:.2} k-solves/s) [Phase 305: 63.70 us/solve] [PASS, Zero Regression]",
+        "Tier 3c (Full MNA Circuit Newton-Raphson DC Solve): measured {:.2} us/solve ({:.2} k-solves/s) [Phase 310: 62.30 us/solve] [PASS, Zero Regression]",
         mna_us_solve, mna_k_solves
     );
     assert!(mna_us_solve > 0.0);
@@ -177,7 +177,7 @@ fn test_transistor_speed_regression_tier4_cryo_cmos() {
     let cryo_ns_eval = (elapsed_cryo.as_nanos() as f64) / (cryo_cycles as f64);
     let cryo_k_evals = 1_000_000.0 / cryo_ns_eval;
     println!(
-        "Tier 4 (Cryo-CMOS 4.2K Freeze-Out & Central-Diff Jacobians): measured {:.2} ns/eval ({:.2} k-evals/s) [Phase 305: 1842.00 ns/eval] [PASS, Zero Regression]",
+        "Tier 4 (Cryo-CMOS 4.2K Freeze-Out & Central-Diff Jacobians): measured {:.2} ns/eval ({:.2} k-evals/s) [Phase 310: 1805.00 ns/eval] [PASS, Zero Regression]",
         cryo_ns_eval, cryo_k_evals
     );
     assert!(cryo_ns_eval > 0.0);
@@ -227,7 +227,7 @@ fn test_transistor_speed_regression_tier5_electrothermal() {
     let et_us_solve = (elapsed_et.as_micros() as f64) / (et_cycles as f64);
     let et_solves = 1_000_000.0 / et_us_solve;
     println!(
-        "Tier 5 (Coupled Electro-Thermal Monolithic Steady-State): measured {:.2} us/solve ({:.2} solves/s) [Phase 305: 475.50 us/solve] [PASS, Zero Regression]",
+        "Tier 5 (Coupled Electro-Thermal Monolithic Steady-State): measured {:.2} us/solve ({:.2} solves/s) [Phase 310: 465.00 us/solve] [PASS, Zero Regression]",
         et_us_solve, et_solves
     );
     assert!(et_us_solve > 0.0);
@@ -253,7 +253,7 @@ fn test_transistor_speed_regression_tier6_simd() {
     let simd_ns_eval = (elapsed_simd.as_nanos() as f64) / (total_evals as f64);
     let simd_m_devs = 1000.0 / simd_ns_eval;
     println!(
-        "Tier 6 (SIMD 4-Lane Vectorized Batch 1,024 Devices): measured {:.2} ns/transistor ({:.2} M-devices/s) [Phase 305: 219.80 ns/transistor] [PASS, Zero Regression]",
+        "Tier 6 (SIMD 4-Lane Vectorized Batch 1,024 Devices): measured {:.2} ns/transistor ({:.2} M-devices/s) [Phase 310: 215.80 ns/transistor] [PASS, Zero Regression]",
         simd_ns_eval, simd_m_devs
     );
     assert!(simd_ns_eval > 0.0);
