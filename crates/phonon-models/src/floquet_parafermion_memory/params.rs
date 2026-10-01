@@ -2,7 +2,7 @@
 
 //! Physical parameter models and multi-physics evaluation metrics for the Phonon
 //! Universal Multi-Scale Visual Studio Autonomous Acoustically Driven Floquet-Chern
-//! Parafermion Topological Quantum Memory & Braiding Router Engine (Phase 285 Milestone).
+//! Parafermion Topological Quantum Memory & Braiding Router Engine (Phase 297).
 
 /// Physical parameter configuration for the universal multi-scale visual studio
 /// autonomous acoustically driven Floquet-Chern parafermion topological quantum memory
@@ -69,7 +69,7 @@ impl FloquetParafermionMemoryParams {
 
 /// Multi-physics evaluation metrics for the Phonon Universal Multi-Scale Visual Studio
 /// Autonomous Acoustically Driven Floquet-Chern Parafermion Topological Quantum Memory &
-/// Braiding Router Engine (Phase 285 Milestone).
+/// Braiding Router Engine (Phase 297).
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct FloquetParafermionMemoryMetrics {
     /// Memory fidelity (target >= 0.9980).

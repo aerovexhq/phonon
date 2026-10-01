@@ -3,7 +3,7 @@
 //! Automated unit and multi-physics validation tests for the Phonon
 //! Universal Multi-Scale Visual Studio Autonomous Acoustically Driven
 //! Floquet-Chern Parafermion Topological Quantum Memory & Braiding Router Engine
-//! (Phase 285 Milestone).
+//! (Phase 297).
 
 use phonon_models::floquet_parafermion_memory::FloquetParafermionMemoryParams;
 use phonon_solver::floquet_parafermion_memory::FloquetParafermionMemorySolver;
