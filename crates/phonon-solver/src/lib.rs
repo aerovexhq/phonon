@@ -236,6 +236,7 @@ pub mod skyrmion_parafermion_processor;
 pub mod fqh_moore_read_transceiver;
 pub mod floquet_parafermion_repeater;
 pub mod fqh_moore_read_memory;
+pub mod floquet_parafermion_crossbar;
 pub mod chiral_skyrmion_magnon_polaron;
 pub mod floquet_exceptional_ring_sensor;
 pub mod relay;
@@ -819,6 +820,7 @@ pub use skyrmion_parafermion_processor::*;
 pub use fqh_moore_read_transceiver::*;
 pub use floquet_parafermion_repeater::*;
 pub use fqh_moore_read_memory::*;
+pub use floquet_parafermion_crossbar::*;
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
     IntegrationMethod, StepControlOptions, TimeWaveform, TransientOptions, TransientSolution,
