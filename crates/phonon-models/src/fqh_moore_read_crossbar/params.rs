@@ -3,7 +3,7 @@
 //! Physical parameter models and multi-physics evaluation metrics for the Phonon
 //! Universal Multi-Scale Visual Studio Autonomous Acoustically Driven Fractional
 //! Quantum Hall Moore-Read Anyon Multiplexed Routing Crossbar & High-Dimensional
-//! Logic Engine (Phase 289).
+//! Logic Engine (Phase 298).
 
 /// Physical parameter configuration for the universal multi-scale visual studio
 /// autonomous acoustically driven fractional quantum Hall Moore-Read anyon multiplexed

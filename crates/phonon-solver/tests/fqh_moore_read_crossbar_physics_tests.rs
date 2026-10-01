@@ -3,7 +3,7 @@
 //! Automated unit and multi-physics validation tests for the Phonon
 //! Universal Multi-Scale Visual Studio Autonomous Acoustically Driven
 //! Fractional Quantum Hall Moore-Read Anyon Multiplexed Routing Crossbar
-//! & High-Dimensional Logic Engine (Phase 289).
+//! & High-Dimensional Logic Engine (Phase 298).
 
 use phonon_models::fqh_moore_read_crossbar::FqhMooreReadCrossbarParams;
 use phonon_solver::fqh_moore_read_crossbar::FqhMooreReadCrossbarSolver;
