@@ -6,8 +6,9 @@ use crate::oscilloscope::{OscilloscopePanel, WaveformTrace};
 use crate::schematic::{
     compile_schematic, compute_junction_dots, deserialize_project, load_project_from_file,
     save_project_to_file, serialize_project, BinaryFormatError, CanvasCommand, CompiledCircuit,
-    ComponentKind, ErcDiagnostic, ErcEngine, ErcSeverity, HistoryStack, NetlistSyncEngine,
-    SchematicCanvas, SchematicComponent, SchematicWire,
+    ComponentKind, ErcDiagnostic, ErcEngine, ErcSeverity, HistoryStack, MultiSheetManager,
+    NetlistSyncEngine, SchematicBus, SchematicCanvas, SchematicComponent, SchematicWire,
+    SubcircuitDefinition,
 };
 use crate::thermal::{Colormap, ThermalOverlay};
 use crate::widgets::{
@@ -56,6 +57,15 @@ pub struct PhononApp {
     pub selected_component_id: Option<usize>,
     pub selected_wire_id: Option<usize>,
     pub active_wire_start: Option<Pos2>,
+
+    /// Multi-sheet schematic canvas manager.
+    pub sheets: MultiSheetManager,
+
+    /// Library of hierarchical subcircuit macro-model definitions.
+    pub subcircuits: HashMap<String, SubcircuitDefinition>,
+
+    /// High-density vectorized bus routes on the schematic canvas.
+    pub buses: Vec<SchematicBus>,
 
     pub oscilloscope: OscilloscopePanel,
     pub thermal: ThermalOverlay,
@@ -131,6 +141,9 @@ impl Default for PhononApp {
             selected_component_id: None,
             selected_wire_id: None,
             active_wire_start: None,
+            sheets: MultiSheetManager::new("Main"),
+            subcircuits: HashMap::new(),
+            buses: Vec::new(),
             oscilloscope: OscilloscopePanel::new(),
             thermal: ThermalOverlay::new(),
             show_oscilloscope: true,
@@ -194,6 +207,7 @@ impl PhononApp {
     pub fn clear_canvas_state(&mut self) {
         self.components.clear();
         self.wires.clear();
+        self.buses.clear();
         self.next_comp_id = 1;
         self.next_wire_id = 1;
         self.selected_component_id = None;
@@ -211,10 +225,64 @@ impl PhononApp {
         self.netlist_sync.invalidate();
     }
 
-    /// Synchronizes app components and wires into the canvas object.
+    /// Synchronizes app components, wires, and buses into the active canvas object and active sheet.
     pub fn sync_canvas_state(&mut self) {
         self.canvas.components = self.components.clone();
         self.canvas.wires = self.wires.clone();
+        self.canvas.buses = self.buses.clone();
+
+        let active = self.sheets.active_sheet_mut();
+        active.canvas.components = self.components.clone();
+        active.canvas.wires = self.wires.clone();
+        active.canvas.subcircuit_instances = self.canvas.subcircuit_instances.clone();
+        active.canvas.buses = self.buses.clone();
+        active.camera_offset = self.canvas.pan;
+        active.camera_zoom = self.canvas.zoom;
+    }
+
+    /// Adds a new sheet, synchronizing the current canvas, and switches to the new sheet.
+    pub fn add_sheet(&mut self, name: &str) -> usize {
+        self.sync_canvas_state();
+        let idx = self.sheets.add_sheet(name);
+        self.switch_to_sheet(idx);
+        idx
+    }
+
+    /// Removes a sheet by index, preventing deletion of the last remaining sheet.
+    pub fn remove_sheet(&mut self, idx: usize) -> Result<(), String> {
+        self.sync_canvas_state();
+        self.sheets.remove_sheet(idx)?;
+        self.load_active_sheet();
+        Ok(())
+    }
+
+    /// Switches the active sheet, saving the current sheet canvas state and restoring target sheet state.
+    pub fn switch_to_sheet(&mut self, idx: usize) -> bool {
+        self.sync_canvas_state();
+        if self.sheets.switch_sheet(idx) {
+            self.load_active_sheet();
+            true
+        } else {
+            false
+        }
+    }
+
+    /// Loads the active sheet's canvas and camera into the primary app workspace.
+    pub fn load_active_sheet(&mut self) {
+        let active = self.sheets.active_sheet();
+        self.components = active.canvas.components.clone();
+        self.wires = active.canvas.wires.clone();
+        self.canvas.components = self.components.clone();
+        self.canvas.wires = self.wires.clone();
+        self.canvas.subcircuit_instances = active.canvas.subcircuit_instances.clone();
+        self.canvas.buses = active.canvas.buses.clone();
+        self.buses = active.canvas.buses.clone();
+        self.canvas.pan = active.camera_offset;
+        self.canvas.zoom = active.camera_zoom;
+        self.selected_component_id = None;
+        self.selected_wire_id = None;
+        self.active_wire_start = None;
+        self.netlist_sync.invalidate();
     }
 
     /// Runs the Electrical Rules Check (ERC) diagnostic engine on the current schematic canvas.
@@ -672,6 +740,16 @@ impl PhononApp {
         for wire in &self.wires {
             let is_sel = self.selected_wire_id == Some(wire.id);
             wire.render(&painter, &self.canvas, is_sel);
+        }
+
+        // 3b. Render buses
+        for bus in &self.buses {
+            bus.render(&painter, &self.canvas, false);
+        }
+
+        // 3c. Render subcircuit instances
+        for inst in &self.canvas.subcircuit_instances {
+            inst.render(&painter, &self.canvas, self.subcircuits.get(&inst.def_name), false);
         }
 
         // 4. Render junction dots
@@ -1152,6 +1230,85 @@ impl PhononApp {
 
                 ui.separator();
                 DynamicsStatusBadge::new().ui(ui, self.dynamics_backend.as_ref());
+            });
+        });
+
+        // Sheet Tabs Bar
+        Panel::top("sheet_tabs_bar").show(ui, |ui| {
+            ui.horizontal(|ui| {
+                ui.spacing_mut().item_spacing = Vec2::new(4.0, 0.0);
+                let mut switch_to = None;
+                let mut remove_idx = None;
+                let active_idx = self.sheets.active_sheet_idx;
+                let sheet_count = self.sheets.sheets.len();
+
+                for (idx, sheet) in self.sheets.sheets.iter().enumerate() {
+                    let is_active = idx == active_idx;
+                    let (bg_color, text_color) = if is_active {
+                        (Color32::from_rgb(45, 60, 85), Color32::from_rgb(100, 200, 255))
+                    } else {
+                        (Color32::from_rgb(25, 30, 40), Color32::from_rgb(160, 175, 195))
+                    };
+
+                    egui::Frame::new()
+                        .fill(bg_color)
+                        .corner_radius(3.0)
+                        .inner_margin(egui::Margin::symmetric(8, 3))
+                        .show(ui, |ui| {
+                            ui.horizontal(|ui| {
+                                let btn = ui.add(
+                                    egui::Button::new(
+                                        egui::RichText::new(&sheet.name)
+                                            .color(text_color)
+                                            .size(11.5),
+                                    )
+                                    .frame(false),
+                                );
+                                if btn.clicked() {
+                                    switch_to = Some(idx);
+                                }
+
+                                if sheet_count > 1 {
+                                    let close_btn = ui.add(
+                                        egui::Button::new(
+                                            egui::RichText::new("x")
+                                                .color(Color32::from_rgb(140, 150, 165))
+                                                .size(10.0),
+                                        )
+                                        .frame(false),
+                                    );
+                                    if close_btn.clicked() {
+                                        remove_idx = Some(idx);
+                                    }
+                                }
+                            });
+                        });
+                }
+
+                // Add Sheet button
+                if ui
+                    .add(
+                        egui::Button::new(
+                            egui::RichText::new("+")
+                                .color(Color32::from_rgb(120, 210, 140))
+                                .size(13.0)
+                                .strong(),
+                        )
+                        .frame(true),
+                    )
+                    .clicked()
+                {
+                    let count = self.sheets.sheets.len() + 1;
+                    let new_name = format!("Sheet {}", count);
+                    self.add_sheet(&new_name);
+                }
+
+                if let Some(idx) = switch_to {
+                    self.switch_to_sheet(idx);
+                }
+                if let Some(idx) = remove_idx {
+                    let _ = self.remove_sheet(idx);
+                }
             });
         });
 

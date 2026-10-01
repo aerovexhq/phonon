@@ -256,6 +256,32 @@ fn render_top_frame_internal(
                     a.show_erc_overlay = !a.show_erc_overlay;
                     ui.close();
                 }
+                ui.menu_button("Sheets", |ui| {
+                    let mut switch_idx = None;
+                    let mut add_new = false;
+                    for (idx, sheet) in a.sheets.sheets.iter().enumerate() {
+                        let is_active = idx == a.sheets.active_sheet_idx;
+                        let prefix = if is_active { "* " } else { "  " };
+                        if ui.button(format!("{}{}", prefix, sheet.name)).clicked() {
+                            switch_idx = Some(idx);
+                        }
+                    }
+                    ui.separator();
+                    if ui.button("+ Add New Sheet").clicked() {
+                        add_new = true;
+                    }
+
+                    if let Some(idx) = switch_idx {
+                        a.switch_to_sheet(idx);
+                        ui.close();
+                    }
+                    if add_new {
+                        let count = a.sheets.sheets.len() + 1;
+                        let new_name = format!("Sheet {}", count);
+                        a.add_sheet(&new_name);
+                        ui.close();
+                    }
+                });
                 if ui.button("Reset View").clicked() {
                     a.canvas.pan = egui::Vec2::new(100.0, 100.0);
                     a.canvas.zoom = 1.0;
