@@ -227,6 +227,7 @@ pub mod fqh_pfaffian_router;
 pub mod floquet_parafermion_laser;
 pub mod skyrmion_majorana_transceiver;
 pub mod floquet_parafermion_comb;
+pub mod floquet_parafermion_memory;
 pub mod chiral_skyrmion_magnon_polaron;
 pub mod floquet_exceptional_ring_sensor;
 pub mod relay;
@@ -801,6 +802,7 @@ pub use fqh_pfaffian_router::*;
 pub use floquet_parafermion_laser::*;
 pub use skyrmion_majorana_transceiver::*;
 pub use floquet_parafermion_comb::*;
+pub use floquet_parafermion_memory::*;
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
     IntegrationMethod, StepControlOptions, TimeWaveform, TransientOptions, TransientSolution,
