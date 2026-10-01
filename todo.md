@@ -22,15 +22,6 @@ The ultimate destination for the Phonon platform is an autonomous, multi-scale, 
 
 ## Future
 
-### Phase 309: Phonon Studio Full Undo/Redo History Stack & Non-Destructive Action Command Engine
-Develop a comprehensive, non-destructive undo/redo history architecture for the visual CAD studio:
-1. Command Pattern History Stack: Implement reversible command objects capturing all canvas mutations:
-   - Add/Remove Component, Move Component, Rotate Component.
-   - Add/Remove Wire, Re-route Manhattan Segment.
-   - Modify Component Properties, Doping Levels, and Resistance/Capacitance Values.
-2. Shortcut & Visual Navigation: Provide standard Ctrl+Z (Undo) and Ctrl+Y / Ctrl+Shift+Z (Redo) shortcuts, along with Edit menu undo/redo actions, visual history timeline navigation, and dirty-state indicators for unsaved edits.
-3. Multi-Action Coalescing: Coalesce continuous mouse drags into single atomic history events upon pointer release, preventing undo-stack pollution.
-
 ### Phase 310: Phonon Studio Ultra-Compact Optimized Binary Project Format (`.phn`), Sub-200ms Instant Boot Optimization & Multi-Abstraction Transistor Speed Regression Protocol (Phase 310 Milestone)
 Implement high-performance project persistence, cold-boot startup acceleration, and milestone performance verification:
 1. Ultra-Compact Binary Project Format (`.phn`): Design and implement an optimized binary project serialization format with magic header `b"PHONON\x01"`, packed coordinate vectors, bit-packed component attributes, wire topology graphs, and optional LZ4 compression, achieving <1 ms project loading and saving times with minimal disk footprint.
@@ -47,21 +38,36 @@ Formulate dynamic bi-directional SPICE netlist synchronization and visual electr
 
 ## Current
 
-### Phase 308: Phonon Studio Categorized Component Architecture: Multi-Tier Hierarchical Component Palette
-Restructure the component selection and palette workflow into an intuitive, multi-tier categorized drawer system:
-1. Hierarchical Category Taxonomy: Group all circuit and physical modeling primitives into structured, collapsible drawers:
-   - Passive Elements: Resistors, Capacitors, Inductors, Grounds, Transformers.
-   - Power & Sources: DC Voltage Sources, AC Voltage Sources, Current Sources, Pulse/Clock Generators.
-   - Discrete Semiconductors: Diodes, Zener Diodes, LEDs, Schottky Diodes.
-   - Transistors & Cryo-CMOS: NMOS, PMOS, FinFET, GAA Nanosheet, NPN BJT, PNP BJT.
-   - Integrated Circuits & Logic: Operational Amplifiers, Inverters, NAND, NOR, Multiplexers.
-   - Sensors & Transducers: Piezoelectric Strain Gauges, Tactile Force Matrices, 9-DOF IMU Transducers.
-   - Topological & Quantum Metamaterials: SAW Interdigital Transducers, Majorana Braiding Junctions, Parafermionic Cavities, Skyrmion Routers.
-2. Quick-Filter & Keyboard Palette Navigation: Implement live search filtering across all component categories and keyboard shortcuts for instant component instantiation.
+### Phase 309: Phonon Studio Full Undo/Redo History Stack & Non-Destructive Action Command Engine
+Develop a comprehensive, non-destructive undo/redo history architecture for the visual CAD studio:
+1. Command Pattern History Stack: Implement reversible command objects capturing all canvas mutations:
+   - Add/Remove Component, Move Component, Rotate Component.
+   - Add/Remove Wire, Re-route Manhattan Segment.
+   - Modify Component Properties, Doping Levels, and Resistance/Capacitance Values.
+2. Shortcut & Visual Navigation: Provide standard Ctrl+Z (Undo) and Ctrl+Y / Ctrl+Shift+Z (Redo) shortcuts, along with Edit menu undo/redo actions, visual history timeline navigation, and dirty-state indicators for unsaved edits.
+3. Multi-Action Coalescing: Coalesce continuous mouse drags into single atomic history events upon pointer release, preventing undo-stack pollution.
 
 ---
 
 ## Done
+
+### Phase 308: Phonon Studio Categorized Component Architecture: Multi-Tier Hierarchical Component Palette
+Restructured the component library, visual drawer layout, and netlist compiler into a multi-tier categorized drawer system:
+1. Hierarchical Category Taxonomy (`crates/phonon-gui/src/schematic/categories.rs`):
+   - Defined `ComponentCategory` with 7 canonical tiers: Passives, Sources, Discretes, Transistors, IntegratedCircuits, Sensors, and TopologicalMetamaterials.
+   - Implemented `display_name()`, `description()`, `all_categories()`, and zero-allocation static slice `component_slice()`.
+2. Expanded Component Library (`crates/phonon-gui/src/schematic/components.rs`):
+   - Expanded `ComponentKind` to 31 categorized primitives spanning passive RLC/TX devices, DC/AC/pulse sources, semiconductor diodes, advanced FETs (FinFET, GAA nanosheets), bipolar BJTs, analog/digital ICs (OpAmp, NOT, NAND, NOR, Mux), piezoresistive/tactile/inertial sensors, and topological metamaterials (SAW IDT, Majorana junctions, parafermionic cavities, skyrmion routers).
+   - Authored geometric 2D vector CAD symbol drawing (`draw_symbol`) rendering standardized circuit symbols, pin snap points, and real-time live value readouts.
+3. Circuit Compiler & SPICE Synthesis (`crates/phonon-gui/src/schematic/circuit_compiler.rs`):
+   - Mapped all 31 component kinds to solvable `CircuitGraph` elements (resistors, inductors, capacitors, voltage/current sources, VCVS, diodes, MOSFETs, BJTs).
+   - Implemented automatic SPICE subcircuit generation generating `.SUBCKT ... .ENDS` macro-model definitions for advanced devices.
+4. Categorized Palette Drawer Widget (`crates/phonon-gui/src/widgets/palette.rs` and `app.rs`):
+   - Developed `ComponentPalette` featuring ASCII filter prompt `[Search]`, instant live filtering across names, variants, categories, and descriptions, and collapsible category drawer headers (`egui::CollapsingHeader`).
+   - Integrated into `PhononApp::render_palette`, dispatching `ToolMode::PlaceComponent(kind)` with real-time cursor ghost previews.
+5. Verification Suite & Performance Benchmark (`crates/phonon-gui/tests/categorized_palette_tests.rs`):
+   - Authored 6 analytical unit tests validating 7-category coverage, component bijection, pin coordinate validity, live search filtering, full SPICE compilation, and throughput benchmark achieving 902,209 ops/sec (11.08 ms / 10k operations).
+
 
 ### Phase 307: Phonon Studio Interactive Canvas Engine: Ergonomic Smooth Zoom, Component 90-Degree 'R' Rotation, Text Selection Lockout & Strict `phonon gui` Command Naming
 Engineered ergonomic interactive canvas navigation, real-time orthogonal component rotation, text selection lockout, and canonical CLI command normalization:

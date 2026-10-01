@@ -9,7 +9,8 @@ use crate::schematic::{
 };
 use crate::thermal::{Colormap, ThermalOverlay};
 use crate::widgets::{
-    render_top_frame_with_app, DynamicsStatusBadge, TopFrameAction, TopFrameConfig,
+    render_top_frame_with_app, ComponentPalette, DynamicsStatusBadge, TopFrameAction,
+    TopFrameConfig,
 };
 use eframe::{App, Frame};
 use egui::{
@@ -78,6 +79,9 @@ pub struct PhononApp {
 
     /// Active physics dynamics backend driving physical simulation state.
     pub dynamics_backend: Box<dyn PhysicsDynamicsBackend>,
+
+    /// Hierarchical categorized component palette drawer.
+    pub palette: ComponentPalette,
 }
 
 impl std::fmt::Debug for PhononApp {
@@ -88,6 +92,7 @@ impl std::fmt::Debug for PhononApp {
             .field("selected_tool", &self.selected_tool)
             .field("top_frame_config", &self.top_frame_config)
             .field("dynamics_backend", &self.dynamics_backend.info())
+            .field("palette", &self.palette)
             .finish()
     }
 }
@@ -118,6 +123,7 @@ impl Default for PhononApp {
             placement_rotation: 0,
             top_frame_config: TopFrameConfig::default(),
             dynamics_backend: Box::new(AutoSelectingDynamicsBackend::new()),
+            palette: ComponentPalette::new(),
         };
 
         // Initialize with default Voltage Divider demo
@@ -684,29 +690,13 @@ impl PhononApp {
         ui.heading("Components");
 
         egui::ScrollArea::vertical().show(ui, |ui| {
-            let palette_items = [
-                ("Resistor", ComponentKind::Resistor),
-                ("Capacitor", ComponentKind::Capacitor),
-                ("Inductor", ComponentKind::Inductor),
-                ("Voltage Source", ComponentKind::VoltageSource),
-                ("Current Source", ComponentKind::CurrentSource),
-                ("Ground", ComponentKind::Ground),
-                ("Diode", ComponentKind::Diode),
-                ("NMOS Transistor", ComponentKind::Nmos),
-                ("PMOS Transistor", ComponentKind::Pmos),
-                ("NPN BJT", ComponentKind::BjtNpn),
-                ("PNP BJT", ComponentKind::BjtPnp),
-            ];
-
-            for (label, kind) in palette_items {
-                let is_selected = matches!(&self.selected_tool, ToolMode::Place(k) | ToolMode::PlaceComponent(k) if k == &kind);
-                if ui.selectable_label(is_selected, label).clicked() {
-                    self.selected_tool = ToolMode::Place(kind);
-                    self.placement_rotation = 0;
-                    self.active_wire_start = None;
-                    self.selected_component_id = None;
-                    self.selected_wire_id = None;
-                }
+            let current_place_kind = self.selected_tool.place_kind();
+            if let Some(kind) = self.palette.render(ui, current_place_kind) {
+                self.selected_tool = ToolMode::PlaceComponent(kind);
+                self.placement_rotation = 0;
+                self.active_wire_start = None;
+                self.selected_component_id = None;
+                self.selected_wire_id = None;
             }
 
             ui.separator();
