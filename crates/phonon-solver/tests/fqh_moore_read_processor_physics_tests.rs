@@ -2,8 +2,7 @@
 
 //! Automated unit and multi-physics validation tests for the Phonon
 //! Universal Multi-Scale Visual Studio Autonomous Acoustically Driven
-//! Fractional Quantum Hall Moore-Read Anyon Braiding Processor Engine
-//! (Phase 287).
+//! Fractional Quantum Hall Moore-Read Anyon Topological Quantum Processor & Surface Code Hub Engine (Phase 300 Milestone).
 
 use phonon_models::fqh_moore_read_processor::FqhMooreReadProcessorParams;
 use phonon_solver::fqh_moore_read_processor::FqhMooreReadProcessorSolver;
@@ -24,11 +23,11 @@ fn test_parameter_boundary_clamping() {
     assert_eq!(underflow.processor_coupling_mev, 1.0);
     assert_eq!(underflow.topological_pfaffian_gap_mev, 2.0);
     assert_eq!(underflow.acoustic_drive_frequency_ghz, 1.0);
-    assert_eq!(underflow.braiding_dispatch_speed_m_per_s, 200.0);
+    assert_eq!(underflow.processor_dispatch_speed_m_per_s, 200.0);
     assert_eq!(underflow.cryogenic_temperature_mk, 1.0);
     assert_eq!(underflow.microwave_probe_power_uw, 0.5);
-    assert_eq!(underflow.synthetic_processor_nodes_factor, 1.0);
-    assert_eq!(underflow.processor_junction_pitch_um, 0.5);
+    assert_eq!(underflow.synthetic_stabilizers_factor, 1.0);
+    assert_eq!(underflow.processor_lattice_pitch_um, 0.5);
 
     // Test values strictly above physical maximum bounds
     let overflow = FqhMooreReadProcessorParams::new(
@@ -44,11 +43,11 @@ fn test_parameter_boundary_clamping() {
     assert_eq!(overflow.processor_coupling_mev, 35.0);
     assert_eq!(overflow.topological_pfaffian_gap_mev, 45.0);
     assert_eq!(overflow.acoustic_drive_frequency_ghz, 12.0);
-    assert_eq!(overflow.braiding_dispatch_speed_m_per_s, 3000.0);
+    assert_eq!(overflow.processor_dispatch_speed_m_per_s, 3000.0);
     assert_eq!(overflow.cryogenic_temperature_mk, 50.0);
     assert_eq!(overflow.microwave_probe_power_uw, 30.0);
-    assert_eq!(overflow.synthetic_processor_nodes_factor, 8.0);
-    assert_eq!(overflow.processor_junction_pitch_um, 25.0);
+    assert_eq!(overflow.synthetic_stabilizers_factor, 8.0);
+    assert_eq!(overflow.processor_lattice_pitch_um, 25.0);
 }
 
 #[test]
@@ -57,11 +56,11 @@ fn test_default_parameters_and_compliance() {
     assert_eq!(params.processor_coupling_mev, 35.0);
     assert_eq!(params.topological_pfaffian_gap_mev, 45.0);
     assert_eq!(params.acoustic_drive_frequency_ghz, 12.0);
-    assert_eq!(params.braiding_dispatch_speed_m_per_s, 3000.0);
+    assert_eq!(params.processor_dispatch_speed_m_per_s, 3000.0);
     assert_eq!(params.cryogenic_temperature_mk, 10.0);
     assert_eq!(params.microwave_probe_power_uw, 29.6);
-    assert_eq!(params.synthetic_processor_nodes_factor, 4.0);
-    assert_eq!(params.processor_junction_pitch_um, 25.0);
+    assert_eq!(params.synthetic_stabilizers_factor, 4.0);
+    assert_eq!(params.processor_lattice_pitch_um, 25.0);
 
     let solver = FqhMooreReadProcessorSolver::new(params);
     let metrics = solver.evaluate_metrics();
@@ -83,9 +82,9 @@ fn test_default_parameters_and_compliance() {
         metrics.topological_protection_gap_mhz
     );
     assert!(
-        metrics.inter_node_crosstalk_isolation_db >= 55.0,
-        "Inter-node crosstalk isolation must be >= 55.0 dB, got {:.4} dB",
-        metrics.inter_node_crosstalk_isolation_db
+        metrics.inter_qudit_crosstalk_isolation_db >= 55.0,
+        "Inter-qudit crosstalk isolation must be >= 55.0 dB, got {:.4} dB",
+        metrics.inter_qudit_crosstalk_isolation_db
     );
     assert!(
         metrics.topological_mode_dephasing_rate_hz <= 12.0,
@@ -125,8 +124,8 @@ fn test_processor_coupling_monotonicity() {
             > s_low.compute_topological_protection_gap_mhz()
     );
     assert!(
-        s_high.compute_inter_node_crosstalk_isolation_db()
-            > s_low.compute_inter_node_crosstalk_isolation_db()
+        s_high.compute_inter_qudit_crosstalk_isolation_db()
+            > s_low.compute_inter_qudit_crosstalk_isolation_db()
     );
     assert!(
         s_high.compute_topological_mode_dephasing_rate_hz()
@@ -161,8 +160,8 @@ fn test_topological_pfaffian_gap_monotonicity() {
             > s_low.compute_topological_protection_gap_mhz()
     );
     assert!(
-        s_high.compute_inter_node_crosstalk_isolation_db()
-            > s_low.compute_inter_node_crosstalk_isolation_db()
+        s_high.compute_inter_qudit_crosstalk_isolation_db()
+            > s_low.compute_inter_qudit_crosstalk_isolation_db()
     );
     assert!(
         s_high.compute_topological_mode_dephasing_rate_hz()
@@ -197,8 +196,8 @@ fn test_acoustic_drive_frequency_monotonicity() {
             > s_low.compute_topological_protection_gap_mhz()
     );
     assert!(
-        s_high.compute_inter_node_crosstalk_isolation_db()
-            > s_low.compute_inter_node_crosstalk_isolation_db()
+        s_high.compute_inter_qudit_crosstalk_isolation_db()
+            > s_low.compute_inter_qudit_crosstalk_isolation_db()
     );
     assert!(
         s_high.compute_topological_mode_dephasing_rate_hz()
@@ -207,13 +206,13 @@ fn test_acoustic_drive_frequency_monotonicity() {
 }
 
 #[test]
-fn test_braiding_dispatch_speed_monotonicity() {
+fn test_processor_dispatch_speed_monotonicity() {
     let p_low = FqhMooreReadProcessorParams {
-        braiding_dispatch_speed_m_per_s: 500.0,
+        processor_dispatch_speed_m_per_s: 500.0,
         ..Default::default()
     };
     let p_high = FqhMooreReadProcessorParams {
-        braiding_dispatch_speed_m_per_s: 2800.0,
+        processor_dispatch_speed_m_per_s: 2800.0,
         ..Default::default()
     };
 
@@ -233,8 +232,8 @@ fn test_braiding_dispatch_speed_monotonicity() {
             > s_low.compute_topological_protection_gap_mhz()
     );
     assert!(
-        s_high.compute_inter_node_crosstalk_isolation_db()
-            > s_low.compute_inter_node_crosstalk_isolation_db()
+        s_high.compute_inter_qudit_crosstalk_isolation_db()
+            > s_low.compute_inter_qudit_crosstalk_isolation_db()
     );
     assert!(
         s_high.compute_topological_mode_dephasing_rate_hz()
@@ -269,8 +268,8 @@ fn test_microwave_probe_power_monotonicity() {
             > s_low.compute_topological_protection_gap_mhz()
     );
     assert!(
-        s_high.compute_inter_node_crosstalk_isolation_db()
-            > s_low.compute_inter_node_crosstalk_isolation_db()
+        s_high.compute_inter_qudit_crosstalk_isolation_db()
+            > s_low.compute_inter_qudit_crosstalk_isolation_db()
     );
     assert!(
         s_high.compute_topological_mode_dephasing_rate_hz()
@@ -279,13 +278,13 @@ fn test_microwave_probe_power_monotonicity() {
 }
 
 #[test]
-fn test_synthetic_processor_nodes_monotonicity() {
+fn test_synthetic_stabilizers_monotonicity() {
     let p_low = FqhMooreReadProcessorParams {
-        synthetic_processor_nodes_factor: 2.0,
+        synthetic_stabilizers_factor: 2.0,
         ..Default::default()
     };
     let p_high = FqhMooreReadProcessorParams {
-        synthetic_processor_nodes_factor: 7.0,
+        synthetic_stabilizers_factor: 7.0,
         ..Default::default()
     };
 
@@ -305,8 +304,8 @@ fn test_synthetic_processor_nodes_monotonicity() {
             > s_low.compute_topological_protection_gap_mhz()
     );
     assert!(
-        s_high.compute_inter_node_crosstalk_isolation_db()
-            > s_low.compute_inter_node_crosstalk_isolation_db()
+        s_high.compute_inter_qudit_crosstalk_isolation_db()
+            > s_low.compute_inter_qudit_crosstalk_isolation_db()
     );
     assert!(
         s_high.compute_topological_mode_dephasing_rate_hz()
@@ -341,8 +340,8 @@ fn test_cryogenic_temperature_sensitivity() {
             > s_warm.compute_topological_protection_gap_mhz()
     );
     assert!(
-        s_cold.compute_inter_node_crosstalk_isolation_db()
-            > s_warm.compute_inter_node_crosstalk_isolation_db()
+        s_cold.compute_inter_qudit_crosstalk_isolation_db()
+            > s_warm.compute_inter_qudit_crosstalk_isolation_db()
     );
     assert!(
         s_cold.compute_topological_mode_dephasing_rate_hz()
@@ -351,13 +350,13 @@ fn test_cryogenic_temperature_sensitivity() {
 }
 
 #[test]
-fn test_processor_junction_pitch_scaling() {
+fn test_processor_lattice_pitch_scaling() {
     let p_narrow = FqhMooreReadProcessorParams {
-        processor_junction_pitch_um: 2.0,
+        processor_lattice_pitch_um: 2.0,
         ..Default::default()
     };
     let p_wide = FqhMooreReadProcessorParams {
-        processor_junction_pitch_um: 22.0,
+        processor_lattice_pitch_um: 22.0,
         ..Default::default()
     };
 
@@ -377,8 +376,8 @@ fn test_processor_junction_pitch_scaling() {
             > s_narrow.compute_topological_protection_gap_mhz()
     );
     assert!(
-        s_wide.compute_inter_node_crosstalk_isolation_db()
-            > s_narrow.compute_inter_node_crosstalk_isolation_db()
+        s_wide.compute_inter_qudit_crosstalk_isolation_db()
+            > s_narrow.compute_inter_qudit_crosstalk_isolation_db()
     );
     assert!(
         s_wide.compute_topological_mode_dephasing_rate_hz()
@@ -397,7 +396,7 @@ fn test_extreme_physical_limits_compliance() {
     assert!(metrics_min.processor_fidelity >= 0.9980);
     assert!(metrics_min.pfaffian_state_retention_fraction >= 0.9970);
     assert!(metrics_min.topological_protection_gap_mhz >= 45.0);
-    assert!(metrics_min.inter_node_crosstalk_isolation_db >= 55.0);
+    assert!(metrics_min.inter_qudit_crosstalk_isolation_db >= 55.0);
     assert!(metrics_min.topological_mode_dephasing_rate_hz <= 12.0);
     assert!(metrics_min.is_physically_compliant);
 
@@ -410,7 +409,7 @@ fn test_extreme_physical_limits_compliance() {
     assert!(metrics_max.processor_fidelity >= 0.9980);
     assert!(metrics_max.pfaffian_state_retention_fraction >= 0.9970);
     assert!(metrics_max.topological_protection_gap_mhz >= 45.0);
-    assert!(metrics_max.inter_node_crosstalk_isolation_db >= 55.0);
+    assert!(metrics_max.inter_qudit_crosstalk_isolation_db >= 55.0);
     assert!(metrics_max.topological_mode_dephasing_rate_hz <= 12.0);
     assert!(metrics_max.is_physically_compliant);
 }

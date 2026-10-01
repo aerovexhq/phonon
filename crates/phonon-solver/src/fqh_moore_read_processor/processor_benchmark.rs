@@ -2,7 +2,7 @@
 
 //! Parallel parameter sweep benchmark suite for the Phonon Universal Multi-Scale
 //! Visual Studio Autonomous Acoustically Driven Fractional Quantum Hall Moore-Read Anyon
-//! Braiding Processor Engine across multi-threaded Rayon workers.
+//! Topological Quantum Processor & Surface Code Hub Engine across multi-threaded Rayon workers.
 
 use crate::fqh_moore_read_processor::FqhMooreReadProcessorSolver;
 use phonon_models::fqh_moore_read_processor::{
@@ -11,7 +11,7 @@ use phonon_models::fqh_moore_read_processor::{
 use rayon::prelude::*;
 use std::time::Instant;
 
-/// Benchmark outcome summary for autonomous fractional quantum Hall Moore-Read anyon braiding processor parameter sweeps.
+/// Benchmark outcome summary for autonomous fractional quantum Hall Moore-Read anyon topological quantum processor sweeps.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct FqhMooreReadProcessorBenchmarkResult {
     pub total_cycles: usize,
@@ -26,9 +26,9 @@ pub struct FqhMooreReadProcessorBenchmarkResult {
     pub mean_topological_protection_gap_mhz: f64,
     pub min_topological_protection_gap_mhz: f64,
     pub max_topological_protection_gap_mhz: f64,
-    pub mean_inter_node_crosstalk_isolation_db: f64,
-    pub min_inter_node_crosstalk_isolation_db: f64,
-    pub max_inter_node_crosstalk_isolation_db: f64,
+    pub mean_inter_qudit_crosstalk_isolation_db: f64,
+    pub min_inter_qudit_crosstalk_isolation_db: f64,
+    pub max_inter_qudit_crosstalk_isolation_db: f64,
     pub mean_topological_mode_dephasing_rate_hz: f64,
     pub min_topological_mode_dephasing_rate_hz: f64,
     pub max_topological_mode_dephasing_rate_hz: f64,
@@ -49,26 +49,26 @@ impl FqhMooreReadProcessorBenchmarkRunner {
                     2.0 + 43.0 * (((i * 13) % 45) as f64 / 45.0);
                 let acoustic_drive_frequency_ghz =
                     1.0 + 11.0 * (((i * 23) % 35) as f64 / 35.0);
-                let braiding_dispatch_speed_m_per_s =
+                let processor_dispatch_speed_m_per_s =
                     200.0 + 2800.0 * (((i * 17) % 50) as f64 / 50.0);
                 let cryogenic_temperature_mk =
                     1.0 + 49.0 * (((i * 29) % 45) as f64 / 45.0);
                 let microwave_probe_power_uw =
                     0.5 + 29.5 * (((i * 31) % 40) as f64 / 40.0);
-                let synthetic_processor_nodes_factor =
+                let synthetic_stabilizers_factor =
                     1.0 + 7.0 * (((i * 11) % 40) as f64 / 40.0);
-                let processor_junction_pitch_um =
+                let processor_lattice_pitch_um =
                     0.5 + 24.5 * (((i * 19) % 45) as f64 / 45.0);
 
                 FqhMooreReadProcessorParams::new(
                     processor_coupling_mev,
                     topological_pfaffian_gap_mev,
                     acoustic_drive_frequency_ghz,
-                    braiding_dispatch_speed_m_per_s,
+                    processor_dispatch_speed_m_per_s,
                     cryogenic_temperature_mk,
                     microwave_probe_power_uw,
-                    synthetic_processor_nodes_factor,
-                    processor_junction_pitch_um,
+                    synthetic_stabilizers_factor,
+                    processor_lattice_pitch_um,
                 )
             })
             .collect();
@@ -133,12 +133,12 @@ impl FqhMooreReadProcessorBenchmarkRunner {
                 max_gap = m.topological_protection_gap_mhz;
             }
 
-            sum_iso += m.inter_node_crosstalk_isolation_db;
-            if m.inter_node_crosstalk_isolation_db < min_iso {
-                min_iso = m.inter_node_crosstalk_isolation_db;
+            sum_iso += m.inter_qudit_crosstalk_isolation_db;
+            if m.inter_qudit_crosstalk_isolation_db < min_iso {
+                min_iso = m.inter_qudit_crosstalk_isolation_db;
             }
-            if m.inter_node_crosstalk_isolation_db > max_iso {
-                max_iso = m.inter_node_crosstalk_isolation_db;
+            if m.inter_qudit_crosstalk_isolation_db > max_iso {
+                max_iso = m.inter_qudit_crosstalk_isolation_db;
             }
 
             sum_deph += m.topological_mode_dephasing_rate_hz;
@@ -168,9 +168,9 @@ impl FqhMooreReadProcessorBenchmarkRunner {
             mean_topological_protection_gap_mhz: sum_gap / n,
             min_topological_protection_gap_mhz: min_gap,
             max_topological_protection_gap_mhz: max_gap,
-            mean_inter_node_crosstalk_isolation_db: sum_iso / n,
-            min_inter_node_crosstalk_isolation_db: min_iso,
-            max_inter_node_crosstalk_isolation_db: max_iso,
+            mean_inter_qudit_crosstalk_isolation_db: sum_iso / n,
+            min_inter_qudit_crosstalk_isolation_db: min_iso,
+            max_inter_qudit_crosstalk_isolation_db: max_iso,
             mean_topological_mode_dephasing_rate_hz: sum_deph / n,
             min_topological_mode_dephasing_rate_hz: min_deph,
             max_topological_mode_dephasing_rate_hz: max_deph,
