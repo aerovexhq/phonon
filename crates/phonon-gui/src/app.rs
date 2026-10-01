@@ -4,8 +4,8 @@
 
 use crate::oscilloscope::{OscilloscopePanel, WaveformTrace};
 use crate::schematic::{
-    compile_schematic, compute_junction_dots, CompiledCircuit, ComponentKind, SchematicCanvas,
-    SchematicComponent, SchematicWire,
+    compile_schematic, compute_junction_dots, CanvasCommand, CompiledCircuit, ComponentKind,
+    HistoryStack, SchematicCanvas, SchematicComponent, SchematicWire,
 };
 use crate::thermal::{Colormap, ThermalOverlay};
 use crate::widgets::{
@@ -70,6 +70,13 @@ pub struct PhononApp {
 
     // Drag tracking for selected component
     dragging_component: bool,
+    drag_start_pos: Option<(usize, Pos2)>,
+
+    /// Reversible undo/redo history stack and command engine.
+    pub history: HistoryStack,
+
+    /// Active editing buffer tracking component value before modification.
+    editing_comp_value: Option<(usize, String)>,
 
     /// Active rotation angle index for components being placed (0 = 0 deg, 1 = 90 deg, 2 = 180 deg, 3 = 270 deg).
     pub placement_rotation: u8,
@@ -120,6 +127,9 @@ impl Default for PhononApp {
             compiled_circuit: None,
             spice_netlist_text: String::new(),
             dragging_component: false,
+            drag_start_pos: None,
+            history: HistoryStack::new(),
+            editing_comp_value: None,
             placement_rotation: 0,
             top_frame_config: TopFrameConfig::default(),
             dynamics_backend: Box::new(AutoSelectingDynamicsBackend::new()),
@@ -128,6 +138,7 @@ impl Default for PhononApp {
 
         // Initialize with default Voltage Divider demo
         app.load_voltage_divider_demo();
+        app.history.clear();
         app
     }
 }
@@ -158,8 +169,8 @@ impl PhononApp {
         self.dynamics_backend.as_mut()
     }
 
-    /// Clears the canvas, removing all components and wires.
-    pub fn clear_all(&mut self) {
+    /// Clears canvas state without pushing an undo command.
+    pub fn clear_canvas_state(&mut self) {
         self.components.clear();
         self.wires.clear();
         self.next_comp_id = 1;
@@ -172,11 +183,80 @@ impl PhononApp {
         self.compiled_circuit = None;
         self.spice_netlist_text.clear();
         self.sim_status.clear();
+        self.drag_start_pos = None;
+        self.editing_comp_value = None;
+    }
+
+    /// Clears the canvas, removing all components and wires, recording the action in history.
+    pub fn clear_all(&mut self) {
+        if !self.components.is_empty() || !self.wires.is_empty() {
+            self.history.record(CanvasCommand::ClearAll {
+                components: self.components.clone(),
+                wires: self.wires.clone(),
+            });
+        }
+        self.clear_canvas_state();
+    }
+
+    /// Reverses the most recent canvas mutation action from the history stack.
+    pub fn undo(&mut self) -> bool {
+        let success = self.history.undo(&mut self.components, &mut self.wires);
+        if success {
+            self.selected_component_id = None;
+            self.selected_wire_id = None;
+            self.active_wire_start = None;
+            self.sim_status = "Undo".to_string();
+            let max_c_id = self.components.iter().map(|c| c.id).max().unwrap_or(0);
+            if self.next_comp_id <= max_c_id {
+                self.next_comp_id = max_c_id + 1;
+            }
+            let max_w_id = self.wires.iter().map(|w| w.id).max().unwrap_or(0);
+            if self.next_wire_id <= max_w_id {
+                self.next_wire_id = max_w_id + 1;
+            }
+        }
+        success
+    }
+
+    /// Re-applies the most recent undone canvas mutation action from the history stack.
+    pub fn redo(&mut self) -> bool {
+        let success = self.history.redo(&mut self.components, &mut self.wires);
+        if success {
+            self.selected_component_id = None;
+            self.selected_wire_id = None;
+            self.active_wire_start = None;
+            self.sim_status = "Redo".to_string();
+            let max_c_id = self.components.iter().map(|c| c.id).max().unwrap_or(0);
+            if self.next_comp_id <= max_c_id {
+                self.next_comp_id = max_c_id + 1;
+            }
+            let max_w_id = self.wires.iter().map(|w| w.id).max().unwrap_or(0);
+            if self.next_wire_id <= max_w_id {
+                self.next_wire_id = max_w_id + 1;
+            }
+        }
+        success
+    }
+
+    /// Modifies a component value and records the change into history.
+    pub fn modify_component_value(&mut self, id: usize, new_val: impl Into<String>) {
+        let new_val = new_val.into();
+        if let Some(comp) = self.components.iter_mut().find(|c| c.id == id) {
+            if comp.value_str != new_val {
+                let old_val = std::mem::replace(&mut comp.value_str, new_val.clone());
+                self.history.record(CanvasCommand::ModifyComponentValue {
+                    id,
+                    old_val,
+                    new_val,
+                });
+            }
+        }
     }
 
     /// Loads an interactive Voltage Divider demo circuit.
     pub fn load_voltage_divider_demo(&mut self) {
-        self.clear_all();
+        self.clear_canvas_state();
+        self.history.clear();
 
         // 1. Components
         let v1 =
@@ -206,7 +286,8 @@ impl PhononApp {
 
     /// Loads an interactive Diode Limiter / Clipper demo circuit.
     pub fn load_diode_clipper_demo(&mut self) {
-        self.clear_all();
+        self.clear_canvas_state();
+        self.history.clear();
 
         let v1 =
             SchematicComponent::new(1, ComponentKind::VoltageSource, Pos2::new(180.0, 300.0), 1);
@@ -358,11 +439,17 @@ impl PhononApp {
     /// Deletes the currently selected component or wire.
     pub fn delete_selected(&mut self) {
         if let Some(cid) = self.selected_component_id {
-            self.components.retain(|c| c.id != cid);
+            if let Some(idx) = self.components.iter().position(|c| c.id == cid) {
+                let comp = self.components.remove(idx);
+                self.history.record(CanvasCommand::DeleteComponent(comp));
+            }
             self.selected_component_id = None;
             self.sim_status.clear();
         } else if let Some(wid) = self.selected_wire_id {
-            self.wires.retain(|w| w.id != wid);
+            if let Some(idx) = self.wires.iter().position(|w| w.id == wid) {
+                let wire = self.wires.remove(idx);
+                self.history.record(CanvasCommand::DeleteWire(wire));
+            }
             self.selected_wire_id = None;
             self.sim_status.clear();
         }
@@ -372,7 +459,14 @@ impl PhononApp {
     pub fn rotate_active(&mut self) {
         if let Some(cid) = self.selected_component_id {
             if let Some(comp) = self.components.iter_mut().find(|c| c.id == cid) {
+                let from_rot = comp.rotation;
                 comp.rotate_clockwise();
+                let to_rot = comp.rotation;
+                self.history.record(CanvasCommand::RotateComponent {
+                    id: cid,
+                    from_rot,
+                    to_rot,
+                });
                 self.sim_status.clear();
                 return;
             }
@@ -390,7 +484,21 @@ impl PhononApp {
 
     /// Handles global hotkeys and keyboard shortcuts.
     fn handle_shortcuts(&mut self, ctx: &egui::Context) {
-        if ctx.input(|i| i.key_pressed(Key::R)) {
+        let ctrl = ctx.input(|i| i.modifiers.command || i.modifiers.ctrl);
+        let shift = ctx.input(|i| i.modifiers.shift);
+
+        // Undo: Ctrl+Z
+        if ctrl && !shift && ctx.input(|i| i.key_pressed(Key::Z)) {
+            self.undo();
+        }
+        // Redo: Ctrl+Y or Ctrl+Shift+Z
+        if (ctrl && ctx.input(|i| i.key_pressed(Key::Y)))
+            || (ctrl && shift && ctx.input(|i| i.key_pressed(Key::Z)))
+        {
+            self.redo();
+        }
+
+        if !ctrl && ctx.input(|i| i.key_pressed(Key::R)) {
             self.rotate_active();
         }
         if ctx.input(|i| i.key_pressed(Key::Delete) || i.key_pressed(Key::Backspace)) {
@@ -403,12 +511,12 @@ impl PhononApp {
             self.selected_wire_id = None;
             self.placement_rotation = 0;
         }
-        if ctx.input(|i| i.key_pressed(Key::W)) {
+        if !ctrl && ctx.input(|i| i.key_pressed(Key::W)) {
             self.selected_tool = ToolMode::Wire;
             self.active_wire_start = None;
             self.placement_rotation = 0;
         }
-        if ctx.input(|i| i.key_pressed(Key::S)) {
+        if !ctrl && ctx.input(|i| i.key_pressed(Key::S)) {
             self.selected_tool = ToolMode::Select;
             self.active_wire_start = None;
             self.placement_rotation = 0;
@@ -499,9 +607,10 @@ impl PhononApp {
                             count,
                         );
                         new_comp.rotation = self.placement_rotation;
-                        self.components.push(new_comp);
+                        self.components.push(new_comp.clone());
                         self.next_comp_id += 1;
                         self.sim_status = format!("Placed {}", kind.prefix());
+                        self.history.record(CanvasCommand::AddComponent(new_comp));
                     }
                     ToolMode::Wire => {
                         if let Some(start) = self.active_wire_start {
@@ -512,8 +621,9 @@ impl PhononApp {
                                     start,
                                     snapped_world,
                                 );
-                                self.wires.push(wire);
+                                self.wires.push(wire.clone());
                                 self.next_wire_id += 1;
+                                self.history.record(CanvasCommand::AddWire(wire));
                                 self.active_wire_start = Some(snapped_world); // Continue routing from current point
                             }
                         } else {
@@ -567,6 +677,7 @@ impl PhononApp {
                     if let Some(comp) = self.components.iter().find(|c| c.id == cid) {
                         if comp.contains(mouse_world) {
                             self.dragging_component = true;
+                            self.drag_start_pos = Some((comp.id, comp.pos));
                         }
                     }
                 }
@@ -583,8 +694,18 @@ impl PhononApp {
                 if let Some(cid) = self.selected_component_id {
                     if let Some(comp) = self.components.iter_mut().find(|c| c.id == cid) {
                         comp.pos = self.canvas.snap_to_grid(comp.pos);
+                        if let Some((start_id, start_pos)) = self.drag_start_pos.take() {
+                            if start_id == comp.id && start_pos != comp.pos {
+                                self.history.record(CanvasCommand::MoveComponent {
+                                    id: comp.id,
+                                    from: start_pos,
+                                    to: comp.pos,
+                                });
+                            }
+                        }
                     }
                 }
+                self.drag_start_pos = None;
                 self.dragging_component = false;
             }
 
@@ -715,6 +836,9 @@ impl PhononApp {
         ui.heading("Inspector");
 
         if let Some(cid) = self.selected_component_id {
+            let mut do_rotate = false;
+            let mut do_delete = false;
+            let mut record_cmd = None;
             if let Some(comp) = self.components.iter_mut().find(|c| c.id == cid) {
                 ui.group(|ui| {
                     ui.label(format!("Component ID: {}", comp.id));
@@ -724,13 +848,27 @@ impl PhononApp {
                     });
                     ui.horizontal(|ui| {
                         ui.label("Value:");
-                        ui.text_edit_singleline(&mut comp.value_str);
+                        if self.editing_comp_value.as_ref().map(|(id, _)| *id) != Some(comp.id) {
+                            self.editing_comp_value = Some((comp.id, comp.value_str.clone()));
+                        }
+                        let val_resp = ui.text_edit_singleline(&mut comp.value_str);
+                        if val_resp.lost_focus() {
+                            if let Some((_, old_val)) = self.editing_comp_value.take() {
+                                if old_val != comp.value_str {
+                                    record_cmd = Some(CanvasCommand::ModifyComponentValue {
+                                        id: comp.id,
+                                        old_val,
+                                        new_val: comp.value_str.clone(),
+                                    });
+                                }
+                            }
+                        }
                     });
                     ui.label(format!("Rotation: {} deg", (comp.rotation % 4) * 90));
 
                     ui.horizontal(|ui| {
                         if ui.button("Rotate 90 deg (R)").clicked() {
-                            comp.rotate_clockwise();
+                            do_rotate = true;
                         }
                     });
 
@@ -745,10 +883,20 @@ impl PhononApp {
                 });
 
                 if ui.button("Delete Component").clicked() {
-                    self.delete_selected();
+                    do_delete = true;
                 }
             }
+            if let Some(cmd) = record_cmd {
+                self.history.record(cmd);
+            }
+            if do_rotate {
+                self.rotate_active();
+            }
+            if do_delete {
+                self.delete_selected();
+            }
         } else if let Some(wid) = self.selected_wire_id {
+            let mut do_delete_wire = false;
             if let Some(wire) = self.wires.iter().find(|w| w.id == wid) {
                 ui.group(|ui| {
                     ui.label(format!("Wire ID: {}", wire.id));
@@ -757,8 +905,11 @@ impl PhononApp {
                     ui.label(format!("Total Length: {:.1} px", total_len));
                 });
                 if ui.button("Delete Wire").clicked() {
-                    self.delete_selected();
+                    do_delete_wire = true;
                 }
+            }
+            if do_delete_wire {
+                self.delete_selected();
             }
         } else if let Some(prefix) = self.selected_tool.place_kind().map(|k| k.prefix()) {
             let rot_deg = (self.placement_rotation % 4) * 90;
@@ -820,13 +971,15 @@ impl PhononApp {
 
         // 1. Bespoke Custom Top Frame
         let mut top_config = self.top_frame_config.clone();
+        let dirty_suffix = if self.history.is_dirty() { " *" } else { "" };
         top_config.circuit_name = if self.components.is_empty() {
-            "Empty Schematic".to_string()
+            format!("Empty Schematic{}", dirty_suffix)
         } else {
             format!(
-                "Circuit ({} Components, {} Wires)",
+                "Circuit ({} Components, {} Wires){}",
                 self.components.len(),
-                self.wires.len()
+                self.wires.len(),
+                dirty_suffix
             )
         };
 

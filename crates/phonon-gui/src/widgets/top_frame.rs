@@ -200,10 +200,25 @@ fn render_top_frame_internal(
 
         // Edit Menu
         ui.menu_button("Edit", |ui| {
-            if ui.button("Undo (Ctrl+Z)").clicked() {
+            let can_undo = app.as_ref().map_or(false, |a| a.history.can_undo());
+            let can_redo = app.as_ref().map_or(false, |a| a.history.can_redo());
+
+            if ui
+                .add_enabled(can_undo, egui::Button::new("Undo (Ctrl+Z)"))
+                .clicked()
+            {
+                if let Some(a) = app.as_deref_mut() {
+                    a.undo();
+                }
                 ui.close();
             }
-            if ui.button("Redo (Ctrl+Y)").clicked() {
+            if ui
+                .add_enabled(can_redo, egui::Button::new("Redo (Ctrl+Y)"))
+                .clicked()
+            {
+                if let Some(a) = app.as_deref_mut() {
+                    a.redo();
+                }
                 ui.close();
             }
             ui.separator();

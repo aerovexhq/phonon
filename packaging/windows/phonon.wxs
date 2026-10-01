@@ -68,7 +68,7 @@
                   Name="Phonon Studio"
                   Description="Phonon Universal Multi-Scale Quantum CAD Studio"
                   Target="[BinFolder]phonon.exe"
-                  Arguments="ui"
+                  Arguments="gui"
                   WorkingDirectory="BinFolder"
                   Icon="PhononIcon" />
 
@@ -103,7 +103,7 @@
                   Name="Phonon Studio"
                   Description="Phonon Universal Multi-Scale Quantum CAD Studio"
                   Target="[BinFolder]phonon.exe"
-                  Arguments="ui"
+                  Arguments="gui"
                   WorkingDirectory="BinFolder"
                   Icon="PhononIcon" />
 
@@ -119,7 +119,7 @@
       <Component Id="FileAssociations" Directory="BinFolder" Guid="4187C1D8-9128-40F1-9488-825002C93751">
         <ProgId Id="Phonon.Project" Description="Phonon CAD Project File" Icon="PhononIcon">
           <Extension Id="phonon" ContentType="application/x-phonon-project">
-            <Verb Id="open" Command="Open with Phonon Studio" TargetFile="PhononExe" Argument="ui &quot;%1&quot;" />
+            <Verb Id="open" Command="Open with Phonon Studio" TargetFile="PhononExe" Argument="gui &quot;%1&quot;" />
           </Extension>
         </ProgId>
 
