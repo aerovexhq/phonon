@@ -231,6 +231,7 @@ pub mod superconducting_quoctit_crossbar;
 pub mod floquet_chern_parafermion_transceiver;
 pub mod quantum_metamaterial_multiplexer;
 pub mod superconducting_quoctit_processor;
+pub mod fqh_pfaffian_router;
 pub mod chiral_skyrmion_magnon_polaron;
 pub mod floquet_exceptional_ring_sensor;
 pub mod radiation;
@@ -983,6 +984,9 @@ pub use quantum_metamaterial_multiplexer::{
 };
 pub use superconducting_quoctit_processor::{
     SuperconductingQuoctitProcessorMetrics, SuperconductingQuoctitProcessorParams,
+};
+pub use fqh_pfaffian_router::{
+    FqhPfaffianRouterMetrics, FqhPfaffianRouterParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
