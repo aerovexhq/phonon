@@ -2,8 +2,8 @@
 
 //! Large-scale parallel multi-physics validation benchmark for the Phonon
 //! Universal Multi-Scale Visual Studio Autonomous Acoustically Driven
-//! Fractional Quantum Hall Moore-Read Anyon Braiding Processor Engine
-//! (Phase 287) across multi-core Rayon threads.
+//! Fractional Quantum Hall Moore-Read Anyon Topological Quantum Processor & Surface Code Hub Engine
+//! (Phase 300 Milestone) across multi-core Rayon threads.
 
 use phonon_solver::fqh_moore_read_processor::FqhMooreReadProcessorBenchmarkRunner;
 
@@ -13,7 +13,7 @@ fn test_parallel_10k_fqh_moore_read_processor_benchmark() {
     let result = FqhMooreReadProcessorBenchmarkRunner::run_benchmark(cycles);
 
     println!(
-        "Phase 287 Benchmark Completed: {} cycles in {:.6} s ({:.2} sweeps/sec)",
+        "Phase 300 Benchmark Completed: {} cycles in {:.6} s ({:.2} sweeps/sec)",
         result.total_cycles, result.elapsed_seconds, result.throughput_sweeps_per_sec
     );
     println!(
@@ -35,10 +35,10 @@ fn test_parallel_10k_fqh_moore_read_processor_benchmark() {
         result.max_topological_protection_gap_mhz
     );
     println!(
-        "Inter-Node Crosstalk Isolation (dB): mean={:.4}, min={:.4}, max={:.4}",
-        result.mean_inter_node_crosstalk_isolation_db,
-        result.min_inter_node_crosstalk_isolation_db,
-        result.max_inter_node_crosstalk_isolation_db
+        "Inter-Qudit Crosstalk Isolation (dB): mean={:.4}, min={:.4}, max={:.4}",
+        result.mean_inter_qudit_crosstalk_isolation_db,
+        result.min_inter_qudit_crosstalk_isolation_db,
+        result.max_inter_qudit_crosstalk_isolation_db
     );
     println!(
         "Topological Mode Dephasing Rate (Hz): mean={:.4}, min={:.4}, max={:.4}",
@@ -66,6 +66,6 @@ fn test_parallel_10k_fqh_moore_read_processor_benchmark() {
     assert!(result.min_processor_fidelity >= 0.9980);
     assert!(result.min_pfaffian_state_retention_fraction >= 0.9970);
     assert!(result.min_topological_protection_gap_mhz >= 45.0);
-    assert!(result.min_inter_node_crosstalk_isolation_db >= 55.0);
+    assert!(result.min_inter_qudit_crosstalk_isolation_db >= 55.0);
     assert!(result.max_topological_mode_dephasing_rate_hz <= 12.0);
 }
