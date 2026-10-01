@@ -223,6 +223,7 @@ pub mod superconducting_quoctit_crossbar;
 pub mod floquet_chern_parafermion_transceiver;
 pub mod quantum_metamaterial_multiplexer;
 pub mod superconducting_quoctit_processor;
+pub mod fqh_pfaffian_router;
 pub mod chiral_skyrmion_magnon_polaron;
 pub mod floquet_exceptional_ring_sensor;
 pub mod relay;
@@ -793,6 +794,7 @@ pub use superconducting_quoctit_crossbar::*;
 pub use floquet_chern_parafermion_transceiver::*;
 pub use quantum_metamaterial_multiplexer::*;
 pub use superconducting_quoctit_processor::*;
+pub use fqh_pfaffian_router::*;
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
     IntegrationMethod, StepControlOptions, TimeWaveform, TransientOptions, TransientSolution,
