@@ -2,8 +2,8 @@
 
 //! Large-scale parallel multi-physics validation benchmark for the Phonon
 //! Universal Multi-Scale Visual Studio Autonomous Acoustically Driven
-//! Floquet-Chern Parafermion Topological Quantum Memory & Braiding Router Engine
-//! (Phase 285 Milestone) across multi-core Rayon threads.
+//! Floquet-Chern Parafermion Topological Quantum Memory & Braiding Router
+//! Engine (Phase 297) across multi-core Rayon threads.
 
 use phonon_solver::floquet_parafermion_memory::FloquetParafermionMemoryBenchmarkRunner;
 
@@ -13,7 +13,7 @@ fn test_parallel_10k_floquet_parafermion_memory_benchmark() {
     let result = FloquetParafermionMemoryBenchmarkRunner::run_benchmark(cycles);
 
     println!(
-        "Phase 285 Benchmark Completed: {} cycles in {:.6} s ({:.2} sweeps/sec)",
+        "Phase 297 Benchmark Completed: {} cycles in {:.6} s ({:.2} sweeps/sec)",
         result.total_cycles, result.elapsed_seconds, result.throughput_sweeps_per_sec
     );
     println!(
@@ -59,13 +59,60 @@ fn test_parallel_10k_floquet_parafermion_memory_benchmark() {
     // Validate 100% compliance across all 10,000 parameter sweeps
     assert_eq!(
         result.physical_compliance_fraction, 1.0,
-        "Every single parameter sweep must satisfy all 5 physical criteria"
+        "Physical compliance must be exactly 100.0% across all 10k sweep cycles"
     );
 
-    // Validate physical metrics bounds
-    assert!(result.min_memory_fidelity >= 0.9980);
-    assert!(result.min_topological_state_retention_fraction >= 0.9970);
-    assert!(result.min_topological_protection_gap_mhz >= 45.0);
-    assert!(result.min_inter_qudit_crosstalk_isolation_db >= 55.0);
-    assert!(result.max_topological_mode_dephasing_rate_hz <= 12.0);
+    // Validate target performance thresholds for means
+    assert!(
+        result.mean_memory_fidelity >= 0.9980,
+        "Mean memory fidelity must be >= 0.9980, got {:.6}",
+        result.mean_memory_fidelity
+    );
+    assert!(
+        result.mean_topological_state_retention_fraction >= 0.9970,
+        "Mean topological state retention fraction must be >= 0.9970, got {:.6}",
+        result.mean_topological_state_retention_fraction
+    );
+    assert!(
+        result.mean_topological_protection_gap_mhz >= 45.0,
+        "Mean topological protection gap must be >= 45.0 MHz, got {:.4}",
+        result.mean_topological_protection_gap_mhz
+    );
+    assert!(
+        result.mean_inter_qudit_crosstalk_isolation_db >= 55.0,
+        "Mean inter-qudit crosstalk isolation must be >= 55.0 dB, got {:.4}",
+        result.mean_inter_qudit_crosstalk_isolation_db
+    );
+    assert!(
+        result.mean_topological_mode_dephasing_rate_hz <= 12.0,
+        "Mean topological mode dephasing rate must be <= 12.0 Hz, got {:.4}",
+        result.mean_topological_mode_dephasing_rate_hz
+    );
+
+    // Validate absolute worst-case bounds across all 10k cycles
+    assert!(
+        result.min_memory_fidelity >= 0.9980,
+        "Worst-case memory fidelity must be >= 0.9980, got {:.6}",
+        result.min_memory_fidelity
+    );
+    assert!(
+        result.min_topological_state_retention_fraction >= 0.9970,
+        "Worst-case topological state retention fraction must be >= 0.9970, got {:.6}",
+        result.min_topological_state_retention_fraction
+    );
+    assert!(
+        result.min_topological_protection_gap_mhz >= 45.0,
+        "Worst-case topological protection gap must be >= 45.0 MHz, got {:.4}",
+        result.min_topological_protection_gap_mhz
+    );
+    assert!(
+        result.min_inter_qudit_crosstalk_isolation_db >= 55.0,
+        "Worst-case inter-qudit crosstalk isolation must be >= 55.0 dB, got {:.4}",
+        result.min_inter_qudit_crosstalk_isolation_db
+    );
+    assert!(
+        result.max_topological_mode_dephasing_rate_hz <= 12.0,
+        "Worst-case topological mode dephasing rate must be <= 12.0 Hz, got {:.4}",
+        result.max_topological_mode_dephasing_rate_hz
+    );
 }

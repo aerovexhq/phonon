@@ -2,7 +2,7 @@
 
 //! Multi-physics solver for the Phonon Universal Multi-Scale Visual Studio
 //! Autonomous Acoustically Driven Floquet-Chern Parafermion Topological Quantum
-//! Memory & Braiding Router Engine (Phase 285 Milestone).
+//! Memory & Braiding Router Engine (Phase 297).
 
 use phonon_models::floquet_parafermion_memory::{
     FloquetParafermionMemoryMetrics, FloquetParafermionMemoryParams,

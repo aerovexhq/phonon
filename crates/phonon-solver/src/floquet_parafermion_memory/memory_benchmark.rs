@@ -2,7 +2,7 @@
 
 //! Parallel parameter sweep benchmark suite for the Phonon Universal Multi-Scale
 //! Visual Studio Autonomous Acoustically Driven Floquet-Chern Parafermion Topological
-//! Quantum Memory & Braiding Router Engine across multi-threaded Rayon workers.
+//! Quantum Memory & Braiding Router Engine (Phase 297) across multi-threaded Rayon workers.
 
 use crate::floquet_parafermion_memory::FloquetParafermionMemorySolver;
 use phonon_models::floquet_parafermion_memory::{
