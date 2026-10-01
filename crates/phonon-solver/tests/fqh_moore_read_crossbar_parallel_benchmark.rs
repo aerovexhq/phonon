@@ -3,7 +3,7 @@
 //! Large-scale parallel multi-physics validation benchmark for the Phonon
 //! Universal Multi-Scale Visual Studio Autonomous Acoustically Driven
 //! Fractional Quantum Hall Moore-Read Anyon Multiplexed Routing Crossbar
-//! & High-Dimensional Logic Engine (Phase 289) across multi-core Rayon threads.
+//! & High-Dimensional Logic Engine (Phase 298) across multi-core Rayon threads.
 
 use phonon_solver::fqh_moore_read_crossbar::FqhMooreReadCrossbarBenchmarkRunner;
 
@@ -13,7 +13,7 @@ fn test_parallel_10k_fqh_moore_read_crossbar_benchmark() {
     let result = FqhMooreReadCrossbarBenchmarkRunner::run_benchmark(cycles);
 
     println!(
-        "Phase 289 Benchmark Completed: {} cycles in {:.6} s ({:.2} sweeps/sec)",
+        "Phase 298 Benchmark Completed: {} cycles in {:.6} s ({:.2} sweeps/sec)",
         result.total_cycles, result.elapsed_seconds, result.throughput_sweeps_per_sec
     );
     println!(
