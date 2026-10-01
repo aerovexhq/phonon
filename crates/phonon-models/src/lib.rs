@@ -220,6 +220,7 @@ pub mod valley_chiral_polariton_splitter;
 pub mod axion_magnon_polariton_isolator;
 pub mod axion_polariton_photonic_isolator;
 pub mod superconducting_quoctit;
+pub mod axion_polariton_circulator;
 pub mod chiral_skyrmion_magnon_polaron;
 pub mod floquet_exceptional_ring_sensor;
 pub mod radiation;
@@ -939,6 +940,9 @@ pub use axion_polariton_photonic_isolator::{
 };
 pub use superconducting_quoctit::{
     SuperconductingQuoctitMetrics, SuperconductingQuoctitParams,
+};
+pub use axion_polariton_circulator::{
+    AxionPolaritonCirculatorMetrics, AxionPolaritonCirculatorParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
