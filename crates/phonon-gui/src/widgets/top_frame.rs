@@ -252,6 +252,10 @@ fn render_top_frame_internal(
                 ui.checkbox(&mut a.canvas.show_grid, "Show Grid");
                 ui.checkbox(&mut a.show_oscilloscope, "Show Oscilloscope");
                 ui.checkbox(&mut a.show_thermal_overlay, "Show Thermal Badges");
+                if ui.button("Toggle ERC Overlay").clicked() {
+                    a.show_erc_overlay = !a.show_erc_overlay;
+                    ui.close();
+                }
                 if ui.button("Reset View").clicked() {
                     a.canvas.pan = egui::Vec2::new(100.0, 100.0);
                     a.canvas.zoom = 1.0;
@@ -264,6 +268,9 @@ fn render_top_frame_internal(
                 ui.checkbox(&mut dummy_grid, "Show Grid");
                 ui.checkbox(&mut dummy_scope, "Show Oscilloscope");
                 ui.checkbox(&mut dummy_thermal, "Show Thermal Badges");
+                if ui.button("Toggle ERC Overlay").clicked() {
+                    ui.close();
+                }
                 if ui.button("Reset View").clicked() {
                     ui.close();
                 }
@@ -281,6 +288,12 @@ fn render_top_frame_internal(
             if ui.button("Run Transient .TRAN").clicked() {
                 if let Some(a) = app.as_deref_mut() {
                     a.run_transient_demo();
+                }
+                ui.close();
+            }
+            if ui.button("Run ERC Check").clicked() {
+                if let Some(a) = app.as_deref_mut() {
+                    a.run_erc();
                 }
                 ui.close();
             }

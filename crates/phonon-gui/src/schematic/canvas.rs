@@ -2,15 +2,20 @@
 
 //! Infinite CAD schematic canvas with pan, zoom, grid rendering, and coordinate projection.
 
-use egui::{Color32, Painter, Pos2, Rect, Stroke, Vec2};
+use super::components::SchematicComponent;
+use super::erc::{ErcDiagnostic, ErcSeverity};
+use super::wire::SchematicWire;
+use egui::{Color32, FontId, Painter, Pos2, Rect, Stroke, StrokeKind, Vec2};
 
-/// Manages infinite vector canvas pan, zoom, and coordinate transformations.
+/// Manages infinite vector canvas pan, zoom, coordinate transformations, and visual schematic objects.
 #[derive(Debug, Clone)]
 pub struct SchematicCanvas {
     pub pan: Vec2,
     pub zoom: f32,
     pub grid_size: f32,
     pub show_grid: bool,
+    pub components: Vec<SchematicComponent>,
+    pub wires: Vec<SchematicWire>,
 }
 
 impl Default for SchematicCanvas {
@@ -20,6 +25,8 @@ impl Default for SchematicCanvas {
             zoom: 1.0,
             grid_size: 20.0,
             show_grid: true,
+            components: Vec::new(),
+            wires: Vec::new(),
         }
     }
 }
@@ -27,6 +34,111 @@ impl Default for SchematicCanvas {
 impl SchematicCanvas {
     pub fn new() -> Self {
         Self::default()
+    }
+
+    /// Adds a schematic component to the canvas.
+    pub fn add_component(&mut self, comp: SchematicComponent) {
+        self.components.push(comp);
+    }
+
+    /// Adds a wire routing segment to the canvas.
+    pub fn add_wire(&mut self, wire: SchematicWire) {
+        self.wires.push(wire);
+    }
+
+    /// Clears all schematic components and wires from the canvas.
+    pub fn clear(&mut self) {
+        self.components.clear();
+        self.wires.clear();
+    }
+
+    /// Renders visual ERC diagnostic overlay with color-coded pulsing rings and hover tooltips.
+    pub fn draw(
+        &self,
+        painter: &Painter,
+        erc_diagnostics: &[ErcDiagnostic],
+        show_erc_overlay: bool,
+        hover_pos: Option<Pos2>,
+    ) {
+        if !show_erc_overlay || erc_diagnostics.is_empty() {
+            return;
+        }
+
+        let time = painter.ctx().input(|i| i.time);
+        let pulse = ((time * 4.0).sin() * 0.2 + 0.9) as f32;
+        let base_radius = 12.0 * self.zoom.clamp(0.8, 2.0);
+        let ring_radius = base_radius * pulse;
+
+        for diagnostic in erc_diagnostics {
+            let (ring_color, badge_color) = match diagnostic.severity {
+                ErcSeverity::Error => (
+                    Color32::from_rgb(220, 50, 50),
+                    Color32::from_rgba_unmultiplied(220, 50, 50, 180),
+                ),
+                ErcSeverity::Warning => (
+                    Color32::from_rgb(230, 160, 20),
+                    Color32::from_rgba_unmultiplied(230, 160, 20, 180),
+                ),
+                ErcSeverity::Info => (
+                    Color32::from_rgb(50, 150, 240),
+                    Color32::from_rgba_unmultiplied(50, 150, 240, 180),
+                ),
+            };
+
+            for &pin_pos in &diagnostic.pin_positions {
+                let screen_pos = self.world_to_screen(pin_pos);
+
+                // Pulsing diagnostic ring
+                painter.circle_stroke(
+                    screen_pos,
+                    ring_radius,
+                    Stroke::new(2.5, ring_color),
+                );
+
+                // Center indicator badge
+                painter.circle_filled(
+                    screen_pos,
+                    4.0 * self.zoom.clamp(0.8, 1.5),
+                    badge_color,
+                );
+
+                // Hover tooltip check
+                if let Some(mouse) = hover_pos {
+                    if (mouse - screen_pos).length() <= (ring_radius + 6.0) {
+                        let text = diagnostic.message.clone();
+                        let font_id = FontId::proportional(11.0);
+                        let galley = painter.layout_no_wrap(
+                            text,
+                            font_id,
+                            Color32::from_rgb(240, 245, 250),
+                        );
+                        let tooltip_rect = Rect::from_min_size(
+                            screen_pos + Vec2::new(12.0, -18.0),
+                            galley.size() + Vec2::new(12.0, 8.0),
+                        );
+                        painter.rect_filled(
+                            tooltip_rect,
+                            3.0,
+                            Color32::from_rgba_unmultiplied(25, 30, 42, 240),
+                        );
+                        painter.rect_stroke(
+                            tooltip_rect,
+                            3.0,
+                            Stroke::new(1.0, ring_color),
+                            StrokeKind::Outside,
+                        );
+                        painter.galley(
+                            tooltip_rect.min + Vec2::new(6.0, 4.0),
+                            galley,
+                            Color32::from_rgb(240, 245, 250),
+                        );
+                    }
+                }
+            }
+        }
+
+        // Request continuous repaint for smooth pulsing animation
+        painter.ctx().request_repaint();
     }
 
     /// Indicates whether canvas text selection lockout is enforced.
