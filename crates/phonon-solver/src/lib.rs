@@ -213,6 +213,7 @@ pub mod axion_magnon_polariton_isolator;
 pub mod axion_polariton_photonic_isolator;
 pub mod superconducting_quoctit;
 pub mod axion_polariton_circulator;
+pub mod quantum_metamaterial_polariton_laser;
 pub mod chiral_skyrmion_magnon_polaron;
 pub mod floquet_exceptional_ring_sensor;
 pub mod relay;
@@ -773,6 +774,7 @@ pub use axion_magnon_polariton_isolator::*;
 pub use axion_polariton_photonic_isolator::*;
 pub use superconducting_quoctit::*;
 pub use axion_polariton_circulator::*;
+pub use quantum_metamaterial_polariton_laser::*;
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
     IntegrationMethod, StepControlOptions, TimeWaveform, TransientOptions, TransientSolution,
