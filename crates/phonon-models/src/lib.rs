@@ -223,6 +223,7 @@ pub mod superconducting_quoctit;
 pub mod axion_polariton_circulator;
 pub mod quantum_metamaterial_polariton_laser;
 pub mod floquet_chern_parafermion_router;
+pub mod fractional_chern_anyon_synthesizer;
 pub mod chiral_skyrmion_magnon_polaron;
 pub mod floquet_exceptional_ring_sensor;
 pub mod radiation;
@@ -951,6 +952,9 @@ pub use quantum_metamaterial_polariton_laser::{
 };
 pub use floquet_chern_parafermion_router::{
     FloquetChernParafermionRouterMetrics, FloquetChernParafermionRouterParams,
+};
+pub use fractional_chern_anyon_synthesizer::{
+    FractionalChernAnyonSynthesizerMetrics, FractionalChernAnyonSynthesizerParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
