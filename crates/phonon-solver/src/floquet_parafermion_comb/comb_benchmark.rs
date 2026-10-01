@@ -17,9 +17,9 @@ pub struct FloquetParafermionCombBenchmarkResult {
     pub total_cycles: usize,
     pub elapsed_seconds: f64,
     pub throughput_sweeps_per_sec: f64,
-    pub mean_comb_synthesizer_fidelity: f64,
-    pub min_comb_synthesizer_fidelity: f64,
-    pub max_comb_synthesizer_fidelity: f64,
+    pub mean_comb_fidelity: f64,
+    pub min_comb_fidelity: f64,
+    pub max_comb_fidelity: f64,
     pub mean_soliton_state_retention_fraction: f64,
     pub min_soliton_state_retention_fraction: f64,
     pub max_soliton_state_retention_fraction: f64,
@@ -49,7 +49,7 @@ impl FloquetParafermionCombBenchmarkRunner {
                     2.0 + 43.0 * (((i * 13) % 45) as f64 / 45.0);
                 let acoustic_drive_frequency_ghz =
                     1.0 + 11.0 * (((i * 23) % 35) as f64 / 35.0);
-                let comb_dispatch_speed_m_per_s =
+                let soliton_dispatch_speed_m_per_s =
                     200.0 + 2800.0 * (((i * 17) % 50) as f64 / 50.0);
                 let cryogenic_temperature_mk =
                     1.0 + 49.0 * (((i * 29) % 45) as f64 / 45.0);
@@ -64,7 +64,7 @@ impl FloquetParafermionCombBenchmarkRunner {
                     comb_coupling_mev,
                     topological_parafermion_gap_mev,
                     acoustic_drive_frequency_ghz,
-                    comb_dispatch_speed_m_per_s,
+                    soliton_dispatch_speed_m_per_s,
                     cryogenic_temperature_mk,
                     optical_pump_power_uw,
                     synthetic_comb_lines_factor,
@@ -109,12 +109,12 @@ impl FloquetParafermionCombBenchmarkRunner {
         let mut compliant_count = 0;
 
         for m in &metrics {
-            sum_fid += m.comb_synthesizer_fidelity;
-            if m.comb_synthesizer_fidelity < min_fid {
-                min_fid = m.comb_synthesizer_fidelity;
+            sum_fid += m.comb_fidelity;
+            if m.comb_fidelity < min_fid {
+                min_fid = m.comb_fidelity;
             }
-            if m.comb_synthesizer_fidelity > max_fid {
-                max_fid = m.comb_synthesizer_fidelity;
+            if m.comb_fidelity > max_fid {
+                max_fid = m.comb_fidelity;
             }
 
             sum_ret += m.soliton_state_retention_fraction;
@@ -159,9 +159,9 @@ impl FloquetParafermionCombBenchmarkRunner {
             total_cycles: cycles,
             elapsed_seconds: elapsed,
             throughput_sweeps_per_sec: throughput,
-            mean_comb_synthesizer_fidelity: sum_fid / n,
-            min_comb_synthesizer_fidelity: min_fid,
-            max_comb_synthesizer_fidelity: max_fid,
+            mean_comb_fidelity: sum_fid / n,
+            min_comb_fidelity: min_fid,
+            max_comb_fidelity: max_fid,
             mean_soliton_state_retention_fraction: sum_ret / n,
             min_soliton_state_retention_fraction: min_ret,
             max_soliton_state_retention_fraction: max_ret,

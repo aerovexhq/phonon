@@ -2,8 +2,8 @@
 
 //! Large-scale parallel multi-physics validation benchmark for the Phonon
 //! Universal Multi-Scale Visual Studio Autonomous Acoustically Driven
-//! Floquet-Chern Parafermion Frequency Comb Synthesizer & Soliton Router Engine
-//! (Phase 284) across multi-core Rayon threads.
+//! Floquet-Chern Parafermion Frequency Comb Synthesizer & Soliton Router
+//! Engine (Phase 296) across multi-core Rayon threads.
 
 use phonon_solver::floquet_parafermion_comb::FloquetParafermionCombBenchmarkRunner;
 
@@ -13,14 +13,14 @@ fn test_parallel_10k_floquet_parafermion_comb_benchmark() {
     let result = FloquetParafermionCombBenchmarkRunner::run_benchmark(cycles);
 
     println!(
-        "Phase 284 Benchmark Completed: {} cycles in {:.6} s ({:.2} sweeps/sec)",
+        "Phase 296 Benchmark Completed: {} cycles in {:.6} s ({:.2} sweeps/sec)",
         result.total_cycles, result.elapsed_seconds, result.throughput_sweeps_per_sec
     );
     println!(
-        "Comb Synthesizer Fidelity: mean={:.6}, min={:.6}, max={:.6}",
-        result.mean_comb_synthesizer_fidelity,
-        result.min_comb_synthesizer_fidelity,
-        result.max_comb_synthesizer_fidelity
+        "Comb Fidelity: mean={:.6}, min={:.6}, max={:.6}",
+        result.mean_comb_fidelity,
+        result.min_comb_fidelity,
+        result.max_comb_fidelity
     );
     println!(
         "Soliton State Retention Fraction: mean={:.6}, min={:.6}, max={:.6}",
@@ -59,13 +59,60 @@ fn test_parallel_10k_floquet_parafermion_comb_benchmark() {
     // Validate 100% compliance across all 10,000 parameter sweeps
     assert_eq!(
         result.physical_compliance_fraction, 1.0,
-        "Every single parameter sweep must satisfy all 5 physical criteria"
+        "Physical compliance must be exactly 100.0% across all 10k sweep cycles"
     );
 
-    // Validate physical metrics bounds
-    assert!(result.min_comb_synthesizer_fidelity >= 0.9980);
-    assert!(result.min_soliton_state_retention_fraction >= 0.9970);
-    assert!(result.min_topological_protection_gap_mhz >= 45.0);
-    assert!(result.min_inter_comb_crosstalk_isolation_db >= 55.0);
-    assert!(result.max_topological_mode_dephasing_rate_hz <= 12.0);
+    // Validate target performance thresholds for means
+    assert!(
+        result.mean_comb_fidelity >= 0.9980,
+        "Mean comb fidelity must be >= 0.9980, got {:.6}",
+        result.mean_comb_fidelity
+    );
+    assert!(
+        result.mean_soliton_state_retention_fraction >= 0.9970,
+        "Mean soliton state retention fraction must be >= 0.9970, got {:.6}",
+        result.mean_soliton_state_retention_fraction
+    );
+    assert!(
+        result.mean_topological_protection_gap_mhz >= 45.0,
+        "Mean topological protection gap must be >= 45.0 MHz, got {:.4}",
+        result.mean_topological_protection_gap_mhz
+    );
+    assert!(
+        result.mean_inter_comb_crosstalk_isolation_db >= 55.0,
+        "Mean inter-comb crosstalk isolation must be >= 55.0 dB, got {:.4}",
+        result.mean_inter_comb_crosstalk_isolation_db
+    );
+    assert!(
+        result.mean_topological_mode_dephasing_rate_hz <= 12.0,
+        "Mean topological mode dephasing rate must be <= 12.0 Hz, got {:.4}",
+        result.mean_topological_mode_dephasing_rate_hz
+    );
+
+    // Validate absolute worst-case bounds across all 10k cycles
+    assert!(
+        result.min_comb_fidelity >= 0.9980,
+        "Worst-case comb fidelity must be >= 0.9980, got {:.6}",
+        result.min_comb_fidelity
+    );
+    assert!(
+        result.min_soliton_state_retention_fraction >= 0.9970,
+        "Worst-case soliton state retention fraction must be >= 0.9970, got {:.6}",
+        result.min_soliton_state_retention_fraction
+    );
+    assert!(
+        result.min_topological_protection_gap_mhz >= 45.0,
+        "Worst-case topological protection gap must be >= 45.0 MHz, got {:.4}",
+        result.min_topological_protection_gap_mhz
+    );
+    assert!(
+        result.min_inter_comb_crosstalk_isolation_db >= 55.0,
+        "Worst-case inter-comb crosstalk isolation must be >= 55.0 dB, got {:.4}",
+        result.min_inter_comb_crosstalk_isolation_db
+    );
+    assert!(
+        result.max_topological_mode_dephasing_rate_hz <= 12.0,
+        "Worst-case topological mode dephasing rate must be <= 12.0 Hz, got {:.4}",
+        result.max_topological_mode_dephasing_rate_hz
+    );
 }

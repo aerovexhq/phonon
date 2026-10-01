@@ -2,13 +2,13 @@
 
 //! Multi-physics solver for the Phonon Universal Multi-Scale Visual Studio
 //! Autonomous Acoustically Driven Floquet-Chern Parafermion Frequency Comb
-//! Synthesizer & Soliton Router Engine (Phase 284).
+//! Synthesizer & Soliton Router Engine (Phase 296).
 
 use phonon_models::floquet_parafermion_comb::{
     FloquetParafermionCombMetrics, FloquetParafermionCombParams,
 };
 
-/// Multi-physics solver evaluating comb synthesizer fidelity, soliton state retention fraction,
+/// Multi-physics solver evaluating comb fidelity, soliton state retention fraction,
 /// topological protection gap, inter-comb crosstalk isolation, and topological mode dephasing rate
 /// for the visual studio autonomous acoustically driven Floquet-Chern parafermion frequency comb
 /// synthesizer and soliton router engine.
@@ -23,20 +23,20 @@ impl FloquetParafermionCombSolver {
         Self { params }
     }
 
-    /// Evaluates comb synthesizer fidelity (target >= 0.9980).
+    /// Evaluates comb fidelity (target >= 0.9980).
     ///
     /// Surface acoustic wave (SAW) dynamic Floquet-Chern synthetic gauge fields couple to
     /// non-Abelian fractionalized parafermionic zero modes, driving coherent Kerr microcomb
     /// dissipative soliton generation and topological frequency synthesis across multi-channel
     /// phononic networks with minimal quantum phase noise and jitter.
-    pub fn compute_comb_synthesizer_fidelity(&self) -> f64 {
+    pub fn compute_comb_fidelity(&self) -> f64 {
         let p = &self.params;
         let base_fidelity = 0.99820;
 
         let d_coupling = (p.comb_coupling_mev - 1.0) / 34.0;
         let d_gap = (p.topological_parafermion_gap_mev - 2.0) / 43.0;
         let d_freq = (p.acoustic_drive_frequency_ghz - 1.0) / 11.0;
-        let d_speed = (p.comb_dispatch_speed_m_per_s - 200.0) / 2800.0;
+        let d_speed = (p.soliton_dispatch_speed_m_per_s - 200.0) / 2800.0;
         let d_temp = (p.cryogenic_temperature_mk - 1.0) / 49.0;
         let d_power = (p.optical_pump_power_uw - 0.5) / 29.5;
         let d_lines = (p.synthetic_comb_lines_factor - 1.0) / 7.0;
@@ -76,7 +76,7 @@ impl FloquetParafermionCombSolver {
         let d_coupling = (p.comb_coupling_mev - 1.0) / 34.0;
         let d_gap = (p.topological_parafermion_gap_mev - 2.0) / 43.0;
         let d_freq = (p.acoustic_drive_frequency_ghz - 1.0) / 11.0;
-        let d_speed = (p.comb_dispatch_speed_m_per_s - 200.0) / 2800.0;
+        let d_speed = (p.soliton_dispatch_speed_m_per_s - 200.0) / 2800.0;
         let d_temp = (p.cryogenic_temperature_mk - 1.0) / 49.0;
         let d_power = (p.optical_pump_power_uw - 0.5) / 29.5;
         let d_lines = (p.synthetic_comb_lines_factor - 1.0) / 7.0;
@@ -116,7 +116,7 @@ impl FloquetParafermionCombSolver {
         let d_coupling = (p.comb_coupling_mev - 1.0) / 34.0;
         let d_gap = (p.topological_parafermion_gap_mev - 2.0) / 43.0;
         let d_freq = (p.acoustic_drive_frequency_ghz - 1.0) / 11.0;
-        let d_speed = (p.comb_dispatch_speed_m_per_s - 200.0) / 2800.0;
+        let d_speed = (p.soliton_dispatch_speed_m_per_s - 200.0) / 2800.0;
         let d_temp = (p.cryogenic_temperature_mk - 1.0) / 49.0;
         let d_power = (p.optical_pump_power_uw - 0.5) / 29.5;
         let d_lines = (p.synthetic_comb_lines_factor - 1.0) / 7.0;
@@ -155,7 +155,7 @@ impl FloquetParafermionCombSolver {
         let d_coupling = (p.comb_coupling_mev - 1.0) / 34.0;
         let d_gap = (p.topological_parafermion_gap_mev - 2.0) / 43.0;
         let d_freq = (p.acoustic_drive_frequency_ghz - 1.0) / 11.0;
-        let d_speed = (p.comb_dispatch_speed_m_per_s - 200.0) / 2800.0;
+        let d_speed = (p.soliton_dispatch_speed_m_per_s - 200.0) / 2800.0;
         let d_temp = (p.cryogenic_temperature_mk - 1.0) / 49.0;
         let d_power = (p.optical_pump_power_uw - 0.5) / 29.5;
         let d_lines = (p.synthetic_comb_lines_factor - 1.0) / 7.0;
@@ -194,7 +194,7 @@ impl FloquetParafermionCombSolver {
         let d_coupling = (p.comb_coupling_mev - 1.0) / 34.0;
         let d_gap = (p.topological_parafermion_gap_mev - 2.0) / 43.0;
         let d_freq = (p.acoustic_drive_frequency_ghz - 1.0) / 11.0;
-        let d_speed = (p.comb_dispatch_speed_m_per_s - 200.0) / 2800.0;
+        let d_speed = (p.soliton_dispatch_speed_m_per_s - 200.0) / 2800.0;
         let d_temp = (p.cryogenic_temperature_mk - 1.0) / 49.0;
         let d_power = (p.optical_pump_power_uw - 0.5) / 29.5;
         let d_lines = (p.synthetic_comb_lines_factor - 1.0) / 7.0;
@@ -223,7 +223,7 @@ impl FloquetParafermionCombSolver {
 
     /// Evaluates complete multi-physics performance metrics and verifies strict physical compliance.
     pub fn evaluate_metrics(&self) -> FloquetParafermionCombMetrics {
-        let comb_synthesizer_fidelity = self.compute_comb_synthesizer_fidelity();
+        let comb_fidelity = self.compute_comb_fidelity();
         let soliton_state_retention_fraction =
             self.compute_soliton_state_retention_fraction();
         let topological_protection_gap_mhz = self.compute_topological_protection_gap_mhz();
@@ -232,14 +232,14 @@ impl FloquetParafermionCombSolver {
         let topological_mode_dephasing_rate_hz =
             self.compute_topological_mode_dephasing_rate_hz();
 
-        let is_physically_compliant = comb_synthesizer_fidelity >= 0.9980
+        let is_physically_compliant = comb_fidelity >= 0.9980
             && soliton_state_retention_fraction >= 0.9970
             && topological_protection_gap_mhz >= 45.0
             && inter_comb_crosstalk_isolation_db >= 55.0
             && topological_mode_dephasing_rate_hz <= 12.0;
 
         FloquetParafermionCombMetrics {
-            comb_synthesizer_fidelity,
+            comb_fidelity,
             soliton_state_retention_fraction,
             topological_protection_gap_mhz,
             inter_comb_crosstalk_isolation_db,
