@@ -225,6 +225,7 @@ pub mod quantum_metamaterial_polariton_laser;
 pub mod floquet_chern_parafermion_router;
 pub mod fractional_chern_anyon_synthesizer;
 pub mod skyrmion_polariton_transceiver;
+pub mod majorana_parafermion_lattice;
 pub mod chiral_skyrmion_magnon_polaron;
 pub mod floquet_exceptional_ring_sensor;
 pub mod radiation;
@@ -959,6 +960,9 @@ pub use fractional_chern_anyon_synthesizer::{
 };
 pub use skyrmion_polariton_transceiver::{
     SkyrmionPolaritonTransceiverMetrics, SkyrmionPolaritonTransceiverParams,
+};
+pub use majorana_parafermion_lattice::{
+    MajoranaParafermionLatticeMetrics, MajoranaParafermionLatticeParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
