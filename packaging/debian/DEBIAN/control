@@ -9,4 +9,4 @@ Description: Phonon - Universal Multi-Scale Visual CAD Studio & Semiconductor So
  High-performance electro-thermal circuit simulator, cryogenic CMOS modeler,
  topological quantum acoustics engine, and visual studio CAD interface.
  Includes both the unified CLI engine ('phonon') and the native desktop CAD
- visual interface ('phonon ui').
+ visual interface ('phonon gui').

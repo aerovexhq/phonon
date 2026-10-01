@@ -1,89 +1,11 @@
+#![deny(unsafe_code)]
+
 //! Phonon CLI entry point.
 
-use clap::{Parser, Subcommand};
+use clap::Parser;
 use phonon_cli::commands::{execute_monte_carlo, execute_run, execute_sweep, execute_validate};
-use phonon_cli::telemetry::OutputFormat;
-use std::path::PathBuf;
+use phonon_cli::{Cli, Commands};
 use std::process::ExitCode;
-
-#[derive(Parser, Debug)]
-#[command(
-    name = "phonon",
-    author = "Aerovex Engineers <dev@aerovex.com>",
-    version,
-    about = "Industry-grade physically rigorous electro-thermal circuit simulator and transistor-level solver",
-    long_about = None
-)]
-struct Cli {
-    #[command(subcommand)]
-    command: Option<Commands>,
-}
-
-#[derive(Subcommand, Debug)]
-enum Commands {
-    /// Launches the native desktop CAD interface and interactive visual studio
-    #[command(alias = "gui")]
-    Ui,
-    /// Validates circuit topology and electrical rules (ERC)
-    Validate {
-        /// Path to the SPICE netlist file
-        netlist: PathBuf,
-    },
-    /// Runs a simulation (.OP, .DC, or .TRAN) and streams telemetry
-    Run {
-        /// Path to the SPICE netlist file
-        netlist: PathBuf,
-        /// Telemetry output format
-        #[arg(short, long, value_enum, default_value_t = OutputFormat::Csv)]
-        format: OutputFormat,
-        /// Output file destination (defaults to stdout if omitted)
-        #[arg(short, long)]
-        output: Option<PathBuf>,
-    },
-    /// Performs a parallel parametric sweep across component value ranges
-    Sweep {
-        /// Path to the SPICE netlist file
-        netlist: PathBuf,
-        /// Component parameter name to sweep (e.g. R1, V1)
-        #[arg(short, long)]
-        param: String,
-        /// Starting parameter value
-        #[arg(long)]
-        start: f64,
-        /// Stopping parameter value
-        #[arg(long)]
-        stop: f64,
-        /// Number of sweep intervals
-        #[arg(long, default_value_t = 10)]
-        steps: usize,
-        /// Telemetry output format
-        #[arg(short, long, value_enum, default_value_t = OutputFormat::Csv)]
-        format: OutputFormat,
-        /// Output file destination (defaults to stdout if omitted)
-        #[arg(short, long)]
-        output: Option<PathBuf>,
-    },
-    /// Performs parallel Monte Carlo statistical tolerance analysis
-    Mc {
-        /// Path to the SPICE netlist file
-        netlist: PathBuf,
-        /// Number of Monte Carlo sample circuits
-        #[arg(short, long, default_value_t = 100)]
-        samples: usize,
-        /// Component tolerance fraction (e.g. 0.05 for 5%)
-        #[arg(short, long, default_value_t = 0.05)]
-        tol: f64,
-        /// Random number generator seed
-        #[arg(long, default_value_t = 42)]
-        seed: u64,
-        /// Telemetry output format
-        #[arg(short, long, value_enum, default_value_t = OutputFormat::Csv)]
-        format: OutputFormat,
-        /// Output file destination (defaults to stdout if omitted)
-        #[arg(short, long)]
-        output: Option<PathBuf>,
-    },
-}
 
 fn print_banner() {
     println!(
@@ -97,11 +19,11 @@ r#"  ____  _   _  ___  _   _  ___  _   _
 
 Usage:
   phonon [COMMAND]
-  phonon ui          Launch native GPU-accelerated desktop CAD studio
+  phonon gui          Launch native GPU-accelerated desktop CAD studio
   phonon --help      Display full CLI commands and flag options
 
 Commands:
-  ui, gui            Launch desktop CAD visual studio
+  gui                Launch desktop CAD visual studio
   validate <netlist> Validate circuit topology and electrical rules (ERC)
   run <netlist>      Execute simulation (.OP, .DC, .TRAN) and stream telemetry
   sweep <netlist>    Execute parallel parametric component sweep
@@ -124,7 +46,7 @@ fn main() -> ExitCode {
     };
 
     match command {
-        Commands::Ui => match phonon_gui::run_gui() {
+        Commands::Gui => match phonon_gui::run_gui() {
             Ok(()) => ExitCode::SUCCESS,
             Err(e) => {
                 eprintln!("Phonon GUI runtime error: {e}");

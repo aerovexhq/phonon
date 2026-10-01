@@ -1,3 +1,5 @@
+#![deny(unsafe_code)]
+
 //! Visual schematic components, pin geometries, symbol rendering, and hit testing.
 
 use super::canvas::SchematicCanvas;
@@ -84,7 +86,7 @@ pub struct SchematicComponent {
     pub name: String,
     pub kind: ComponentKind,
     pub pos: Pos2,
-    /// Rotation in increments of 90 degrees (0 = 0°, 1 = 90°, 2 = 180°, 3 = 270°).
+    /// Rotation in increments of 90 degrees (0 = 0 deg, 1 = 90 deg, 2 = 180 deg, 3 = 270 deg).
     pub rotation: u8,
     pub value_str: String,
     pub model_name: Option<String>,
@@ -108,6 +110,11 @@ impl SchematicComponent {
     /// Rotates the component clockwise by 90 degrees.
     pub fn rotate_clockwise(&mut self) {
         self.rotation = (self.rotation + 1) % 4;
+    }
+
+    /// Returns the current rotation angle in degrees (0, 90, 180, or 270).
+    pub fn rotation_degrees(&self) -> u32 {
+        (self.rotation % 4) as u32 * 90
     }
 
     /// Transforms a local vector according to the component's rotation.

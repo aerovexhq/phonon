@@ -7,7 +7,7 @@ Phonon is an industry-grade, multi-scale electro-thermal circuit simulation engi
 1. **Unified Binary Architecture**:
    Phonon packages both its headless numerical solver CLI and its GPU-accelerated desktop visual studio into a single optimized binary:
    - Run `phonon` to inspect available commands or run headless simulations.
-   - Run `phonon ui` (or `phonon gui`) to launch the interactive desktop CAD interface.
+   - Run `phonon gui` to launch the interactive desktop CAD interface.
 
 2. **Dual-Platform Visual Deployment**:
    - **Desktop CAD Studio**: Native desktop GUI powered by Rust (`eframe`/`egui`) with low-latency rendering and multi-threaded Rayon execution.
@@ -45,5 +45,5 @@ phonon sweep examples/rc_filter.cir --param R1 --start 100 --stop 10000 --steps 
 ### Launch Native Desktop CAD Studio
 
 ```bash
-phonon ui
+phonon gui
 ```

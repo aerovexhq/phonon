@@ -123,7 +123,7 @@ run_gui_wizard() {
         --text="Phonon Studio v${VERSION} has been successfully installed to:\n${TARGET_BIN}/phonon\n\nWould you like to launch Phonon Studio now?" \
         --ok-label="Launch Studio" \
         --cancel-label="Finish"; then
-        "${TARGET_BIN}/phonon" ui &
+        "${TARGET_BIN}/phonon" gui &
     fi
 }
 
@@ -136,7 +136,7 @@ run_tui_wizard() {
 
     # 1. Welcome
     $TUI_BIN --title "${APP_TITLE}" \
-             --msgbox "Welcome to Phonon Simulation Studio v${VERSION} Setup Wizard.\n\nThis tool will configure the unified 'phonon' CLI and 'phonon ui' Studio on your system." 12 65
+             --msgbox "Welcome to Phonon Simulation Studio v${VERSION} Setup Wizard.\n\nThis tool will configure the unified 'phonon' CLI and 'phonon gui' Studio on your system." 12 65
 
     # 2. Scope
     SCOPE_CHOICE=$($TUI_BIN --title "${APP_TITLE} - Scope" \
@@ -170,7 +170,7 @@ run_tui_wizard() {
     fi
 
     $TUI_BIN --title "${APP_TITLE} - Complete" \
-             --msgbox "Installation complete!\n\nBinary installed to: ${TARGET_BIN}/phonon\n\nRun 'phonon' for CLI or 'phonon ui' for Desktop Studio." 12 65
+             --msgbox "Installation complete!\n\nBinary installed to: ${TARGET_BIN}/phonon\n\nRun 'phonon' for CLI or 'phonon gui' for Desktop Studio." 12 65
 }
 
 # ------------------------------------------------------------------------------

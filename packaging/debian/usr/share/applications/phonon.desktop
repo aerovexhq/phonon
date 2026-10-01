@@ -2,7 +2,7 @@
 Name=Phonon CAD Studio
 GenericName=Circuit Simulator & CAD Studio
 Comment=Universal Multi-Scale Visual CAD Studio & Semiconductor Solver
-Exec=phonon ui %F
+Exec=phonon gui %F
 Icon=phonon
 Terminal=false
 Type=Application

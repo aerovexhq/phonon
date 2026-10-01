@@ -7,7 +7,7 @@ Phonon features a clean, unified command-line interface.
 | Command | Syntax | Description |
 | :--- | :--- | :--- |
 | **`phonon`** | `phonon` | Display system version, interactive banner, and command index |
-| **`phonon ui`** | `phonon ui` (alias: `gui`) | Launch native desktop GPU-accelerated CAD studio |
+| **`phonon gui`** | `phonon gui` | Launch native desktop GPU-accelerated CAD studio |
 | **`phonon validate`** | `phonon validate <netlist>` | Validate circuit topology and electrical rules (ERC) |
 | **`phonon run`** | `phonon run <netlist> [options]` | Execute simulation (.OP, .DC, .TRAN) and stream telemetry |
 | **`phonon sweep`** | `phonon sweep <netlist> [options]` | Execute parallel parametric sweep over component values |

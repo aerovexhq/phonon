@@ -7,8 +7,6 @@ The Phonon Desktop Visual CAD Studio is a high-performance native application bu
 Launch the interface from terminal or your desktop application launcher:
 
 ```bash
-phonon ui
-# or alias:
 phonon gui
 ```
 

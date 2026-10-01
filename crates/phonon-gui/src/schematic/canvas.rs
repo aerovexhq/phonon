@@ -1,3 +1,5 @@
+#![deny(unsafe_code)]
+
 //! Infinite CAD schematic canvas with pan, zoom, grid rendering, and coordinate projection.
 
 use egui::{Color32, Painter, Pos2, Rect, Stroke, Vec2};
@@ -27,6 +29,12 @@ impl SchematicCanvas {
         Self::default()
     }
 
+    /// Indicates whether canvas text selection lockout is enforced.
+    #[inline]
+    pub fn is_text_selection_locked(&self) -> bool {
+        true
+    }
+
     /// Transforms world/schematic coordinates to screen pixel coordinates.
     #[inline]
     pub fn world_to_screen(&self, world_pos: Pos2) -> Pos2 {
@@ -53,6 +61,23 @@ impl SchematicCanvas {
         Pos2::new(x, y)
     }
 
+    /// Smoothly updates canvas zoom with continuous exponential scaling centered at an optional screen position.
+    pub fn apply_zoom_delta(&mut self, scroll_delta: f32, focus_pos: Option<Pos2>) {
+        if scroll_delta.abs() > 0.0 {
+            let clamped_delta = scroll_delta.clamp(-120.0, 120.0);
+            let zoom_factor = (clamped_delta * 0.0015).exp();
+            let new_zoom = (self.zoom * zoom_factor).clamp(0.2, 5.0);
+            if let Some(mouse_pos) = focus_pos {
+                let world_before = self.screen_to_world(mouse_pos);
+                self.zoom = new_zoom;
+                let world_after = self.screen_to_world(mouse_pos);
+                self.pan += (world_after - world_before) * self.zoom;
+            } else {
+                self.zoom = new_zoom;
+            }
+        }
+    }
+
     /// Handles pan (drag) and zoom (scroll) interactions within the canvas rect.
     pub fn handle_pan_zoom(&mut self, ui: &egui::Ui, response: &egui::Response) {
         // Pan via middle mouse drag or secondary (right) drag
@@ -66,13 +91,8 @@ impl SchematicCanvas {
         if response.hovered() {
             let scroll_delta = ui.input(|i| i.smooth_scroll_delta.y);
             if scroll_delta.abs() > 0.0 {
-                if let Some(mouse_pos) = ui.input(|i| i.pointer.hover_pos()) {
-                    let world_before = self.screen_to_world(mouse_pos);
-                    let zoom_factor = if scroll_delta > 0.0 { 1.1 } else { 0.9 };
-                    self.zoom = (self.zoom * zoom_factor).clamp(0.2, 5.0);
-                    let world_after = self.screen_to_world(mouse_pos);
-                    self.pan += (world_after - world_before) * self.zoom;
-                }
+                let mouse_pos = ui.input(|i| i.pointer.hover_pos());
+                self.apply_zoom_delta(scroll_delta, mouse_pos);
             }
         }
     }
