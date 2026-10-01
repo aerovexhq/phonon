@@ -252,7 +252,7 @@ fn test_top_frame_web_mode_download_action() {
     );
     assert_eq!(
         TopFrameConfig::download_url(),
-        "https://github.com/aerovexsim/phonon/releases/latest"
+        "https://github.com/aerovexhq/phonon/releases/latest"
     );
 
     // Analytical action dispatch

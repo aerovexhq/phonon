@@ -10,7 +10,7 @@ use crate::widgets::icon::render_phonon_icon;
 use egui::{vec2, Color32, FontId, OpenUrl, RichText, Sense, Stroke, Ui, ViewportCommand};
 
 /// Canonical URL for downloading the native Phonon desktop application.
-pub const PHONON_RELEASES_URL: &str = "https://github.com/aerovexsim/phonon/releases/latest";
+pub const PHONON_RELEASES_URL: &str = "https://github.com/aerovexhq/phonon/releases/latest";
 
 /// User interaction or window management action dispatched by the top frame.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -344,7 +344,7 @@ fn render_top_frame_internal(
         // Help Menu
         ui.menu_button("Help", |ui| {
             if ui.button("Documentation").clicked() {
-                ui.ctx().open_url(OpenUrl::new_tab("https://github.com/aerovexsim/phonon#readme"));
+                ui.ctx().open_url(OpenUrl::new_tab("https://github.com/aerovexhq/phonon#readme"));
                 ui.close();
             }
             if ui.button("Keyboard Shortcuts").clicked() {

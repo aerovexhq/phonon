@@ -251,7 +251,7 @@ export default function App() {
           </a>
 
           <a
-            href="https://github.com/aerovexsim/phonon"
+            href="https://github.com/aerovexhq/phonon"
             target="_blank"
             rel="noreferrer"
             style={{

@@ -8,7 +8,7 @@ Recommended for Debian, Ubuntu, Linux Mint, Pop!_OS, Zorin OS, and Elementary OS
 
 ```bash
 # Download latest v0.1.0 release package
-wget https://github.com/aerovexsim/phonon/releases/download/v0.1.0/phonon_0.1.0_amd64.deb
+wget https://github.com/aerovexhq/phonon/releases/download/v0.1.0/phonon_0.1.0_amd64.deb
 
 # Install or replace existing installation
 sudo dpkg -i phonon_0.1.0_amd64.deb
@@ -58,7 +58,7 @@ If you want a portable single binary without any system packages or root access:
 
 ```bash
 # Download standalone x86_64 stripped binary
-wget https://github.com/aerovexsim/phonon/releases/download/v0.1.0/phonon-x86_64
+wget https://github.com/aerovexhq/phonon/releases/download/v0.1.0/phonon-x86_64
 
 # Mark as executable
 chmod +x phonon-x86_64
@@ -73,7 +73,7 @@ chmod +x phonon-x86_64
 ## Method 4: Universal Distribution Tarball (.tar.gz)
 
 ```bash
-wget https://github.com/aerovexsim/phonon/releases/download/v0.1.0/phonon-v0.1.0-x86_64-unknown-linux-gnu.tar.gz
+wget https://github.com/aerovexhq/phonon/releases/download/v0.1.0/phonon-v0.1.0-x86_64-unknown-linux-gnu.tar.gz
 tar -xzf phonon-v0.1.0-x86_64-unknown-linux-gnu.tar.gz
 cd phonon-v0.1.0-x86_64-unknown-linux-gnu
 sudo bash install.sh
@@ -122,14 +122,14 @@ For IT administrators, Microsoft Intune, Active Directory Group Policy (GPO), an
 ### Portable AppImage (.AppImage)
 Runs on any modern Linux distribution without installation:
 ```bash
-wget https://github.com/aerovexsim/phonon/releases/download/v0.1.0/Phonon-0.1.0-x86_64.AppImage
+wget https://github.com/aerovexhq/phonon/releases/download/v0.1.0/Phonon-0.1.0-x86_64.AppImage
 chmod +x Phonon-0.1.0-x86_64.AppImage
 ./Phonon-0.1.0-x86_64.AppImage
 ```
 
 ### Fedora / RHEL / openSUSE RPM (.rpm)
 ```bash
-sudo dnf install https://github.com/aerovexsim/phonon/releases/download/v0.1.0/phonon-0.1.0-1.x86_64.rpm
+sudo dnf install https://github.com/aerovexhq/phonon/releases/download/v0.1.0/phonon-0.1.0-1.x86_64.rpm
 ```
 
 ### Interactive Linux Setup Wizard (GUI / TUI)
@@ -149,7 +149,7 @@ Requirements:
 
 ```bash
 # Clone the repository
-git clone https://github.com/aerovexsim/phonon.git
+git clone https://github.com/aerovexhq/phonon.git
 cd phonon
 
 # Build optimized release binary

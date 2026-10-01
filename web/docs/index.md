@@ -43,11 +43,11 @@ features:
 curl -fsSL https://phonon.aerovex.net/install.sh | bash
 
 # Option B: Single Debian/Ubuntu package (.deb)
-wget https://github.com/aerovexsim/phonon/releases/download/v0.1.0/phonon_0.1.0_amd64.deb
+wget https://github.com/aerovexhq/phonon/releases/download/v0.1.0/phonon_0.1.0_amd64.deb
 sudo dpkg -i phonon_0.1.0_amd64.deb
 
 # Option C: Standalone portable executable
-wget https://github.com/aerovexsim/phonon/releases/download/v0.1.0/phonon-x86_64
+wget https://github.com/aerovexhq/phonon/releases/download/v0.1.0/phonon-x86_64
 chmod +x phonon-x86_64 && ./phonon-x86_64 ui
 ```
 

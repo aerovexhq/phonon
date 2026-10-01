@@ -21,7 +21,7 @@ export default defineConfig({
       { text: '6 Realism Tiers', link: '/tiers/overview' },
       { text: 'CLI Reference', link: '/cli/commands' },
       { text: 'Web Studio', link: '/studio/', target: '_self' },
-      { text: 'v0.1.0', link: 'https://github.com/aerovexsim/phonon/releases/tag/v0.1.0' }
+      { text: 'v0.1.0', link: 'https://github.com/aerovexhq/phonon/releases/tag/v0.1.0' }
     ],
     sidebar: {
       '/guide/': [
@@ -64,7 +64,7 @@ export default defineConfig({
       ]
     },
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/aerovexsim/phonon' }
+      { icon: 'github', link: 'https://github.com/aerovexhq/phonon' }
     ],
     footer: {
       message: 'Released under the MIT License.',
