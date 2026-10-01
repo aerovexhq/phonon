@@ -1,5 +1,7 @@
 # Phonon Project Roadmap & Task Registry
 
+> **Phonon Autonomous Roadmap**: All Phonon-specific roadmap phases, technical specifications, and development milestones are tracked exclusively within this document.
+
 ---
 
 ## Grand End-Goal: Phonon Universal Multi-Scale Visual CAD Studio (Phonon Studio)
