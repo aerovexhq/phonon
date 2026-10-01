@@ -240,6 +240,7 @@ pub mod skyrmion_parafermion_transceiver;
 pub mod fqh_moore_read_processor;
 pub mod skyrmion_majorana_memory;
 pub mod fqh_moore_read_crossbar;
+pub mod skyrmion_parafermion_memory;
 pub mod skyrmion_parafermion_processor;
 pub mod fqh_moore_read_transceiver;
 pub mod floquet_parafermion_repeater;
@@ -1025,6 +1026,9 @@ pub use skyrmion_majorana_memory::{
 };
 pub use fqh_moore_read_crossbar::{
     FqhMooreReadCrossbarMetrics, FqhMooreReadCrossbarParams,
+};
+pub use skyrmion_parafermion_memory::{
+    SkyrmionParafermionMemoryMetrics, SkyrmionParafermionMemoryParams,
 };
 pub use skyrmion_parafermion_processor::{
     SkyrmionParafermionProcessorMetrics, SkyrmionParafermionProcessorParams,
