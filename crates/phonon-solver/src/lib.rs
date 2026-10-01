@@ -228,6 +228,7 @@ pub mod floquet_parafermion_laser;
 pub mod skyrmion_majorana_transceiver;
 pub mod floquet_parafermion_comb;
 pub mod floquet_parafermion_memory;
+pub mod skyrmion_parafermion_transceiver;
 pub mod chiral_skyrmion_magnon_polaron;
 pub mod floquet_exceptional_ring_sensor;
 pub mod relay;
@@ -803,6 +804,7 @@ pub use floquet_parafermion_laser::*;
 pub use skyrmion_majorana_transceiver::*;
 pub use floquet_parafermion_comb::*;
 pub use floquet_parafermion_memory::*;
+pub use skyrmion_parafermion_transceiver::*;
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
     IntegrationMethod, StepControlOptions, TimeWaveform, TransientOptions, TransientSolution,

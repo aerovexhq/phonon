@@ -236,6 +236,7 @@ pub mod floquet_parafermion_laser;
 pub mod skyrmion_majorana_transceiver;
 pub mod floquet_parafermion_comb;
 pub mod floquet_parafermion_memory;
+pub mod skyrmion_parafermion_transceiver;
 pub mod chiral_skyrmion_magnon_polaron;
 pub mod floquet_exceptional_ring_sensor;
 pub mod radiation;
@@ -1003,6 +1004,9 @@ pub use floquet_parafermion_comb::{
 };
 pub use floquet_parafermion_memory::{
     FloquetParafermionMemoryMetrics, FloquetParafermionMemoryParams,
+};
+pub use skyrmion_parafermion_transceiver::{
+    SkyrmionParafermionTransceiverMetrics, SkyrmionParafermionTransceiverParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
