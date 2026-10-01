@@ -1,3 +1,5 @@
+#![deny(unsafe_code)]
+
 //! Synchronized event-driven mixed-signal co-simulation kernel bridging continuous
 //! Modified Nodal Analysis (MNA) with discrete event queues and boundary bridges.
 

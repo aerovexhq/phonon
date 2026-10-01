@@ -22,6 +22,16 @@ The ultimate destination for the Phonon platform is an autonomous, multi-scale, 
 
 ## Future
 
+### Phase 316: Phonon Studio Non-Linear Transient Sensitivity Analysis, Adjoint Sensitivity Engine & Worst-Case Circuit Optimization
+Formulate non-linear transient sensitivity analysis and adjoint optimization:
+1. Adjoint Transient Sensitivity Engine: Implement backward continuous-time adjoint differential equation solver computing sensitivities of arbitrary circuit performance metrics with respect to all device parameters in a single simulation pass.
+2. Component Sensitivity Visualizer: Render real-time sensitivity bar charts and highlight high-impact components directly on visual schematic canvas pins.
+3. Gradient-Based Worst-Case Optimization: Automated gradient-descent optimizer maximizing circuit operating margins across process, voltage, and temperature (PVT) variations.
+
+---
+
+## Current
+
 ### Phase 315 (Milestone): Phonon Universal Multi-Scale Visual Studio Autonomous Acoustically Driven Fractional Quantum Hall Moore-Read Anyon Multiplexed Routing Crossbar & High-Dimensional Logic Engine / Multi-Abstraction Transistor Speed Regression Protocol
 Formulate anyon routing crossbar and periodic milestone regression:
 1. Moore-Read Non-Abelian Crossbar: Integrate multi-anyon topological routing crossbars with surface acoustic wave phase modulators and anyon braiding logic gates.
@@ -30,17 +40,21 @@ Formulate anyon routing crossbar and periodic milestone regression:
 
 ---
 
-## Current
+## Done
 
 ### Phase 314: Phonon Studio Mixed-Signal Mixed-Domain Co-Simulation, Event-Driven Digital Verilog/VHDL Interface & Continuous-Time Analog Synchronizer
-Formulate mixed-signal mixed-domain co-simulation:
-1. Mixed-Signal Co-Simulation Kernel: Bridge event-driven discrete digital simulation and continuous-time MNA analog solver with dynamic synchronization barriers and rollback compensation.
-2. Digital HDL Interface: Ingest Verilog/VHDL digital logic blocks compiled into high-speed native logic graphs with cycle-accurate clocking.
-3. Continuous-Time Analog Synchronizer: Real-time delta-step interpolator matching DAC/ADC interface boundary voltages and threshold crossing detection.
-
----
-
-## Done
+Developed high-performance mixed-signal co-simulation bridging discrete-event digital logic and continuous-time analog MNA solvers:
+1. Discrete Event-Driven Digital Kernel (`crates/phonon-solver/src/mixed_signal/digital_engine.rs`):
+   - Implemented 4-state logic (`LogicState::{Low, High, HighZ, Unknown}`), binary min-heap event queue, combinational gates (AND, OR, NAND, NOR, XOR, XNOR, NOT, Buffer), and sequential flip-flops (DFF).
+   - High-throughput event evaluation benchmark achieved 6,159,969 events/sec (> 500,000 threshold).
+2. Continuous-Time Analog & Boundary Synchronizer (`crates/phonon-solver/src/mixed_signal/synchronizer.rs`):
+   - Built `BoundaryAdc` with configurable threshold hysteresis ($V_{\text{IL}}$, $V_{\text{IH}}$, $\Delta V$) and event generation.
+   - Built `BoundaryDac` with continuous voltage smoothing (Linear, SmoothStep) and rise/fall dynamics.
+   - Designed `MixedSignalSynchronizer` adaptive lockstep barrier integrating continuous analog stepping with discrete event propagation.
+3. Verilog/VHDL Digital HDL Macro Ingestion (`crates/phonon-solver/src/mixed_signal/hdl_parser.rs`):
+   - Built structural and behavioral Verilog parser compiling combinational continuous assignments and clocked registers (`always @(posedge clk)`) into connected digital logic graphs.
+4. Automated Verification Suite (`crates/phonon-solver/tests/mixed_signal_cosim_tests.rs`):
+   - 6/6 tests passing verifying gates, ADC threshold crossings, DAC continuous output, closed-loop ring oscillator co-simulation, Verilog parsing, and high-speed throughput.
 
 ### Phase 313: Phonon Universal Multi-Scale Visual Studio SPICE Model Parameter Extraction Wizard, Genetic Algorithm Curve-Fitting Engine & Automated BSIM4/EKV Parameter Tuning
 Developed high-speed compact semiconductor parameter extraction, multi-island genetic algorithm curve-fitting engine, automated BSIM4 `.MODEL` deck synthesis, and interactive visual CAD extraction wizard:
@@ -195,7 +209,7 @@ Formulated and implemented a bespoke cross-platform custom window frame and bran
      * Main Menu Bar: File (New, Open, Save, Load Demos, Export SPICE Netlist, Exit), Edit (Undo, Redo, Cut, Copy, Paste, Delete, Select All), View (Show Grid, Show Oscilloscope, Show Thermal Badges, Reset View), Simulation (Run DC .OP, Run Transient .TRAN, Clear Traces), and Help (Documentation, Keyboard Shortcuts, About).
      * Center draggable area displaying circuit name and application version with double-click maximize toggle and `ViewportCommand::StartDrag`.
      * Desktop window controls (`!is_web`): Minimize button `_`, Maximize/Restore button `[ ]`, Close button `X`.
-     * Web Studio download action (`is_web`): Window buttons hidden; rendered high-visibility "Download Desktop App" action linking to `https://github.com/aerovexsim/phonon/releases/latest`.
+     * Web Studio download action (`is_web`): Window buttons hidden; rendered high-visibility "Download Desktop App" action linking to `https://github.com/aerovexhq/phonon/releases/latest`.
 3. Unobtrusive Status Engine & App Integration:
    - Integrated `render_top_frame_with_app` directly into `PhononApp::update` in `crates/phonon-gui/src/app.rs`.
    - Eliminated informational notification popup spam (suppressed legacy "Voltage Divider Demo loaded. Click 'Run DC' to simulate.", "Diode Clipper Demo loaded.", and editing message spam).

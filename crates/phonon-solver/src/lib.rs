@@ -347,8 +347,10 @@ pub use magnon_bec::*;
 pub use majorana_chiral_phonon::*;
 pub use metamaterial_circulator_cloak::*;
 pub use mixed_signal::{
-    solve_mixed_signal, DigitalTraceStep, MixedSignalCircuit, MixedSignalOptions,
-    MixedSignalSolution,
+    parse_verilog_module, solve_mixed_signal, BoundaryAdc, BoundaryDac, DacSmoothing,
+    DigitalEngine, DigitalEvent, DigitalLogicGate, DigitalTraceStep, GateKind, HdlParseError,
+    LogicState, MixedSignalCircuit, MixedSignalOptions, MixedSignalSolution, MixedSignalStepReport,
+    MixedSignalSynchronizer, ParsedHdlModule,
 };
 pub use mna::{
     assemble_mna_dc, solve_dc_linear, solve_dc_non_linear, DcSolution, MnaSystem, ModelContext,
