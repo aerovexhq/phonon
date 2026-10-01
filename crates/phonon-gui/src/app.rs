@@ -1,3 +1,5 @@
+#![deny(unsafe_code)]
+
 //! The central Phonon GUI application orchestrator, CAD layout, and interactive simulation.
 
 use crate::oscilloscope::{OscilloscopePanel, WaveformTrace};
@@ -6,10 +8,12 @@ use crate::schematic::{
     SchematicComponent, SchematicWire,
 };
 use crate::thermal::{Colormap, ThermalOverlay};
+use crate::widgets::DynamicsStatusBadge;
 use eframe::{App, Frame};
 use egui::{
     CentralPanel, Color32, FontId, Key, Panel, PointerButton, Pos2, Sense, Stroke, Ui, Vec2,
 };
+use phonon_core::{AutoSelectingDynamicsBackend, PhysicsDynamicsBackend};
 use phonon_solver::{solve_dc_non_linear, NewtonOptions};
 use std::collections::HashMap;
 
@@ -23,7 +27,6 @@ pub enum ToolMode {
 }
 
 /// The unified Phonon desktop CAD application.
-#[derive(Debug, Clone)]
 pub struct PhononApp {
     pub canvas: SchematicCanvas,
     pub components: Vec<SchematicComponent>,
@@ -50,6 +53,20 @@ pub struct PhononApp {
 
     // Drag tracking for selected component
     dragging_component: bool,
+
+    /// Active physics dynamics backend driving physical simulation state.
+    pub dynamics_backend: Box<dyn PhysicsDynamicsBackend>,
+}
+
+impl std::fmt::Debug for PhononApp {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("PhononApp")
+            .field("next_comp_id", &self.next_comp_id)
+            .field("next_wire_id", &self.next_wire_id)
+            .field("selected_tool", &self.selected_tool)
+            .field("dynamics_backend", &self.dynamics_backend.info())
+            .finish()
+    }
 }
 
 impl Default for PhononApp {
@@ -75,6 +92,7 @@ impl Default for PhononApp {
             compiled_circuit: None,
             spice_netlist_text: String::new(),
             dragging_component: false,
+            dynamics_backend: Box::new(AutoSelectingDynamicsBackend::new()),
         };
 
         // Initialize with default Voltage Divider demo
@@ -84,8 +102,29 @@ impl Default for PhononApp {
 }
 
 impl PhononApp {
+    /// Creates a default `PhononApp` with an auto-selecting dynamics backend.
     pub fn new(_cc: &eframe::CreationContext<'_>) -> Self {
         Self::default()
+    }
+
+    /// Creates a `PhononApp` instance with an injected custom physics dynamics backend.
+    pub fn with_backend(
+        _cc: &eframe::CreationContext<'_>,
+        backend: Box<dyn PhysicsDynamicsBackend>,
+    ) -> Self {
+        let mut app = Self::default();
+        app.dynamics_backend = backend;
+        app
+    }
+
+    /// Returns a shared reference to the active physics dynamics backend.
+    pub fn backend(&self) -> &dyn PhysicsDynamicsBackend {
+        self.dynamics_backend.as_ref()
+    }
+
+    /// Returns a mutable reference to the active physics dynamics backend.
+    pub fn backend_mut(&mut self) -> &mut dyn PhysicsDynamicsBackend {
+        self.dynamics_backend.as_mut()
     }
 
     /// Clears the canvas, removing all components and wires.
@@ -785,10 +824,10 @@ impl App for PhononApp {
 
             // Action Toolbar
             ui.horizontal(|ui| {
-                if ui.button("▶ Run DC (.OP)").clicked() {
+                if ui.button("Run DC (.OP)").clicked() {
                     self.run_dc_op();
                 }
-                if ui.button("⚡ Run Transient (.TRAN)").clicked() {
+                if ui.button("Run Transient (.TRAN)").clicked() {
                     self.run_transient_demo();
                 }
                 if ui.button("Export Netlist").clicked() {
@@ -802,9 +841,7 @@ impl App for PhononApp {
                 }
 
                 ui.separator();
-                ui.label(format!("Mode: {:?}", self.selected_tool));
-                ui.separator();
-                ui.label(&self.sim_status);
+                DynamicsStatusBadge::new().ui(ui, self.dynamics_backend.as_ref());
             });
         });
 

@@ -1,3 +1,5 @@
+#![deny(unsafe_code)]
+
 //! 2D spatial thermal heatmaps, colormap gradients (Turbo, Magma, Inferno), and hotspot alerts.
 
 use egui::{Align2, Color32, FontId, Painter, Pos2, Rect, Stroke, StrokeKind, Vec2};
@@ -122,13 +124,13 @@ impl ThermalOverlay {
             },
         );
 
-        // Warning triangle icon if exceeding safe thermal limits
+        // Warning indicator if exceeding safe thermal limits
         if is_hotspot {
             let icon_pos = badge_rect.right_top() + Vec2::new(4.0, 2.0);
             painter.text(
                 icon_pos,
                 Align2::LEFT_TOP,
-                format!("⚠ {} HOT", component_name),
+                format!("[WARN] {} HOT", component_name),
                 FontId::proportional(10.0),
                 Color32::from_rgb(255, 80, 80),
             );
