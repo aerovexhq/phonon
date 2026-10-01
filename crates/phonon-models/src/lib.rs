@@ -245,6 +245,7 @@ pub mod fqh_moore_read_transceiver;
 pub mod floquet_parafermion_repeater;
 pub mod fqh_moore_read_memory;
 pub mod floquet_parafermion_crossbar;
+pub mod floquet_parafermion_processor;
 pub mod chiral_skyrmion_magnon_polaron;
 pub mod floquet_exceptional_ring_sensor;
 pub mod radiation;
@@ -1039,6 +1040,9 @@ pub use fqh_moore_read_memory::{
 };
 pub use floquet_parafermion_crossbar::{
     FloquetParafermionCrossbarMetrics, FloquetParafermionCrossbarParams,
+};
+pub use floquet_parafermion_processor::{
+    FloquetParafermionProcessorMetrics, FloquetParafermionProcessorParams,
 };
 pub use valley_acoustic::*;
 pub use valleytronics::*;
