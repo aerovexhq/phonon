@@ -22,7 +22,6 @@ use crate::sparse::lu::SparseLuFactorization;
 use crate::sparse::markowitz::MarkowitzOptions;
 use crate::transient::{solve_transient, TransientOptions, TransientSolution};
 use phonon_core::{CircuitGraph, ComponentRecord, NodeId};
-use std::collections::HashMap;
 
 /// Circuit performance objective functional to evaluate and optimize.
 #[derive(Debug, Clone, PartialEq)]

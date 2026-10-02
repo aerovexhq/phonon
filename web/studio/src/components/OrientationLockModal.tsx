@@ -6,23 +6,39 @@ export const OrientationLockModal: React.FC = () => {
 
   useEffect(() => {
     const checkOrientation = () => {
-      const portrait = window.innerHeight > window.innerWidth
-      const touch =
+      const isTouchDevice =
         'ontouchstart' in window ||
         navigator.maxTouchPoints > 0 ||
-        (window.matchMedia && window.matchMedia('(pointer: coarse)').matches)
-      const isMobileWidth = Math.min(window.innerWidth, window.innerHeight) <= 900
-      setIsPortrait(portrait && (touch || isMobileWidth))
-      setIsTouch(touch)
+        (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) ||
+        /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+
+      let portrait = false
+      if (window.screen && window.screen.orientation && window.screen.orientation.type) {
+        portrait = window.screen.orientation.type.startsWith('portrait')
+      } else if (window.matchMedia && window.matchMedia('(orientation: portrait)').matches) {
+        portrait = true
+      } else {
+        portrait = window.innerHeight > window.innerWidth
+      }
+
+      setIsPortrait(portrait && isTouchDevice)
+      setIsTouch(isTouchDevice)
     }
 
     checkOrientation()
     window.addEventListener('resize', checkOrientation)
     window.addEventListener('orientationchange', checkOrientation)
+    const screenOrientation = window.screen?.orientation
+    if (screenOrientation && screenOrientation.addEventListener) {
+      screenOrientation.addEventListener('change', checkOrientation)
+    }
 
     return () => {
       window.removeEventListener('resize', checkOrientation)
       window.removeEventListener('orientationchange', checkOrientation)
+      if (screenOrientation && screenOrientation.removeEventListener) {
+        screenOrientation.removeEventListener('change', checkOrientation)
+      }
     }
   }, [])
 

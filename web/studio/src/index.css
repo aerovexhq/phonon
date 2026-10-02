@@ -112,3 +112,33 @@ code, pre, .font-mono {
   animation: drawerSlideInRight 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Touch Canvas optimization */
+.canvas-touch-container {
+  touch-action: none;
+  -webkit-touch-callout: none;
+}
+
+/* Mobile horizontal landscape ergonomics */
+@media (max-height: 540px) {
+  .compact-header {
+    height: 28px !important;
+  }
+  .compact-toolbar {
+    height: 32px !important;
+  }
+  .compact-tabs {
+    height: 20px !important;
+  }
+  .compact-status {
+    height: 18px !important;
+  }
+}
+

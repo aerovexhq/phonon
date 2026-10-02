@@ -337,6 +337,11 @@ export default function App() {
   const [draggingCompId, setDraggingCompId] = useState<number | null>(null)
   const [dragOffset, setDragOffset] = useState<{ x: number; y: number }>({ x: 0, y: 0 })
 
+  const dragOffsetRef = useRef(dragOffset)
+  dragOffsetRef.current = dragOffset
+  const draggingCompIdRef = useRef(draggingCompId)
+  draggingCompIdRef.current = draggingCompId
+
   // Custom Component Symbol Editor state
   const [isSymbolEditorOpen, setIsSymbolEditorOpen] = useState<boolean>(false)
   const [customSymbols, setCustomSymbols] = useState<CustomSymbolDefinition[]>([])
@@ -391,6 +396,40 @@ export default function App() {
 
   const isSmallScreen = windowWidth < 900
   const isVerySmallScreen = windowWidth < 680
+
+  const toggleLeftPanel = useCallback(() => {
+    setIsLeftPanelOpen((prev) => {
+      const next = !prev
+      if (next && window.innerWidth < 900) {
+        setIsRightPanelOpen(false)
+      }
+      return next
+    })
+  }, [])
+
+  const toggleRightPanel = useCallback(() => {
+    setIsRightPanelOpen((prev) => {
+      const next = !prev
+      if (next && window.innerWidth < 900) {
+        setIsLeftPanelOpen(false)
+      }
+      return next
+    })
+  }, [])
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        if (window.innerWidth < 900) {
+          setIsLeftPanelOpen(false)
+          setIsRightPanelOpen(false)
+        }
+        setActiveMenu(null)
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [])
 
   useEffect(() => {
     const handleResize = () => {
@@ -473,7 +512,22 @@ export default function App() {
           setZoom(targetZoom)
           setPan({ x: nextPanX, y: nextPanY })
         }
-      } else if (e.touches.length === 1 && !touchStartRef.current.isPinching && draggingCompId === null) {
+      } else if (e.touches.length === 1 && draggingCompIdRef.current !== null) {
+        e.preventDefault()
+        const t = e.touches[0]
+        const rect = svgEl.getBoundingClientRect()
+        const screenX = t.clientX - rect.left
+        const screenY = t.clientY - rect.top
+        const worldX = (screenX - panRef.current.x) / zoomRef.current
+        const worldY = (screenY - panRef.current.y) / zoomRef.current
+        const targetX = worldX - dragOffsetRef.current.x
+        const targetY = worldY - dragOffsetRef.current.y
+        const snappedX = Math.round(targetX / 20) * 20
+        const snappedY = Math.round(targetY / 20) * 20
+        setComponents((prev) =>
+          prev.map((c) => (c.id === draggingCompIdRef.current ? { ...c, x: snappedX, y: snappedY } : c))
+        )
+      } else if (e.touches.length === 1 && !touchStartRef.current.isPinching && draggingCompIdRef.current === null) {
         const t = e.touches[0]
         const dx = t.clientX - touchStartRef.current.touchStartPos.x
         const dy = t.clientY - touchStartRef.current.touchStartPos.y
@@ -489,6 +543,7 @@ export default function App() {
 
     const handleTouchEnd = () => {
       touchStartRef.current.isPinching = false
+      setDraggingCompId(null)
     }
 
     svgEl.addEventListener('touchstart', handleTouchStart, { passive: false })
@@ -502,7 +557,7 @@ export default function App() {
       svgEl.removeEventListener('touchend', handleTouchEnd)
       svgEl.removeEventListener('touchcancel', handleTouchEnd)
     }
-  }, [draggingCompId])
+  }, [])
 
   // Global right-click context menu prevention
   useEffect(() => {
@@ -1249,24 +1304,25 @@ export default function App() {
           - Center: Circuit title and version
           - Right: High-visibility "Download Desktop App" action on web
       ========================================================================== */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '32px', backgroundColor: '#0d111a', borderBottom: '1px solid #1a2233', padding: '0 10px', flexShrink: 0 }}>
+      <div className="compact-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '32px', backgroundColor: '#0d111a', borderBottom: '1px solid #1a2233', padding: '0 10px', flexShrink: 0 }}>
         
         {/* Left: Brand Icon + Title + Menu Bar */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
           {/* Responsive Burger Menu Button */}
           <button
-            onClick={() => setIsLeftPanelOpen((prev) => !prev)}
-            title="Toggle Component Palette (Burger Menu)"
+            onClick={toggleLeftPanel}
+            title={isLeftPanelOpen ? "Close Component Palette" : "Open Component Palette (Burger Menu)"}
             style={{
-              background: isLeftPanelOpen ? 'var(--bg-active, #253349)' : 'transparent',
-              border: '1px solid var(--border-button, #334155)',
-              color: isLeftPanelOpen ? 'var(--accent-cyan, #38bdf8)' : 'var(--text-secondary, #cbd5e1)',
+              background: isLeftPanelOpen ? 'var(--bg-active, #253349)' : (isSmallScreen ? '#132338' : 'transparent'),
+              border: `1px solid ${isSmallScreen ? 'var(--accent-cyan, #38bdf8)' : 'var(--border-button, #334155)'}`,
+              color: (isLeftPanelOpen || isSmallScreen) ? 'var(--accent-cyan, #38bdf8)' : 'var(--text-secondary, #cbd5e1)',
               cursor: 'pointer',
-              width: '26px',
               height: '24px',
+              padding: isSmallScreen ? '0 7px' : '0 5px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
+              gap: '5px',
               borderRadius: '3px',
               transition: 'background-color 0.15s, color 0.15s',
               flexShrink: 0,
@@ -1276,13 +1332,16 @@ export default function App() {
               e.currentTarget.style.color = 'var(--text-primary, #f8fafc)'
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = isLeftPanelOpen ? 'var(--bg-active, #253349)' : 'transparent'
-              e.currentTarget.style.color = isLeftPanelOpen ? 'var(--accent-cyan, #38bdf8)' : 'var(--text-secondary, #cbd5e1)'
+              e.currentTarget.style.backgroundColor = isLeftPanelOpen ? 'var(--bg-active, #253349)' : (isSmallScreen ? '#132338' : 'transparent')
+              e.currentTarget.style.color = (isLeftPanelOpen || isSmallScreen) ? 'var(--accent-cyan, #38bdf8)' : 'var(--text-secondary, #cbd5e1)'
             }}
           >
             <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
               <path fillRule="evenodd" d="M2 3.75A.75.75 0 012.75 3h10.5a.75.75 0 010 1.5H2.75A.75.75 0 012 3.75zm0 4.25a.75.75 0 01.75-.75h10.5a.75.75 0 010 1.5H2.75A.75.75 0 012 8zm0 4.25a.75.75 0 01.75-.75h10.5a.75.75 0 010 1.5H2.75a.75.75 0 01-.75-.75z" />
             </svg>
+            {isSmallScreen && (
+              <span style={{ fontSize: '10px', fontWeight: 600, letterSpacing: '0.02em' }}>Palette</span>
+            )}
           </button>
 
           {/* Phonon Vector Master Icon */}
@@ -1299,7 +1358,7 @@ export default function App() {
           )}
 
           {/* Menus separated by '|' */}
-          <div className="menu-container" style={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
+          <div className="menu-container no-scrollbar" style={{ display: 'flex', alignItems: 'center', position: 'relative', overflowX: 'auto', whiteSpace: 'nowrap' }}>
             {[
               { id: 'file', label: 'File' },
               { id: 'edit', label: 'Edit' },
@@ -1399,42 +1458,41 @@ export default function App() {
 
         {/* Right: Download Desktop App + Modern Vector Window Controls */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
-          {!isVerySmallScreen && (
-            <a
-              href="https://github.com/aerovexhq/phonon/releases/latest"
-              target="_blank"
-              rel="noreferrer"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '6px',
-                padding: '3px 10px',
-                fontSize: '11px',
-                fontWeight: 500,
-                backgroundColor: 'var(--bg-hover, #1e293b)',
-                color: 'var(--accent-cyan, #38bdf8)',
-                border: '1px solid var(--border-button, #334155)',
-                borderRadius: '3px',
-                textDecoration: 'none',
-                cursor: 'pointer',
-                whiteSpace: 'nowrap',
-                transition: 'background-color 0.15s, color 0.15s',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = 'var(--border-button, #334155)'
-                e.currentTarget.style.color = 'var(--text-primary, #f8fafc)'
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = 'var(--bg-hover, #1e293b)'
-                e.currentTarget.style.color = 'var(--accent-cyan, #38bdf8)'
-              }}
-            >
-              <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
-                <path d="M8 12l-4-4h2.5V2h3v6H12l-4 4zm-6 2h12v1.5H2V14z" />
-              </svg>
-              Download Desktop App
-            </a>
-          )}
+          <a
+            href="https://github.com/aerovexhq/phonon/releases/latest"
+            target="_blank"
+            rel="noreferrer"
+            title="Download Native Desktop App"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              padding: windowWidth < 800 ? '3px 6px' : '3px 10px',
+              fontSize: '11px',
+              fontWeight: 500,
+              backgroundColor: 'var(--bg-hover, #1e293b)',
+              color: 'var(--accent-cyan, #38bdf8)',
+              border: '1px solid var(--border-button, #334155)',
+              borderRadius: '3px',
+              textDecoration: 'none',
+              cursor: 'pointer',
+              whiteSpace: 'nowrap',
+              transition: 'background-color 0.15s, color 0.15s',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = 'var(--border-button, #334155)'
+              e.currentTarget.style.color = 'var(--text-primary, #f8fafc)'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = 'var(--bg-hover, #1e293b)'
+              e.currentTarget.style.color = 'var(--accent-cyan, #38bdf8)'
+            }}
+          >
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M8 12l-4-4h2.5V2h3v6H12l-4 4zm-6 2h12v1.5H2V14z" />
+            </svg>
+            {windowWidth >= 800 && <span>Download Desktop App</span>}
+          </a>
 
           {/* Window Control Buttons with Vector Iconography */}
           <div style={{ display: 'flex', alignItems: 'center', borderLeft: '1px solid var(--border-color, #1a2233)', paddingLeft: '8px', gap: '2px' }}>
@@ -1546,10 +1604,10 @@ export default function App() {
           - Hover tooltips with keybinds
           - Command Palette (Ctrl+K) & Settings (Ctrl+,) shortcuts
       ========================================================================== */}
-      <div style={{ display: 'flex', alignItems: 'center', height: '36px', backgroundColor: 'var(--bg-toolbar, #101623)', borderBottom: '1px solid var(--border-color, #1a2233)', padding: '0 10px', gap: '8px', flexShrink: 0, overflowX: 'auto', whiteSpace: 'nowrap' }}>
+      <div className="compact-toolbar no-scrollbar" style={{ display: 'flex', alignItems: 'center', height: '36px', backgroundColor: 'var(--bg-toolbar, #101623)', borderBottom: '1px solid var(--border-color, #1a2233)', padding: '0 10px', gap: '8px', flexShrink: 0, overflowX: 'auto', whiteSpace: 'nowrap' }}>
         {/* Quick Palette Toggle Button */}
         <button
-          onClick={() => setIsLeftPanelOpen((prev) => !prev)}
+          onClick={toggleLeftPanel}
           title="Toggle Component Palette (Burger Menu)"
           style={{
             padding: '4px 8px',
@@ -1657,7 +1715,7 @@ export default function App() {
         <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
           {/* Quick Inspector Toggle Button */}
           <button
-            onClick={() => setIsRightPanelOpen((prev) => !prev)}
+            onClick={toggleRightPanel}
             title="Toggle Inspector Panel"
             style={{
               padding: '4px 8px',
@@ -1731,7 +1789,7 @@ export default function App() {
       </div>
 
       {/* Tab bar */}
-      <div style={{ display: 'flex', alignItems: 'center', height: '24px', backgroundColor: '#0d111a', borderBottom: '1px solid #1a2233', padding: '0 10px', gap: '4px', flexShrink: 0 }}>
+      <div className="compact-tabs" style={{ display: 'flex', alignItems: 'center', height: '24px', backgroundColor: '#0d111a', borderBottom: '1px solid #1a2233', padding: '0 10px', gap: '4px', flexShrink: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', padding: '2px 8px', backgroundColor: '#131b2c', borderTop: '2px solid #0284c7', borderRight: '1px solid #1a2233', borderLeft: '1px solid #1a2233', color: '#f8fafc', fontSize: '11px', fontWeight: 500 }}>
           Main
         </div>
@@ -1794,15 +1852,55 @@ export default function App() {
           >
             {/* Drawer Header with Close Button on Small Screens */}
             {isSmallScreen && (
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 10px', borderBottom: '1px solid #1a2233' }}>
-                <span style={{ fontSize: '11px', fontWeight: 600, color: '#f8fafc', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Component Palette</span>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 12px', borderBottom: '1px solid #1a2233', backgroundColor: '#090d16' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <svg width="14" height="14" viewBox="0 0 16 16" fill="#38bdf8">
+                    <path fillRule="evenodd" d="M2 3.75A.75.75 0 012.75 3h10.5a.75.75 0 010 1.5H2.75A.75.75 0 012 3.75zm0 4.25a.75.75 0 01.75-.75h10.5a.75.75 0 010 1.5H2.75A.75.75 0 012 8zm0 4.25a.75.75 0 01.75-.75h10.5a.75.75 0 010 1.5H2.75a.75.75 0 01-.75-.75z" />
+                  </svg>
+                  <span style={{ fontSize: '11px', fontWeight: 600, color: '#f8fafc', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Component Palette</span>
+                </div>
                 <button
                   onClick={() => setIsLeftPanelOpen(false)}
-                  title="Close Palette"
-                  style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', fontSize: '14px', padding: '2px 6px' }}
+                  title="Close Palette (Esc)"
+                  style={{ background: '#1e293b', border: '1px solid #334155', borderRadius: '3px', color: '#94a3b8', cursor: 'pointer', fontSize: '14px', width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                  onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#334155'; e.currentTarget.style.color = '#f8fafc'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#1e293b'; e.currentTarget.style.color = '#94a3b8'; }}
                 >
-                  ✕
+                  X
                 </button>
+              </div>
+            )}
+
+            {/* Mobile / Small Screen Quick Actions */}
+            {isSmallScreen && (
+              <div style={{ padding: '8px 10px', borderBottom: '1px solid #1a2233', backgroundColor: '#090d16' }}>
+                <div style={{ fontSize: '10px', fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '6px' }}>Quick Demos & Actions</div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px' }}>
+                  <button
+                    onClick={() => { handleProtectedLoadDemo('voltage_divider'); setIsLeftPanelOpen(false); }}
+                    style={{ padding: '4px 6px', backgroundColor: '#1e293b', border: '1px solid #334155', borderRadius: '2px', color: '#e2e8f0', fontSize: '10px', cursor: 'pointer', textAlign: 'left' }}
+                  >
+                    Voltage Divider
+                  </button>
+                  <button
+                    onClick={() => { handleProtectedLoadDemo('diode_clipper'); setIsLeftPanelOpen(false); }}
+                    style={{ padding: '4px 6px', backgroundColor: '#1e293b', border: '1px solid #334155', borderRadius: '2px', color: '#e2e8f0', fontSize: '10px', cursor: 'pointer', textAlign: 'left' }}
+                  >
+                    Diode Clipper
+                  </button>
+                  <button
+                    onClick={() => { handleProtectedLoadDemo('bjt_amplifier'); setIsLeftPanelOpen(false); }}
+                    style={{ padding: '4px 6px', backgroundColor: '#1e293b', border: '1px solid #334155', borderRadius: '2px', color: '#e2e8f0', fontSize: '10px', cursor: 'pointer', textAlign: 'left' }}
+                  >
+                    BJT Amplifier
+                  </button>
+                  <button
+                    onClick={() => { handleProtectedClear(); setIsLeftPanelOpen(false); }}
+                    style={{ padding: '4px 6px', backgroundColor: '#1e293b', border: '1px solid #334155', borderRadius: '2px', color: '#e2e8f0', fontSize: '10px', cursor: 'pointer', textAlign: 'left' }}
+                  >
+                    Clear Canvas
+                  </button>
+                </div>
               </div>
             )}
             
@@ -2054,10 +2152,32 @@ export default function App() {
                         const screenY = e.clientY - rect.top
                         const worldX = (screenX - pan.x) / zoom
                         const worldY = (screenY - pan.y) / zoom
-                        setDragOffset({
+                        const offset = {
                           x: worldX - comp.x,
                           y: worldY - comp.y,
-                        })
+                        }
+                        setDragOffset(offset)
+                        dragOffsetRef.current = offset
+                      }
+                    }}
+                    onTouchStart={(e) => {
+                      if (e.touches.length !== 1) return
+                      e.stopPropagation()
+                      const touch = e.touches[0]
+                      setSelectedCompId(comp.id)
+                      setDraggingCompId(comp.id)
+                      if (canvasRef.current) {
+                        const rect = canvasRef.current.getBoundingClientRect()
+                        const screenX = touch.clientX - rect.left
+                        const screenY = touch.clientY - rect.top
+                        const worldX = (screenX - panRef.current.x) / zoomRef.current
+                        const worldY = (screenY - panRef.current.y) / zoomRef.current
+                        const offset = {
+                          x: worldX - comp.x,
+                          y: worldY - comp.y,
+                        }
+                        setDragOffset(offset)
+                        dragOffsetRef.current = offset
                       }
                     }}
                   >
@@ -2241,17 +2361,30 @@ export default function App() {
                     {Array.from({ length: allKinds.find((k) => k.kind === comp.kind)?.pinCount || 2 }).map((_, pIdx) => {
                       const [pinRelX, pinRelY] = getPinCoords(0, 0, comp.kind, comp.rotation, pIdx)
                       return (
-                        <circle
-                          key={pIdx}
-                          cx={pinRelX}
-                          cy={pinRelY}
-                          r="4"
-                          fill="#0284c7"
-                          stroke="#38bdf8"
-                          strokeWidth="1"
-                          style={{ cursor: 'pointer' }}
-                          onClick={(e) => handlePinClick(e, comp.id, pIdx)}
-                        />
+                        <g key={pIdx}>
+                          {/* Invisible expanded touch hit target for mobile ergonomics */}
+                          <circle
+                            cx={pinRelX}
+                            cy={pinRelY}
+                            r="12"
+                            fill="transparent"
+                            style={{ cursor: 'pointer' }}
+                            onClick={(e) => handlePinClick(e, comp.id, pIdx)}
+                            onTouchEnd={(e) => {
+                              e.stopPropagation()
+                              handlePinClick(e as unknown as React.MouseEvent, comp.id, pIdx)
+                            }}
+                          />
+                          <circle
+                            cx={pinRelX}
+                            cy={pinRelY}
+                            r="4"
+                            fill="#0284c7"
+                            stroke="#38bdf8"
+                            strokeWidth="1"
+                            style={{ pointerEvents: 'none' }}
+                          />
+                        </g>
                       )
                     })}
 
@@ -2411,7 +2544,7 @@ export default function App() {
                   title="Close Inspector"
                   style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', fontSize: '14px', padding: '2px 6px' }}
                 >
-                  ✕
+                  X
                 </button>
               )}
             </div>
@@ -2591,11 +2724,15 @@ export default function App() {
       {/* =========================================================================
           ROW 4: STATUS BAR
       ========================================================================== */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '22px', backgroundColor: 'var(--bg-header, #090d16)', borderTop: '1px solid var(--border-color, #1a2233)', padding: '0 10px', color: 'var(--text-muted, #64748b)', fontSize: '10px', fontFamily: 'monospace', flexShrink: 0 }}>
-        <div>
-          Components: {components.length} | Wires: {wires.length} | Zoom: {zoom.toFixed(1)}x
+      <div className="compact-status" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '22px', backgroundColor: 'var(--bg-header, #090d16)', borderTop: '1px solid var(--border-color, #1a2233)', padding: '0 10px', color: 'var(--text-muted, #64748b)', fontSize: '10px', fontFamily: 'monospace', flexShrink: 0 }}>
+        <div style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+          {isVerySmallScreen ? (
+            `C: ${components.length} | W: ${wires.length} | ${zoom.toFixed(1)}x`
+          ) : (
+            `Components: ${components.length} | Wires: ${wires.length} | Zoom: ${zoom.toFixed(1)}x`
+          )}
         </div>
-        <div>
+        <div style={{ whiteSpace: 'nowrap', flexShrink: 0, marginLeft: '8px' }}>
           Sim: {simRunning ? 'Running...' : simStatus}
         </div>
       </div>

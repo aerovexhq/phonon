@@ -124,6 +124,9 @@ pub struct PhononApp {
     /// Hierarchical categorized component palette drawer.
     pub palette: ComponentPalette,
 
+    /// Whether the left component palette panel is visible (collapsible to burger menu).
+    pub show_palette: bool,
+
     /// Instant boot theme configuration.
     pub boot_theme_config: crate::BootThemeConfig,
 }
@@ -182,6 +185,7 @@ impl Default for PhononApp {
             top_frame_config: TopFrameConfig::default(),
             dynamics_backend: Box::new(AutoSelectingDynamicsBackend::new()),
             palette: ComponentPalette::new(),
+            show_palette: true,
             boot_theme_config: crate::default_boot_theme_config(),
         };
 
@@ -1617,12 +1621,14 @@ impl PhononApp {
         }
 
         // 4. Left Palette Panel
-        Panel::left("palette_panel")
-            .resizable(true)
-            .default_size(180.0)
-            .show(ui, |ui| {
-                self.render_palette(ui);
-            });
+        if self.show_palette {
+            Panel::left("palette_panel")
+                .resizable(true)
+                .default_size(180.0)
+                .show(ui, |ui| {
+                    self.render_palette(ui);
+                });
+        }
 
         // 5. Right Inspector Panel
         Panel::right("inspector_panel")

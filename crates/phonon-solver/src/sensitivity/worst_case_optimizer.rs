@@ -6,7 +6,7 @@
 //! using backward adjoint gradient projections:
 //! $$\mathbf{p}_{\text{worst}} = \mathbf{p}_{\text{nom}} + \text{diag}(\boldsymbol{\Delta} \mathbf{p}) \cdot \text{sgn}\left(\boldsymbol{\nabla}_{\mathbf{p}} J\right)$$
 
-use super::adjoint_engine::{AdjointSensitivityEngine, CircuitParameter};
+use super::adjoint_engine::AdjointSensitivityEngine;
 use crate::error::SolverError;
 use crate::transient::solve_transient;
 use std::collections::HashMap;
