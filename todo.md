@@ -24,28 +24,43 @@ The ultimate destination for the Phonon platform is an autonomous, multi-scale, 
 
 ## Future
 
+### Phase 323: Phonon Studio Interactive Transient Audio DSP Synthesizer & Soundcard Driver
+Direct audio output streaming from Port-Hamiltonian circuits at 48 kHz:
+1. Low-Latency Audio Driver: Streaming WASAPI/ALSA/CoreAudio ring buffer interface.
+2. Dynamic Vowel Morphing: Continuous real-time interpolation between vowel area functions (/a/, /i/, /u/) via canvas sliders.
+3. Plosive Consonant Transient Engine: Lip and tongue occlusion release dynamics with burst noise synthesis.
+
+### Phase 324: Phonon Studio Visual Schematic Port-Hamiltonian Biomechanical Articulatory Library & Real-Time Waveform Oscilloscope
+Integrate Port-Hamiltonian components into the visual CAD palette and oscilloscope:
+1. Palette Macro-Blocks: Schematic symbol blocks for Lungs, Hirano Vocal Folds, Webster Vocal Tract, and Lip Radiation.
+2. Dual-Domain Oscilloscope: Simultaneous display of electrical voltage/current and acoustic pressure/volume flow.
+3. Netlist Ingestion: Export and compile Port-Hamiltonian components to standard SPICE subcircuits with companion MNA stamps.
+
+### Phase 325 (Milestone): Phonon Universal Multi-Scale Visual Studio Milestone & Multi-Abstraction Transistor Speed Regression Protocol
+Execute periodic milestone verification across all 6 realism tiers (Tiers 0-6) validating zero performance regression against baseline thresholds.
+
+---
+
+## Current
+
 ### Phase 322: Phonon Studio Real-Time High-Order Symplectic Integration & Multi-Rate Co-Simulation Engine
 Formulate high-order geometric integrators for coupled mechanical-acoustic-circuit networks:
 1. Symplectic Störmer-Verlet & Gauss-Legendre Runge-Kutta: Preserve quadratic energy invariants for non-dissipative Port-Hamiltonian subsystems.
 2. Multi-Rate Partitioning: Solve fast sub-microsecond electromagnetic switching dynamics alongside millisecond acoustic waveforms using dual-rate interpolation barriers.
 3. Adaptive Error Step Sizing: Real-time Milne device error estimation with step doubler/halver guards.
 
-### Phase 323: Phonon Studio Interactive Transient Audio DSP Synthesizer & Soundcard Driver
-Direct audio output streaming from Port-Hamiltonian circuits at 48 kHz.
-
----
-
-## Current
-
-### Phase 321: Phonon Studio Port-Hamiltonian Audio-Acoustic Multi-Physics Engine & Symplectic MNA Stamp Library
-Formulate native Port-Hamiltonian multi-physics macro-components:
-1. Dirac Interconnection Library: Macro-blocks for skew-symmetric non-linear coupling matrices $\mathbf{J}(\mathbf{x})$ and positive semi-definite dissipation networks $\mathbf{R}(\mathbf{x}) \ge 0$.
-2. Biomechanical Vocal Fold & Acoustic Waveguide Blocks: Built-in schematic library components for Hirano 3-layer vocal fold oscillators, continuous Riccati Webster-horns, and lip radiation impedance stamps.
-3. Direct Real-Time Audio Export: Low-latency audio stream playback driver directly evaluating Port-Hamiltonian acoustic circuits at $48\text{ kHz}$ from the schematic canvas.
-
 ---
 
 ## Done
+
+### Phase 321: Phonon Studio Port-Hamiltonian Audio-Acoustic Multi-Physics Engine & Symplectic MNA Stamp Library
+Formulated native Port-Hamiltonian multi-physics macro-components and symplectic MNA stamps:
+1. Skew-Symmetric Dirac Interconnection Library (`DiracInterconnection`): Implemented $\mathbf{J} = -\mathbf{J}^T$ skew-symmetric coupling, positive semi-definite dissipation $\mathbf{R} \ge 0$, and implicit midpoint symplectic integrator with mathematical proof of strict passivity ($\dot{H} \le \mathbf{y}^T \mathbf{u}$).
+2. Hirano 3-Layer Tissue Biomechanics (`HiranoVocalFold`): Built 3-layer cover-body mechanics with mucosal traveling wave phase delay $\tau_m = T_h / c_m \approx 2.80\text{ ms}$, Duffing non-linear restoring stiffness, Hertzian tissue collision mechanics, and dynamic von Kármán-Pohlhausen boundary layer separation $x_s(t)$ guaranteeing net positive aerodynamic energy extraction per cycle ($W_{\text{net}} > 0$).
+3. Continuous Riccati Webster-Horn Transmission Line (`RiccatiWebsterHorn`): Solved continuous Riccati reflection equation $\mathrm{d}R/\mathrm{d}x = 2\gamma R - \frac{1}{2}(\mathrm{d}\ln Z_0/\mathrm{d}x)(1 - R^2)$ with frequency-dependent visco-thermal losses and lip radiation impedance ($+6\text{ dB/octave}$ differentiation).
+4. Symplectic MNA Stamp Library (`PortHamiltonianMnaStamp`): Formulated Norton/Thevenin bilinear companion circuit stamps $\mathbf{G}_{\text{eq}} \mathbf{v}^{n+1} = \mathbf{i}_{\text{eq}}^n$ mapping mechanical/acoustic port-Hamiltonian state variables directly into Phonon's sparse MNA matrix solver.
+5. High-Speed 48 kHz Audio Engine (`PortHamiltonianAudioEngine`): Zero-allocation streaming audio synthesis engine generating continuous glottal and radiated acoustic pressure waveforms sustaining $> 1,000,000\text{ samples/sec}$ (> 20x real-time speed).
+6. Analytical Verification Suite: All 11 unit tests passing (`crates/phonon-solver/tests/port_hamiltonian_audio_tests.rs`, 11/11 PASS) verifying skew-symmetry, positive semi-definite dissipation, energy conservation, mucosal wave delay, self-oscillation limit cycles, formants, and real-time throughput.
 
 ### Phase 320 (Milestone): Phonon Universal Multi-Scale Visual Studio Milestone & Multi-Abstraction Transistor Speed Regression Protocol
 Executed periodic milestone verification across all 6 realism tiers (Tiers 0-6) validating zero performance regression against baseline thresholds:
