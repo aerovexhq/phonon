@@ -5,6 +5,7 @@ import { ToastContainer } from './components/Toast'
 import { CommandPalette } from './components/CommandPalette'
 import { SettingsModal } from './components/SettingsModal'
 import { OrientationLockModal } from './components/OrientationLockModal'
+import { SymbolEditorModal, CustomSymbolDefinition } from './components/SymbolEditorModal'
 
 // ==============================================================================
 // Phonon Web CAD Studio — High-Precision Visual Electronic Design Automation (EDA)
@@ -336,6 +337,31 @@ export default function App() {
   const [draggingCompId, setDraggingCompId] = useState<number | null>(null)
   const [dragOffset, setDragOffset] = useState<{ x: number; y: number }>({ x: 0, y: 0 })
 
+  // Custom Component Symbol Editor state
+  const [isSymbolEditorOpen, setIsSymbolEditorOpen] = useState<boolean>(false)
+  const [customSymbols, setCustomSymbols] = useState<CustomSymbolDefinition[]>([])
+
+  const allKinds = useMemo(() => {
+    const userKinds: ComponentKindDef[] = customSymbols.map((cs) => ({
+      kind: cs.id,
+      name: `${cs.name} (${cs.prefix})`,
+      category: cs.category || 'Custom Modules',
+      prefix: cs.prefix,
+      defaultValue: cs.id,
+      description: `Custom user module with ${cs.pins.length} pins`,
+      pinCount: cs.pins.length,
+    }))
+    return [...COMPONENT_KINDS, ...userKinds]
+  }, [customSymbols])
+
+  const allCategories = useMemo(() => {
+    const cats = [...CATEGORIES]
+    if (customSymbols.length > 0 && !cats.includes('Custom Modules')) {
+      cats.push('Custom Modules')
+    }
+    return cats
+  }, [customSymbols])
+
   // Wiring tool state
   const [pendingWireStart, setPendingWireStart] = useState<{ compId: number; pin: number; x: number; y: number } | null>(null)
   const [mousePos, setMousePos] = useState<{ x: number; y: number }>({ x: 0, y: 0 })
@@ -575,7 +601,7 @@ export default function App() {
 
   // Add Component from Palette
   const addComponent = (kind: string) => {
-    const def = COMPONENT_KINDS.find((k) => k.kind === kind)
+    const def = allKinds.find((k) => k.kind === kind)
     if (!def) return
 
     const newId = components.length > 0 ? Math.max(...components.map((c) => c.id)) + 1 : 1
@@ -705,7 +731,11 @@ export default function App() {
     let rx = 0
     let ry = 0
 
-    if (kind === 'vsource' || kind === 'vac' || kind === 'vpulse') {
+    const customSym = customSymbols.find((cs) => cs.id === kind)
+    if (customSym && customSym.pins[pinIdx]) {
+      rx = customSym.pins[pinIdx].x
+      ry = customSym.pins[pinIdx].y
+    } else if (kind === 'vsource' || kind === 'vac' || kind === 'vpulse') {
       ry = pinIdx === 0 ? -40 : 40
     } else if (kind === 'resistor' || kind === 'capacitor' || kind === 'inductor' || kind === 'diode') {
       ry = pinIdx === 0 ? -30 : 30
@@ -1202,7 +1232,7 @@ export default function App() {
   }
 
   // Filtered components in palette
-  const filteredKinds = COMPONENT_KINDS.filter(
+  const filteredKinds = allKinds.filter(
     (k) =>
       searchQuery === '' ||
       k.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -1342,6 +1372,12 @@ export default function App() {
               <div style={{ position: 'absolute', top: '24px', left: '120px', backgroundColor: '#111827', border: '1px solid #1f2937', borderRadius: '4px', zIndex: 100, minWidth: '180px', boxShadow: '0 8px 24px rgba(0,0,0,0.6)', padding: '4px 0' }}>
                 <div onClick={runDcOp} style={{ padding: '6px 12px', cursor: 'pointer', color: '#e2e8f0' }} onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#1e293b')} onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}>Run DC (.OP)</div>
                 <div onClick={runTransient} style={{ padding: '6px 12px', cursor: 'pointer', color: '#e2e8f0' }} onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#1e293b')} onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}>Run Transient (.TRAN)</div>
+              </div>
+            )}
+
+            {activeMenu === 'tools' && (
+              <div style={{ position: 'absolute', top: '24px', left: '170px', backgroundColor: 'var(--bg-dropdown, #111827)', border: '1px solid var(--border-color, #1a2233)', borderRadius: '4px', zIndex: 100, minWidth: '220px', boxShadow: '0 8px 24px rgba(0,0,0,0.6)', padding: '4px 0' }}>
+                <div onClick={() => { setIsSymbolEditorOpen(true); setActiveMenu(null) }} style={{ padding: '6px 12px', cursor: 'pointer', color: 'var(--text-secondary, #cbd5e1)' }} onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--bg-hover, #1e293b)')} onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}>Component Symbol Editor</div>
               </div>
             )}
 
@@ -1861,7 +1897,7 @@ export default function App() {
 
           {/* Component Categories Drawer List */}
           <div style={{ flex: 1, padding: '4px 0', overflowY: 'auto' }}>
-            {CATEGORIES.map((cat) => {
+            {allCategories.map((cat) => {
               const items = filteredKinds.filter((k) => k.category === cat)
               if (items.length === 0 && searchQuery !== '') return null
               const isOpen = openCategories[cat] || searchQuery !== ''
@@ -2132,10 +2168,77 @@ export default function App() {
                           <line x1="0" y1="10" x2="0" y2="25" stroke="#94a3b8" strokeWidth="1.5" />
                         </g>
                       )}
+                      {/* Custom User Module Symbols */}
+                      {(() => {
+                        const customDef = customSymbols.find((cs) => cs.id === comp.kind)
+                        if (!customDef) return null
+                        return (
+                          <g>
+                            {customDef.primitives.map((prim, idx) => {
+                              if (prim.type === 'rect') {
+                                const rx = Math.min(prim.x1, prim.x2)
+                                const ry = Math.min(prim.y1, prim.y2)
+                                const rw = Math.abs(prim.x2 - prim.x1)
+                                const rh = Math.abs(prim.y2 - prim.y1)
+                                return (
+                                  <rect
+                                    key={idx}
+                                    x={rx}
+                                    y={ry}
+                                    width={rw}
+                                    height={rh}
+                                    fill="rgba(56, 189, 248, 0.05)"
+                                    stroke="#38bdf8"
+                                    strokeWidth={1.5}
+                                  />
+                                )
+                              } else if (prim.type === 'circle') {
+                                return (
+                                  <circle
+                                    key={idx}
+                                    cx={prim.x1}
+                                    cy={prim.y1}
+                                    r={prim.radius || 15}
+                                    fill="rgba(56, 189, 248, 0.05)"
+                                    stroke="#38bdf8"
+                                    strokeWidth={1.5}
+                                  />
+                                )
+                              } else if (prim.type === 'line') {
+                                return (
+                                  <line
+                                    key={idx}
+                                    x1={prim.x1}
+                                    y1={prim.y1}
+                                    x2={prim.x2}
+                                    y2={prim.y2}
+                                    stroke="#38bdf8"
+                                    strokeWidth={1.5}
+                                  />
+                                )
+                              } else if (prim.type === 'text') {
+                                return (
+                                  <text
+                                    key={idx}
+                                    x={prim.x1}
+                                    y={prim.y1}
+                                    fill="#38bdf8"
+                                    fontSize={10}
+                                    textAnchor="middle"
+                                  >
+                                    {prim.text}
+                                  </text>
+                                )
+                              }
+                              return null
+                            })}
+                          </g>
+                        )
+                      })()}
                     </g>
 
                     {/* Component Pin Connection Targets */}
-                    {Array.from({ length: COMPONENT_KINDS.find((k) => k.kind === comp.kind)?.pinCount || 2 }).map((_, pIdx) => {
+                    {Array.from({ length: allKinds.find((k) => k.kind === comp.kind)?.pinCount || 2 }).map((_, pIdx) => {
                       const [pinRelX, pinRelY] = getPinCoords(0, 0, comp.kind, comp.rotation, pIdx)
                       return (
                         <circle
@@ -2319,7 +2422,7 @@ export default function App() {
               <div>
                 {/* Prominent Component Header at top (UNBOXED) */}
                 <div style={{ fontSize: '12px', fontWeight: 600, color: '#38bdf8', marginBottom: '8px' }}>
-                  {selectedComp.name} ({COMPONENT_KINDS.find((k) => k.kind === selectedComp.kind)?.name || selectedComp.kind})
+                  {selectedComp.name} ({allKinds.find((k) => k.kind === selectedComp.kind)?.name || selectedComp.kind})
                 </div>
 
                 {/* Properties (NO boxed border around properties above Delete Component!) */}
@@ -2534,6 +2637,16 @@ export default function App() {
 
       {/* Mandatory Mobile Landscape Orientation Lock Modal */}
       <OrientationLockModal />
+
+      {/* Component Symbol & Shape Editor Modal */}
+      <SymbolEditorModal
+        isOpen={isSymbolEditorOpen}
+        onClose={() => setIsSymbolEditorOpen(false)}
+        onSaveSymbol={(sym) => {
+          setCustomSymbols((prev) => [...prev, sym])
+          showToast('Symbol Created', `Registered custom symbol ${sym.name} (${sym.id})`, 'success')
+        }}
+      />
     </div>
   )
 }
