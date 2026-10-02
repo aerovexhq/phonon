@@ -9,9 +9,9 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
 DIST_DIR="${ROOT_DIR}/dist"
-VERSION="0.1.0"
+VERSION="${1:-${PHONON_VERSION:-0.1.0}}"
 
-echo "[1/6] Preparing output directories..."
+echo "[1/6] Preparing output directories for version ${VERSION}..."
 mkdir -p "${DIST_DIR}"
 
 RELEASE_BIN="${ROOT_DIR}/target/release/phonon"
@@ -25,7 +25,7 @@ cp -f "$RELEASE_BIN" "${DIST_DIR}/phonon-x86_64"
 chmod 755 "${DIST_DIR}/phonon-x86_64"
 strip --strip-unneeded "${DIST_DIR}/phonon-x86_64" 2>/dev/null || true
 
-echo "[3/6] Packaging Debian (.deb) package..."
+echo "[3/6] Packaging Debian (.deb) package (Version: ${VERSION})..."
 DEB_STAGING="${SCRIPT_DIR}/debian"
 mkdir -p "${DEB_STAGING}/DEBIAN" \
          "${DEB_STAGING}/usr/bin" \
@@ -52,6 +52,7 @@ chmod 644 "${DEB_STAGING}/usr/share/bash-completion/completions/phonon"
 cp -f "${SCRIPT_DIR}/completions/_phonon.zsh" "${DEB_STAGING}/usr/share/zsh/site-functions/_phonon"
 chmod 644 "${DEB_STAGING}/usr/share/zsh/site-functions/_phonon"
 
+sed -i "s/^Version:.*/Version: ${VERSION}/" "${DEB_STAGING}/DEBIAN/control"
 chmod 644 "${DEB_STAGING}/DEBIAN/control"
 
 dpkg-deb --build --root-owner-group "${DEB_STAGING}" "${DIST_DIR}/phonon_${VERSION}_amd64.deb"

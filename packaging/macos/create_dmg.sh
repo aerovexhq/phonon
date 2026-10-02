@@ -9,7 +9,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 DIST_DIR="${ROOT_DIR}/dist"
-VERSION="0.1.0"
+VERSION="${1:-${PHONON_VERSION:-0.1.0}}"
 DMG_NAME="Phonon-${VERSION}.dmg"
 DMG_PATH="${DIST_DIR}/${DMG_NAME}"
 APP_BUNDLE="${DIST_DIR}/macos/Phonon Studio.app"
