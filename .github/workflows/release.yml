@@ -104,9 +104,13 @@ jobs:
           choco install innosetup --no-progress
 
       - name: Build Inno Setup Interactive EXE Wizard
-        shell: bash
+        shell: pwsh
         run: |
-          ISCC.exe /DMyAppVersion="${{ steps.ver.outputs.version }}" packaging/windows/inno_setup.iss
+          $iscc = (Get-Command ISCC.exe -ErrorAction SilentlyContinue).Source
+          if (-not $iscc) {
+            $iscc = "C:\Program Files (x86)\Inno Setup 6\ISCC.exe"
+          }
+          & $iscc /DMyAppVersion="${{ steps.ver.outputs.version }}" packaging/windows/inno_setup.iss
 
       - name: Install WiX Toolset
         continue-on-error: true
@@ -123,7 +127,7 @@ jobs:
             -d DocSourceDir="." `
             -d PackagingDir="packaging/windows" `
             -ext WixToolset.UI.wixext `
-            -o dist/phonon-0.1.0-x64.msi || true
+            -o dist/phonon-${{ steps.ver.outputs.version }}-x64.msi || true
 
       - name: Create Portable Windows ZIP
         shell: pwsh
