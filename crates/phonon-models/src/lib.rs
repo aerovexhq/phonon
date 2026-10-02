@@ -17,6 +17,7 @@ pub mod acoustomagnonic_polariton_laser;
 pub mod afm_spintronics;
 pub mod assets;
 pub mod atomistic;
+pub mod audio_dsp_synth;
 pub mod axion_electrodynamics;
 pub mod bjt;
 pub mod braiding_switchyard;
@@ -1064,3 +1065,4 @@ pub use extraction::{
 };
 pub use port_hamiltonian::*;
 pub use symplectic_multirate::*;
+pub use audio_dsp_synth::*;

@@ -38,9 +38,21 @@ jobs:
         run: |
           cargo build --release -p phonon-cli
 
+      - name: Determine Packaging Version
+        id: ver
+        shell: bash
+        run: |
+          if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
+            V="${{ github.ref_name }}"
+            V="${V#v}"
+            echo "version=${V}" >> $GITHUB_OUTPUT
+          else
+            echo "version=0.1.0-dev" >> $GITHUB_OUTPUT
+          fi
+
       - name: Execute Linux Release Packaging Pipeline
         run: |
-          bash packaging/build_packages.sh
+          bash packaging/build_packages.sh "${{ steps.ver.outputs.version }}"
 
       - name: Upload Linux Artifacts
         uses: actions/upload-artifact@v4
@@ -55,6 +67,18 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Determine Packaging Version
+        id: ver
+        shell: bash
+        run: |
+          if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
+            V="${{ github.ref_name }}"
+            V="${V#v}"
+            echo "version=${V}" >> $GITHUB_OUTPUT
+          else
+            echo "version=0.1.0-dev" >> $GITHUB_OUTPUT
+          fi
 
       - name: Install Rust Stable Toolchain
         uses: dtolnay/rust-toolchain@stable
@@ -82,7 +106,7 @@ jobs:
       - name: Build Inno Setup Interactive EXE Wizard
         shell: bash
         run: |
-          ISCC.exe packaging/windows/inno_setup.iss
+          ISCC.exe /DMyAppVersion="${{ steps.ver.outputs.version }}" packaging/windows/inno_setup.iss
 
       - name: Install WiX Toolset
         continue-on-error: true
@@ -104,7 +128,7 @@ jobs:
       - name: Create Portable Windows ZIP
         shell: pwsh
         run: |
-          Compress-Archive -Path dist/windows/phonon.exe, README.md, LICENSE -DestinationPath dist/phonon-v0.1.0-x86_64-pc-windows-msvc.zip
+          Compress-Archive -Path dist/windows/phonon.exe, README.md, LICENSE -DestinationPath dist/phonon-v${{ steps.ver.outputs.version }}-x86_64-pc-windows-msvc.zip
 
       - name: Upload Windows Artifacts
         uses: actions/upload-artifact@v4
@@ -122,6 +146,18 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Determine Packaging Version
+        id: ver
+        shell: bash
+        run: |
+          if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
+            V="${{ github.ref_name }}"
+            V="${V#v}"
+            echo "version=${V}" >> $GITHUB_OUTPUT
+          else
+            echo "version=0.1.0-dev" >> $GITHUB_OUTPUT
+          fi
 
       - name: Install Rust Stable Toolchain
         uses: dtolnay/rust-toolchain@stable
@@ -141,7 +177,7 @@ jobs:
 
       - name: Build Styled Drag-and-Drop DMG
         run: |
-          bash packaging/macos/create_dmg.sh
+          bash packaging/macos/create_dmg.sh "${{ steps.ver.outputs.version }}"
 
       - name: Build Guided Multi-Step PKG Wizard
         run: |
@@ -150,13 +186,13 @@ jobs:
                    --install-location "/Applications/Phonon Studio.app" \
                    --scripts packaging/macos/scripts \
                    --identifier net.aerovex.phonon.app \
-                   --version 0.1.0 \
+                   --version "${{ steps.ver.outputs.version }}" \
                    dist/pkg-staging/phonon-app.pkg
 
           productbuild --distribution packaging/macos/distribution.xml \
                        --package-path dist/pkg-staging \
                        --resources packaging/macos \
-                       dist/Phonon-0.1.0.pkg || true
+                       "dist/Phonon-${{ steps.ver.outputs.version }}.pkg" || true
 
       - name: Upload macOS Artifacts
         uses: actions/upload-artifact@v4
@@ -188,38 +224,32 @@ jobs:
           cat SHA256SUMS
 
       - name: Update Rolling Continuous Pre-Release (Tracks Latest Commit)
+        if: github.ref == 'refs/heads/main'
         uses: softprops/action-gh-release@v2
         with:
           files: all-dist/*
           tag_name: rolling
-          name: "Phonon Continuous Rolling Build"
+          name: "Phonon Continuous Development Build (0.1.0-dev)"
           body: |
-            Automated continuous release tracking the latest commit (`${{ github.sha }}`).
-            This rolling build provides multi-OS binaries for Linux (.deb, .tar.gz), Windows (.exe, .msi, .zip), and macOS (.dmg, .pkg, .tar.gz).
+            Automated continuous development release tracking the latest commit (`${{ github.sha }}`).
+            This rolling pre-release contains the latest development packages:
+            - Linux: Debian (`phonon_0.1.0-dev_amd64.deb`), tarball (`phonon-v0.1.0-dev-x86_64-unknown-linux-gnu.tar.gz`)
+            - Windows: Inno Setup (`phonon-setup-0.1.0-dev-x64.exe`), ZIP (`phonon-v0.1.0-dev-x86_64-pc-windows-msvc.zip`)
+            - macOS: Apple Silicon DMG (`Phonon-0.1.0-dev.dmg`), PKG (`Phonon-0.1.0-dev.pkg`)
           prerelease: true
           make_latest: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Update Official v0.1.0 Release Assets With Latest Build
-        uses: softprops/action-gh-release@v2
-        with:
-          files: all-dist/*
-          tag_name: v0.1.0
-          name: "Phonon Release v0.1.0"
-          prerelease: false
-          make_latest: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Publish Explicit Tagged Release (If Tag Pushed)
-        if: startsWith(github.ref, 'refs/tags/v') && github.ref_name != 'v0.1.0'
+      - name: Publish Official Tagged Release (If Tag Pushed)
+        if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
           files: all-dist/*
           name: "Phonon Release ${{ github.ref_name }}"
           draft: false
           prerelease: false
+          make_latest: true
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
