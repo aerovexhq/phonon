@@ -2,6 +2,8 @@ name: Multi-OS Release Packaging Pipeline
 
 on:
   push:
+    branches:
+      - main
     tags:
       - 'v*'
   workflow_dispatch:
@@ -182,7 +184,36 @@ jobs:
           find . -maxdepth 1 -type f ! -name "SHA256SUMS" ! -name ".*" -exec sha256sum {} + | sort -k 2 > SHA256SUMS
           cat SHA256SUMS
 
-      - name: Publish Multi-OS GitHub Release Assets
+      - name: Update Rolling Continuous Pre-Release (Tracks Latest Commit)
+        uses: softprops/action-gh-release@v2
+        with:
+          files: all-dist/*
+          tag_name: rolling
+          name: "Phonon Continuous Rolling Build"
+          body: |
+            Automated continuous release tracking the latest commit (`${{ github.sha }}`).
+            This rolling build provides multi-OS binaries for Linux (.deb, .tar.gz), Windows (.exe, .msi, .zip), and macOS (.dmg, .pkg, .tar.gz).
+          prerelease: true
+          make_latest: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Freeze Immutable v0.1.0 Official Release (If Not Already Created)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if gh release view v0.1.0 >/dev/null 2>&1; then
+            echo "Release v0.1.0 already exists and is permanently frozen. Preserving immutability without modification."
+          else
+            echo "Release v0.1.0 does not exist yet. Freezing official v0.1.0 release from current build..."
+            gh release create v0.1.0 all-dist/* \
+              --title "Phonon v0.1.0 Official Release" \
+              --notes "Official frozen v0.1.0 release of Phonon Multi-Scale Visual Electronic CAD & SPICE Simulation Studio." \
+              --latest
+          fi
+
+      - name: Publish Explicit Tagged Release (If Tag Pushed)
+        if: startsWith(github.ref, 'refs/tags/v') && github.ref_name != 'v0.1.0'
         uses: softprops/action-gh-release@v2
         with:
           files: all-dist/*
@@ -190,3 +221,5 @@ jobs:
           draft: false
           prerelease: false
           generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
