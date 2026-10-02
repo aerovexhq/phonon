@@ -237,7 +237,7 @@ impl PlosiveEngine {
                 let alpha = (1.0 - (-dt / tau_buildup).exp()).clamp(0.0, 1.0);
                 self.intraoral_pressure += alpha * (subglottal_pressure_pa - self.intraoral_pressure);
 
-                if self.occlusion_timer >= self.occlusion_duration {
+                if self.occlusion_timer >= self.occlusion_duration - 1e-9 {
                     // Transition to release burst
                     self.state = PlosiveState::Burst;
                     self.burst_timer = 0.0;

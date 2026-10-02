@@ -195,7 +195,8 @@ impl VowelMorpher {
                 (0.50, 0.80), // velum constriction
                 (0.75, 2.50), // oral cavity
                 (0.90, 1.20),
-                (1.00, 0.30), // lips constriction
+                (0.93, 0.30), // lips constriction
+                (1.00, 0.30),
             ],
             3 => &[
                 // /e/ (mid front): pharynx ~4.0 cm^2, palatal ~1.5 cm^2
@@ -212,6 +213,7 @@ impl VowelMorpher {
                 (0.20, 1.50), // pharynx constriction
                 (0.60, 3.00), // oral cavity
                 (0.85, 1.80),
+                (0.93, 0.60),
                 (1.00, 0.60), // lips constriction
             ],
             _ => &[
