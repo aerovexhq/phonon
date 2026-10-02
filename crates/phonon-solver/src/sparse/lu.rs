@@ -312,6 +312,21 @@ impl SparseLuFactorization {
     pub fn inv_col_perm(&self) -> &[usize] {
         &self.inv_col_perm
     }
+
+    /// Returns the sparse L entries map for each row.
+    pub fn l_entries(&self) -> &[HashMap<usize, f64>] {
+        &self.l_entries
+    }
+
+    /// Returns the sparse U entries map for each row.
+    pub fn u_entries(&self) -> &[HashMap<usize, f64>] {
+        &self.u_entries
+    }
+
+    /// Returns the diagonal elements of U.
+    pub fn u_diag(&self) -> &[f64] {
+        &self.u_diag
+    }
 }
 
 #[cfg(test)]
