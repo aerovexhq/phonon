@@ -69,3 +69,46 @@ code, pre, .font-mono {
     opacity: 0.5;
   }
 }
+
+@keyframes phoneRotateAnimation {
+  0%, 25% {
+    transform: rotate(0deg);
+  }
+  50%, 75% {
+    transform: rotate(-90deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes drawerSlideInLeft {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes drawerSlideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.drawer-slide-in-left {
+  animation: drawerSlideInLeft 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.drawer-slide-in-right {
+  animation: drawerSlideInRight 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
