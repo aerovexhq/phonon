@@ -9,11 +9,12 @@ use crate::schematic::{
     save_project_to_file, serialize_project, BinaryFormatError, CanvasCommand, CompiledCircuit,
     ComponentKind, ErcDiagnostic, ErcEngine, ErcSeverity, HistoryStack, MultiSheetManager,
     NetlistSyncEngine, SchematicBus, SchematicCanvas, SchematicComponent, SchematicWire,
-    SubcircuitDefinition,
+    SubcircuitDefinition, SymbolLibrary,
 };
 use crate::thermal::{Colormap, ThermalOverlay};
 use crate::widgets::{
-    render_top_frame_with_app, ComponentPalette, SensitivityDialog, TopFrameAction, TopFrameConfig,
+    render_top_frame_with_app, ComponentPalette, SensitivityDialog, SymbolEditorDialog,
+    TopFrameAction, TopFrameConfig,
 };
 use eframe::{App, Frame};
 use egui::{
@@ -95,6 +96,12 @@ pub struct PhononApp {
     /// Non-linear transient sensitivity analysis and worst-case optimization dialog.
     pub sensitivity_dialog: SensitivityDialog,
 
+    /// Interactive Logisim/KiCad-style component symbol and shape editor dialog.
+    pub symbol_editor: SymbolEditorDialog,
+
+    /// User library storing custom component symbol definitions.
+    pub symbol_library: SymbolLibrary,
+
     // Drag tracking for selected component
     dragging_component: bool,
     drag_start_pos: Option<(usize, Pos2)>,
@@ -165,6 +172,8 @@ impl Default for PhononApp {
             show_erc_overlay: true,
             extraction_wizard: ExtractionWizardDialog::new(),
             sensitivity_dialog: SensitivityDialog::new(),
+            symbol_editor: SymbolEditorDialog::new(),
+            symbol_library: SymbolLibrary::new(),
             dragging_component: false,
             drag_start_pos: None,
             history: HistoryStack::with_capacity(500, 64),
@@ -1679,6 +1688,16 @@ impl PhononApp {
             self.run_sensitivity_analysis();
         }
         self.sensitivity_dialog.ui(ui.ctx());
+
+        // 10. Interactive Component Symbol & Shape Editor Dialog
+        let mut saved_symbol = None;
+        self.symbol_editor.show(ui.ctx(), |sym| {
+            saved_symbol = Some(sym);
+        });
+        if let Some(sym) = saved_symbol {
+            self.symbol_library.register(sym);
+            self.sim_status = "Custom component symbol registered into library.".to_string();
+        }
     }
 }
 

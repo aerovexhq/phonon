@@ -13,6 +13,7 @@ pub mod history;
 pub mod netlist_sync;
 pub mod sheet;
 pub mod subcircuit;
+pub mod symbol;
 pub mod wire;
 
 pub use binary_format::{
@@ -33,6 +34,10 @@ pub use sheet::{MultiSheetManager, SchematicSheet};
 pub use subcircuit::{
     flatten_hierarchical_netlist, flatten_hierarchical_netlist_with_instances, PinDirection,
     SubcircuitDefinition, SubcircuitInstance, SubcircuitPin,
+};
+pub use symbol::{
+    CustomComponentSymbol, LabelPlacement, SymbolLibrary, SymbolPin, SymbolPinDirection,
+    SymbolPrimitive, TerminalDirection,
 };
 pub use wire::{compute_junction_dots, SchematicWire, WireSegment};
 
