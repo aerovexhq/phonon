@@ -275,6 +275,7 @@ pub mod twisted_bilayer_topological_superfluid;
 pub mod tensor_gauge_monopole_sensor;
 pub mod quantum_acoustic_surface_code;
 pub mod non_hermitian_quadrupole_laser;
+pub mod sensitivity;
 pub mod transient;
 pub mod valley_acoustic;
 pub mod valleytronics;
@@ -829,6 +830,10 @@ pub use fqh_moore_read_memory::*;
 pub use floquet_parafermion_crossbar::*;
 pub use floquet_parafermion_processor::*;
 pub use moore_read_logic_crossbar::*;
+pub use sensitivity::{
+    AdjointSensitivityEngine, CircuitParameter, CornerEvaluation, CornerType, ObjectiveKind,
+    SensitivityResult, WorstCaseOptimizer, WorstCaseSummary,
+};
 pub use transient::{
     evaluate_tr_bdf2_lte, solve_transient, CapacitorCompanion, InductorCompanion,
     IntegrationMethod, StepControlOptions, TimeWaveform, TransientOptions, TransientSolution,

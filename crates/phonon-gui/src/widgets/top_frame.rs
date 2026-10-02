@@ -153,9 +153,12 @@ fn render_top_frame_internal(
                 .color(Color32::from_rgb(240, 246, 252)),
         );
 
-        ui.separator();
+        ui.label(RichText::new("|").color(Color32::from_rgb(60, 70, 85)).size(11.0));
 
         // 3. Main Menu Bar
+        ui.visuals_mut().widgets.inactive.weak_bg_fill = Color32::TRANSPARENT;
+        ui.visuals_mut().widgets.inactive.bg_stroke = Stroke::NONE;
+
         // File Menu
         ui.menu_button("File", |ui| {
             if ui.button("New").clicked() {
@@ -185,6 +188,24 @@ fn render_top_frame_internal(
                     }
                     ui.close();
                 }
+                if ui.button("BJT CE Amplifier").clicked() {
+                    if let Some(a) = app.as_deref_mut() {
+                        a.load_bjt_amplifier_demo();
+                    }
+                    ui.close();
+                }
+                if ui.button("CMOS Inverter").clicked() {
+                    if let Some(a) = app.as_deref_mut() {
+                        a.load_cmos_inverter_demo();
+                    }
+                    ui.close();
+                }
+                if ui.button("NMOS Switch").clicked() {
+                    if let Some(a) = app.as_deref_mut() {
+                        a.load_nmos_switch_demo();
+                    }
+                    ui.close();
+                }
             });
             if ui.button("Export SPICE Netlist").clicked() {
                 if let Some(a) = app.as_deref_mut() {
@@ -201,6 +222,7 @@ fn render_top_frame_internal(
                 ui.close();
             }
         });
+        ui.label(RichText::new("|").color(Color32::from_rgb(60, 70, 85)).size(11.0));
 
         // Edit Menu
         ui.menu_button("Edit", |ui| {
@@ -245,6 +267,7 @@ fn render_top_frame_internal(
                 ui.close();
             }
         });
+        ui.label(RichText::new("|").color(Color32::from_rgb(60, 70, 85)).size(11.0));
 
         // View Menu
         ui.menu_button("View", |ui| {
@@ -302,6 +325,7 @@ fn render_top_frame_internal(
                 }
             }
         });
+        ui.label(RichText::new("|").color(Color32::from_rgb(60, 70, 85)).size(11.0));
 
         // Simulation Menu
         ui.menu_button("Simulation", |ui| {
@@ -323,6 +347,12 @@ fn render_top_frame_internal(
                 }
                 ui.close();
             }
+            if ui.button("Transient Sensitivity Analysis").clicked() {
+                if let Some(a) = app.as_deref_mut() {
+                    a.sensitivity_dialog.is_open = true;
+                }
+                ui.close();
+            }
             if ui.button("Clear Traces").clicked() {
                 if let Some(a) = app.as_deref_mut() {
                     a.oscilloscope.clear();
@@ -330,9 +360,16 @@ fn render_top_frame_internal(
                 ui.close();
             }
         });
+        ui.label(RichText::new("|").color(Color32::from_rgb(60, 70, 85)).size(11.0));
 
         // Tools Menu
         ui.menu_button("Tools", |ui| {
+            if ui.button("Transient Sensitivity Analysis").clicked() {
+                if let Some(a) = app.as_deref_mut() {
+                    a.sensitivity_dialog.is_open = true;
+                }
+                ui.close();
+            }
             if ui.button("SPICE Model Extraction Wizard").clicked() {
                 if let Some(a) = app.as_deref_mut() {
                     a.extraction_wizard.is_open = true;
@@ -340,6 +377,7 @@ fn render_top_frame_internal(
                 ui.close();
             }
         });
+        ui.label(RichText::new("|").color(Color32::from_rgb(60, 70, 85)).size(11.0));
 
         // Help Menu
         ui.menu_button("Help", |ui| {
@@ -403,9 +441,15 @@ fn render_top_frame_internal(
                 action = TopFrameAction::DownloadDesktopApp;
             }
         } else {
-            // Desktop Mode: Minimize, Maximize/Restore, Close buttons
+            // Desktop Mode: Minimize, Maximize/Restore, Close buttons (frameless minimalist style)
             // Minimize button "_"
-            let min_btn = egui::Button::new(RichText::new(" _ ").monospace().size(12.0));
+            let min_btn = egui::Button::new(
+                RichText::new(" _ ")
+                    .monospace()
+                    .size(12.0)
+                    .color(Color32::from_rgb(180, 195, 210)),
+            )
+            .frame(false);
             if ui.add(min_btn).clicked() {
                 ui.ctx().send_viewport_cmd(ViewportCommand::Minimized(true));
                 action = TopFrameAction::Minimize;
@@ -414,7 +458,13 @@ fn render_top_frame_internal(
             // Maximize/Restore button "[ ]"
             let is_maximized = ui.input(|i| i.viewport().maximized.unwrap_or(false));
             let max_label = if is_maximized { "[=]" } else { "[ ]" };
-            let max_btn = egui::Button::new(RichText::new(max_label).monospace().size(11.0));
+            let max_btn = egui::Button::new(
+                RichText::new(max_label)
+                    .monospace()
+                    .size(11.0)
+                    .color(Color32::from_rgb(180, 195, 210)),
+            )
+            .frame(false);
             if ui.add(max_btn).clicked() {
                 ui.ctx().send_viewport_cmd(ViewportCommand::Maximized(!is_maximized));
                 action = TopFrameAction::Maximize;
@@ -426,7 +476,8 @@ fn render_top_frame_internal(
                     .monospace()
                     .size(11.0)
                     .color(Color32::from_rgb(239, 68, 68)),
-            );
+            )
+            .frame(false);
             if ui.add(close_btn).clicked() {
                 ui.ctx().send_viewport_cmd(ViewportCommand::Close);
                 action = TopFrameAction::Close;

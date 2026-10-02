@@ -24,7 +24,7 @@ impl ComponentPalette {
     pub fn new() -> Self {
         let mut open_categories = HashMap::new();
         for &cat in ComponentCategory::all_categories() {
-            open_categories.insert(cat, true);
+            open_categories.insert(cat, false);
         }
         Self {
             search_query: String::new(),
@@ -124,7 +124,7 @@ impl ComponentPalette {
         } else {
             // Hierarchical Collapsible Drawer View
             for &cat in ComponentCategory::all_categories() {
-                let default_open = *self.open_categories.get(&cat).unwrap_or(&true);
+                let default_open = *self.open_categories.get(&cat).unwrap_or(&false);
                 let header = egui::CollapsingHeader::new(
                     RichText::new(cat.display_name())
                         .font(FontId::proportional(12.5))

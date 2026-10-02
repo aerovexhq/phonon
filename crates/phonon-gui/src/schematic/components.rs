@@ -828,6 +828,27 @@ impl ComponentKind {
             }
         }
     }
+
+    /// Returns default (name_offset, value_offset) in local world coordinates.
+    pub fn default_label_offsets(&self) -> (Vec2, Vec2) {
+        match self {
+            Self::VoltageSource
+            | Self::AcVoltageSource
+            | Self::CurrentSource
+            | Self::PulseGenerator => {
+                // Circle radius is 20.0 px. Offset to x=28.0 to guarantee zero collision with circle perimeter.
+                (Vec2::new(28.0, -10.0), Vec2::new(28.0, 8.0))
+            }
+            Self::Transformer | Self::SawIdt | Self::ParafermionicCavity => {
+                (Vec2::new(26.0, -12.0), Vec2::new(26.0, 8.0))
+            }
+            Self::OpAmp | Self::Inverter | Self::NandGate | Self::NorGate | Self::Mux2to1 => {
+                (Vec2::new(26.0, -12.0), Vec2::new(26.0, 8.0))
+            }
+            Self::Ground => (Vec2::new(16.0, 4.0), Vec2::new(16.0, 18.0)),
+            _ => (Vec2::new(20.0, -10.0), Vec2::new(20.0, 8.0)),
+        }
+    }
 }
 
 /// A visual component placed on the schematic canvas.
@@ -866,12 +887,63 @@ impl SchematicComponent {
         self
     }
 
+    /// Builder method setting the parameter value string.
+    pub fn with_value(mut self, value: impl Into<String>) -> Self {
+        self.value_str = value.into();
+        self
+    }
+
     /// Looks up a custom property value by key.
     pub fn get_property(&self, key: &str) -> Option<&str> {
         self.properties
             .iter()
             .find(|(k, _)| k == key)
             .map(|(_, v)| v.as_str())
+    }
+
+    /// Sets or updates a custom property key-value pair.
+    pub fn set_property(&mut self, key: impl Into<String>, value: impl Into<String>) {
+        let key_str = key.into();
+        let val_str = value.into();
+        if let Some(prop) = self.properties.iter_mut().find(|(k, _)| k == &key_str) {
+            prop.1 = val_str;
+        } else {
+            self.properties.push((key_str, val_str));
+        }
+    }
+
+    /// Returns (name_offset, value_offset) in local world coordinates.
+    pub fn label_offsets(&self) -> (Vec2, Vec2) {
+        let (def_name, def_val) = self.kind.default_label_offsets();
+        let name_x = self
+            .get_property("label_offset_x")
+            .and_then(|s| s.parse::<f32>().ok())
+            .unwrap_or(def_name.x);
+        let name_y = self
+            .get_property("label_offset_y")
+            .and_then(|s| s.parse::<f32>().ok())
+            .unwrap_or(def_name.y);
+        let val_x = self
+            .get_property("value_offset_x")
+            .and_then(|s| s.parse::<f32>().ok())
+            .unwrap_or(def_val.x);
+        let val_y = self
+            .get_property("value_offset_y")
+            .and_then(|s| s.parse::<f32>().ok())
+            .unwrap_or(def_val.y);
+        (Vec2::new(name_x, name_y), Vec2::new(val_x, val_y))
+    }
+
+    /// Sets custom label offset for the component name.
+    pub fn set_label_offset(&mut self, offset: Vec2) {
+        self.set_property("label_offset_x", format!("{:.1}", offset.x));
+        self.set_property("label_offset_y", format!("{:.1}", offset.y));
+    }
+
+    /// Sets custom label offset for the component value.
+    pub fn set_value_offset(&mut self, offset: Vec2) {
+        self.set_property("value_offset_x", format!("{:.1}", offset.x));
+        self.set_property("value_offset_y", format!("{:.1}", offset.y));
     }
 
     /// Rotates the component clockwise by 90 degrees.
@@ -949,8 +1021,9 @@ impl SchematicComponent {
         }
 
         // Draw labels (Name and Value)
-        let label_pos = canvas.world_to_screen(self.pos + Vec2::new(18.0, -10.0));
-        let val_pos = canvas.world_to_screen(self.pos + Vec2::new(18.0, 6.0));
+        let (name_offset, val_offset) = self.label_offsets();
+        let label_pos = canvas.world_to_screen(self.pos + name_offset);
+        let val_pos = canvas.world_to_screen(self.pos + val_offset);
         let font_size = 12.0 * canvas.zoom.clamp(0.8, 1.8);
 
         painter.text(

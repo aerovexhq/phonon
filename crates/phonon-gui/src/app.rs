@@ -13,12 +13,11 @@ use crate::schematic::{
 };
 use crate::thermal::{Colormap, ThermalOverlay};
 use crate::widgets::{
-    render_top_frame_with_app, ComponentPalette, DynamicsStatusBadge, TopFrameAction,
-    TopFrameConfig,
+    render_top_frame_with_app, ComponentPalette, SensitivityDialog, TopFrameAction, TopFrameConfig,
 };
 use eframe::{App, Frame};
 use egui::{
-    CentralPanel, Color32, FontId, Key, Panel, PointerButton, Pos2, Sense, Stroke, Ui, Vec2,
+    CentralPanel, Color32, FontId, Key, Panel, PointerButton, Pos2, RichText, Sense, Stroke, Ui, Vec2,
 };
 use phonon_core::{AutoSelectingDynamicsBackend, PhysicsDynamicsBackend};
 use phonon_solver::{solve_dc_non_linear, NewtonOptions};
@@ -93,6 +92,9 @@ pub struct PhononApp {
     /// SPICE model parameter extraction wizard modal dialog.
     pub extraction_wizard: ExtractionWizardDialog,
 
+    /// Non-linear transient sensitivity analysis and worst-case optimization dialog.
+    pub sensitivity_dialog: SensitivityDialog,
+
     // Drag tracking for selected component
     dragging_component: bool,
     drag_start_pos: Option<(usize, Pos2)>,
@@ -162,6 +164,7 @@ impl Default for PhononApp {
             erc_diagnostics: Vec::new(),
             show_erc_overlay: true,
             extraction_wizard: ExtractionWizardDialog::new(),
+            sensitivity_dialog: SensitivityDialog::new(),
             dragging_component: false,
             drag_start_pos: None,
             history: HistoryStack::with_capacity(500, 64),
@@ -511,6 +514,154 @@ impl PhononApp {
         self.sim_status.clear();
     }
 
+    /// Loads an interactive BJT Common Emitter Amplifier demo circuit.
+    pub fn load_bjt_amplifier_demo(&mut self) {
+        self.clear_canvas_state();
+        self.history.clear();
+
+        // 1. Components
+        // VCC: 12V Supply
+        let vcc = SchematicComponent::new(1, ComponentKind::VoltageSource, Pos2::new(420.0, 180.0), 1)
+            .with_value("12.0");
+        // RC: Collector Resistor 2.2k
+        let rc = SchematicComponent::new(2, ComponentKind::Resistor, Pos2::new(420.0, 280.0), 1)
+            .with_value("2.2k");
+        // Q1: BJT NPN Transistor at (400, 380) -> C=(420, 340), B=(380, 380), E=(420, 420)
+        let q1 = SchematicComponent::new(3, ComponentKind::BjtNpn, Pos2::new(400.0, 380.0), 1);
+        // RE: Emitter Resistor 470
+        let re = SchematicComponent::new(4, ComponentKind::Resistor, Pos2::new(420.0, 480.0), 2)
+            .with_value("470");
+        // RB1: Base Bias Upper 22k
+        let rb1 = SchematicComponent::new(5, ComponentKind::Resistor, Pos2::new(300.0, 280.0), 3)
+            .with_value("22k");
+        // RB2: Base Bias Lower 4.7k
+        let rb2 = SchematicComponent::new(6, ComponentKind::Resistor, Pos2::new(300.0, 480.0), 4)
+            .with_value("4.7k");
+        // VIN: AC Signal Source
+        let vin = SchematicComponent::new(7, ComponentKind::AcVoltageSource, Pos2::new(180.0, 380.0), 1)
+            .with_value("SIN(0 0.05 1k)");
+        // GND: Reference Ground
+        let gnd = SchematicComponent::new(8, ComponentKind::Ground, Pos2::new(300.0, 560.0), 1);
+
+        self.components = vec![vcc, rc, q1, re, rb1, rb2, vin, gnd];
+        self.next_comp_id = 9;
+
+        // 2. Wires
+        // VCC top to RC pin 1
+        let w1 = SchematicWire::manhattan_route(1, Pos2::new(420.0, 140.0), Pos2::new(420.0, 240.0));
+        // VCC top to RB1 pin 1
+        let w2 = SchematicWire::manhattan_route(2, Pos2::new(420.0, 140.0), Pos2::new(300.0, 240.0));
+        // RC pin 2 to Q1 Collector (420, 340)
+        let w3 = SchematicWire::manhattan_route(3, Pos2::new(420.0, 320.0), Pos2::new(420.0, 340.0));
+        // Q1 Emitter (420, 420) to RE pin 1
+        let w4 = SchematicWire::manhattan_route(4, Pos2::new(420.0, 420.0), Pos2::new(420.0, 440.0));
+        // VIN (+) to Q1 Base / RB divider node
+        let w5 = SchematicWire::manhattan_route(5, Pos2::new(180.0, 340.0), Pos2::new(380.0, 380.0));
+        let w6 = SchematicWire::manhattan_route(6, Pos2::new(300.0, 320.0), Pos2::new(380.0, 380.0));
+        let w7 = SchematicWire::manhattan_route(7, Pos2::new(380.0, 380.0), Pos2::new(300.0, 440.0));
+        // Bottom GND rail connections
+        let w8 = SchematicWire::manhattan_route(8, Pos2::new(300.0, 520.0), Pos2::new(300.0, 540.0));
+        let w9 = SchematicWire::manhattan_route(9, Pos2::new(420.0, 520.0), Pos2::new(300.0, 540.0));
+        let w10 = SchematicWire::manhattan_route(10, Pos2::new(180.0, 420.0), Pos2::new(300.0, 540.0));
+
+        self.wires = vec![w1, w2, w3, w4, w5, w6, w7, w8, w9, w10];
+        self.next_wire_id = 11;
+
+        self.sync_canvas_state();
+        self.run_erc();
+        self.sim_status.clear();
+    }
+
+    /// Loads an interactive CMOS Inverter Pair demo circuit.
+    pub fn load_cmos_inverter_demo(&mut self) {
+        self.clear_canvas_state();
+        self.history.clear();
+
+        // 1. Components
+        // VDD: 3.3V DC Supply
+        let vdd = SchematicComponent::new(1, ComponentKind::VoltageSource, Pos2::new(200.0, 240.0), 1)
+            .with_value("3.3");
+        // M1: PMOS Pull-up at (360, 260) -> D=(380, 220), G=(340, 260), S=(380, 300)
+        let m1 = SchematicComponent::new(2, ComponentKind::Pmos, Pos2::new(360.0, 260.0), 1);
+        // M2: NMOS Pull-down at (360, 380) -> D=(380, 340), G=(340, 380), S=(380, 420)
+        let m2 = SchematicComponent::new(3, ComponentKind::Nmos, Pos2::new(360.0, 380.0), 1);
+        // VIN: Pulse Generator Input
+        let vin = SchematicComponent::new(4, ComponentKind::PulseGenerator, Pos2::new(180.0, 380.0), 1)
+            .with_value("PULSE(0 3.3 0 1n 1n 10u 20u)");
+        // GND: Reference Ground
+        let gnd = SchematicComponent::new(5, ComponentKind::Ground, Pos2::new(380.0, 480.0), 1);
+
+        self.components = vec![vdd, m1, m2, vin, gnd];
+        self.next_comp_id = 6;
+
+        // 2. Wires
+        // VDD (+) to PMOS Drain
+        let w1 = SchematicWire::manhattan_route(1, Pos2::new(200.0, 200.0), Pos2::new(380.0, 220.0));
+        // PMOS Source (380, 300) to NMOS Drain (380, 340) -> Output Node
+        let w2 = SchematicWire::manhattan_route(2, Pos2::new(380.0, 300.0), Pos2::new(380.0, 340.0));
+        // VIN (+) to Common Gates
+        let w3 = SchematicWire::manhattan_route(3, Pos2::new(180.0, 340.0), Pos2::new(340.0, 260.0));
+        let w4 = SchematicWire::manhattan_route(4, Pos2::new(340.0, 260.0), Pos2::new(340.0, 380.0));
+        // NMOS Source to GND
+        let w5 = SchematicWire::manhattan_route(5, Pos2::new(380.0, 420.0), Pos2::new(380.0, 460.0));
+        // VDD (-) to GND
+        let w6 = SchematicWire::manhattan_route(6, Pos2::new(200.0, 280.0), Pos2::new(380.0, 460.0));
+        // VIN (-) to GND
+        let w7 = SchematicWire::manhattan_route(7, Pos2::new(180.0, 420.0), Pos2::new(380.0, 460.0));
+
+        self.wires = vec![w1, w2, w3, w4, w5, w6, w7];
+        self.next_wire_id = 8;
+
+        self.sync_canvas_state();
+        self.run_erc();
+        self.sim_status.clear();
+    }
+
+    /// Loads an interactive NMOS Switch demo circuit.
+    pub fn load_nmos_switch_demo(&mut self) {
+        self.clear_canvas_state();
+        self.history.clear();
+
+        // 1. Components
+        // VDD: 5V Supply
+        let vdd = SchematicComponent::new(1, ComponentKind::VoltageSource, Pos2::new(180.0, 240.0), 1)
+            .with_value("5.0");
+        // RLOAD: 1k Load Resistor
+        let rload = SchematicComponent::new(2, ComponentKind::Resistor, Pos2::new(380.0, 240.0), 1)
+            .with_value("1k");
+        // M1: NMOS Switch at (360, 360) -> D=(380, 320), G=(340, 360), S=(380, 400)
+        let m1 = SchematicComponent::new(3, ComponentKind::Nmos, Pos2::new(360.0, 360.0), 1);
+        // VGATE: Gate Pulse Generator
+        let vgate = SchematicComponent::new(4, ComponentKind::PulseGenerator, Pos2::new(220.0, 360.0), 1)
+            .with_value("PULSE(0 5 0 1n 1n 50u 100u)");
+        // GND: Reference Ground
+        let gnd = SchematicComponent::new(5, ComponentKind::Ground, Pos2::new(380.0, 460.0), 1);
+
+        self.components = vec![vdd, rload, m1, vgate, gnd];
+        self.next_comp_id = 6;
+
+        // 2. Wires
+        // VDD (+) to RLOAD pin 1
+        let w1 = SchematicWire::manhattan_route(1, Pos2::new(180.0, 200.0), Pos2::new(380.0, 200.0));
+        // RLOAD pin 2 to NMOS Drain (380, 320)
+        let w2 = SchematicWire::manhattan_route(2, Pos2::new(380.0, 280.0), Pos2::new(380.0, 320.0));
+        // VGATE (+) to NMOS Gate (340, 360)
+        let w3 = SchematicWire::manhattan_route(3, Pos2::new(220.0, 320.0), Pos2::new(340.0, 360.0));
+        // NMOS Source (380, 400) to GND
+        let w4 = SchematicWire::manhattan_route(4, Pos2::new(380.0, 400.0), Pos2::new(380.0, 440.0));
+        // VDD (-) to GND
+        let w5 = SchematicWire::manhattan_route(5, Pos2::new(180.0, 280.0), Pos2::new(380.0, 440.0));
+        // VGATE (-) to GND
+        let w6 = SchematicWire::manhattan_route(6, Pos2::new(220.0, 400.0), Pos2::new(380.0, 440.0));
+
+        self.wires = vec![w1, w2, w3, w4, w5, w6];
+        self.next_wire_id = 7;
+
+        self.sync_canvas_state();
+        self.run_erc();
+        self.sim_status.clear();
+    }
+
     /// Compiles schematic and runs the non-linear DC Operating Point (.OP) solver.
     pub fn run_dc_op(&mut self) {
         match compile_schematic(&self.components, &self.wires) {
@@ -632,6 +783,25 @@ impl PhononApp {
         self.oscilloscope.add_trace(trace_temp);
 
         self.sim_status = "Transient Solved: 3 traces, 3,600 samples".to_string();
+    }
+
+    /// Executes backward adjoint sensitivity analysis and worst-case optimization for the schematic circuit.
+    pub fn run_sensitivity_analysis(&mut self) {
+        match compile_schematic(&self.components, &self.wires) {
+            Err(err) => {
+                self.sim_status = format!("Compilation Error: {}", err);
+            }
+            Ok(compiled) => {
+                let opts = phonon_solver::TransientOptions::default();
+                self.sensitivity_dialog.run_analysis(
+                    &compiled.graph,
+                    &compiled.model_ctx,
+                    &opts,
+                );
+                self.sensitivity_dialog.is_open = true;
+                self.sim_status = self.sensitivity_dialog.status_msg.clone();
+            }
+        }
     }
 
     /// Deletes the currently selected component or wire.
@@ -976,6 +1146,27 @@ impl PhononApp {
                         .render_junction_badge(&painter, badge_pos, temp_c, &comp.name);
                 }
             }
+
+            // Sensitivity pin badges
+            if self.sensitivity_dialog.show_badges_on_canvas {
+                if let Some((_norm_sens, badge_color)) =
+                    self.sensitivity_dialog.get_badge_impact(&comp.name)
+                {
+                    for (_pin_name, pin_world) in comp.all_pins() {
+                        let pin_screen = self.canvas.world_to_screen(pin_world);
+                        painter.circle_filled(
+                            pin_screen,
+                            4.5 * self.canvas.zoom.clamp(0.8, 1.5),
+                            badge_color,
+                        );
+                        painter.circle_stroke(
+                            pin_screen,
+                            6.5 * self.canvas.zoom.clamp(0.8, 1.5),
+                            Stroke::new(1.5, badge_color),
+                        );
+                    }
+                }
+            }
         }
 
         // 7. Visual ERC Diagnostic Overlay
@@ -1044,6 +1235,15 @@ impl PhononApp {
             if ui.button("Load Diode Clipper").clicked() {
                 self.load_diode_clipper_demo();
             }
+            if ui.button("Load BJT CE Amplifier").clicked() {
+                self.load_bjt_amplifier_demo();
+            }
+            if ui.button("Load CMOS Inverter").clicked() {
+                self.load_cmos_inverter_demo();
+            }
+            if ui.button("Load NMOS Switch").clicked() {
+                self.load_nmos_switch_demo();
+            }
         });
     }
 
@@ -1055,53 +1255,126 @@ impl PhononApp {
             let mut do_rotate = false;
             let mut do_delete = false;
             let mut record_cmd = None;
+            let mut comp_name_for_telemetry = String::new();
+            let mut comp_pins_for_telemetry = Vec::new();
+
             if let Some(comp) = self.components.iter_mut().find(|c| c.id == cid) {
-                ui.group(|ui| {
-                    ui.label(format!("Component ID: {}", comp.id));
-                    ui.horizontal(|ui| {
-                        ui.label("Name:");
-                        ui.text_edit_singleline(&mut comp.name);
-                    });
-                    ui.horizontal(|ui| {
-                        ui.label("Value:");
-                        if self.editing_comp_value.as_ref().map(|(id, _)| *id) != Some(comp.id) {
-                            self.editing_comp_value = Some((comp.id, comp.value_str.clone()));
-                        }
-                        let val_resp = ui.text_edit_singleline(&mut comp.value_str);
-                        if val_resp.lost_focus() {
-                            if let Some((_, old_val)) = self.editing_comp_value.take() {
-                                if old_val != comp.value_str {
-                                    record_cmd = Some(CanvasCommand::ModifyComponentValue {
-                                        id: comp.id,
-                                        old_val,
-                                        new_val: comp.value_str.clone(),
-                                    });
-                                }
+                comp_name_for_telemetry = comp.name.clone();
+                comp_pins_for_telemetry = comp.all_pins();
+
+                // 1. Prominent Header: Component Name and Kind
+                ui.horizontal(|ui| {
+                    ui.label(
+                        RichText::new(&comp.name)
+                            .strong()
+                            .size(16.0)
+                            .color(Color32::from_rgb(100, 200, 255)),
+                    );
+                    ui.label(
+                        RichText::new(format!("({})", comp.kind.display_name()))
+                            .size(12.0)
+                            .color(Color32::from_rgb(148, 163, 184)),
+                    );
+                });
+                ui.separator();
+
+                // 2. Unboxed Properties: ID, Name, Value, Rotation
+                ui.label(format!("Component ID: {}", comp.id));
+                ui.horizontal(|ui| {
+                    ui.label("Name:");
+                    ui.text_edit_singleline(&mut comp.name);
+                });
+                ui.horizontal(|ui| {
+                    ui.label("Value:");
+                    if self.editing_comp_value.as_ref().map(|(id, _)| *id) != Some(comp.id) {
+                        self.editing_comp_value = Some((comp.id, comp.value_str.clone()));
+                    }
+                    let val_resp = ui.text_edit_singleline(&mut comp.value_str);
+                    if val_resp.lost_focus() {
+                        if let Some((_, old_val)) = self.editing_comp_value.take() {
+                            if old_val != comp.value_str {
+                                record_cmd = Some(CanvasCommand::ModifyComponentValue {
+                                    id: comp.id,
+                                    old_val,
+                                    new_val: comp.value_str.clone(),
+                                });
                             }
                         }
-                    });
-                    ui.label(format!("Rotation: {} deg", (comp.rotation % 4) * 90));
+                    }
+                });
+                ui.label(format!("Rotation: {} deg", (comp.rotation % 4) * 90));
 
-                    ui.horizontal(|ui| {
-                        if ui.button("Rotate 90 deg (R)").clicked() {
-                            do_rotate = true;
-                        }
-                    });
-
-                    ui.separator();
-                    ui.label("Pin Terminals:");
-                    for (pin_name, p_world) in comp.all_pins() {
-                        ui.monospace(format!(
-                            "Pin {}: ({:.0}, {:.0})",
-                            pin_name, p_world.x, p_world.y
-                        ));
+                ui.horizontal(|ui| {
+                    if ui.button("Rotate 90 deg (R)").clicked() {
+                        do_rotate = true;
                     }
                 });
 
+                // 3. Label Position Controls (Presets to prevent collision with shapes)
+                ui.separator();
+                ui.label("Label Position Presets:");
+                ui.horizontal(|ui| {
+                    if ui.button("Right").clicked() {
+                        comp.set_label_offset(Vec2::new(28.0, -10.0));
+                        comp.set_value_offset(Vec2::new(28.0, 8.0));
+                    }
+                    if ui.button("Left").clicked() {
+                        comp.set_label_offset(Vec2::new(-60.0, -10.0));
+                        comp.set_value_offset(Vec2::new(-60.0, 8.0));
+                    }
+                    if ui.button("Top").clicked() {
+                        comp.set_label_offset(Vec2::new(-16.0, -42.0));
+                        comp.set_value_offset(Vec2::new(-16.0, -28.0));
+                    }
+                    if ui.button("Bottom").clicked() {
+                        comp.set_label_offset(Vec2::new(-16.0, 28.0));
+                        comp.set_value_offset(Vec2::new(-16.0, 42.0));
+                    }
+                });
+
+                // 4. Pin Terminals
+                ui.separator();
+                ui.label("Pin Terminals:");
+                for (pin_name, p_world) in comp.all_pins() {
+                    ui.monospace(format!(
+                        "Pin {}: ({:.0}, {:.0})",
+                        pin_name, p_world.x, p_world.y
+                    ));
+                }
+
+                ui.separator();
                 if ui.button("Delete Component").clicked() {
                     do_delete = true;
                 }
             }
+
+            // 5. Per-component Operating Telemetry (DC node voltages & temperature)
+            if !comp_name_for_telemetry.is_empty() {
+                ui.separator();
+                ui.heading("Operating Telemetry");
+
+                if let Some(&temp_c) = self.component_temperatures.get(&comp_name_for_telemetry) {
+                    ui.monospace(format!("Junction Temp: {:.1} °C", temp_c));
+                }
+
+                if let Some(compiled) = &self.compiled_circuit {
+                    let mut found_pins = false;
+                    for (pin_name, _) in &comp_pins_for_telemetry {
+                        if let Some(net) = compiled.pin_to_net.get(&(comp_name_for_telemetry.clone(), pin_name.to_string())) {
+                            if let Some(&volts) = self.dc_node_voltages.get(net) {
+                                ui.monospace(format!("Pin {} (net {}): {:.4} V", pin_name, net, volts));
+                                found_pins = true;
+                            }
+                        }
+                    }
+                    if !found_pins {
+                        ui.label("No active DC voltages for pins");
+                    }
+                } else if !self.dc_node_voltages.is_empty() {
+                    ui.label("Run DC (.OP) to view terminal voltages");
+                }
+            }
+
             if let Some(cmd) = record_cmd {
                 self.history.record(cmd);
             }
@@ -1114,12 +1387,10 @@ impl PhononApp {
         } else if let Some(wid) = self.selected_wire_id {
             let mut do_delete_wire = false;
             if let Some(wire) = self.wires.iter().find(|w| w.id == wid) {
-                ui.group(|ui| {
-                    ui.label(format!("Wire ID: {}", wire.id));
-                    ui.label(format!("Segments: {}", wire.segments.len()));
-                    let total_len: f32 = wire.segments.iter().map(|s| s.length()).sum();
-                    ui.label(format!("Total Length: {:.1} px", total_len));
-                });
+                ui.label(format!("Wire ID: {}", wire.id));
+                ui.label(format!("Segments: {}", wire.segments.len()));
+                let total_len: f32 = wire.segments.iter().map(|s| s.length()).sum();
+                ui.label(format!("Total Length: {:.1} px", total_len));
                 if ui.button("Delete Wire").clicked() {
                     do_delete_wire = true;
                 }
@@ -1130,14 +1401,12 @@ impl PhononApp {
         } else if let Some(prefix) = self.selected_tool.place_kind().map(|k| k.prefix()) {
             let rot_deg = (self.placement_rotation % 4) * 90;
             let mut do_rotate = false;
-            ui.group(|ui| {
-                ui.label(format!("Placing: {}", prefix));
-                ui.label(format!("Rotation: {} deg", rot_deg));
-                ui.horizontal(|ui| {
-                    if ui.button("Rotate 90 deg (R)").clicked() {
-                        do_rotate = true;
-                    }
-                });
+            ui.label(format!("Placing: {}", prefix));
+            ui.label(format!("Rotation: {} deg", rot_deg));
+            ui.horizontal(|ui| {
+                if ui.button("Rotate 90 deg (R)").clicked() {
+                    do_rotate = true;
+                }
             });
             if do_rotate {
                 self.rotate_active();
@@ -1147,22 +1416,8 @@ impl PhononApp {
             ui.separator();
             ui.label(format!("Total Components: {}", self.components.len()));
             ui.label(format!("Total Wires: {}", self.wires.len()));
-
-            if !self.dc_node_voltages.is_empty() {
-                ui.separator();
-                ui.heading("DC Node Voltages");
-                for (node, &volts) in &self.dc_node_voltages {
-                    ui.monospace(format!("{}: {:.4} V", node, volts));
-                }
-            }
-
-            if !self.component_temperatures.is_empty() {
-                ui.separator();
-                ui.heading("Component Temperatures");
-                for (comp_name, &temp_c) in &self.component_temperatures {
-                    ui.monospace(format!("{}: {:.1} °C", comp_name, temp_c));
-                }
-            }
+            ui.separator();
+            ui.label("Click any component to inspect terminal voltages and operating temperature.");
         }
 
         ui.separator();
@@ -1232,9 +1487,6 @@ impl PhononApp {
                 if ui.button("Clear Canvas").clicked() {
                     self.clear_all();
                 }
-
-                ui.separator();
-                DynamicsStatusBadge::new().ui(ui, self.dynamics_backend.as_ref());
             });
         });
 
@@ -1420,6 +1672,13 @@ impl PhononApp {
 
         // 8. SPICE Model Parameter Extraction Wizard Dialog
         self.extraction_wizard.ui(ui.ctx());
+
+        // 9. Non-Linear Transient Sensitivity Dialog
+        if self.sensitivity_dialog.run_requested {
+            self.sensitivity_dialog.run_requested = false;
+            self.run_sensitivity_analysis();
+        }
+        self.sensitivity_dialog.ui(ui.ctx());
     }
 }
 
