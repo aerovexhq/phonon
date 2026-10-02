@@ -251,6 +251,7 @@ pub mod floquet_parafermion_processor;
 pub mod moore_read_logic_crossbar;
 pub mod chiral_skyrmion_magnon_polaron;
 pub mod floquet_exceptional_ring_sensor;
+pub mod port_hamiltonian;
 pub mod radiation;
 pub mod relay;
 pub mod sensors;
@@ -1060,3 +1061,4 @@ pub use extraction::{
     generate_bsim4_model_deck, validate_bsim4_model_deck, Bsim4TargetParams, ExtractionError,
     FittingResult, GaOptimizer, MeasuredCurve, MeasurementPoint,
 };
+pub use port_hamiltonian::*;

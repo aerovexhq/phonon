@@ -242,6 +242,7 @@ pub mod floquet_parafermion_processor;
 pub mod moore_read_logic_crossbar;
 pub mod chiral_skyrmion_magnon_polaron;
 pub mod floquet_exceptional_ring_sensor;
+pub mod port_hamiltonian;
 pub mod relay;
 pub mod rf;
 pub mod sensors;
@@ -851,3 +852,4 @@ pub use wakefield::{
     TrackingSummary, WakefieldAccelerator, ELECTRON_MASS_KG, ELEMENTARY_CHARGE, SPEED_OF_LIGHT,
     VACUUM_PERMITTIVITY,
 };
+pub use port_hamiltonian::*;
