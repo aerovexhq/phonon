@@ -7,7 +7,7 @@
 
 use crate::schematic::compile_schematic;
 use crate::widgets::icon::render_phonon_icon;
-use egui::{vec2, Color32, FontId, OpenUrl, RichText, Sense, Stroke, Ui, ViewportCommand};
+use egui::{pos2, vec2, Color32, FontId, OpenUrl, Rect, RichText, Sense, Stroke, StrokeKind, Ui, ViewportCommand};
 
 /// Canonical URL for downloading the native Phonon desktop application.
 pub const PHONON_RELEASES_URL: &str = "https://github.com/aerovexhq/phonon/releases/latest";
@@ -441,44 +441,90 @@ fn render_top_frame_internal(
                 action = TopFrameAction::DownloadDesktopApp;
             }
         } else {
-            // Desktop Mode: Minimize, Maximize/Restore, Close buttons (frameless minimalist style)
-            // Minimize button "_"
-            let min_btn = egui::Button::new(
-                RichText::new(" _ ")
-                    .monospace()
-                    .size(12.0)
-                    .color(Color32::from_rgb(180, 195, 210)),
-            )
-            .frame(false);
-            if ui.add(min_btn).clicked() {
+            // Desktop Mode: Modern Vector Window Controls (Minimize, Maximize/Restore, Close)
+            let btn_size = vec2(26.0, 22.0);
+
+            // 1. Minimize Vector Icon
+            let (min_rect, min_resp) = ui.allocate_exact_size(btn_size, Sense::click());
+            if min_resp.hovered() {
+                ui.painter().rect_filled(min_rect, 2.0, Color32::from_rgb(30, 41, 59));
+            }
+            let min_color = if min_resp.hovered() {
+                Color32::from_rgb(248, 250, 252)
+            } else {
+                Color32::from_rgb(148, 163, 184)
+            };
+            let min_c = min_rect.center();
+            ui.painter().line_segment(
+                [pos2(min_c.x - 4.5, min_c.y + 3.0), pos2(min_c.x + 4.5, min_c.y + 3.0)],
+                Stroke::new(1.3, min_color),
+            );
+            if min_resp.clicked() {
                 ui.ctx().send_viewport_cmd(ViewportCommand::Minimized(true));
                 action = TopFrameAction::Minimize;
             }
 
-            // Maximize/Restore button "[ ]"
+            // 2. Maximize / Restore Vector Icon
             let is_maximized = ui.input(|i| i.viewport().maximized.unwrap_or(false));
-            let max_label = if is_maximized { "[=]" } else { "[ ]" };
-            let max_btn = egui::Button::new(
-                RichText::new(max_label)
-                    .monospace()
-                    .size(11.0)
-                    .color(Color32::from_rgb(180, 195, 210)),
-            )
-            .frame(false);
-            if ui.add(max_btn).clicked() {
+            let (max_rect, max_resp) = ui.allocate_exact_size(btn_size, Sense::click());
+            if max_resp.hovered() {
+                ui.painter().rect_filled(max_rect, 2.0, Color32::from_rgb(30, 41, 59));
+            }
+            let max_color = if max_resp.hovered() {
+                Color32::from_rgb(248, 250, 252)
+            } else {
+                Color32::from_rgb(148, 163, 184)
+            };
+            let max_c = max_rect.center();
+            if is_maximized {
+                // Restore icon: two overlapping boxes
+                ui.painter().rect_stroke(
+                    Rect::from_min_size(pos2(max_c.x - 2.5, max_c.y - 4.5), vec2(7.0, 7.0)),
+                    1.0,
+                    Stroke::new(1.1, max_color),
+                    StrokeKind::Middle,
+                );
+                ui.painter().rect_stroke(
+                    Rect::from_min_size(pos2(max_c.x - 4.5, max_c.y - 2.5), vec2(7.0, 7.0)),
+                    1.0,
+                    Stroke::new(1.1, max_color),
+                    StrokeKind::Middle,
+                );
+            } else {
+                // Maximize icon: single box
+                ui.painter().rect_stroke(
+                    Rect::from_center_size(max_c, vec2(8.5, 8.5)),
+                    1.0,
+                    Stroke::new(1.2, max_color),
+                    StrokeKind::Middle,
+                );
+            }
+            if max_resp.clicked() {
                 ui.ctx().send_viewport_cmd(ViewportCommand::Maximized(!is_maximized));
                 action = TopFrameAction::Maximize;
             }
 
-            // Close button "X"
-            let close_btn = egui::Button::new(
-                RichText::new(" X ")
-                    .monospace()
-                    .size(11.0)
-                    .color(Color32::from_rgb(239, 68, 68)),
-            )
-            .frame(false);
-            if ui.add(close_btn).clicked() {
+            // 3. Close Vector Icon
+            let (close_rect, close_resp) = ui.allocate_exact_size(btn_size, Sense::click());
+            if close_resp.hovered() {
+                ui.painter().rect_filled(close_rect, 2.0, Color32::from_rgb(225, 29, 72));
+            }
+            let close_color = if close_resp.hovered() {
+                Color32::from_rgb(255, 255, 255)
+            } else {
+                Color32::from_rgb(239, 68, 68)
+            };
+            let close_c = close_rect.center();
+            let d = 3.5;
+            ui.painter().line_segment(
+                [pos2(close_c.x - d, close_c.y - d), pos2(close_c.x + d, close_c.y + d)],
+                Stroke::new(1.3, close_color),
+            );
+            ui.painter().line_segment(
+                [pos2(close_c.x - d, close_c.y + d), pos2(close_c.x + d, close_c.y - d)],
+                Stroke::new(1.3, close_color),
+            );
+            if close_resp.clicked() {
                 ui.ctx().send_viewport_cmd(ViewportCommand::Close);
                 action = TopFrameAction::Close;
             }

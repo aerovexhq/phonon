@@ -1,0 +1,318 @@
+/* ==============================================================================
+ * Phonon Universal Multi-Scale Visual Studio - Central Theme & Styling Engine
+ * All visual colors, surface depths, borders, and typography variables are
+ * consolidated here for seamless runtime switching and user theme customization.
+ * ============================================================================== */
+
+:root {
+  /* Default Theme: Deep Space */
+  --bg-app: #0b0f19;
+  --bg-canvas: #0b0f19;
+  --bg-header: #090d16;
+  --bg-toolbar: #101623;
+  --bg-panel: #0d111a;
+  --bg-panel-subtle: #090d16;
+  --bg-dropdown: #111827;
+  --bg-hover: #1e293b;
+  --bg-active: #253349;
+  --bg-input: #131b2c;
+  --bg-modal-backdrop: rgba(3, 7, 18, 0.75);
+  --bg-modal: #0d121f;
+
+  /* Borders & Dividers */
+  --border-color: #1a2233;
+  --border-subtle: #131b2c;
+  --border-focus: #38bdf8;
+  --border-button: #334155;
+
+  /* Text Colors */
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-muted: #64748b;
+  --text-inverse: #0f172a;
+
+  /* Interactive & State Accents */
+  --accent-cyan: #38bdf8;
+  --accent-blue: #0284c7;
+  --accent-green: #22c55e;
+  --accent-amber: #f59e0b;
+  --accent-rose: #f43f5e;
+  --accent-purple: #a855f7;
+
+  /* Canvas Visuals */
+  --canvas-grid-dot: #1e293b;
+  --canvas-wire: #22c55e;
+  --canvas-wire-terminal: #38bdf8;
+  --canvas-comp-stroke: #94a3b8;
+  --canvas-comp-fill: #0f172a;
+  --canvas-selection-box: #0284c7;
+
+  /* Scope Visuals */
+  --scope-bg: #070a10;
+  --scope-grid: #131b2c;
+  --scope-ch1: #38bdf8;
+  --scope-ch2: #22c55e;
+
+  /* Typography Scales */
+  --font-base: 12px;
+  --font-xs: 10px;
+  --font-sm: 11px;
+  --font-md: 12px;
+  --font-lg: 13px;
+  --font-xl: 15px;
+  --font-title: 16px;
+}
+
+/* ------------------------------------------------------------------------------
+   1. Theme: OLED Obsidian (Pure Blacks & Electric High Contrast)
+   ------------------------------------------------------------------------------ */
+body.theme-obsidian {
+  --bg-app: #000000;
+  --bg-canvas: #000000;
+  --bg-header: #050505;
+  --bg-toolbar: #080808;
+  --bg-panel: #050505;
+  --bg-panel-subtle: #000000;
+  --bg-dropdown: #0c0c0c;
+  --bg-hover: #171717;
+  --bg-active: #262626;
+  --bg-input: #0f0f0f;
+  --bg-modal-backdrop: rgba(0, 0, 0, 0.85);
+  --bg-modal: #080808;
+
+  --border-color: #202020;
+  --border-subtle: #141414;
+  --border-button: #2a2a2a;
+
+  --text-primary: #ffffff;
+  --text-secondary: #e5e5e5;
+  --text-muted: #737373;
+
+  --canvas-grid-dot: #242424;
+  --canvas-wire: #00ff66;
+  --canvas-wire-terminal: #00e5ff;
+  --canvas-comp-stroke: #a3a3a3;
+  --canvas-comp-fill: #000000;
+
+  --scope-bg: #000000;
+  --scope-grid: #181818;
+  --scope-ch1: #00e5ff;
+  --scope-ch2: #00ff66;
+}
+
+/* ------------------------------------------------------------------------------
+   2. Theme: Nordic Polar (Slate Frost & Crisp Cyan)
+   ------------------------------------------------------------------------------ */
+body.theme-nord {
+  --bg-app: #242933;
+  --bg-canvas: #242933;
+  --bg-header: #1e222a;
+  --bg-toolbar: #292e39;
+  --bg-panel: #20242c;
+  --bg-panel-subtle: #1c2027;
+  --bg-dropdown: #2e3440;
+  --bg-hover: #3b4252;
+  --bg-active: #434c5e;
+  --bg-input: #2e3440;
+  --bg-modal-backdrop: rgba(15, 17, 21, 0.8);
+  --bg-modal: #242933;
+
+  --border-color: #3b4252;
+  --border-subtle: #2e3440;
+  --border-button: #4c566a;
+
+  --text-primary: #eceff4;
+  --text-secondary: #e5e9f0;
+  --text-muted: #7b88a1;
+
+  --accent-cyan: #88c0d0;
+  --accent-blue: #81a1c1;
+  --accent-green: #a3be8c;
+  --accent-amber: #ebcb8b;
+  --accent-rose: #bf616a;
+
+  --canvas-grid-dot: #3b4252;
+  --canvas-wire: #a3be8c;
+  --canvas-wire-terminal: #88c0d0;
+  --canvas-comp-stroke: #d8dee9;
+  --canvas-comp-fill: #2e3440;
+
+  --scope-bg: #1c2027;
+  --scope-grid: #2e3440;
+  --scope-ch1: #88c0d0;
+  --scope-ch2: #a3be8c;
+}
+
+/* ------------------------------------------------------------------------------
+   3. Theme: Monokai Pro (Dark Charcoal with Vibrant High-Energy Pastels)
+   ------------------------------------------------------------------------------ */
+body.theme-monokai {
+  --bg-app: #221f22;
+  --bg-canvas: #221f22;
+  --bg-header: #19181a;
+  --bg-toolbar: #272428;
+  --bg-panel: #1d1b1e;
+  --bg-panel-subtle: #181618;
+  --bg-dropdown: #2d2a2e;
+  --bg-hover: #403e41;
+  --bg-active: #4c494d;
+  --bg-input: #2d2a2e;
+  --bg-modal-backdrop: rgba(10, 9, 10, 0.85);
+  --bg-modal: #221f22;
+
+  --border-color: #383539;
+  --border-subtle: #2a272b;
+  --border-button: #4a474c;
+
+  --text-primary: #fcfcfa;
+  --text-secondary: #c1c0c0;
+  --text-muted: #727072;
+
+  --accent-cyan: #78dce8;
+  --accent-blue: #78dce8;
+  --accent-green: #a9dc76;
+  --accent-amber: #ffd866;
+  --accent-rose: #ff6188;
+  --accent-purple: #ab9df2;
+
+  --canvas-grid-dot: #383539;
+  --canvas-wire: #a9dc76;
+  --canvas-wire-terminal: #78dce8;
+  --canvas-comp-stroke: #c1c0c0;
+  --canvas-comp-fill: #2d2a2e;
+
+  --scope-bg: #181618;
+  --scope-grid: #2e2b2f;
+  --scope-ch1: #78dce8;
+  --scope-ch2: #a9dc76;
+}
+
+/* ------------------------------------------------------------------------------
+   4. Theme: Solarized Dark
+   ------------------------------------------------------------------------------ */
+body.theme-solarized {
+  --bg-app: #002b36;
+  --bg-canvas: #002b36;
+  --bg-header: #00212b;
+  --bg-toolbar: #073642;
+  --bg-panel: #002833;
+  --bg-panel-subtle: #00212b;
+  --bg-dropdown: #073642;
+  --bg-hover: #0a4655;
+  --bg-active: #0e5668;
+  --bg-input: #073642;
+  --bg-modal-backdrop: rgba(0, 15, 20, 0.8);
+  --bg-modal: #002b36;
+
+  --border-color: #0e5668;
+  --border-subtle: #093c49;
+  --border-button: #136a80;
+
+  --text-primary: #93a1a1;
+  --text-secondary: #839496;
+  --text-muted: #586e75;
+
+  --accent-cyan: #2aa198;
+  --accent-blue: #268bd2;
+  --accent-green: #859900;
+  --accent-amber: #b58900;
+  --accent-rose: #dc322f;
+
+  --canvas-grid-dot: #073642;
+  --canvas-wire: #859900;
+  --canvas-wire-terminal: #2aa198;
+  --canvas-comp-stroke: #839496;
+  --canvas-comp-fill: #073642;
+
+  --scope-bg: #001f27;
+  --scope-grid: #073642;
+  --scope-ch1: #2aa198;
+  --scope-ch2: #859900;
+}
+
+/* ------------------------------------------------------------------------------
+   5. Theme: Clean Scientific Light
+   ------------------------------------------------------------------------------ */
+body.theme-light-lab {
+  --bg-app: #f8fafc;
+  --bg-canvas: #f8fafc;
+  --bg-header: #f1f5f9;
+  --bg-toolbar: #e2e8f0;
+  --bg-panel: #ffffff;
+  --bg-panel-subtle: #f8fafc;
+  --bg-dropdown: #ffffff;
+  --bg-hover: #e2e8f0;
+  --bg-active: #cbd5e1;
+  --bg-input: #f1f5f9;
+  --bg-modal-backdrop: rgba(15, 23, 42, 0.4);
+  --bg-modal: #ffffff;
+
+  --border-color: #cbd5e1;
+  --border-subtle: #e2e8f0;
+  --border-button: #94a3b8;
+
+  --text-primary: #0f172a;
+  --text-secondary: #334155;
+  --text-muted: #64748b;
+  --text-inverse: #f8fafc;
+
+  --accent-cyan: #0284c7;
+  --accent-blue: #2563eb;
+  --accent-green: #16a34a;
+  --accent-amber: #d97706;
+  --accent-rose: #e11d48;
+
+  --canvas-grid-dot: #cbd5e1;
+  --canvas-wire: #16a34a;
+  --canvas-wire-terminal: #0284c7;
+  --canvas-comp-stroke: #334155;
+  --canvas-comp-fill: #ffffff;
+
+  --scope-bg: #0f172a;
+  --scope-grid: #1e293b;
+  --scope-ch1: #38bdf8;
+  --scope-ch2: #22c55e;
+}
+
+/* ------------------------------------------------------------------------------
+   Font Size Scaling Multipliers
+   ------------------------------------------------------------------------------ */
+body.font-size-sm {
+  --font-base: 11px;
+  --font-xs: 9px;
+  --font-sm: 10px;
+  --font-md: 11px;
+  --font-lg: 12px;
+  --font-xl: 13.5px;
+  --font-title: 14.5px;
+}
+
+body.font-size-md {
+  --font-base: 12px;
+  --font-xs: 10px;
+  --font-sm: 11px;
+  --font-md: 12px;
+  --font-lg: 13px;
+  --font-xl: 15px;
+  --font-title: 16px;
+}
+
+body.font-size-lg {
+  --font-base: 13.5px;
+  --font-xs: 11px;
+  --font-sm: 12px;
+  --font-md: 13.5px;
+  --font-lg: 14.5px;
+  --font-xl: 16.5px;
+  --font-title: 18px;
+}
+
+body.font-size-xl {
+  --font-base: 15px;
+  --font-xs: 12px;
+  --font-sm: 13px;
+  --font-md: 15px;
+  --font-lg: 16px;
+  --font-xl: 18px;
+  --font-title: 20px;
+}

@@ -24,14 +24,6 @@ The ultimate destination for the Phonon platform is an autonomous, multi-scale, 
 
 ## Future
 
-### Phase 317: Phonon Studio Industry-Grade Interactive Component Symbol & Shape Editor, Visual Macro-Model Designer & UI-Isolated Symbol Architecture
-Formulate custom component shape and symbol editor with strict UI-level decoupling to avoid simulation RAM overhead:
-1. Strict UI-Level Symbol Isolation (Zero Simulation Overhead): Shape definitions, 2D vector primitives, bezier splines, stroke colors, and visual pin decorations exist strictly within the UI crate (`crates/phonon-gui`) and `.phn` project metadata. The core mathematical simulation kernel (`crates/phonon-solver`, `crates/phonon-models`) interacts exclusively with pure sparse mathematical netlists, pin indices, and device physics matrices with zero GUI payload or memory thrashing.
-2. Custom Component Symbol Editor (Logisim/KiCad-Inspired CAD Studio): Provide a rich, industry-grade vector symbol designer allowing users to construct component outlines (rectangles, circles, custom polygons, IEEE logic gate arcs, text annotations).
-3. Pin Anchor & Terminal Mapping Engine: Interactive placement of terminal pins with directionality (Input, Output, Bidirectional, Passive) and net binding to underlying subcircuits.
-4. Interactive Text Label Positioner: Allow visual dragging, rotation, and anchor presets of designator ($R_1$, $V_1$) and value labels relative to the component center, guaranteeing zero visual collisions.
-5. Macro-Model Library Ingestion: Save custom symbols to user library and instantiate them seamlessly on the main canvas with full SPICE compilation support.
-
 ### Phase 318: Phonon Universal Multi-Scale Visual Studio High-Throughput Industry-Grade Simulation Kernel Optimizations & Cache-Locality Engine
 Execute industry-grade numerical optimizations to maximize simulation execution speed:
 1. Zero-Allocation Sparse MNA Solver: Pre-allocate compressed sparse column (CSC) symbolic pattern; perform in-place LU factorizations using static scratch buffers without dynamic heap allocations during transient inner-loop solves.
@@ -52,18 +44,31 @@ Execute periodic milestone verification across all 6 realism tiers (Tiers 0-6) v
 
 ## Current
 
-### Phase 316: Phonon Studio Sleek Minimalist UI Overhaul, Inspector Telemetry Integration, Collapsed Palette & Semiconductor Demos
-Execute visual CAD interface refinement, inspector telemetry integration, and low-level component demos:
-1. Sleek Frameless Top Menu & Window Controls: Replace repetitive gray box buttons in the top frame with clean flat text buttons separated by subtle `|` glyphs; replace window control boxes with frameless minimalist icons with hover-only feedback.
-2. Uncluttered Action Bar & Remove Dynamics Badge: Eliminate `[REFERENCE DYNAMICS ACTIVE]` and external link visual noise; redesign Run DC, Run Transient, Export, and Clear buttons into modern flat minimalist controls.
-3. Canvas Text Collision Fix & Dynamic Label Offsets: Fix label position collision on voltage sources (offset text past the circle perimeter), and enable component design definitions to specify customized (x, y) offsets for designators and values.
-4. Inspector Redesign & Per-Component DC/Thermal Telemetry: Remove the clunky bordered box in the inspector; add prominent component title (e.g., `V1 (DC Voltage Source)`); display per-component real-time telemetry (operating voltage $V$, branch current $I$, power dissipation $P$, dynamic temperature $T$) when a component is selected.
-5. Collapsed Palette Drawers by Default: Configure the 7 component category drawers to start collapsed by default for a clean, focused workspace.
-6. Low-Level Semiconductor Demos: Add built-in demos for fundamental semiconductor circuits (BJT Common Emitter Amplifier, CMOS Inverter Pair, NMOS Switch) with pre-wired components and verified operating points.
+### Phase 317: Phonon Studio Industry-Grade Interactive Component Symbol & Shape Editor, Visual Macro-Model Designer & UI-Isolated Symbol Architecture
+Formulate custom component shape and symbol editor with strict UI-level decoupling to avoid simulation RAM overhead:
+1. Strict UI-Level Symbol Isolation (Zero Simulation Overhead): Shape definitions, 2D vector primitives, bezier splines, stroke colors, and visual pin decorations exist strictly within the UI crate (`crates/phonon-gui`) and `.phn` project metadata. The core mathematical simulation kernel (`crates/phonon-solver`, `crates/phonon-models`) interacts exclusively with pure sparse mathematical netlists, pin indices, and device physics matrices with zero GUI payload or memory thrashing.
+2. Custom Component Symbol Editor (Logisim/KiCad-Inspired CAD Studio): Provide a rich, industry-grade vector symbol designer allowing users to construct component outlines (rectangles, circles, custom polygons, IEEE logic gate arcs, text annotations).
+3. Pin Anchor & Terminal Mapping Engine: Interactive placement of terminal pins with directionality (Input, Output, Bidirectional, Passive) and net binding to underlying subcircuits.
+4. Interactive Text Label Positioner: Allow visual dragging, rotation, and anchor presets of designator ($R_1$, $V_1$) and value labels relative to the component center, guaranteeing zero visual collisions.
+5. Macro-Model Library Ingestion: Save custom symbols to user library and instantiate them seamlessly on the main canvas with full SPICE compilation support.
 
 ---
 
 ## Done
+
+### Phase 316: Phonon Studio Sleek Minimalist UI Overhaul, Inspector Telemetry Integration, Collapsed Palette, Theme System & Release Automation
+Executed visual CAD interface refinement, inspector telemetry integration, theme engine, command palette, and continuous release automation:
+1. Sleek Frameless Top Menu & Window Controls: Replaced repetitive gray box buttons in top frame with clean flat text buttons separated by subtle `|` glyphs; replaced window control boxes with painted vector icons (minimize line, maximize/restore rectangle, close diagonal cross) with hover-only feedback.
+2. Uncluttered Action Bar & Dynamics Badge Removal: Eliminated `[REFERENCE DYNAMICS ACTIVE]` and external link visual noise; redesigned Run DC, Run Transient, Export, and Clear buttons into modern flat minimalist controls with keybind tooltips.
+3. Canvas Text Collision Fix & Dynamic Label Offsets: Fixed label collisions on voltage sources and enabled component definitions to specify customizable offset positions for designators and values.
+4. Inspector Redesign & Per-Component DC/Thermal Telemetry: Removed clunky bordered boxes in inspector; added prominent component titles (e.g., `V1 (DC Voltage Source)`); displays per-component real-time telemetry (operating voltage $V$, branch current $I$, power dissipation $P$, dynamic temperature $T$) when a component is clicked.
+5. Centralized Theme System & Single CSS Variable Architecture: Declared all color variables in `theme.css`. Implemented 6 built-in themes (Deep Space, OLED Obsidian, Nordic Polar, Monokai Pro, Solarized Dark, Clean Scientific Light) with custom user theme creation and dynamic switching.
+6. Componentized Settings Modal & Command Palette: Added 90%x70% Settings popup modal (`File > Settings` / `Ctrl+,`) with categories (General, Appearance, Keybindings, Simulation), UI/canvas font size selector, and full keybinding customization. Added fuzzy-searchable Command Palette (`Ctrl+K`).
+7. Protected Actions & Toast Notification Engine: Guarded canvas clearing, demo circuit loading, and window close with confirmation dialogs; added lightweight CAD toast notification system.
+8. Collapsed Palette Drawers: Configured the 7 component category drawers to start collapsed by default for a clean, focused workspace.
+9. Low-Level Semiconductor Demos: Added built-in demos for fundamental semiconductor circuits (BJT Common Emitter Amplifier, CMOS Inverter Pair, NMOS Switch) with pre-wired components and verified operating points.
+10. Continuous Rolling Release & Frozen Immutable v0.1.0 Workflow: Configured GitHub Actions release pipeline updating rolling pre-release tag on every push to `main` without appearing in official releases tab, and permanently freezing official immutable `v0.1.0` release.
+11. GitHub Pages Dual Static Deployment: Automated unified build of VitePress documentation at `/` and Web CAD Studio at `/studio/` with custom domain `phonon.aerovex.net`.
 
 ### Phase 315 (Milestone): Phonon Universal Multi-Scale Visual Studio Autonomous Acoustically Driven Fractional Quantum Hall Moore-Read Anyon Multiplexed Routing Crossbar & High-Dimensional Logic Engine / Multi-Abstraction Transistor Speed Regression Protocol
 Formulated anyon routing crossbar and completed periodic milestone multi-abstraction regression protocol:

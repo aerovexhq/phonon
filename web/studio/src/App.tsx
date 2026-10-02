@@ -1,4 +1,9 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react'
+import { ActionDefinition, StudioSettings, ToastMessage } from './types/actions'
+import { ConfirmDialog } from './components/ConfirmDialog'
+import { ToastContainer } from './components/Toast'
+import { CommandPalette } from './components/CommandPalette'
+import { SettingsModal } from './components/SettingsModal'
 
 // ==============================================================================
 // Phonon Web CAD Studio — High-Precision Visual Electronic Design Automation (EDA)
@@ -196,13 +201,134 @@ export default function App() {
     'Integrated Circuits': false,
     'Sensors & Actuators': false,
     'Topological Metamaterials': false,
-    'Demo Circuits': false,
   })
+
+  // Settings State (loaded from localStorage with default fallbacks)
+  const [settings, setSettings] = useState<StudioSettings>(() => {
+    try {
+      const saved = localStorage.getItem('phonon_settings')
+      if (saved) return JSON.parse(saved)
+    } catch (_) {}
+    return {
+      theme: 'theme-deep-space',
+      fontSize: 'md',
+      customThemes: [],
+      keybindOverrides: {},
+      gridSnap: true,
+      showGrid: true,
+      showOscilloscope: true,
+      showThermalOverlay: true,
+      maxIterations: 100,
+      tolerance: 0.0001,
+    }
+  })
+
+  // Dirty state (tracks unsaved changes)
+  const [isDirty, setIsDirty] = useState<boolean>(false)
+
+  // Modals & Popups state
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false)
+  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false)
+  const [confirmState, setConfirmState] = useState<{
+    isOpen: boolean
+    title: string
+    message: string
+    confirmLabel?: string
+    cancelLabel?: string
+    discardLabel?: string
+    variant?: 'danger' | 'warning' | 'primary'
+    onConfirm: () => void
+    onDiscard?: () => void
+  }>({
+    isOpen: false,
+    title: '',
+    message: '',
+    onConfirm: () => {},
+  })
+
+  // Toast Notification Stack
+  const [toasts, setToasts] = useState<ToastMessage[]>([])
+
+  const showToast = useCallback(
+    (title: string, message?: string, type: 'success' | 'info' | 'warn' | 'error' = 'info') => {
+      const id = `toast-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`
+      const newToast: ToastMessage = { id, title, message, type, timestamp: Date.now() }
+      setToasts((prev) => [...prev, newToast])
+      setTimeout(() => {
+        setToasts((prev) => prev.filter((t) => t.id !== id))
+      }, 3500)
+    },
+    []
+  )
+
+  const dismissToast = useCallback((id: string) => {
+    setToasts((prev) => prev.filter((t) => t.id !== id))
+  }, [])
+
+  // Persist settings updates
+  const updateSettings = useCallback((newPartial: Partial<StudioSettings>) => {
+    setSettings((prev) => {
+      const updated = { ...prev, ...newPartial }
+      try {
+        localStorage.setItem('phonon_settings', JSON.stringify(updated))
+      } catch (_) {}
+      return updated
+    })
+  }, [])
+
+  // Apply Theme & Font Size to Document Root
+  useEffect(() => {
+    document.body.className = ''
+    document.body.classList.add(`font-size-${settings.fontSize}`)
+
+    if (settings.theme.startsWith('custom-')) {
+      const ct = settings.customThemes.find((t) => t.id === settings.theme)
+      if (ct) {
+        Object.entries(ct.variables).forEach(([k, v]) => {
+          document.documentElement.style.setProperty(k, v)
+        })
+      }
+    } else {
+      document.body.classList.add(settings.theme)
+      ;[
+        '--bg-canvas',
+        '--bg-header',
+        '--bg-panel',
+        '--border-color',
+        '--text-primary',
+        '--canvas-wire',
+        '--accent-cyan',
+      ].forEach((p) => document.documentElement.style.removeProperty(p))
+    }
+  }, [settings.theme, settings.fontSize, settings.customThemes])
+
+  // Warn on browser tab exit if canvas has unsaved edits
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (isDirty) {
+        e.preventDefault()
+        e.returnValue = ''
+      }
+    }
+    window.addEventListener('beforeunload', handleBeforeUnload)
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload)
+  }, [isDirty])
 
   // Canvas State: Components & Wires
   const [circuitName, setCircuitName] = useState('Voltage Divider Demo')
   const [components, setComponents] = useState<ComponentInstance[]>(DEMOS.voltage_divider.components)
   const [wires, setWires] = useState<WireInstance[]>(DEMOS.voltage_divider.wires)
+
+  // Canvas Transform State: Pan & Zoom
+  const [pan, setPan] = useState<{ x: number; y: number }>({ x: 0, y: 0 })
+  const [zoom, setZoom] = useState<number>(1.0)
+  const [isPanning, setIsPanning] = useState<boolean>(false)
+  const [panStart, setPanStart] = useState<{ x: number; y: number }>({ x: 0, y: 0 })
+
+  const panRef = useRef(pan)
+  panRef.current = pan
+  const zoomRef = useRef(zoom)
+  zoomRef.current = zoom
 
   // Selection & Dragging state
   const [selectedCompId, setSelectedCompId] = useState<number | null>(null)
@@ -225,36 +351,66 @@ export default function App() {
 
   const canvasRef = useRef<SVGSVGElement | null>(null)
 
+  // Global right-click context menu prevention
+  useEffect(() => {
+    const handleContextMenu = (e: MouseEvent) => {
+      e.preventDefault()
+    }
+    window.addEventListener('contextmenu', handleContextMenu)
+    return () => window.removeEventListener('contextmenu', handleContextMenu)
+  }, [])
+
+  // Global mouse up for pan release
+  useEffect(() => {
+    const handleWindowMouseUp = (e: MouseEvent) => {
+      if (e.button === 2 || e.button === 1) {
+        setIsPanning(false)
+      }
+      setDraggingCompId(null)
+    }
+    window.addEventListener('mouseup', handleWindowMouseUp)
+    return () => window.removeEventListener('mouseup', handleWindowMouseUp)
+  }, [])
+
+  // Non-passive wheel event listener for smooth zoom anchored to cursor
+  useEffect(() => {
+    const svgEl = canvasRef.current
+    if (!svgEl) return
+
+    const handleWheel = (e: WheelEvent) => {
+      e.preventDefault()
+      const rect = svgEl.getBoundingClientRect()
+      const mouseScreenX = e.clientX - rect.left
+      const mouseScreenY = e.clientY - rect.top
+
+      const currentZoom = zoomRef.current
+      const currentPan = panRef.current
+
+      // Calculate world coordinates before zoom
+      const worldX = (mouseScreenX - currentPan.x) / currentZoom
+      const worldY = (mouseScreenY - currentPan.y) / currentZoom
+
+      // Continuous exponential damping matching desktop Phonon
+      const clampedDelta = Math.max(-120, Math.min(120, -e.deltaY))
+      const zoomFactor = Math.exp(clampedDelta * 0.0015)
+      const nextZoom = Math.max(0.2, Math.min(5.0, currentZoom * zoomFactor))
+
+      // Keep world coordinates at cursor position stationary
+      const nextPanX = mouseScreenX - worldX * nextZoom
+      const nextPanY = mouseScreenY - worldY * nextZoom
+
+      setZoom(nextZoom)
+      setPan({ x: nextPanX, y: nextPanY })
+    }
+
+    svgEl.addEventListener('wheel', handleWheel, { passive: false })
+    return () => svgEl.removeEventListener('wheel', handleWheel)
+  }, [])
+
   // Toggle Category
   const toggleCategory = (cat: string) => {
     setOpenCategories((prev) => ({ ...prev, [cat]: !prev[cat] }))
   }
-
-  // Keyboard shortcuts (Rotate with 'R', Delete with Backspace/Delete, Select with 'S', Wire with 'W')
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      // Don't intercept when user is typing in an input
-      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return
-
-      if (e.key === 'r' || e.key === 'R') {
-        if (selectedCompId !== null) {
-          setComponents((prev) =>
-            prev.map((c) => (c.id === selectedCompId ? { ...c, rotation: (c.rotation + 1) % 4 } : c))
-          )
-        }
-      } else if (e.key === 'Delete' || e.key === 'Backspace') {
-        if (selectedCompId !== null) {
-          deleteComponent(selectedCompId)
-        }
-      } else if (e.key === 's' || e.key === 'S') {
-        setActiveTool('select')
-      } else if (e.key === 'w' || e.key === 'W') {
-        setActiveTool('wire')
-      }
-    }
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [selectedCompId])
 
   // Click outside to dismiss menus
   useEffect(() => {
@@ -318,18 +474,54 @@ export default function App() {
     if (selectedCompId === id) setSelectedCompId(null)
   }
 
+  // Mouse Down on Canvas
+  const handleCanvasMouseDown = (e: React.MouseEvent<SVGSVGElement>) => {
+    // Right-click (button === 2) or Middle-click (button === 1) starts smooth canvas panning
+    if (e.button === 2 || e.button === 1) {
+      e.preventDefault()
+      if (pendingWireStart !== null) {
+        setPendingWireStart(null)
+      }
+      setIsPanning(true)
+      setPanStart({ x: e.clientX - pan.x, y: e.clientY - pan.y })
+      return
+    }
+
+    if (e.button === 0) {
+      // Left click on empty canvas: deselect if in select mode
+      if (activeTool === 'select') {
+        setSelectedCompId(null)
+      }
+    }
+  }
+
   // Mouse Move on Canvas
   const handleCanvasMouseMove = (e: React.MouseEvent<SVGSVGElement>) => {
     if (!canvasRef.current) return
     const rect = canvasRef.current.getBoundingClientRect()
-    const x = e.clientX - rect.left
-    const y = e.clientY - rect.top
-    setMousePos({ x, y })
+    const screenX = e.clientX - rect.left
+    const screenY = e.clientY - rect.top
+
+    // Calculate world coordinate (accounting for pan and zoom)
+    const worldX = (screenX - pan.x) / zoom
+    const worldY = (screenY - pan.y) / zoom
+    setMousePos({ x: worldX, y: worldY })
+
+    // Handle right/middle click panning
+    if (isPanning) {
+      setPan({
+        x: e.clientX - panStart.x,
+        y: e.clientY - panStart.y,
+      })
+      return
+    }
 
     if (draggingCompId !== null) {
-      // Snap to 10px grid
-      const snappedX = Math.round((x - dragOffset.x) / 10) * 10
-      const snappedY = Math.round((y - dragOffset.y) / 10) * 10
+      // Snap to 10px grid in world space
+      const rawX = worldX - dragOffset.x
+      const rawY = worldY - dragOffset.y
+      const snappedX = Math.round(rawX / 10) * 10
+      const snappedY = Math.round(rawY / 10) * 10
 
       setComponents((prev) =>
         prev.map((c) => (c.id === draggingCompId ? { ...c, x: snappedX, y: snappedY } : c))
@@ -362,7 +554,10 @@ export default function App() {
   }
 
   // Mouse Up on Canvas
-  const handleCanvasMouseUp = () => {
+  const handleCanvasMouseUp = (e: React.MouseEvent<SVGSVGElement>) => {
+    if (e.button === 2 || e.button === 1) {
+      setIsPanning(false)
+    }
     setDraggingCompId(null)
   }
 
@@ -480,6 +675,350 @@ export default function App() {
     a.click()
     URL.revokeObjectURL(url)
   }
+
+  // Protected Action Handlers
+  const handleProtectedClear = useCallback(() => {
+    if (components.length === 0 && wires.length === 0) {
+      clearCanvas()
+      setIsDirty(false)
+      showToast('Canvas Cleared', 'Canvas is already empty', 'info')
+      return
+    }
+
+    setConfirmState({
+      isOpen: true,
+      title: 'Clear Schematic Canvas',
+      message: 'Are you sure you want to clear the entire schematic? All components and wires will be removed permanently.',
+      confirmLabel: 'Clear Canvas',
+      cancelLabel: 'Cancel',
+      variant: 'danger',
+      onConfirm: () => {
+        clearCanvas()
+        setIsDirty(false)
+        setConfirmState((prev) => ({ ...prev, isOpen: false }))
+        showToast('Canvas Cleared', 'All schematic elements removed', 'info')
+      },
+    })
+  }, [components.length, wires.length, showToast])
+
+  const handleProtectedLoadDemo = useCallback(
+    (demoKey: string) => {
+      const demo = DEMOS[demoKey]
+      if (!demo) return
+
+      if (!isDirty && components.length === 0 && wires.length === 0) {
+        loadDemo(demoKey)
+        setIsDirty(false)
+        showToast('Demo Loaded', `Loaded ${demo.name}`, 'success')
+        return
+      }
+
+      setConfirmState({
+        isOpen: true,
+        title: `Load ${demo.name}`,
+        message: `Loading the ${demo.name} circuit will replace your current schematic. Any unsaved edits will be discarded.`,
+        confirmLabel: 'Load Demo',
+        cancelLabel: 'Cancel',
+        variant: 'warning',
+        onConfirm: () => {
+          loadDemo(demoKey)
+          setIsDirty(false)
+          setConfirmState((prev) => ({ ...prev, isOpen: false }))
+          showToast('Demo Loaded', `Loaded ${demo.name}`, 'success')
+        },
+      })
+    },
+    [isDirty, components.length, wires.length, showToast]
+  )
+
+  const handleProtectedClose = useCallback(() => {
+    if (!isDirty && components.length === 0 && wires.length === 0) {
+      showToast('Studio Closed', 'Ready for new session', 'info')
+      return
+    }
+
+    setConfirmState({
+      isOpen: true,
+      title: 'Unsaved Schematic Changes',
+      message: 'Your circuit has unsaved modifications. Do you want to export your SPICE netlist deck before resetting the workspace?',
+      confirmLabel: 'Export & Reset',
+      discardLabel: 'Discard Changes',
+      cancelLabel: 'Cancel',
+      variant: 'warning',
+      onConfirm: () => {
+        exportNetlist()
+        clearCanvas()
+        setIsDirty(false)
+        setConfirmState((prev) => ({ ...prev, isOpen: false }))
+        showToast('Project Exported', 'Downloaded SPICE netlist deck', 'success')
+      },
+      onDiscard: () => {
+        clearCanvas()
+        setIsDirty(false)
+        setConfirmState((prev) => ({ ...prev, isOpen: false }))
+        showToast('Changes Discarded', 'Workspace reset', 'info')
+      },
+    })
+  }, [isDirty, components.length, wires.length, showToast])
+
+  // Central Action Registry
+  const actions: ActionDefinition[] = useMemo(
+    () => [
+      // File Actions
+      {
+        id: 'file.new',
+        label: 'New Canvas',
+        category: 'File',
+        description: 'Clear canvas with protection and start new circuit',
+        run: handleProtectedClear,
+      },
+      {
+        id: 'file.demo_voltage_divider',
+        label: 'Load Voltage Divider',
+        category: 'File',
+        description: 'Two-resistor potential divider with 5.0V source',
+        run: () => handleProtectedLoadDemo('voltage_divider'),
+      },
+      {
+        id: 'file.demo_diode_clipper',
+        label: 'Load Diode Clipper',
+        category: 'File',
+        description: 'Non-linear diode half-wave wave-shaper',
+        run: () => handleProtectedLoadDemo('diode_clipper'),
+      },
+      {
+        id: 'file.demo_bjt_amp',
+        label: 'Load BJT CE Amplifier',
+        category: 'File',
+        description: 'Bipolar junction transistor common-emitter linear amplifier',
+        run: () => handleProtectedLoadDemo('bjt_amplifier'),
+      },
+      {
+        id: 'file.demo_cmos_inverter',
+        label: 'Load CMOS Inverter',
+        category: 'File',
+        description: 'Complementary PMOS and NMOS digital logic inverter pair',
+        run: () => handleProtectedLoadDemo('cmos_inverter'),
+      },
+      {
+        id: 'file.demo_nmos_switch',
+        label: 'Load NMOS Switch',
+        category: 'File',
+        description: 'Low-side NMOS power switch with inductive clamp',
+        run: () => handleProtectedLoadDemo('nmos_switch'),
+      },
+      {
+        id: 'file.export_netlist',
+        label: 'Export SPICE Netlist (.cir)',
+        category: 'File',
+        description: 'Compile schematic to Berkeley SPICE 3f5 netlist deck',
+        defaultKeybind: 'Ctrl+E',
+        run: () => {
+          exportNetlist()
+          showToast('Netlist Exported', 'Generated SPICE netlist deck', 'success')
+        },
+      },
+      {
+        id: 'file.settings',
+        label: 'Preferences & Settings',
+        category: 'Settings',
+        description: 'Configure appearance, font scaling, themes, and keybindings',
+        defaultKeybind: 'Ctrl+,',
+        run: () => setIsSettingsOpen(true),
+      },
+
+      // Edit Actions
+      {
+        id: 'edit.rotate',
+        label: 'Rotate Selected (90°)',
+        category: 'Edit',
+        description: 'Rotate active component 90 degrees clockwise',
+        defaultKeybind: 'R',
+        run: () => {
+          if (selectedCompId !== null) {
+            setComponents((prev) =>
+              prev.map((c) => (c.id === selectedCompId ? { ...c, rotation: (c.rotation + 1) % 4 } : c))
+            )
+            setIsDirty(true)
+          }
+        },
+      },
+      {
+        id: 'edit.delete',
+        label: 'Delete Selected Component',
+        category: 'Edit',
+        description: 'Remove highlighted component and attached wires',
+        defaultKeybind: 'Delete',
+        run: () => {
+          if (selectedCompId !== null) {
+            deleteComponent(selectedCompId)
+            setIsDirty(true)
+          }
+        },
+      },
+      {
+        id: 'edit.clear',
+        label: 'Clear Canvas',
+        category: 'Edit',
+        description: 'Protected removal of all schematic elements',
+        run: handleProtectedClear,
+      },
+
+      // View Actions
+      {
+        id: 'view.toggle_scope',
+        label: 'Toggle Virtual Oscilloscope',
+        category: 'View',
+        description: 'Show or hide docked real-time virtual oscilloscope',
+        run: () => setShowOscilloscope((prev) => !prev),
+      },
+      {
+        id: 'view.toggle_thermal',
+        label: 'Toggle Thermal Badges',
+        category: 'View',
+        description: 'Show or hide dynamic junction heating badges',
+        run: () => setShowThermalOverlay((prev) => !prev),
+      },
+      {
+        id: 'view.reset_zoom',
+        label: 'Reset Zoom & Pan (1.0x)',
+        category: 'View',
+        description: 'Reset canvas coordinate transform to default origin and 1.0x scale',
+        defaultKeybind: 'Ctrl+0',
+        run: () => {
+          setPan({ x: 0, y: 0 })
+          setZoom(1.0)
+          showToast('View Reset', 'Zoom set to 1.0x at canvas origin', 'info')
+        },
+      },
+      {
+        id: 'view.zoom_in',
+        label: 'Zoom In (+)',
+        category: 'View',
+        description: 'Increase canvas magnification factor',
+        defaultKeybind: 'Ctrl+=',
+        run: () => setZoom((z) => Math.min(5.0, z * 1.2)),
+      },
+      {
+        id: 'view.zoom_out',
+        label: 'Zoom Out (-)',
+        category: 'View',
+        description: 'Decrease canvas magnification factor',
+        defaultKeybind: 'Ctrl+-',
+        run: () => setZoom((z) => Math.max(0.2, z / 1.2)),
+      },
+
+      // Simulation Actions
+      {
+        id: 'sim.run_dc',
+        label: 'Run DC Operating Point (.OP)',
+        category: 'Simulation',
+        description: 'Solve non-linear Newton-Raphson node voltages and branch currents',
+        defaultKeybind: 'F5',
+        run: () => {
+          runDcOp()
+          showToast('DC Solved', 'Node voltages and junction temperatures updated', 'success')
+        },
+      },
+      {
+        id: 'sim.run_transient',
+        label: 'Run Transient Analysis (.TRAN)',
+        category: 'Simulation',
+        description: 'Execute multi-step time-domain numerical integration',
+        defaultKeybind: 'F6',
+        run: () => {
+          runTransient()
+          showToast('Transient Solved', 'Time-domain traces sent to oscilloscope', 'success')
+        },
+      },
+
+      // Tools
+      {
+        id: 'tool.select',
+        label: 'Select / Move Tool',
+        category: 'Tools',
+        description: 'Select, drag, and inspect circuit elements',
+        defaultKeybind: 'S',
+        run: () => setActiveTool('select'),
+      },
+      {
+        id: 'tool.wire',
+        label: 'Wire Routing Tool',
+        category: 'Tools',
+        description: 'Click terminals to connect schematic electrical nets',
+        defaultKeybind: 'W',
+        run: () => setActiveTool('wire'),
+      },
+      {
+        id: 'tool.command_palette',
+        label: 'Open Command Palette',
+        category: 'Tools',
+        description: 'Fuzzy search and execute any CAD action',
+        defaultKeybind: 'Ctrl+K',
+        run: () => setIsCommandPaletteOpen(true),
+      },
+    ],
+    [
+      handleProtectedClear,
+      handleProtectedLoadDemo,
+      selectedCompId,
+      showToast,
+    ]
+  )
+
+  // Dynamic Global Keyboard Listener & Keybinding Registry Dispatcher
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Don't intercept when user is typing in an input or textarea
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return
+
+      // Command Palette (Ctrl+K or Cmd+K)
+      if ((e.ctrlKey || e.metaKey) && (e.key === 'k' || e.key === 'K')) {
+        e.preventDefault()
+        setIsCommandPaletteOpen((prev) => !prev)
+        return
+      }
+
+      // Settings (Ctrl+, or Cmd+,)
+      if ((e.ctrlKey || e.metaKey) && e.key === ',') {
+        e.preventDefault()
+        setIsSettingsOpen((prev) => !prev)
+        return
+      }
+
+      // Build key combination string
+      const parts: string[] = []
+      if (e.ctrlKey || e.metaKey) parts.push('Ctrl')
+      if (e.altKey) parts.push('Alt')
+      if (e.shiftKey) parts.push('Shift')
+      const keyName = e.key.length === 1 ? e.key.toUpperCase() : e.key
+      if (!['Control', 'Shift', 'Alt', 'Meta'].includes(keyName)) {
+        parts.push(keyName)
+      }
+      const combo = parts.join('+')
+
+      // Check if combo matches any action in the action registry
+      const matched = actions.find((a) => {
+        const boundKey = settings.keybindOverrides[a.id] || a.defaultKeybind
+        return boundKey && boundKey.toUpperCase() === combo.toUpperCase()
+      })
+
+      if (matched) {
+        e.preventDefault()
+        matched.run()
+        return
+      }
+
+      // Fallback Escape
+      if (e.key === 'Escape') {
+        setPendingWireStart(null)
+        setActiveTool('select')
+        setSelectedCompId(null)
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [actions, settings.keybindOverrides])
 
   // Selected Component helper
   const selectedComp = components.find((c) => c.id === selectedCompId)
@@ -599,30 +1138,37 @@ export default function App() {
 
             {/* Menu Dropdowns */}
             {activeMenu === 'file' && (
-              <div style={{ position: 'absolute', top: '24px', left: '0', backgroundColor: '#111827', border: '1px solid #1f2937', borderRadius: '4px', zIndex: 100, minWidth: '180px', boxShadow: '0 8px 24px rgba(0,0,0,0.6)', padding: '4px 0' }}>
-                <div onClick={clearCanvas} style={{ padding: '6px 12px', cursor: 'pointer', color: '#e2e8f0' }} onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#1e293b')} onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}>New Canvas</div>
-                <div style={{ height: '1px', backgroundColor: '#1f2937', margin: '4px 0' }}></div>
-                <div onClick={() => loadDemo('voltage_divider')} style={{ padding: '6px 12px', cursor: 'pointer', color: '#e2e8f0' }} onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#1e293b')} onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}>Load Voltage Divider</div>
-                <div onClick={() => loadDemo('diode_clipper')} style={{ padding: '6px 12px', cursor: 'pointer', color: '#e2e8f0' }} onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#1e293b')} onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}>Load Diode Clipper</div>
-                <div onClick={() => loadDemo('bjt_amplifier')} style={{ padding: '6px 12px', cursor: 'pointer', color: '#e2e8f0' }} onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#1e293b')} onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}>Load BJT Amplifier</div>
-                <div onClick={() => loadDemo('cmos_inverter')} style={{ padding: '6px 12px', cursor: 'pointer', color: '#e2e8f0' }} onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#1e293b')} onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}>Load CMOS Inverter</div>
-                <div onClick={() => loadDemo('nmos_switch')} style={{ padding: '6px 12px', cursor: 'pointer', color: '#e2e8f0' }} onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#1e293b')} onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}>Load NMOS Switch</div>
-                <div style={{ height: '1px', backgroundColor: '#1f2937', margin: '4px 0' }}></div>
-                <div onClick={exportNetlist} style={{ padding: '6px 12px', cursor: 'pointer', color: '#e2e8f0' }} onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#1e293b')} onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}>Export Netlist (.cir)</div>
+              <div style={{ position: 'absolute', top: '24px', left: '0', backgroundColor: 'var(--bg-dropdown, #111827)', border: '1px solid var(--border-color, #1a2233)', borderRadius: '4px', zIndex: 100, minWidth: '190px', boxShadow: '0 8px 24px rgba(0,0,0,0.6)', padding: '4px 0' }}>
+                <div onClick={() => { handleProtectedClear(); setActiveMenu(null) }} style={{ padding: '6px 12px', cursor: 'pointer', color: 'var(--text-secondary, #cbd5e1)' }} onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--bg-hover, #1e293b)')} onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}>New Canvas</div>
+                <div style={{ height: '1px', backgroundColor: 'var(--border-subtle, #131b2c)', margin: '4px 0' }}></div>
+                <div onClick={() => { handleProtectedLoadDemo('voltage_divider'); setActiveMenu(null) }} style={{ padding: '6px 12px', cursor: 'pointer', color: 'var(--text-secondary, #cbd5e1)' }} onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--bg-hover, #1e293b)')} onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}>Load Voltage Divider</div>
+                <div onClick={() => { handleProtectedLoadDemo('diode_clipper'); setActiveMenu(null) }} style={{ padding: '6px 12px', cursor: 'pointer', color: 'var(--text-secondary, #cbd5e1)' }} onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--bg-hover, #1e293b)')} onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}>Load Diode Clipper</div>
+                <div onClick={() => { handleProtectedLoadDemo('bjt_amplifier'); setActiveMenu(null) }} style={{ padding: '6px 12px', cursor: 'pointer', color: 'var(--text-secondary, #cbd5e1)' }} onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--bg-hover, #1e293b)')} onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}>Load BJT Amplifier</div>
+                <div onClick={() => { handleProtectedLoadDemo('cmos_inverter'); setActiveMenu(null) }} style={{ padding: '6px 12px', cursor: 'pointer', color: 'var(--text-secondary, #cbd5e1)' }} onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--bg-hover, #1e293b)')} onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}>Load CMOS Inverter</div>
+                <div onClick={() => { handleProtectedLoadDemo('nmos_switch'); setActiveMenu(null) }} style={{ padding: '6px 12px', cursor: 'pointer', color: 'var(--text-secondary, #cbd5e1)' }} onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--bg-hover, #1e293b)')} onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}>Load NMOS Switch</div>
+                <div style={{ height: '1px', backgroundColor: 'var(--border-subtle, #131b2c)', margin: '4px 0' }}></div>
+                <div onClick={() => { exportNetlist(); setActiveMenu(null); showToast('Netlist Exported', 'Generated SPICE netlist deck', 'success') }} style={{ padding: '6px 12px', cursor: 'pointer', color: 'var(--text-secondary, #cbd5e1)' }} onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--bg-hover, #1e293b)')} onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}>Export Netlist (.cir)</div>
+                <div style={{ height: '1px', backgroundColor: 'var(--border-subtle, #131b2c)', margin: '4px 0' }}></div>
+                <div onClick={() => { setIsSettingsOpen(true); setActiveMenu(null) }} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '6px 12px', cursor: 'pointer', color: 'var(--text-secondary, #cbd5e1)' }} onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--bg-hover, #1e293b)')} onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}>
+                  <span>Settings</span>
+                  <span style={{ fontSize: '10px', color: 'var(--text-muted, #64748b)', fontFamily: 'monospace' }}>Ctrl+,</span>
+                </div>
               </div>
             )}
 
             {activeMenu === 'edit' && (
-              <div style={{ position: 'absolute', top: '24px', left: '35px', backgroundColor: '#111827', border: '1px solid #1f2937', borderRadius: '4px', zIndex: 100, minWidth: '160px', boxShadow: '0 8px 24px rgba(0,0,0,0.6)', padding: '4px 0' }}>
-                <div onClick={() => selectedCompId && deleteComponent(selectedCompId)} style={{ padding: '6px 12px', cursor: 'pointer', color: '#e2e8f0' }} onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#1e293b')} onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}>Delete Component</div>
-                <div onClick={clearCanvas} style={{ padding: '6px 12px', cursor: 'pointer', color: '#e2e8f0' }} onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#1e293b')} onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}>Clear Canvas</div>
+              <div style={{ position: 'absolute', top: '24px', left: '35px', backgroundColor: 'var(--bg-dropdown, #111827)', border: '1px solid var(--border-color, #1a2233)', borderRadius: '4px', zIndex: 100, minWidth: '160px', boxShadow: '0 8px 24px rgba(0,0,0,0.6)', padding: '4px 0' }}>
+                <div onClick={() => { if (selectedCompId) deleteComponent(selectedCompId); setActiveMenu(null) }} style={{ padding: '6px 12px', cursor: 'pointer', color: 'var(--text-secondary, #cbd5e1)' }} onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--bg-hover, #1e293b)')} onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}>Delete Component</div>
+                <div onClick={() => { handleProtectedClear(); setActiveMenu(null) }} style={{ padding: '6px 12px', cursor: 'pointer', color: 'var(--text-secondary, #cbd5e1)' }} onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--bg-hover, #1e293b)')} onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}>Clear Canvas</div>
               </div>
             )}
 
             {activeMenu === 'view' && (
               <div style={{ position: 'absolute', top: '24px', left: '75px', backgroundColor: '#111827', border: '1px solid #1f2937', borderRadius: '4px', zIndex: 100, minWidth: '180px', boxShadow: '0 8px 24px rgba(0,0,0,0.6)', padding: '4px 0' }}>
-                <div onClick={() => setShowOscilloscope(!showOscilloscope)} style={{ padding: '6px 12px', cursor: 'pointer', color: '#e2e8f0' }} onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#1e293b')} onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}>Toggle Oscilloscope</div>
-                <div onClick={() => setShowThermalOverlay(!showThermalOverlay)} style={{ padding: '6px 12px', cursor: 'pointer', color: '#e2e8f0' }} onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#1e293b')} onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}>Toggle Thermal Badges</div>
+                <div onClick={() => { setShowOscilloscope(!showOscilloscope); setActiveMenu(null) }} style={{ padding: '6px 12px', cursor: 'pointer', color: '#e2e8f0' }} onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#1e293b')} onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}>Toggle Oscilloscope</div>
+                <div onClick={() => { setShowThermalOverlay(!showThermalOverlay); setActiveMenu(null) }} style={{ padding: '6px 12px', cursor: 'pointer', color: '#e2e8f0' }} onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#1e293b')} onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}>Toggle Thermal Badges</div>
+                <div style={{ height: '1px', backgroundColor: '#1f2937', margin: '4px 0' }}></div>
+                <div onClick={() => { setPan({ x: 0, y: 0 }); setZoom(1.0); setActiveMenu(null) }} style={{ padding: '6px 12px', cursor: 'pointer', color: '#e2e8f0' }} onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#1e293b')} onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}>Reset Zoom & Pan (1.0x)</div>
               </div>
             )}
 
@@ -647,8 +1193,8 @@ export default function App() {
           Circuit ({components.length} Components, {wires.length} Wires) (v0.1.0)
         </div>
 
-        {/* Right: High Visibility Download Button */}
-        <div>
+        {/* Right: Download Desktop App + Modern Vector Window Controls */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <a
             href="https://github.com/aerovexhq/phonon/releases/latest"
             target="_blank"
@@ -656,108 +1202,271 @@ export default function App() {
             style={{
               display: 'inline-flex',
               alignItems: 'center',
-              gap: '4px',
+              gap: '6px',
               padding: '3px 10px',
               fontSize: '11px',
               fontWeight: 500,
-              backgroundColor: '#1e293b',
-              color: '#38bdf8',
-              border: '1px solid #334155',
+              backgroundColor: 'var(--bg-hover, #1e293b)',
+              color: 'var(--accent-cyan, #38bdf8)',
+              border: '1px solid var(--border-button, #334155)',
               borderRadius: '3px',
               textDecoration: 'none',
               cursor: 'pointer',
+              transition: 'background-color 0.15s, color 0.15s',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#334155'
-              e.currentTarget.style.color = '#f8fafc'
+              e.currentTarget.style.backgroundColor = 'var(--border-button, #334155)'
+              e.currentTarget.style.color = 'var(--text-primary, #f8fafc)'
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = '#1e293b'
-              e.currentTarget.style.color = '#38bdf8'
+              e.currentTarget.style.backgroundColor = 'var(--bg-hover, #1e293b)'
+              e.currentTarget.style.color = 'var(--accent-cyan, #38bdf8)'
             }}
           >
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M8 12l-4-4h2.5V2h3v6H12l-4 4zm-6 2h12v1.5H2V14z" />
+            </svg>
             Download Desktop App
           </a>
+
+          {/* Window Control Buttons with Vector Iconography */}
+          <div style={{ display: 'flex', alignItems: 'center', borderLeft: '1px solid var(--border-color, #1a2233)', paddingLeft: '8px', gap: '2px' }}>
+            {/* Minimize */}
+            <button
+              onClick={() => showToast('Minimize', 'Running in web browser canvas', 'info')}
+              title="Minimize"
+              style={{
+                background: 'transparent',
+                border: 'none',
+                color: 'var(--text-muted, #94a3b8)',
+                cursor: 'pointer',
+                width: '26px',
+                height: '24px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: '3px',
+                transition: 'background-color 0.15s, color 0.15s',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = 'var(--bg-hover, #1e293b)'
+                e.currentTarget.style.color = 'var(--text-primary, #f8fafc)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'transparent'
+                e.currentTarget.style.color = 'var(--text-muted, #94a3b8)'
+              }}
+            >
+              <svg width="11" height="11" viewBox="0 0 12 12" fill="none">
+                <line x1="2" y1="6" x2="10" y2="6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+              </svg>
+            </button>
+
+            {/* Maximize / Fullscreen */}
+            <button
+              onClick={() => {
+                if (!document.fullscreenElement) {
+                  document.documentElement.requestFullscreen().catch(() => {})
+                } else {
+                  document.exitFullscreen().catch(() => {})
+                }
+              }}
+              title="Toggle Fullscreen"
+              style={{
+                background: 'transparent',
+                border: 'none',
+                color: 'var(--text-muted, #94a3b8)',
+                cursor: 'pointer',
+                width: '26px',
+                height: '24px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: '3px',
+                transition: 'background-color 0.15s, color 0.15s',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = 'var(--bg-hover, #1e293b)'
+                e.currentTarget.style.color = 'var(--text-primary, #f8fafc)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'transparent'
+                e.currentTarget.style.color = 'var(--text-muted, #94a3b8)'
+              }}
+            >
+              <svg width="11" height="11" viewBox="0 0 12 12" fill="none">
+                <rect x="2" y="2" width="8" height="8" rx="1.5" stroke="currentColor" strokeWidth="1.2" />
+              </svg>
+            </button>
+
+            {/* Close (Protected) */}
+            <button
+              onClick={handleProtectedClose}
+              title="Close Studio (Protected)"
+              style={{
+                background: 'transparent',
+                border: 'none',
+                color: 'var(--text-muted, #94a3b8)',
+                cursor: 'pointer',
+                width: '26px',
+                height: '24px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: '3px',
+                transition: 'background-color 0.15s, color 0.15s',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = '#e11d48'
+                e.currentTarget.style.color = '#ffffff'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'transparent'
+                e.currentTarget.style.color = 'var(--text-muted, #94a3b8)'
+              }}
+            >
+              <svg width="11" height="11" viewBox="0 0 12 12" fill="none">
+                <path d="M2.5 2.5L9.5 9.5M9.5 2.5L2.5 9.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
 
       {/* =========================================================================
           ROW 2: ACTION TOOLBAR
-          - Run DC (.OP), Run Transient (.TRAN), Export Netlist, Clear Canvas
-          - NO clutter or dynamics active badge!
+          - Run DC (.OP), Run Transient (.TRAN), Export Netlist, Protected Clear
+          - Hover tooltips with keybinds
+          - Command Palette (Ctrl+K) & Settings (Ctrl+,) shortcuts
       ========================================================================== */}
-      <div style={{ display: 'flex', alignItems: 'center', height: '36px', backgroundColor: '#101623', borderBottom: '1px solid #1a2233', padding: '0 10px', gap: '8px', flexShrink: 0 }}>
+      <div style={{ display: 'flex', alignItems: 'center', height: '36px', backgroundColor: 'var(--bg-toolbar, #101623)', borderBottom: '1px solid var(--border-color, #1a2233)', padding: '0 10px', gap: '8px', flexShrink: 0 }}>
         <button
           onClick={runDcOp}
+          title="Run DC Operating Point (.OP) (F5)"
           style={{
             padding: '4px 10px',
-            backgroundColor: '#1e293b',
-            border: '1px solid #334155',
+            backgroundColor: 'var(--bg-hover, #1e293b)',
+            border: '1px solid var(--border-button, #334155)',
             borderRadius: '3px',
-            color: '#f8fafc',
+            color: 'var(--text-primary, #f8fafc)',
             cursor: 'pointer',
             fontSize: '11px',
             fontWeight: 500,
           }}
-          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2e3d54')}
-          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1e293b')}
+          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--bg-active, #253349)')}
+          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'var(--bg-hover, #1e293b)')}
         >
           Run DC (.OP)
         </button>
 
         <button
           onClick={runTransient}
+          title="Run Transient Analysis (.TRAN) (F6)"
           style={{
             padding: '4px 10px',
-            backgroundColor: '#1e293b',
-            border: '1px solid #334155',
+            backgroundColor: 'var(--bg-hover, #1e293b)',
+            border: '1px solid var(--border-button, #334155)',
             borderRadius: '3px',
-            color: '#f8fafc',
+            color: 'var(--text-primary, #f8fafc)',
             cursor: 'pointer',
             fontSize: '11px',
             fontWeight: 500,
           }}
-          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2e3d54')}
-          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1e293b')}
+          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--bg-active, #253349)')}
+          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'var(--bg-hover, #1e293b)')}
         >
           Run Transient (.TRAN)
         </button>
 
         <button
-          onClick={exportNetlist}
+          onClick={() => {
+            exportNetlist()
+            showToast('Netlist Exported', 'Generated SPICE netlist deck', 'success')
+          }}
+          title="Export SPICE Netlist (.cir) (Ctrl+E)"
           style={{
             padding: '4px 10px',
-            backgroundColor: '#1e293b',
-            border: '1px solid #334155',
+            backgroundColor: 'var(--bg-hover, #1e293b)',
+            border: '1px solid var(--border-button, #334155)',
             borderRadius: '3px',
-            color: '#f8fafc',
+            color: 'var(--text-primary, #f8fafc)',
             cursor: 'pointer',
             fontSize: '11px',
             fontWeight: 500,
           }}
-          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2e3d54')}
-          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1e293b')}
+          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--bg-active, #253349)')}
+          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'var(--bg-hover, #1e293b)')}
         >
           Export Netlist
         </button>
 
         <button
-          onClick={clearCanvas}
+          onClick={handleProtectedClear}
+          title="Clear Canvas (Protected)"
           style={{
             padding: '4px 10px',
-            backgroundColor: '#1e293b',
-            border: '1px solid #334155',
+            backgroundColor: 'var(--bg-hover, #1e293b)',
+            border: '1px solid var(--border-button, #334155)',
             borderRadius: '3px',
-            color: '#f8fafc',
+            color: 'var(--text-primary, #f8fafc)',
             cursor: 'pointer',
             fontSize: '11px',
             fontWeight: 500,
           }}
-          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2e3d54')}
-          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1e293b')}
+          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--bg-active, #253349)')}
+          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'var(--bg-hover, #1e293b)')}
         >
           Clear Canvas
         </button>
+
+        {/* Right side shortcuts */}
+        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <button
+            onClick={() => setIsCommandPaletteOpen(true)}
+            title="Command Palette (Ctrl+K)"
+            style={{
+              padding: '4px 10px',
+              backgroundColor: 'var(--bg-hover, #1e293b)',
+              border: '1px solid var(--border-button, #334155)',
+              borderRadius: '3px',
+              color: 'var(--accent-cyan, #38bdf8)',
+              cursor: 'pointer',
+              fontSize: '11px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--bg-active, #253349)')}
+            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'var(--bg-hover, #1e293b)')}
+          >
+            <svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clipRule="evenodd" />
+            </svg>
+            Command Palette (Ctrl+K)
+          </button>
+
+          <button
+            onClick={() => setIsSettingsOpen(true)}
+            title="Studio Settings (Ctrl+,)"
+            style={{
+              padding: '4px 8px',
+              backgroundColor: 'var(--bg-hover, #1e293b)',
+              border: '1px solid var(--border-button, #334155)',
+              borderRadius: '3px',
+              color: 'var(--text-secondary, #cbd5e1)',
+              cursor: 'pointer',
+              fontSize: '11px',
+              display: 'flex',
+              alignItems: 'center',
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--bg-active, #253349)')}
+            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'var(--bg-hover, #1e293b)')}
+          >
+            <svg width="13" height="13" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clipRule="evenodd" />
+            </svg>
+          </button>
+        </div>
       </div>
 
       {/* Tab bar */}
@@ -945,66 +1654,6 @@ export default function App() {
                 </div>
               )
             })}
-
-            {/* Built-in Demo Circuits Category */}
-            <div style={{ borderBottom: '1px solid #131b2c' }}>
-              <div
-                onClick={() => toggleCategory('Demo Circuits')}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  padding: '6px 10px',
-                  cursor: 'pointer',
-                  color: openCategories['Demo Circuits'] ? '#38bdf8' : '#cbd5e1',
-                  fontSize: '11px',
-                  fontWeight: 600,
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#131b2c')}
-                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
-              >
-                <span style={{ fontSize: '9px', marginRight: '6px', transform: openCategories['Demo Circuits'] ? 'rotate(90deg)' : 'none', display: 'inline-block', transition: 'transform 0.15s ease' }}>
-                  ▶
-                </span>
-                Demo Circuits
-              </div>
-              {openCategories['Demo Circuits'] && (
-                <div style={{ padding: '0 10px 6px 18px' }}>
-                  <div style={{ fontSize: '9px', color: '#64748b', fontStyle: 'italic', marginBottom: '6px', lineHeight: '1.2' }}>
-                    Pre-configured foundational and transistor-level circuits for instant multi-scale SPICE verification.
-                  </div>
-                  {[
-                    { key: 'voltage_divider', name: 'Voltage Divider' },
-                    { key: 'diode_clipper', name: 'Diode Clipper' },
-                    { key: 'bjt_amplifier', name: 'BJT CE Amplifier' },
-                    { key: 'cmos_inverter', name: 'CMOS Inverter' },
-                    { key: 'nmos_switch', name: 'NMOS Switch' },
-                  ].map((demo) => (
-                    <div
-                      key={demo.key}
-                      onClick={() => loadDemo(demo.key)}
-                      style={{
-                        padding: '4px 6px',
-                        cursor: 'pointer',
-                        color: '#e2e8f0',
-                        fontSize: '11px',
-                        borderRadius: '2px',
-                        marginBottom: '2px',
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = '#1e293b'
-                        e.currentTarget.style.color = '#38bdf8'
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.backgroundColor = 'transparent'
-                        e.currentTarget.style.color = '#e2e8f0'
-                      }}
-                    >
-                      {demo.name}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
           </div>
         </div>
 
@@ -1013,23 +1662,33 @@ export default function App() {
           <div style={{ flex: 1, position: 'relative', backgroundColor: '#0b0f19', overflow: 'hidden' }}>
             <svg
               ref={canvasRef}
-              style={{ width: '100%', height: '100%', cursor: activeTool === 'wire' ? 'crosshair' : 'default' }}
+              style={{ width: '100%', height: '100%', cursor: isPanning ? 'grabbing' : activeTool === 'wire' ? 'crosshair' : 'default' }}
+              onMouseDown={handleCanvasMouseDown}
               onMouseMove={handleCanvasMouseMove}
               onMouseUp={handleCanvasMouseUp}
+              onContextMenu={(e) => e.preventDefault()}
               onClick={() => {
                 if (activeTool === 'select') setSelectedCompId(null)
               }}
             >
               <defs>
                 {/* 20px Grid dots */}
-                <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+                <pattern
+                  id="grid"
+                  width="20"
+                  height="20"
+                  patternUnits="userSpaceOnUse"
+                  patternTransform={`translate(${pan.x}, ${pan.y}) scale(${zoom})`}
+                >
                   <circle cx="10" cy="10" r="0.75" fill="#1e293b" />
                 </pattern>
               </defs>
 
               <rect width="100%" height="100%" fill="url(#grid)" />
 
-              {/* Render Wires */}
+              {/* World elements transformed by Pan & Zoom */}
+              <g transform={`translate(${pan.x}, ${pan.y}) scale(${zoom})`}>
+                {/* Render Wires */}
               {wires.map((wire) => (
                 <g key={wire.id}>
                   {/* Green wire stroke */}
@@ -1071,14 +1730,19 @@ export default function App() {
                     transform={`translate(${comp.x}, ${comp.y})`}
                     style={{ cursor: 'move' }}
                     onMouseDown={(e) => {
+                      if (e.button !== 0) return
                       e.stopPropagation()
                       setSelectedCompId(comp.id)
                       setDraggingCompId(comp.id)
                       if (canvasRef.current) {
                         const rect = canvasRef.current.getBoundingClientRect()
+                        const screenX = e.clientX - rect.left
+                        const screenY = e.clientY - rect.top
+                        const worldX = (screenX - pan.x) / zoom
+                        const worldY = (screenY - pan.y) / zoom
                         setDragOffset({
-                          x: e.clientX - rect.left - comp.x,
-                          y: e.clientY - rect.top - comp.y,
+                          x: worldX - comp.x,
+                          y: worldY - comp.y,
                         })
                       }
                     }}
@@ -1237,6 +1901,7 @@ export default function App() {
                   </g>
                 )
               })}
+              </g>
             </svg>
           </div>
 
@@ -1497,14 +2162,49 @@ export default function App() {
       {/* =========================================================================
           ROW 4: STATUS BAR
       ========================================================================== */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '22px', backgroundColor: '#090d16', borderTop: '1px solid #1a2233', padding: '0 10px', color: '#64748b', fontSize: '10px', fontFamily: 'monospace', flexShrink: 0 }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '22px', backgroundColor: 'var(--bg-header, #090d16)', borderTop: '1px solid var(--border-color, #1a2233)', padding: '0 10px', color: 'var(--text-muted, #64748b)', fontSize: '10px', fontFamily: 'monospace', flexShrink: 0 }}>
         <div>
-          Components: {components.length} | Wires: {wires.length} | Zoom: 1.0x
+          Components: {components.length} | Wires: {wires.length} | Zoom: {zoom.toFixed(1)}x
         </div>
         <div>
           Sim: {simRunning ? 'Running...' : simStatus}
         </div>
       </div>
+
+      {/* Componentized Settings Modal */}
+      <SettingsModal
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
+        settings={settings}
+        onUpdateSettings={updateSettings}
+        actions={actions}
+        onShowToast={showToast}
+      />
+
+      {/* Componentized Command Palette (Ctrl+K) */}
+      <CommandPalette
+        isOpen={isCommandPaletteOpen}
+        onClose={() => setIsCommandPaletteOpen(false)}
+        actions={actions}
+        keybindOverrides={settings.keybindOverrides}
+      />
+
+      {/* Componentized Protected Confirm Dialog */}
+      <ConfirmDialog
+        isOpen={confirmState.isOpen}
+        title={confirmState.title}
+        message={confirmState.message}
+        confirmLabel={confirmState.confirmLabel}
+        cancelLabel={confirmState.cancelLabel}
+        discardLabel={confirmState.discardLabel}
+        variant={confirmState.variant}
+        onConfirm={confirmState.onConfirm}
+        onCancel={() => setConfirmState((prev) => ({ ...prev, isOpen: false }))}
+        onDiscard={confirmState.onDiscard}
+      />
+
+      {/* Componentized Toast Notifications Container */}
+      <ToastContainer toasts={toasts} onDismiss={dismissToast} />
     </div>
   )
 }
