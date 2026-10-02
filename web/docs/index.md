@@ -12,6 +12,8 @@ hero:
     - theme: brand
       text: Launch Web Studio
       link: /studio/
+      target: _self
+      rel: external
     - theme: alt
       text: Get Started
       link: /guide/getting-started

@@ -24,21 +24,42 @@ The ultimate destination for the Phonon platform is an autonomous, multi-scale, 
 
 ## Future
 
-### Phase 317: Phonon Studio Eye Diagram & Jitter Decomposition Visualizer, Statistical High-Speed SerDes Link Simulator & IBIS Model Parser
-Formulate statistical high-speed signal integrity and SerDes channel verification:
-1. IBIS Buffer Parser: Ingest Input/Output Buffer Information Specification (IBIS 5.0/6.0/7.0) models extracting V-I tables and ramp transitions into continuous MNA device models.
-2. Fast Channel Pulse Response Simulator: Compute statistical eye diagrams across multi-inch lossy stripline/microstrip interconnects with frequency-dependent dielectric and skin-effect losses.
-3. Jitter Decomposition & Bathtub Curves: Decompose deterministic jitter (ISI, duty-cycle distortion) and random Gaussian jitter to evaluate bit error rate (BER) bathtub curves down to 1e-12.
+### Phase 317: Phonon Studio Industry-Grade Interactive Component Symbol & Shape Editor, Visual Macro-Model Designer & UI-Isolated Symbol Architecture
+Formulate custom component shape and symbol editor with strict UI-level decoupling to avoid simulation RAM overhead:
+1. Strict UI-Level Symbol Isolation (Zero Simulation Overhead): Shape definitions, 2D vector primitives, bezier splines, stroke colors, and visual pin decorations exist strictly within the UI crate (`crates/phonon-gui`) and `.phn` project metadata. The core mathematical simulation kernel (`crates/phonon-solver`, `crates/phonon-models`) interacts exclusively with pure sparse mathematical netlists, pin indices, and device physics matrices with zero GUI payload or memory thrashing.
+2. Custom Component Symbol Editor (Logisim/KiCad-Inspired CAD Studio): Provide a rich, industry-grade vector symbol designer allowing users to construct component outlines (rectangles, circles, custom polygons, IEEE logic gate arcs, text annotations).
+3. Pin Anchor & Terminal Mapping Engine: Interactive placement of terminal pins with directionality (Input, Output, Bidirectional, Passive) and net binding to underlying subcircuits.
+4. Interactive Text Label Positioner: Allow visual dragging, rotation, and anchor presets of designator ($R_1$, $V_1$) and value labels relative to the component center, guaranteeing zero visual collisions.
+5. Macro-Model Library Ingestion: Save custom symbols to user library and instantiate them seamlessly on the main canvas with full SPICE compilation support.
+
+### Phase 318: Phonon Universal Multi-Scale Visual Studio High-Throughput Industry-Grade Simulation Kernel Optimizations & Cache-Locality Engine
+Execute industry-grade numerical optimizations to maximize simulation execution speed:
+1. Zero-Allocation Sparse MNA Solver: Pre-allocate compressed sparse column (CSC) symbolic pattern; perform in-place LU factorizations using static scratch buffers without dynamic heap allocations during transient inner-loop solves.
+2. SIMD Vectorized Non-Linear Device Evaluations: Vectorize BSIM4, Gummel-Poon BJT, and diode Jacobian and conductance evaluations using 4-lane / 8-lane SIMD primitives, maximizing FLOP throughput during non-linear Newton-Raphson iterations.
+3. Cache-Friendly Contiguous Array Memory Layout: Flatten node state vectors, branch currents, and pin connectivity into cache-aligned contiguous memory arrays, eliminating pointer chasing and CPU L1/L2 cache misses.
+4. Bank-Rose Adaptive Damping & Fast Convergence Control: Accelerate Newton-Raphson convergence for highly non-linear circuits with adaptive damping and truncation-error timestep management.
+
+### Phase 319: Phonon Studio Non-Linear Transient Sensitivity Analysis, Adjoint Sensitivity Engine & Worst-Case Circuit Optimization
+Formulate non-linear transient sensitivity analysis and adjoint optimization:
+1. Adjoint Transient Sensitivity Engine: Implement backward continuous-time adjoint differential equation solver computing sensitivities of arbitrary circuit performance metrics with respect to all device parameters in a single simulation pass.
+2. Component Sensitivity Visualizer: Render real-time sensitivity bar charts and highlight high-impact components directly on visual schematic canvas pins.
+3. Gradient-Based Worst-Case Optimization: Automated gradient-descent optimizer maximizing circuit operating margins across process, voltage, and temperature (PVT) variations.
+
+### Phase 320 (Milestone): Phonon Universal Multi-Scale Visual Studio Milestone & Multi-Abstraction Transistor Speed Regression Protocol
+Execute periodic milestone verification across all 6 realism tiers (Tiers 0-6) validating zero performance regression against baseline thresholds.
 
 ---
 
 ## Current
 
-### Phase 316: Phonon Studio Non-Linear Transient Sensitivity Analysis, Adjoint Sensitivity Engine & Worst-Case Circuit Optimization
-Formulate non-linear transient sensitivity analysis and adjoint optimization:
-1. Adjoint Transient Sensitivity Engine: Implement backward continuous-time adjoint differential equation solver computing sensitivities of arbitrary circuit performance metrics with respect to all device parameters in a single simulation pass.
-2. Component Sensitivity Visualizer: Render real-time sensitivity bar charts and highlight high-impact components directly on visual schematic canvas pins.
-3. Gradient-Based Worst-Case Optimization: Automated gradient-descent optimizer maximizing circuit operating margins across process, voltage, and temperature (PVT) variations.
+### Phase 316: Phonon Studio Sleek Minimalist UI Overhaul, Inspector Telemetry Integration, Collapsed Palette & Semiconductor Demos
+Execute visual CAD interface refinement, inspector telemetry integration, and low-level component demos:
+1. Sleek Frameless Top Menu & Window Controls: Replace repetitive gray box buttons in the top frame with clean flat text buttons separated by subtle `|` glyphs; replace window control boxes with frameless minimalist icons with hover-only feedback.
+2. Uncluttered Action Bar & Remove Dynamics Badge: Eliminate `[REFERENCE DYNAMICS ACTIVE]` and external link visual noise; redesign Run DC, Run Transient, Export, and Clear buttons into modern flat minimalist controls.
+3. Canvas Text Collision Fix & Dynamic Label Offsets: Fix label position collision on voltage sources (offset text past the circle perimeter), and enable component design definitions to specify customized (x, y) offsets for designators and values.
+4. Inspector Redesign & Per-Component DC/Thermal Telemetry: Remove the clunky bordered box in the inspector; add prominent component title (e.g., `V1 (DC Voltage Source)`); display per-component real-time telemetry (operating voltage $V$, branch current $I$, power dissipation $P$, dynamic temperature $T$) when a component is selected.
+5. Collapsed Palette Drawers by Default: Configure the 7 component category drawers to start collapsed by default for a clean, focused workspace.
+6. Low-Level Semiconductor Demos: Add built-in demos for fundamental semiconductor circuits (BJT Common Emitter Amplifier, CMOS Inverter Pair, NMOS Switch) with pre-wired components and verified operating points.
 
 ---
 
