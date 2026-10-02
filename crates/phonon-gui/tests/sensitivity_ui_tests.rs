@@ -3,15 +3,11 @@
 //! Verification test suite for Phonon Visual Studio Sensitivity Visualizer Dialog and worst-case UI widgets.
 
 use egui::Color32;
-use phonon_core::{CircuitGraph, NodeId};
+use phonon_core::CircuitGraph;
 use phonon_gui::widgets::sensitivity_dialog::SensitivityDialog;
 use phonon_solver::mna::non_linear_solver::ModelContext;
-use phonon_solver::sensitivity::{
-    CircuitParameter, CornerEvaluation, CornerType, ObjectiveKind, SensitivityResult,
-    WorstCaseSummary,
-};
+use phonon_solver::sensitivity::{ObjectiveKind, SensitivityResult};
 use phonon_solver::transient::TransientOptions;
-use std::collections::HashMap;
 
 #[test]
 fn test_sensitivity_dialog_initialization_defaults() {
@@ -127,11 +123,9 @@ fn test_run_analysis_populates_results_and_corners() {
     let mut dialog = SensitivityDialog::new();
 
     let mut graph = CircuitGraph::new();
-    let n_in = graph.add_node("VIN");
-    let n_out = graph.add_node("VOUT");
-    graph.add_voltage_source("V1", n_in, NodeId::GROUND, 5.0);
-    graph.add_resistor("R1", n_in, n_out, 1000.0);
-    graph.add_capacitor("C1", n_out, NodeId::GROUND, 1.0e-5, Some(0.0));
+    let _ = graph.add_voltage_source("V1", "VIN", "0", 5.0);
+    let _ = graph.add_resistor("R1", "VIN", "VOUT", 1000.0);
+    let _ = graph.add_capacitor("C1", "VOUT", "0", 1.0e-5, Some(0.0));
 
     let context = ModelContext::default();
     let mut options = TransientOptions::default();

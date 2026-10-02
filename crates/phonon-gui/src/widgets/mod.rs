@@ -6,10 +6,12 @@ pub mod dynamics_status;
 pub mod icon;
 pub mod palette;
 pub mod sensitivity_dialog;
+pub mod symbol_editor;
 pub mod top_frame;
 
 pub use dynamics_status::DynamicsStatusBadge;
 pub use icon::render_phonon_icon;
 pub use palette::ComponentPalette;
 pub use sensitivity_dialog::SensitivityDialog;
+pub use symbol_editor::{SymbolEditorDialog, SymbolEditorTool};
 pub use top_frame::{render_top_frame, render_top_frame_with_app, TopFrameAction, TopFrameConfig};
