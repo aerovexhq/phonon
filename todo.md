@@ -64,6 +64,15 @@ Conducted in-depth articulatory acoustic research cross-pollinating Phonon's Mod
 4. Aero-Mechanical Glottal Dynamics: Formulated Liljencrants-Fant (LF) glottal flow derivative model ($O_q, \alpha_m, R_a, R_k$) and Ishizaka-Flanagan non-linear 2-mass vocal fold oscillator with Bernoulli subglottal coupling.
 5. Precision Voice Timbre Replication Protocol: Engineered a 5-stage physical extraction and cloning protocol: acoustic inverse filtering $\to$ iterative linear prediction area function inversion $\to$ formant loci mapping $\to$ glottal LF parameter fitting $\to$ timbre replication with D-vector verification.
 
+### Research Monograph: Multidimensional FDTD, Digital Waveguide Meshes & Electro-Acoustic MNA Formulations (`analysis/finite_difference_time_domain_and_transmission_line_acoustics.md`)
+Conducted research extending Phonon's solver to multidimensional wave mechanics and complex vocal tract cavities:
+1. 3D Wave Mechanics & Cutoff Dispersions: Formulated linearized momentum and mass continuity equations in lossy media and demonstrated how transverse cross-modes emerge above $f_{\text{cutoff}} \approx 3.81\text{ kHz}$ in non-planar vocal cavities (piriform fossae, asymmetric nasal turbinates).
+2. Staggered-Grid Acoustic FDTD: Formulated leapfrog spatial-temporal central finite differences on 3D Yee grids with strict CFL stability bound $\Delta t \le h / (c_0 \sqrt{3})$.
+3. Frequency-Dependent Impedance Boundaries (FDIBC): Modeled yielding vocal tract tissue damping, cartilaginous compliance, and viscous thermal losses via recursive bilinear transform filters.
+4. Digital Waveguide Meshes (DWM): Formulated lossless multi-port ($K$-port) scattering junctions ($p_J = \frac{2}{K} \sum p_k^+$) ensuring energy conservation.
+5. Sparse MNA Co-Simulation: Mapped 3D acoustic cells to symmetric $\Pi$-networks and stamped into Phonon's sparse MNA engine for monolithic co-simulation with aero-mechanical glottal drivers.
+6. Adjoint Sensitivity Formulation: Formulated continuous-time backward adjoint differential equations $\mathbf{G}^T \boldsymbol{\lambda} - \mathbf{C}^T \dot{\boldsymbol{\lambda}} = -\partial g / \partial \mathbf{x}$ for gradient-based area recovery.
+
 ### Phase 316: Phonon Studio Sleek Minimalist UI Overhaul, Inspector Telemetry Integration, Collapsed Palette, Theme System & Release Automation
 Executed visual CAD interface refinement, inspector telemetry integration, theme engine, command palette, and continuous release automation:
 1. Sleek Frameless Top Menu & Window Controls: Replaced repetitive gray box buttons in top frame with clean flat text buttons separated by subtle `|` glyphs; replaced window control boxes with painted vector icons (minimize line, maximize/restore rectangle, close diagonal cross) with hover-only feedback.

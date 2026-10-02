@@ -4,6 +4,7 @@ import { ConfirmDialog } from './components/ConfirmDialog'
 import { ToastContainer } from './components/Toast'
 import { CommandPalette } from './components/CommandPalette'
 import { SettingsModal } from './components/SettingsModal'
+import { OrientationLockModal } from './components/OrientationLockModal'
 
 // ==============================================================================
 // Phonon Web CAD Studio — High-Precision Visual Electronic Design Automation (EDA)
@@ -351,6 +352,132 @@ export default function App() {
 
   const canvasRef = useRef<SVGSVGElement | null>(null)
 
+  // Responsive Layout States & Panel Toggles
+  const [windowWidth, setWindowWidth] = useState<number>(() =>
+    typeof window !== 'undefined' ? window.innerWidth : 1200
+  )
+  const [isLeftPanelOpen, setIsLeftPanelOpen] = useState<boolean>(() =>
+    typeof window !== 'undefined' ? window.innerWidth >= 900 : true
+  )
+  const [isRightPanelOpen, setIsRightPanelOpen] = useState<boolean>(() =>
+    typeof window !== 'undefined' ? window.innerWidth >= 1100 : true
+  )
+
+  const isSmallScreen = windowWidth < 900
+  const isVerySmallScreen = windowWidth < 680
+
+  useEffect(() => {
+    const handleResize = () => {
+      const w = window.innerWidth
+      setWindowWidth(w)
+      if (w < 900) {
+        setIsLeftPanelOpen(false)
+        setIsRightPanelOpen(false)
+      } else if (w >= 1100) {
+        setIsLeftPanelOpen(true)
+        setIsRightPanelOpen(true)
+      }
+    }
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
+  // Touch gestures for mobile landscape (pinch zoom & smooth pan)
+  const touchStartRef = useRef<{
+    isPinching: boolean
+    startDist: number
+    startZoom: number
+    startPan: { x: number; y: number }
+    touchStartPos: { x: number; y: number }
+    midScreenPos: { x: number; y: number }
+  }>({
+    isPinching: false,
+    startDist: 0,
+    startZoom: 1,
+    startPan: { x: 0, y: 0 },
+    touchStartPos: { x: 0, y: 0 },
+    midScreenPos: { x: 0, y: 0 },
+  })
+
+  useEffect(() => {
+    const svgEl = canvasRef.current
+    if (!svgEl) return
+
+    const handleTouchStart = (e: TouchEvent) => {
+      if (e.touches.length === 2) {
+        e.preventDefault()
+        const t1 = e.touches[0]
+        const t2 = e.touches[1]
+        const dist = Math.hypot(t1.clientX - t2.clientX, t1.clientY - t2.clientY)
+        const rect = svgEl.getBoundingClientRect()
+        touchStartRef.current = {
+          isPinching: true,
+          startDist: dist,
+          startZoom: zoomRef.current,
+          startPan: { ...panRef.current },
+          touchStartPos: { x: t1.clientX, y: t1.clientY },
+          midScreenPos: {
+            x: (t1.clientX + t2.clientX) / 2 - rect.left,
+            y: (t1.clientY + t2.clientY) / 2 - rect.top,
+          },
+        }
+      } else if (e.touches.length === 1) {
+        const t = e.touches[0]
+        touchStartRef.current.isPinching = false
+        touchStartRef.current.touchStartPos = { x: t.clientX, y: t.clientY }
+        touchStartRef.current.startPan = { ...panRef.current }
+      }
+    }
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (e.touches.length === 2 && touchStartRef.current.isPinching) {
+        e.preventDefault()
+        const t1 = e.touches[0]
+        const t2 = e.touches[1]
+        const dist = Math.hypot(t1.clientX - t2.clientX, t1.clientY - t2.clientY)
+        if (touchStartRef.current.startDist > 0) {
+          const factor = dist / touchStartRef.current.startDist
+          const targetZoom = Math.max(0.2, Math.min(5.0, touchStartRef.current.startZoom * factor))
+          const midX = touchStartRef.current.midScreenPos.x
+          const midY = touchStartRef.current.midScreenPos.y
+          const worldX = (midX - touchStartRef.current.startPan.x) / touchStartRef.current.startZoom
+          const worldY = (midY - touchStartRef.current.startPan.y) / touchStartRef.current.startZoom
+          const nextPanX = midX - worldX * targetZoom
+          const nextPanY = midY - worldY * targetZoom
+          setZoom(targetZoom)
+          setPan({ x: nextPanX, y: nextPanY })
+        }
+      } else if (e.touches.length === 1 && !touchStartRef.current.isPinching && draggingCompId === null) {
+        const t = e.touches[0]
+        const dx = t.clientX - touchStartRef.current.touchStartPos.x
+        const dy = t.clientY - touchStartRef.current.touchStartPos.y
+        if (Math.hypot(dx, dy) > 4) {
+          e.preventDefault()
+          setPan({
+            x: touchStartRef.current.startPan.x + dx,
+            y: touchStartRef.current.startPan.y + dy,
+          })
+        }
+      }
+    }
+
+    const handleTouchEnd = () => {
+      touchStartRef.current.isPinching = false
+    }
+
+    svgEl.addEventListener('touchstart', handleTouchStart, { passive: false })
+    svgEl.addEventListener('touchmove', handleTouchMove, { passive: false })
+    svgEl.addEventListener('touchend', handleTouchEnd)
+    svgEl.addEventListener('touchcancel', handleTouchEnd)
+
+    return () => {
+      svgEl.removeEventListener('touchstart', handleTouchStart)
+      svgEl.removeEventListener('touchmove', handleTouchMove)
+      svgEl.removeEventListener('touchend', handleTouchEnd)
+      svgEl.removeEventListener('touchcancel', handleTouchEnd)
+    }
+  }, [draggingCompId])
+
   // Global right-click context menu prevention
   useEffect(() => {
     const handleContextMenu = (e: MouseEvent) => {
@@ -453,18 +580,23 @@ export default function App() {
 
     const newId = components.length > 0 ? Math.max(...components.map((c) => c.id)) + 1 : 1
     const countOfKind = components.filter((c) => c.kind === kind).length + 1
+    const centerX = Math.round(((windowWidth / 2 - pan.x) / zoom) / 20) * 20
+    const centerY = Math.round(((window.innerHeight / 2 - pan.y) / zoom) / 20) * 20
     const newComp: ComponentInstance = {
       id: newId,
       kind,
       name: `${def.prefix}${countOfKind}`,
       value: def.defaultValue,
-      x: 320,
-      y: 200,
+      x: isFinite(centerX) ? centerX : 320,
+      y: isFinite(centerY) ? centerY : 200,
       rotation: 0,
       labelPos: 'right',
     }
     setComponents((prev) => [...prev, newComp])
     setSelectedCompId(newId)
+    if (isSmallScreen) {
+      setIsLeftPanelOpen(false)
+    }
   }
 
   // Delete Component
@@ -1091,6 +1223,38 @@ export default function App() {
         
         {/* Left: Brand Icon + Title + Menu Bar */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          {/* Responsive Burger Menu Button */}
+          <button
+            onClick={() => setIsLeftPanelOpen((prev) => !prev)}
+            title="Toggle Component Palette (Burger Menu)"
+            style={{
+              background: isLeftPanelOpen ? 'var(--bg-active, #253349)' : 'transparent',
+              border: '1px solid var(--border-button, #334155)',
+              color: isLeftPanelOpen ? 'var(--accent-cyan, #38bdf8)' : 'var(--text-secondary, #cbd5e1)',
+              cursor: 'pointer',
+              width: '26px',
+              height: '24px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderRadius: '3px',
+              transition: 'background-color 0.15s, color 0.15s',
+              flexShrink: 0,
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = 'var(--bg-hover, #1e293b)'
+              e.currentTarget.style.color = 'var(--text-primary, #f8fafc)'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = isLeftPanelOpen ? 'var(--bg-active, #253349)' : 'transparent'
+              e.currentTarget.style.color = isLeftPanelOpen ? 'var(--accent-cyan, #38bdf8)' : 'var(--text-secondary, #cbd5e1)'
+            }}
+          >
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+              <path fillRule="evenodd" d="M2 3.75A.75.75 0 012.75 3h10.5a.75.75 0 010 1.5H2.75A.75.75 0 012 3.75zm0 4.25a.75.75 0 01.75-.75h10.5a.75.75 0 010 1.5H2.75A.75.75 0 012 8zm0 4.25a.75.75 0 01.75-.75h10.5a.75.75 0 010 1.5H2.75a.75.75 0 01-.75-.75z" />
+            </svg>
+          </button>
+
           {/* Phonon Vector Master Icon */}
           <svg width="18" height="18" viewBox="0 0 256 256" style={{ flexShrink: 0 }}>
             <circle cx="128" cy="128" r="110" fill="none" stroke="#0284c7" strokeWidth="6" opacity="0.4" />
@@ -1100,7 +1264,9 @@ export default function App() {
             <path d="M 64 128 Q 96 80, 128 128 T 192 128" fill="none" stroke="#38bdf8" strokeWidth="12" strokeLinecap="round" />
           </svg>
 
-          <span style={{ fontWeight: 600, color: '#f8fafc', fontSize: '13px', marginRight: '6px' }}>Phonon Studio</span>
+          {!isVerySmallScreen && (
+            <span style={{ fontWeight: 600, color: '#f8fafc', fontSize: '13px', marginRight: '6px', whiteSpace: 'nowrap' }}>Phonon Studio</span>
+          )}
 
           {/* Menus separated by '|' */}
           <div className="menu-container" style={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
@@ -1188,46 +1354,51 @@ export default function App() {
           </div>
         </div>
 
-        {/* Center: Circuit Status Header */}
-        <div style={{ color: '#94a3b8', fontSize: '11px', fontFamily: 'monospace' }}>
-          Circuit ({components.length} Components, {wires.length} Wires) (v0.1.0)
-        </div>
+        {/* Center: Circuit Status Header (Hidden on small screens) */}
+        {!isSmallScreen && (
+          <div style={{ color: '#94a3b8', fontSize: '11px', fontFamily: 'monospace', whiteSpace: 'nowrap' }}>
+            Circuit ({components.length} Components, {wires.length} Wires) (v0.1.0)
+          </div>
+        )}
 
         {/* Right: Download Desktop App + Modern Vector Window Controls */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <a
-            href="https://github.com/aerovexhq/phonon/releases/latest"
-            target="_blank"
-            rel="noreferrer"
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px',
-              padding: '3px 10px',
-              fontSize: '11px',
-              fontWeight: 500,
-              backgroundColor: 'var(--bg-hover, #1e293b)',
-              color: 'var(--accent-cyan, #38bdf8)',
-              border: '1px solid var(--border-button, #334155)',
-              borderRadius: '3px',
-              textDecoration: 'none',
-              cursor: 'pointer',
-              transition: 'background-color 0.15s, color 0.15s',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = 'var(--border-button, #334155)'
-              e.currentTarget.style.color = 'var(--text-primary, #f8fafc)'
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = 'var(--bg-hover, #1e293b)'
-              e.currentTarget.style.color = 'var(--accent-cyan, #38bdf8)'
-            }}
-          >
-            <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
-              <path d="M8 12l-4-4h2.5V2h3v6H12l-4 4zm-6 2h12v1.5H2V14z" />
-            </svg>
-            Download Desktop App
-          </a>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
+          {!isVerySmallScreen && (
+            <a
+              href="https://github.com/aerovexhq/phonon/releases/latest"
+              target="_blank"
+              rel="noreferrer"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '3px 10px',
+                fontSize: '11px',
+                fontWeight: 500,
+                backgroundColor: 'var(--bg-hover, #1e293b)',
+                color: 'var(--accent-cyan, #38bdf8)',
+                border: '1px solid var(--border-button, #334155)',
+                borderRadius: '3px',
+                textDecoration: 'none',
+                cursor: 'pointer',
+                whiteSpace: 'nowrap',
+                transition: 'background-color 0.15s, color 0.15s',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = 'var(--border-button, #334155)'
+                e.currentTarget.style.color = 'var(--text-primary, #f8fafc)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'var(--bg-hover, #1e293b)'
+                e.currentTarget.style.color = 'var(--accent-cyan, #38bdf8)'
+              }}
+            >
+              <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M8 12l-4-4h2.5V2h3v6H12l-4 4zm-6 2h12v1.5H2V14z" />
+              </svg>
+              Download Desktop App
+            </a>
+          )}
 
           {/* Window Control Buttons with Vector Iconography */}
           <div style={{ display: 'flex', alignItems: 'center', borderLeft: '1px solid var(--border-color, #1a2233)', paddingLeft: '8px', gap: '2px' }}>
@@ -1339,7 +1510,34 @@ export default function App() {
           - Hover tooltips with keybinds
           - Command Palette (Ctrl+K) & Settings (Ctrl+,) shortcuts
       ========================================================================== */}
-      <div style={{ display: 'flex', alignItems: 'center', height: '36px', backgroundColor: 'var(--bg-toolbar, #101623)', borderBottom: '1px solid var(--border-color, #1a2233)', padding: '0 10px', gap: '8px', flexShrink: 0 }}>
+      <div style={{ display: 'flex', alignItems: 'center', height: '36px', backgroundColor: 'var(--bg-toolbar, #101623)', borderBottom: '1px solid var(--border-color, #1a2233)', padding: '0 10px', gap: '8px', flexShrink: 0, overflowX: 'auto', whiteSpace: 'nowrap' }}>
+        {/* Quick Palette Toggle Button */}
+        <button
+          onClick={() => setIsLeftPanelOpen((prev) => !prev)}
+          title="Toggle Component Palette (Burger Menu)"
+          style={{
+            padding: '4px 8px',
+            backgroundColor: isLeftPanelOpen ? 'var(--bg-active, #253349)' : 'var(--bg-hover, #1e293b)',
+            border: `1px solid ${isLeftPanelOpen ? 'var(--accent-cyan, #38bdf8)' : 'var(--border-button, #334155)'}`,
+            borderRadius: '3px',
+            color: isLeftPanelOpen ? 'var(--accent-cyan, #38bdf8)' : 'var(--text-secondary, #cbd5e1)',
+            cursor: 'pointer',
+            fontSize: '11px',
+            fontWeight: 500,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '5px',
+            flexShrink: 0,
+          }}
+          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--bg-active, #253349)')}
+          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = isLeftPanelOpen ? 'var(--bg-active, #253349)' : 'var(--bg-hover, #1e293b)')}
+        >
+          <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+            <path fillRule="evenodd" d="M2 3.75A.75.75 0 012.75 3h10.5a.75.75 0 010 1.5H2.75A.75.75 0 012 3.75zm0 4.25a.75.75 0 01.75-.75h10.5a.75.75 0 010 1.5H2.75A.75.75 0 012 8zm0 4.25a.75.75 0 01.75-.75h10.5a.75.75 0 010 1.5H2.75a.75.75 0 01-.75-.75z" />
+          </svg>
+          Palette
+        </button>
+
         <button
           onClick={runDcOp}
           title="Run DC Operating Point (.OP) (F5)"
@@ -1420,7 +1618,34 @@ export default function App() {
         </button>
 
         {/* Right side shortcuts */}
-        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
+          {/* Quick Inspector Toggle Button */}
+          <button
+            onClick={() => setIsRightPanelOpen((prev) => !prev)}
+            title="Toggle Inspector Panel"
+            style={{
+              padding: '4px 8px',
+              backgroundColor: isRightPanelOpen ? 'var(--bg-active, #253349)' : 'var(--bg-hover, #1e293b)',
+              border: `1px solid ${isRightPanelOpen ? 'var(--accent-cyan, #38bdf8)' : 'var(--border-button, #334155)'}`,
+              borderRadius: '3px',
+              color: isRightPanelOpen ? 'var(--accent-cyan, #38bdf8)' : 'var(--text-secondary, #cbd5e1)',
+              cursor: 'pointer',
+              fontSize: '11px',
+              fontWeight: 500,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '5px',
+              flexShrink: 0,
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--bg-active, #253349)')}
+            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = isRightPanelOpen ? 'var(--bg-active, #253349)' : 'var(--bg-hover, #1e293b)')}
+          >
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M3 2.5a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-1 0V3a.5.5 0 0 1 .5-.5zm0 4a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V7a.5.5 0 0 1 .5-.5zm5-4a.5.5 0 0 1 .5.5v5a.5.5 0 0 1-1 0V3a.5.5 0 0 1 .5-.5zm0 8a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2a.5.5 0 0 1 .5-.5zm5-8a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-1 0V3a.5.5 0 0 1 .5-.5zm0 6a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V9a.5.5 0 0 1 .5-.5zM1.5 5a1.5 1.5 0 1 0 3 0 1.5 1.5 0 0 0-3 0zm5 4a1.5 1.5 0 1 0 3 0 1.5 1.5 0 0 0-3 0zm5-2a1.5 1.5 0 1 0 3 0 1.5 1.5 0 0 0-3 0z" />
+            </svg>
+            Inspector
+          </button>
+
           <button
             onClick={() => setIsCommandPaletteOpen(true)}
             title="Command Palette (Ctrl+K)"
@@ -1490,11 +1715,63 @@ export default function App() {
       ========================================================================== */}
       <div style={{ display: 'flex', flex: 1, minHeight: 0, position: 'relative' }}>
         
-        {/* LEFT PALETTE (Width: 230px) */}
-        <div style={{ width: '230px', backgroundColor: '#0d111a', borderRight: '1px solid #1a2233', display: 'flex', flexDirection: 'column', flexShrink: 0, overflowY: 'auto' }}>
-          
-          {/* CAD Tools */}
-          <div style={{ padding: '8px 10px', borderBottom: '1px solid #1a2233' }}>
+        {/* Backdrop for Left Palette on small screens */}
+        {isSmallScreen && isLeftPanelOpen && (
+          <div
+            onClick={() => setIsLeftPanelOpen(false)}
+            style={{
+              position: 'absolute',
+              inset: 0,
+              backgroundColor: 'rgba(5, 8, 15, 0.75)',
+              zIndex: 40,
+              backdropFilter: 'blur(2px)',
+            }}
+          />
+        )}
+
+        {/* LEFT PALETTE (Desktop Docked or Mobile Overlay Drawer) */}
+        {isLeftPanelOpen && (
+          <div
+            className={isSmallScreen ? 'drawer-slide-in-left' : undefined}
+            style={{
+              ...(isSmallScreen
+                ? {
+                    position: 'absolute',
+                    top: 0,
+                    bottom: 0,
+                    left: 0,
+                    width: '280px',
+                    maxWidth: '85vw',
+                    zIndex: 50,
+                    boxShadow: '4px 0 24px rgba(0,0,0,0.7)',
+                  }
+                : {
+                    width: '230px',
+                    flexShrink: 0,
+                  }),
+              backgroundColor: '#0d111a',
+              borderRight: '1px solid #1a2233',
+              display: 'flex',
+              flexDirection: 'column',
+              overflowY: 'auto',
+            }}
+          >
+            {/* Drawer Header with Close Button on Small Screens */}
+            {isSmallScreen && (
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 10px', borderBottom: '1px solid #1a2233' }}>
+                <span style={{ fontSize: '11px', fontWeight: 600, color: '#f8fafc', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Component Palette</span>
+                <button
+                  onClick={() => setIsLeftPanelOpen(false)}
+                  title="Close Palette"
+                  style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', fontSize: '14px', padding: '2px 6px' }}
+                >
+                  ✕
+                </button>
+              </div>
+            )}
+            
+            {/* CAD Tools */}
+            <div style={{ padding: '8px 10px', borderBottom: '1px solid #1a2233' }}>
             <div style={{ fontSize: '11px', fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '6px' }}>CAD Tools</div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px', marginBottom: '4px' }}>
               <button
@@ -1656,13 +1933,14 @@ export default function App() {
             })}
           </div>
         </div>
+        )}
 
         {/* CENTER SCHEMATIC CANVAS */}
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden' }}>
           <div style={{ flex: 1, position: 'relative', backgroundColor: '#0b0f19', overflow: 'hidden' }}>
             <svg
               ref={canvasRef}
-              style={{ width: '100%', height: '100%', cursor: isPanning ? 'grabbing' : activeTool === 'wire' ? 'crosshair' : 'default' }}
+              style={{ width: '100%', height: '100%', cursor: isPanning ? 'grabbing' : activeTool === 'wire' ? 'crosshair' : 'default', touchAction: 'none' }}
               onMouseDown={handleCanvasMouseDown}
               onMouseMove={handleCanvasMouseMove}
               onMouseUp={handleCanvasMouseUp}
@@ -1980,13 +2258,60 @@ export default function App() {
           )}
         </div>
 
-        {/* RIGHT SIDEBAR: INSPECTOR & THERMAL CONTROLS (Width: 230px) */}
-        <div style={{ width: '230px', backgroundColor: '#0d111a', borderLeft: '1px solid #1a2233', display: 'flex', flexDirection: 'column', flexShrink: 0, overflowY: 'auto' }}>
-          
-          {/* Header */}
-          <div style={{ padding: '8px 10px', borderBottom: '1px solid #1a2233' }}>
-            <div style={{ fontSize: '11px', fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Inspector</div>
-          </div>
+        {/* Backdrop for Right Inspector on small screens */}
+        {isSmallScreen && isRightPanelOpen && (
+          <div
+            onClick={() => setIsRightPanelOpen(false)}
+            style={{
+              position: 'absolute',
+              inset: 0,
+              backgroundColor: 'rgba(5, 8, 15, 0.75)',
+              zIndex: 40,
+              backdropFilter: 'blur(2px)',
+            }}
+          />
+        )}
+
+        {/* RIGHT SIDEBAR: INSPECTOR & THERMAL CONTROLS (Desktop Docked or Mobile Overlay Drawer) */}
+        {isRightPanelOpen && (
+          <div
+            className={isSmallScreen ? 'drawer-slide-in-right' : undefined}
+            style={{
+              ...(isSmallScreen
+                ? {
+                    position: 'absolute',
+                    top: 0,
+                    bottom: 0,
+                    right: 0,
+                    width: '280px',
+                    maxWidth: '85vw',
+                    zIndex: 50,
+                    boxShadow: '-4px 0 24px rgba(0,0,0,0.7)',
+                  }
+                : {
+                    width: '230px',
+                    flexShrink: 0,
+                  }),
+              backgroundColor: '#0d111a',
+              borderLeft: '1px solid #1a2233',
+              display: 'flex',
+              flexDirection: 'column',
+              overflowY: 'auto',
+            }}
+          >
+            {/* Header */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 10px', borderBottom: '1px solid #1a2233' }}>
+              <div style={{ fontSize: '11px', fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Inspector</div>
+              {isSmallScreen && (
+                <button
+                  onClick={() => setIsRightPanelOpen(false)}
+                  title="Close Inspector"
+                  style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', fontSize: '14px', padding: '2px 6px' }}
+                >
+                  ✕
+                </button>
+              )}
+            </div>
 
           {/* Component Details */}
           <div style={{ padding: '10px', flex: 1 }}>
@@ -2157,6 +2482,7 @@ export default function App() {
             </div>
           </div>
         </div>
+        )}
       </div>
 
       {/* =========================================================================
@@ -2205,6 +2531,9 @@ export default function App() {
 
       {/* Componentized Toast Notifications Container */}
       <ToastContainer toasts={toasts} onDismiss={dismissToast} />
+
+      {/* Mandatory Mobile Landscape Orientation Lock Modal */}
+      <OrientationLockModal />
     </div>
   )
 }
