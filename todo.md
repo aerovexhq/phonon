@@ -56,6 +56,14 @@ Formulate custom component shape and symbol editor with strict UI-level decoupli
 
 ## Done
 
+### Research Monograph: Electro-Acoustic MNA Vocal Tract Modeling, Wave Mechanics & Precision Voice Replication (`analysis/articulatory_speech_synthesis_and_voice_replication_physics.md`)
+Conducted in-depth articulatory acoustic research cross-pollinating Phonon's Modified Nodal Analysis (MNA) circuit engine and Sonon's speech processing pipeline:
+1. Webster's Horn Wave Mechanics: Formulated planar acoustic wave propagation in continuously varying cross-sectional area ducts $A(x, t)$, neutral tube quarter-wave resonance, and formant perturbation sensitivity theorem $\delta F_n \propto (U_n^2 - P_n^2) \delta A$.
+2. Distributed Electro-Acoustic Ladder Networks: Formulated non-uniform acoustic transmission lines as $T$-network and $\Pi$-network RLCG ladder circuits solvable via Phonon's sparse MNA stamp solver (acoustic mass $\to L$, compliance $\to C$, viscous drag $\to R$, thermal wall losses $\to G$).
+3. Kelly-Lochbaum Scattering Lattice: Formulated cylindrical acoustic cylinder junctions, boundary reflection coefficients $r_k = \frac{A_{k+1} - A_k}{A_{k+1} + A_k}$, forward/backward wave recursion, and lip radiation impedance $Z_{\text{rad}}(\omega) \approx \frac{\rho_0 \omega^2}{4 \pi c_0} + j \frac{8 \rho_0 \omega}{3 \pi^2 a}$.
+4. Aero-Mechanical Glottal Dynamics: Formulated Liljencrants-Fant (LF) glottal flow derivative model ($O_q, \alpha_m, R_a, R_k$) and Ishizaka-Flanagan non-linear 2-mass vocal fold oscillator with Bernoulli subglottal coupling.
+5. Precision Voice Timbre Replication Protocol: Engineered a 5-stage physical extraction and cloning protocol: acoustic inverse filtering $\to$ iterative linear prediction area function inversion $\to$ formant loci mapping $\to$ glottal LF parameter fitting $\to$ timbre replication with D-vector verification.
+
 ### Phase 316: Phonon Studio Sleek Minimalist UI Overhaul, Inspector Telemetry Integration, Collapsed Palette, Theme System & Release Automation
 Executed visual CAD interface refinement, inspector telemetry integration, theme engine, command palette, and continuous release automation:
 1. Sleek Frameless Top Menu & Window Controls: Replaced repetitive gray box buttons in top frame with clean flat text buttons separated by subtle `|` glyphs; replaced window control boxes with painted vector icons (minimize line, maximize/restore rectangle, close diagonal cross) with hover-only feedback.
