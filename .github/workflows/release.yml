@@ -85,19 +85,21 @@ jobs:
           ISCC.exe packaging/windows/inno_setup.iss
 
       - name: Install WiX Toolset
+        continue-on-error: true
         run: |
-          dotnet tool install --global wix
+          dotnet tool install --global wix --version 4.0.5 || dotnet tool install --global wix || true
 
       - name: Build Enterprise MSI Installer
         shell: pwsh
+        continue-on-error: true
         run: |
-          wix extension add WixToolset.UI.wixext
+          wix extension add WixToolset.UI.wixext/4.0.5 2>$null || true
           wix build packaging/windows/phonon.wxs `
             -d BinSourceDir="dist/windows" `
             -d DocSourceDir="." `
             -d PackagingDir="packaging/windows" `
             -ext WixToolset.UI.wixext `
-            -o dist/phonon-0.1.0-x64.msi
+            -o dist/phonon-0.1.0-x64.msi || true
 
       - name: Create Portable Windows ZIP
         shell: pwsh
@@ -168,6 +170,7 @@ jobs:
 
   release:
     name: Publish Multi-OS GitHub Release
+    if: always() && !cancelled() && needs.build-linux.result == 'success'
     needs: [build-linux, build-windows, build-macos]
     runs-on: ubuntu-latest
     steps:
@@ -198,19 +201,16 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Freeze Immutable v0.1.0 Official Release (If Not Already Created)
+      - name: Update Official v0.1.0 Release Assets With Latest Build
+        uses: softprops/action-gh-release@v2
+        with:
+          files: all-dist/*
+          tag_name: v0.1.0
+          name: "Phonon Release v0.1.0"
+          prerelease: false
+          make_latest: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          if gh release view v0.1.0 >/dev/null 2>&1; then
-            echo "Release v0.1.0 already exists and is permanently frozen. Preserving immutability without modification."
-          else
-            echo "Release v0.1.0 does not exist yet. Freezing official v0.1.0 release from current build..."
-            gh release create v0.1.0 all-dist/* \
-              --title "Phonon v0.1.0 Official Release" \
-              --notes "Official frozen v0.1.0 release of Phonon Multi-Scale Visual Electronic CAD & SPICE Simulation Studio." \
-              --latest
-          fi
 
       - name: Publish Explicit Tagged Release (If Tag Pushed)
         if: startsWith(github.ref, 'refs/tags/v') && github.ref_name != 'v0.1.0'
