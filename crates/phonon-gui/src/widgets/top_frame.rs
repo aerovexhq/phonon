@@ -142,7 +142,21 @@ fn render_top_frame_internal(
     ui.horizontal(|ui| {
         ui.spacing_mut().item_spacing = vec2(6.0, 0.0);
 
-        // 1. Top-Left: Vectorized Master SVG Icon (width = 20, height = 20)
+        // 1. Top-Left: Burger Menu Button for Palette Toggle
+        let burger_btn = ui.add(
+            egui::Button::new(RichText::new("[=]").size(13.0).color(Color32::from_rgb(56, 189, 248)))
+                .frame(false),
+        );
+        if burger_btn
+            .on_hover_text("Toggle Component Palette (Burger Menu)")
+            .clicked()
+        {
+            if let Some(a) = app.as_deref_mut() {
+                a.show_palette = !a.show_palette;
+            }
+        }
+
+        // Vectorized Master SVG Icon (width = 20, height = 20)
         render_phonon_icon(ui, 20.0);
 
         // 2. Title / Brand Label
@@ -275,6 +289,7 @@ fn render_top_frame_internal(
                 ui.checkbox(&mut a.canvas.show_grid, "Show Grid");
                 ui.checkbox(&mut a.show_oscilloscope, "Show Oscilloscope");
                 ui.checkbox(&mut a.show_thermal_overlay, "Show Thermal Badges");
+                ui.checkbox(&mut a.show_palette, "Show Component Palette");
                 if ui.button("Toggle ERC Overlay").clicked() {
                     a.show_erc_overlay = !a.show_erc_overlay;
                     ui.close();
