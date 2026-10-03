@@ -2,6 +2,7 @@
 
 //! GUI widgets, visual status indicators, iconography, and custom window frames for Phonon Studio.
 
+pub mod cluster_dashboard_dialog;
 pub mod dynamics_status;
 pub mod icon;
 pub mod monte_carlo_dialog;
@@ -13,6 +14,7 @@ pub mod symbol_editor;
 pub mod thermal_floorplan_dialog;
 pub mod top_frame;
 
+pub use cluster_dashboard_dialog::ClusterDashboardDialog;
 pub use dynamics_status::DynamicsStatusBadge;
 pub use icon::render_phonon_icon;
 pub use monte_carlo_dialog::{MonteCarloParamEntry, MonteCarloYieldDialog};

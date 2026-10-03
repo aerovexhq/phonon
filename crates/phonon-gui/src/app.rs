@@ -13,9 +13,9 @@ use crate::schematic::{
 };
 use crate::thermal::{Colormap, ThermalOverlay};
 use crate::widgets::{
-    render_top_frame_with_app, ComponentPalette, MonteCarloYieldDialog, PolaritonCavityDialog,
-    SensitivityDialog, SmithChartDialog, SymbolEditorDialog, ThermalFloorplanDialog,
-    TopFrameAction, TopFrameConfig,
+    render_top_frame_with_app, ClusterDashboardDialog, ComponentPalette, MonteCarloYieldDialog,
+    PolaritonCavityDialog, SensitivityDialog, SmithChartDialog, SymbolEditorDialog,
+    ThermalFloorplanDialog, TopFrameAction, TopFrameConfig,
 };
 use eframe::{App, Frame};
 use egui::{
@@ -109,6 +109,9 @@ pub struct PhononApp {
     /// Interactive Polariton Waveguide & Topological Photonic Cavity Simulator dialog.
     pub polariton_cavity_dialog: PolaritonCavityDialog,
 
+    /// Interactive Distributed Cloud Parameter Sweep Cluster Engine Dashboard dialog.
+    pub cluster_dashboard_dialog: ClusterDashboardDialog,
+
     /// Interactive Logisim/KiCad-style component symbol and shape editor dialog.
     pub symbol_editor: SymbolEditorDialog,
 
@@ -192,6 +195,7 @@ impl Default for PhononApp {
             smith_chart_dialog: SmithChartDialog::new(),
             thermal_floorplan_dialog: ThermalFloorplanDialog::new(),
             polariton_cavity_dialog: PolaritonCavityDialog::new(),
+            cluster_dashboard_dialog: ClusterDashboardDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
             dragging_component: false,
@@ -1783,6 +1787,9 @@ impl PhononApp {
             self.polariton_cavity_dialog.run_simulation();
         }
         self.polariton_cavity_dialog.ui(ui.ctx());
+
+        // 15. Interactive Distributed Cloud Parameter Sweep Cluster Dashboard Dialog
+        self.cluster_dashboard_dialog.ui(ui.ctx());
     }
 }
 
