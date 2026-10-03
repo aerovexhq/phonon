@@ -24,22 +24,44 @@ The ultimate destination for the Phonon platform is an autonomous, multi-scale, 
 
 ## Future
 
-### Phase 336: Phonon Studio Universal Topological Dirac & Weyl Semimetal Metamaterial Simulator
-3D Weyl point dispersion, Fermi arc surface states, chiral anomaly transport, and topological acoustic metamaterial beam splitting.
-
 ### Phase 337: Phonon Studio Fractional Quantum Hall Anyon Braiding & Non-Abelian Topological Circuit Co-Simulator
 Non-Abelian Moore-Read $\nu=5/2$ Pfaffian and Fibonacci anyon braiding matrix emulator, chiral edge interferometers, and topological quantum gate synthesis.
+
+### Phase 338: Phonon Studio Superconducting Josephson Traveling-Wave Parametric Amplifier (JTWPA) Simulator
+Non-linear discrete Josephson transmission line, four-wave mixing (4WM), dispersion engineering with resonant phase matching, and quantum-limited squeezing.
 
 ---
 
 ## Current
 
-### Phase 335 (Milestone): Phonon Universal Multi-Scale Visual Studio Milestone & Multi-Abstraction Transistor Speed Regression Protocol
-Periodic milestone verification across all 7 realism tiers (Tiers 0-6) validating zero performance regression against baseline thresholds.
+### Phase 336: Phonon Studio Universal Topological Dirac & Weyl Semimetal Metamaterial Simulator
+3D Weyl point dispersion, Fermi arc surface states, chiral anomaly transport, and topological acoustic metamaterial beam splitting:
+1. 3D Weyl & Dirac Dispersion Solver: Linear crossing nodes in momentum space $E(\mathbf{k}) = \pm v_F |\mathbf{k} - \mathbf{k}_0|$, chiral charges $\mathcal{C} = \pm 1$, and Type-I / Type-II tilted conical dispersions.
+2. Fermi Arc Surface State & Chiral Anomaly Kernel: Non-closed open Fermi arc states connecting surface projections of bulk Weyl points, non-local transport, and negative magnetoresistance signature $\sigma \propto B^2$.
+3. Interactive Weyl Semimetal Studio Visualizer in CAD Studio: Native egui 3D Brillouin zone node visualizer, Fermi arc surface state contours, and acoustic beam splitter simulation.
 
 ---
 
 ## Done
+
+### Phase 335 (Milestone): Phonon Universal Multi-Scale Visual Studio Milestone & Multi-Abstraction Transistor Speed Regression Protocol
+Periodic milestone verification across all 7 realism tiers (Tiers 0-6) validating zero performance regression against baseline thresholds:
+1. Multi-Abstraction Realism Tier Benchmark Results:
+   - Tier 0 (Topological Quantum Acoustics - Majorana Braiding): 24.85 ns/eval (40.23 M-evals/s) [Threshold: < 100.00 us/eval, Sub-microsecond throughput verified].
+   - Tier 1 (TCAD 1D Mesh Drift-Diffusion): 663.35 us/eval (1.51 k-evals/s) [Threshold: < 7500.00 us/eval].
+   - Tier 2a (Inverse Design Single Genome Fitness): 76.18 ns/eval (13.13 M-evals/s) [Threshold: < 200.00 ns/eval].
+   - Tier 2b (Full NSGA-II + Adjoint 36-pop 5-gen Optimization): 2.75 ms/run (363.20 runs/s) [Threshold: < 50.00 ms/run].
+   - Tier 3a (Compact BSIM4 MOSFET + Ward-Dutton Charges): 62.38 ns/eval (16.03 M-evals/s) [Threshold: < 150.00 ns/eval].
+   - Tier 3b (Compact Gummel-Poon BJT): 33.60 ns/eval (29.76 M-evals/s) [Threshold: < 250.00 ns/eval].
+   - Tier 3c (Full MNA Circuit Newton-Raphson DC Solve): 28.82 us/solve (34.70 k-solves/s) [Threshold: < 250.00 us/solve].
+   - Tier 4 (Cryo-CMOS 4.2K Freeze-Out & Central-Diff Jacobians): 594.96 ns/eval (1680.79 k-evals/s) [Threshold: < 2000.00 ns/eval].
+   - Tier 5 (Coupled Electro-Thermal Monolithic Steady-State): 318.44 us/solve (3140.31 solves/s) [Threshold: < 1500.00 us/solve].
+   - Tier 6 (SIMD 4-Lane Vectorized Batch 1,024 Devices): 67.12 ns/transistor (14.90 M-devices/s) [Threshold: < 250.00 ns/transistor].
+2. Schematic CAD Integrity Verification:
+   - All 35 schematic primitive kinds validated across ERC diagnostic rules and binary format round-trip serialization with zero data corruption.
+3. Automated Verification Suites:
+   - `crates/phonon-core/tests/transistor_speed_regression_tests.rs`: 8/8 tests passing with zero performance regressions.
+
 
 ### Phase 334: Phonon Studio Non-Hermitian Exceptional Point Sensor & Parity-Time (PT) Symmetric Circuit Simulator
 Higher-order exceptional point bifurcation, non-Hermitian skin effect, and ultra-sensitive perturbation sensing:
