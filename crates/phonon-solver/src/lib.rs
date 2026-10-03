@@ -117,6 +117,7 @@ pub mod topological_axion;
 pub mod exceptional_surface;
 pub mod soti_corner_resonator;
 pub mod lieb_lattice;
+pub mod axion_insulator;
 pub mod floquet_anyon;
 pub mod skyrmionic_memory;
 pub mod quadrupole_qubit;
@@ -945,6 +946,12 @@ pub use lieb_lattice::{
     DisorderResilienceResult, HighSymmetryPoint as LiebHighSymmetryPoint, LiebBandPoint,
     LiebComplex, LiebHamiltonian, LiebLattice, LiebLatticeResult, LiebParams, XorShiftRng,
     HIGH_SYMMETRY_PATH as LIEB_HIGH_SYMMETRY_PATH,
+};
+pub use axion_insulator::{
+    AxionBandPoint, AxionComplex, AxionHamiltonian, AxionParams, AxionRodLattice, AxionRodResult,
+    CliffordGamma, HingeDisorderResult, HingeEigenmode, HingeId, HingeSParameters,
+    HighSymmetryPoint as AxionHighSymmetryPoint,
+    AXION_HIGH_SYMMETRY_PATH,
 };
 
 
