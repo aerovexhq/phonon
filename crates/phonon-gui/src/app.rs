@@ -18,6 +18,7 @@ use crate::widgets::{
     SmithChartDialog, SymbolEditorDialog, ThermalFloorplanDialog, TopFrameAction, TopFrameConfig,
     WeylSemimetalDialog, FqhBraidingDialog, JtwpaDialog, FloquetMetasurfaceDialog,
     HolonomicProcessorDialog, TwistedMoireDialog, ChernCirculatorDialog,
+    KerrMicrocombDialog,
 };
 use eframe::{App, Frame};
 use egui::{
@@ -141,6 +142,9 @@ pub struct PhononApp {
     /// Interactive Acoustic Chern Insulator Chiral Circulator & Non-Reciprocal Router Studio dialog.
     pub chern_circulator_dialog: ChernCirculatorDialog,
 
+    /// Interactive Non-Linear Soliton Kerr Microcomb Phononic Frequency Comb Studio dialog.
+    pub kerr_microcomb_dialog: KerrMicrocombDialog,
+
     /// Interactive Logisim/KiCad-style component symbol and shape editor dialog.
     pub symbol_editor: SymbolEditorDialog,
 
@@ -234,6 +238,7 @@ impl Default for PhononApp {
             holonomic_processor_dialog: HolonomicProcessorDialog::new(),
             twisted_moire_dialog: TwistedMoireDialog::new(),
             chern_circulator_dialog: ChernCirculatorDialog::new(),
+            kerr_microcomb_dialog: KerrMicrocombDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
             dragging_component: false,
@@ -1855,6 +1860,9 @@ impl PhononApp {
 
         // 24. Interactive Acoustic Chern Insulator Chiral Circulator & Non-Reciprocal Router Studio Dialog
         self.chern_circulator_dialog.ui(ui.ctx());
+
+        // 25. Interactive Non-Linear Soliton Kerr Microcomb Phononic Frequency Comb Studio Dialog
+        self.kerr_microcomb_dialog.ui(ui.ctx());
     }
 }
 

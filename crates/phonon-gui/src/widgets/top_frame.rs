@@ -452,6 +452,12 @@ fn render_top_frame_internal(
                 }
                 ui.close();
             }
+            if ui.button("Kerr Microcomb Studio...").clicked() {
+                if let Some(a) = app.as_deref_mut() {
+                    a.kerr_microcomb_dialog.is_open = true;
+                }
+                ui.close();
+            }
             if ui.button("Clear Traces").clicked() {
                 if let Some(a) = app.as_deref_mut() {
                     a.oscilloscope.clear();

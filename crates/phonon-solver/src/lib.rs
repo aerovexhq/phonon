@@ -77,6 +77,7 @@ pub mod josephson_vortex_ratchet;
 pub mod jtwpa;
 pub mod kitwpa;
 pub mod kitaev_spin_liquid_braiding;
+pub mod kerr_microcomb;
 pub mod lidar;
 pub mod magnon_bec;
 pub mod majorana_chiral_phonon;
@@ -923,6 +924,10 @@ pub use acoustic_chern_circulator::{
     BerryCurvaturePoint, ChernLatticeParams, ChernLatticeState, ChiralEdgeMode, CirculatorPort,
     DefectImmunityResult, EdgeDispersionPoint, ObstacleKind, SParameterSpectrum,
     SParameterSpectrumPoint, ScatteringMatrix3x3, ThreePortCirculator,
+};
+pub use kerr_microcomb::{
+    CombSpectrum, DetuningScanResult, LleSplitStepSolver, MicrocombRegime, MicrocombState,
+    MicroresonatorParams,
 };
 
 
