@@ -116,6 +116,7 @@ pub mod superradiance_laser;
 pub mod topological_axion;
 pub mod exceptional_surface;
 pub mod soti_corner_resonator;
+pub mod lieb_lattice;
 pub mod floquet_anyon;
 pub mod skyrmionic_memory;
 pub mod quadrupole_qubit;
@@ -939,6 +940,13 @@ pub use soti_corner_resonator::{
     BandDispersionPoint, BbhComplex, BbhHamiltonian, CornerEigenstate, CornerId,
     HighSymmetryPoint, QuadrupoleParams, SotiLattice, SotiLatticeResult, HIGH_SYMMETRY_PATH,
 };
+pub use lieb_lattice::{
+    hermitian_eigensolver, jacobi_symmetric_eigensolver, AbCagingSimulator, CompactLocalizedState,
+    DisorderResilienceResult, HighSymmetryPoint as LiebHighSymmetryPoint, LiebBandPoint,
+    LiebComplex, LiebHamiltonian, LiebLattice, LiebLatticeResult, LiebParams, XorShiftRng,
+    HIGH_SYMMETRY_PATH as LIEB_HIGH_SYMMETRY_PATH,
+};
+
 
 
 

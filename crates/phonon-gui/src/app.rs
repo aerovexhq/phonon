@@ -18,7 +18,7 @@ use crate::widgets::{
     SmithChartDialog, SymbolEditorDialog, ThermalFloorplanDialog, TopFrameAction, TopFrameConfig,
     WeylSemimetalDialog, FqhBraidingDialog, JtwpaDialog, FloquetMetasurfaceDialog,
     HolonomicProcessorDialog, TwistedMoireDialog, ChernCirculatorDialog,
-    KerrMicrocombDialog, ExceptionalSurfaceDialog, SotiCornerDialog,
+    KerrMicrocombDialog, ExceptionalSurfaceDialog, SotiCornerDialog, LiebLatticeDialog,
 };
 use eframe::{App, Frame};
 use egui::{
@@ -151,6 +151,9 @@ pub struct PhononApp {
     /// Interactive Topological Higher-Order Corner State Acoustic Resonator Studio dialog.
     pub soti_corner_dialog: SotiCornerDialog,
 
+    /// Interactive Topological Acoustic Flat-Band Lieb-Lattice Gauge Simulator Studio dialog.
+    pub lieb_lattice_dialog: LiebLatticeDialog,
+
     /// Interactive Logisim/KiCad-style component symbol and shape editor dialog.
     pub symbol_editor: SymbolEditorDialog,
 
@@ -247,6 +250,7 @@ impl Default for PhononApp {
             kerr_microcomb_dialog: KerrMicrocombDialog::new(),
             exceptional_surface_dialog: ExceptionalSurfaceDialog::new(),
             soti_corner_dialog: SotiCornerDialog::new(),
+            lieb_lattice_dialog: LiebLatticeDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
             dragging_component: false,
@@ -1877,6 +1881,9 @@ impl PhononApp {
 
         // 27. Interactive Topological Higher-Order Corner State Acoustic Resonator Dialog
         self.soti_corner_dialog.ui(ui.ctx());
+
+        // 28. Interactive Topological Acoustic Flat-Band Lieb-Lattice Gauge Simulator Dialog
+        self.lieb_lattice_dialog.ui(ui.ctx());
     }
 }
 
