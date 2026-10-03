@@ -134,6 +134,7 @@ pub mod metamaterial_circulator_cloak;
 pub mod mixed_signal;
 pub mod mna;
 pub mod moire;
+pub mod monte_carlo;
 pub mod molecular;
 pub mod mvl;
 pub mod net;
@@ -857,3 +858,4 @@ pub use wakefield::{
 pub use port_hamiltonian::*;
 pub use symplectic_multirate::*;
 pub use audio_dsp_synth::*;
+pub use monte_carlo::*;

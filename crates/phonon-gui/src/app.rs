@@ -13,8 +13,8 @@ use crate::schematic::{
 };
 use crate::thermal::{Colormap, ThermalOverlay};
 use crate::widgets::{
-    render_top_frame_with_app, ComponentPalette, SensitivityDialog, SymbolEditorDialog,
-    TopFrameAction, TopFrameConfig,
+    render_top_frame_with_app, ComponentPalette, MonteCarloYieldDialog, SensitivityDialog,
+    SymbolEditorDialog, TopFrameAction, TopFrameConfig,
 };
 use eframe::{App, Frame};
 use egui::{
@@ -96,6 +96,9 @@ pub struct PhononApp {
     /// Non-linear transient sensitivity analysis and worst-case optimization dialog.
     pub sensitivity_dialog: SensitivityDialog,
 
+    /// Interactive Monte Carlo Yield & Latin Hypercube Sampling Inspector dialog.
+    pub monte_carlo_dialog: MonteCarloYieldDialog,
+
     /// Interactive Logisim/KiCad-style component symbol and shape editor dialog.
     pub symbol_editor: SymbolEditorDialog,
 
@@ -175,6 +178,7 @@ impl Default for PhononApp {
             show_erc_overlay: true,
             extraction_wizard: ExtractionWizardDialog::new(),
             sensitivity_dialog: SensitivityDialog::new(),
+            monte_carlo_dialog: MonteCarloYieldDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
             dragging_component: false,
@@ -813,6 +817,25 @@ impl PhononApp {
                 );
                 self.sensitivity_dialog.is_open = true;
                 self.sim_status = self.sensitivity_dialog.status_msg.clone();
+            }
+        }
+    }
+
+    /// Executes distributed Monte Carlo & Latin Hypercube parameter sweep and yield analysis.
+    pub fn run_monte_carlo_sweep(&mut self) {
+        match compile_schematic(&self.components, &self.wires) {
+            Err(err) => {
+                self.sim_status = format!("Compilation Error: {}", err);
+            }
+            Ok(compiled) => {
+                let opts = phonon_solver::TransientOptions::default();
+                self.monte_carlo_dialog.run_sweep(
+                    &compiled.graph,
+                    &compiled.model_ctx,
+                    &opts,
+                );
+                self.monte_carlo_dialog.is_open = true;
+                self.sim_status = self.monte_carlo_dialog.status_msg.clone();
             }
         }
     }
@@ -1695,7 +1718,14 @@ impl PhononApp {
         }
         self.sensitivity_dialog.ui(ui.ctx());
 
-        // 10. Interactive Component Symbol & Shape Editor Dialog
+        // 10. Monte Carlo Yield & Latin Hypercube Sampling Dialog
+        if self.monte_carlo_dialog.run_requested {
+            self.monte_carlo_dialog.run_requested = false;
+            self.run_monte_carlo_sweep();
+        }
+        self.monte_carlo_dialog.ui(ui.ctx());
+
+        // 11. Interactive Component Symbol & Shape Editor Dialog
         let mut saved_symbol = None;
         self.symbol_editor.show(ui.ctx(), |sym| {
             saved_symbol = Some(sym);

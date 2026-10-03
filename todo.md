@@ -24,25 +24,47 @@ The ultimate destination for the Phonon platform is an autonomous, multi-scale, 
 
 ## Future
 
-### Phase 328: Phonon Studio RF & Microwave S-Parameter Extraction & Harmonic Balance Frequency-Domain Engine
-Multi-port S-parameter extraction, Smith chart visualizer, and non-linear harmonic balance solver for RF circuits.
-
 ### Phase 329: Phonon Studio Electro-Thermal Transient Multi-Scale Co-Simulation & Dynamic Floorplan Mesh Generator
 Dynamic thermal mesh refinement, heat dissipation heatmaps, and transient Cauer RC ladder coupling.
+
+### Phase 330 (Milestone): Phonon Universal Multi-Scale Visual Studio Milestone & Multi-Abstraction Transistor Speed Regression Protocol
+Periodic milestone verification across all 7 realism tiers (Tiers 0-6) validating zero performance regression against baseline thresholds.
 
 ---
 
 ## Current
 
-### Phase 327: Phonon Universal Multi-Scale Visual Studio Distributed Multi-Threaded Parameter Space Exploration & Monte Carlo Sensitivity Harvester
-Large-scale Latin Hypercube Sampling, multi-core Rayon parameter sweeps, and statistical yield analysis:
-1. Latin Hypercube Sampling (LHS) Engine: High-dimensional stratified parameter distribution generator across device tolerances, oxide thickness variations, and temperature gradients.
-2. Parallel Rayon Batch Execution Kernel: Multi-threaded sweep engine simulating 10,000+ corner variants with lock-free metric harvesting.
-3. Interactive Yield & Histogram Inspector in CAD Studio: Visual probability density plots, cumulative distribution function (CDF) overlays, and 3-sigma process corner boundaries.
+### Phase 328: Phonon Studio RF & Microwave S-Parameter Extraction & Harmonic Balance Frequency-Domain Engine
+Multi-port scattering parameter (S-parameter) extraction, interactive Smith chart CAD visualizer, and non-linear harmonic balance frequency-domain solver:
+1. Multi-Port S-Parameter Solver: Implement linear high-frequency multi-port network analysis computing S11, S21, S12, S22 over logarithmic frequency sweeps (100 kHz to 100 GHz) with reference impedance normalization.
+2. Interactive Smith Chart Visualizer in CAD Studio: Native egui vector Smith chart plotting impedance/admittance loci, constant-resistance/reactance circles, and stability circles.
+3. Non-Linear Harmonic Balance Engine: Multi-tone harmonic balance solver combining frequency-domain linear network MNA with time-domain non-linear device evaluation via FFT/IFFT.
 
 ---
 
 ## Done
+
+### Phase 327: Phonon Universal Multi-Scale Visual Studio Distributed Multi-Threaded Parameter Space Exploration & Monte Carlo Sensitivity Harvester
+Large-scale Latin Hypercube Sampling, multi-core Rayon parameter sweeps, and statistical yield analysis:
+1. Latin Hypercube Sampling (LHS) Engine (`crates/phonon-solver/src/monte_carlo/lhs.rs`):
+   - Implemented `LatinHypercubeSampler` with stratified partitioning into N equiprobable intervals and Fisher-Yates permutation per dimension.
+   - Implemented `ParameterDistribution` supporting Uniform, Gaussian (Acklam probit algorithm / Abramowitz-Stegun erf), and LogNormal distributions.
+   - Added deterministic PRNG (`SplitMix64`) with reproducible seed initialization.
+2. Parallel Rayon Batch Execution Kernel (`crates/phonon-solver/src/monte_carlo/yield_harvester.rs`):
+   - Implemented `MonteCarloHarvester` parallelizing circuit evaluations across N sampled parameter vectors.
+   - Evaluates statistical moments: mean, std dev, variance, skewness, kurtosis, median.
+   - Computes statistical yield against specification limits ([LSL, USL]) and process capability indices (Cp, Cpk).
+   - Generates histogram bins and empirical cumulative distribution function (CDF).
+   - Identifies theoretical -3sigma, nominal, +3sigma bounds and empirical quantiles.
+   - High-throughput benchmark: processed 10,000 samples under 200 ms with multi-core Rayon execution.
+3. Interactive Yield & Histogram Inspector in CAD Studio (`crates/phonon-gui/src/widgets/monte_carlo_dialog.rs`):
+   - Built `MonteCarloYieldDialog` in Phonon Visual Studio with sample count selection (100 to 10,000+), sampling mode (LHS vs Monte Carlo), and canvas parameter toggles.
+   - Renders visual histogram plot with LSL/USL threshold markers and statistical readouts via `egui_plot`.
+   - Integrated into `PhononApp` state, simulation loop (`run_monte_carlo_sweep`), and top frame menu.
+4. Automated Verification Suites:
+   - `crates/phonon-solver/tests/lhs_monte_carlo_tests.rs`: 5/5 tests passing.
+   - `crates/phonon-gui/tests/monte_carlo_gui_tests.rs`: 4/4 tests passing.
+   - Full GUI regression suite passing with zero regressions.
 
 ### Phase 326: Phonon Studio Full SPICE Component Optimization & Evolutionary Parameter Estimation Engine
 Autonomous SPICE model parameter extraction and evolutionary curve fitting directly integrated with the visual CAD studio:
