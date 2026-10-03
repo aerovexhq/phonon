@@ -43,6 +43,7 @@ pub mod chiral_spintronic_memristor;
 pub mod cqed;
 pub mod diamond_nv;
 pub mod em;
+pub mod ep_sensor;
 pub mod error;
 pub mod floquet;
 pub mod floquet_acoustic_chern;
@@ -878,4 +879,8 @@ pub use cluster::{
     ClusterDispatchQueue, ClusterSweepResult, NodeStatus, ProtocolError, RpcMessage,
     SimulatedClusterWorker, SimulationType, SweepSample, WorkerNodeInfo, PROTOCOL_MAGIC,
     PROTOCOL_VERSION,
+};
+pub use ep_sensor::{
+    EpOrder, NhseLattice, NhseResult, NonHermitianHamiltonian, PtCircuitParams, PtCircuitState,
+    PtPhase, RiemannBranchPoint,
 };

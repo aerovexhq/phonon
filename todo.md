@@ -24,25 +24,40 @@ The ultimate destination for the Phonon platform is an autonomous, multi-scale, 
 
 ## Future
 
-### Phase 335 (Milestone): Phonon Universal Multi-Scale Visual Studio Milestone & Multi-Abstraction Transistor Speed Regression Protocol
-Periodic milestone verification across all 7 realism tiers (Tiers 0-6) validating zero performance regression against baseline thresholds.
-
 ### Phase 336: Phonon Studio Universal Topological Dirac & Weyl Semimetal Metamaterial Simulator
 3D Weyl point dispersion, Fermi arc surface states, chiral anomaly transport, and topological acoustic metamaterial beam splitting.
+
+### Phase 337: Phonon Studio Fractional Quantum Hall Anyon Braiding & Non-Abelian Topological Circuit Co-Simulator
+Non-Abelian Moore-Read $\nu=5/2$ Pfaffian and Fibonacci anyon braiding matrix emulator, chiral edge interferometers, and topological quantum gate synthesis.
 
 ---
 
 ## Current
 
-### Phase 334: Phonon Studio Non-Hermitian Exceptional Point Sensor & Parity-Time (PT) Symmetric Circuit Simulator
-Higher-order exceptional point bifurcation, non-Hermitian skin effect, and ultra-sensitive perturbation sensing:
-1. Non-Hermitian Hamiltonian & Jordan Block Eigensolver: Effective non-Hermitian Hamiltonian $H_{eff} = H_0 - i\Gamma/2$ eigenvalue topology, Exceptional Points (EP2, EP3, EP4) coalescence of eigenvalues and eigenvectors, and square/cube-root perturbation sensitivity $\Delta \lambda \propto \epsilon^{1/N}$.
-2. Parity-Time (PT) Symmetric Circuit Solver: Coupled gain-loss RLC resonators and non-Hermitian active circuits, PT-symmetry breaking phase transitions, and non-Hermitian skin effect directed amplification.
-3. Interactive Exceptional Point Visualizer in CAD Studio: Native egui Riemann surface sheet representation of complex eigenvalues $(\text{Re}(\lambda), \text{Im}(\lambda))$ over perturbation space, Jordan block canonical decomposition, and live sub-threshold sensing sensitivity gauge.
+### Phase 335 (Milestone): Phonon Universal Multi-Scale Visual Studio Milestone & Multi-Abstraction Transistor Speed Regression Protocol
+Periodic milestone verification across all 7 realism tiers (Tiers 0-6) validating zero performance regression against baseline thresholds.
 
 ---
 
 ## Done
+
+### Phase 334: Phonon Studio Non-Hermitian Exceptional Point Sensor & Parity-Time (PT) Symmetric Circuit Simulator
+Higher-order exceptional point bifurcation, non-Hermitian skin effect, and ultra-sensitive perturbation sensing:
+1. Non-Hermitian Hamiltonian & Jordan Block Eigensolver (`crates/phonon-solver/src/ep_sensor/jordan_eigensolver.rs`):
+   - Implemented `EpOrder` supporting higher-order singularities (EP2, EP3, EP4) with Puiseux fractional scaling exponents $1/N$.
+   - Implemented `NonHermitianHamiltonian` with Jordan block matrix assembly $H_{EP} = \lambda_0 I + J_N$, Petermann excess noise factor $K = 1 / |\langle v_L | v_R \rangle|^2$ divergence, and complex Riemann sheet trajectory winding.
+   - Evaluates fractional eigenvalue splitting $\Delta \lambda \approx C_N \cdot \epsilon^{1/N}$, demonstrating $> 100\times$ sensitivity enhancement over linear Hermitian sensors at low perturbation levels.
+2. Parity-Time (PT) Symmetric Circuit Solver (`crates/phonon-solver/src/ep_sensor/pt_circuit.rs`):
+   - Built coupled active RLC resonator model with negative gain resistance $R_{gain}$ and passive loss $R_{loss}$.
+   - Classifies Exact phase (bounded neutral oscillations), Exceptional Point coalescence, and Broken phase (exponential amplification).
+   - Implemented 1D Non-Hermitian Skin Effect (NHSE) lattice proving bulk eigenstate collapse and boundary localization with contrast $> 100\times$.
+3. Interactive Exceptional Point Visualizer in CAD Studio (`crates/phonon-gui/src/widgets/exceptional_point_dialog.rs`):
+   - Built `ExceptionalPointDialog` in Phonon Visual Studio featuring interactive Riemann surface sheet winding plots, PT circuit transient voltage waveforms, sub-threshold log-log sensitivity enhancement gauge, and physical telemetry (PT phase, $K$ factor, $\Delta \omega$).
+   - Integrated into `PhononApp` and top frame menu.
+4. Automated Verification Suites:
+   - `crates/phonon-solver/tests/exceptional_point_sensor_tests.rs`: 5/5 tests passing.
+   - `crates/phonon-gui/tests/exceptional_point_gui_tests.rs`: 4/4 tests passing.
+
 
 ### Phase 333: Phonon Studio Autonomous Neuromorphic Synaptic Spiking Neural Network (SNN) Co-Design Engine
 Memristive crossbar array simulation, spike-timing-dependent plasticity (STDP), and neuromorphic mixed-signal circuit co-design:

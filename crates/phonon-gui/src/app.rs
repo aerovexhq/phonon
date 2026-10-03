@@ -13,9 +13,9 @@ use crate::schematic::{
 };
 use crate::thermal::{Colormap, ThermalOverlay};
 use crate::widgets::{
-    render_top_frame_with_app, ClusterDashboardDialog, ComponentPalette, MonteCarloYieldDialog,
-    NeuromorphicSnnDialog, PolaritonCavityDialog, SensitivityDialog, SmithChartDialog,
-    SymbolEditorDialog, ThermalFloorplanDialog, TopFrameAction, TopFrameConfig,
+    render_top_frame_with_app, ClusterDashboardDialog, ComponentPalette, ExceptionalPointDialog,
+    MonteCarloYieldDialog, NeuromorphicSnnDialog, PolaritonCavityDialog, SensitivityDialog,
+    SmithChartDialog, SymbolEditorDialog, ThermalFloorplanDialog, TopFrameAction, TopFrameConfig,
 };
 use eframe::{App, Frame};
 use egui::{
@@ -115,6 +115,9 @@ pub struct PhononApp {
     /// Interactive Neuromorphic Studio Canvas & Synaptic Weight Visualizer dialog.
     pub neuromorphic_snn_dialog: NeuromorphicSnnDialog,
 
+    /// Interactive Exceptional Point Sensor & PT-Symmetric Circuit Simulator dialog.
+    pub exceptional_point_dialog: ExceptionalPointDialog,
+
     /// Interactive Logisim/KiCad-style component symbol and shape editor dialog.
     pub symbol_editor: SymbolEditorDialog,
 
@@ -200,6 +203,7 @@ impl Default for PhononApp {
             polariton_cavity_dialog: PolaritonCavityDialog::new(),
             cluster_dashboard_dialog: ClusterDashboardDialog::new(),
             neuromorphic_snn_dialog: NeuromorphicSnnDialog::new(),
+            exceptional_point_dialog: ExceptionalPointDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
             dragging_component: false,
@@ -1797,6 +1801,9 @@ impl PhononApp {
 
         // 16. Interactive Neuromorphic Studio Canvas & Synaptic Weight Visualizer Dialog
         self.neuromorphic_snn_dialog.ui(ui.ctx());
+
+        // 17. Interactive Exceptional Point Sensor & PT-Symmetric Circuit Simulator Dialog
+        self.exceptional_point_dialog.ui(ui.ctx());
     }
 }
 

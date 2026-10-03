@@ -4,6 +4,7 @@
 
 pub mod cluster_dashboard_dialog;
 pub mod dynamics_status;
+pub mod exceptional_point_dialog;
 pub mod icon;
 pub mod monte_carlo_dialog;
 pub mod neuromorphic_snn_dialog;
@@ -17,6 +18,7 @@ pub mod top_frame;
 
 pub use cluster_dashboard_dialog::ClusterDashboardDialog;
 pub use dynamics_status::DynamicsStatusBadge;
+pub use exceptional_point_dialog::ExceptionalPointDialog;
 pub use icon::render_phonon_icon;
 pub use monte_carlo_dialog::{MonteCarloParamEntry, MonteCarloYieldDialog};
 pub use neuromorphic_snn_dialog::NeuromorphicSnnDialog;
