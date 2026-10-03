@@ -24,25 +24,44 @@ The ultimate destination for the Phonon platform is an autonomous, multi-scale, 
 
 ## Future
 
-### Phase 327: Phonon Universal Multi-Scale Visual Studio Distributed Multi-Threaded Parameter Space Exploration & Monte Carlo Sensitivity Harvester
-Large-scale Latin Hypercube Sampling, multi-core Rayon parameter sweeps, and statistical yield analysis.
-
 ### Phase 328: Phonon Studio RF & Microwave S-Parameter Extraction & Harmonic Balance Frequency-Domain Engine
 Multi-port S-parameter extraction, Smith chart visualizer, and non-linear harmonic balance solver for RF circuits.
+
+### Phase 329: Phonon Studio Electro-Thermal Transient Multi-Scale Co-Simulation & Dynamic Floorplan Mesh Generator
+Dynamic thermal mesh refinement, heat dissipation heatmaps, and transient Cauer RC ladder coupling.
 
 ---
 
 ## Current
 
-### Phase 326: Phonon Studio Full SPICE Component Optimization & Evolutionary Parameter Estimation Engine
-Autonomous SPICE model parameter extraction and evolutionary curve fitting directly integrated with the visual CAD studio:
-1. Multi-Objective Parameter Estimator: Implement parameter extraction pipeline fitting BSIM4, EKV, and Gummel-Poon SPICE parameters from empirical I-V / C-V measurement curves using hybrid Genetic Algorithm and Levenberg-Marquardt local polishing.
-2. Interactive Fitting Wizard in CAD Studio: Visual extraction dialog with real-time curve overlay, RMSE residual tracking, and parameter bounds configuration.
-3. Netlist Parameter Card Export: Seamless compilation of fitted model cards directly into active schematic instances and `.SUBCKT` libraries.
+### Phase 327: Phonon Universal Multi-Scale Visual Studio Distributed Multi-Threaded Parameter Space Exploration & Monte Carlo Sensitivity Harvester
+Large-scale Latin Hypercube Sampling, multi-core Rayon parameter sweeps, and statistical yield analysis:
+1. Latin Hypercube Sampling (LHS) Engine: High-dimensional stratified parameter distribution generator across device tolerances, oxide thickness variations, and temperature gradients.
+2. Parallel Rayon Batch Execution Kernel: Multi-threaded sweep engine simulating 10,000+ corner variants with lock-free metric harvesting.
+3. Interactive Yield & Histogram Inspector in CAD Studio: Visual probability density plots, cumulative distribution function (CDF) overlays, and 3-sigma process corner boundaries.
 
 ---
 
 ## Done
+
+### Phase 326: Phonon Studio Full SPICE Component Optimization & Evolutionary Parameter Estimation Engine
+Autonomous SPICE model parameter extraction and evolutionary curve fitting directly integrated with the visual CAD studio:
+1. Multi-Objective Parameter Estimators (`crates/phonon-models/src/extraction/`):
+   - Implemented generic damped Gauss-Newton / Levenberg-Marquardt local polisher (`polisher.rs`) implementing `PolishableModel` with linear system solver (Gaussian elimination with partial pivoting) achieving sub-1% RMSE residual.
+   - Added EKV MOSFET optimization engine (`ekv.rs`): `EkvTargetParams` (`vto`, `kp`, `gamma`, `theta`), multi-island genetic algorithm (3 islands, tournament selection, arithmetic crossover, Gaussian mutation, migration) and Levenberg-Marquardt refinement.
+   - Added Gummel-Poon BJT optimization engine (`bjt.rs`): `BjtTargetParams` (`is`, `bf`, `vaf`) with log-scale genome mapping for saturation current `is`, multi-island GA, and LM polishing.
+   - Integrated LM polishing and parameter bounds into BSIM4 optimizer (`optimizer.rs`).
+   - Added synthetic curve generators for EKV and BJT (`curve_data.rs`) and model deck generators with syntax validation (`model_deck.rs`).
+2. Interactive Fitting Wizard in CAD Studio (`crates/phonon-gui/src/extraction/wizard.rs`):
+   - Extended `ExtractionWizardDialog` with `DeviceModelKind` enum (`Bsim4`, `Ekv`, `GummelPoonBjt`).
+   - Added model selector and polarity controls (NMOS/PMOS, NPN/PNP).
+   - Added collapsible GUI controls for parameter bounds adjustments.
+   - Added Levenberg-Marquardt local refinement toggle and manual trigger button.
+   - Implemented `apply_to_component(&self, comp: &mut SchematicComponent)` to directly inject fitted model cards, parameters, and RMSE/R2 telemetry into selected schematic canvas components.
+3. Automated Verification Suites:
+   - `crates/phonon-models/tests/spice_optimization_tests.rs`: 6/6 tests passing.
+   - `crates/phonon-gui/tests/component_optimization_gui_tests.rs`: 6/6 tests passing.
+   - Complete GUI suite (94 integration tests) passing with zero regressions.
 
 ### Phase 325 (Milestone): Phonon Universal Multi-Scale Visual Studio Milestone & Multi-Abstraction Transistor Speed Regression Protocol
 Executed periodic milestone verification across all 7 realism tiers (Tiers 0 through 6) and schematic CAD integrity suite (`crates/phonon-core/tests/transistor_speed_regression_tests.rs`, 8/8 PASS):

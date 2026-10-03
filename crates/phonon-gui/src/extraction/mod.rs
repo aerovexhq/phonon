@@ -4,4 +4,4 @@
 
 pub mod wizard;
 
-pub use wizard::ExtractionWizardDialog;
+pub use wizard::{DeviceModelKind, ExtractionWizardDialog};

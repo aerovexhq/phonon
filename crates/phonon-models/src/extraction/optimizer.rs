@@ -2,7 +2,18 @@
 
 //! High-throughput genetic algorithm curve-fitting engine and compact BSIM4 parameter optimizer.
 
-use super::curve_data::MeasuredCurve;
+use super::curve_data::{MeasuredCurve, MeasurementPoint};
+pub use super::ekv::{
+    ekv_genome_to_params, ekv_params_to_genome, EkvBounds, EkvFittingResult, EkvOptimizer,
+    EkvTargetParams,
+};
+pub use super::bjt::{
+    bjt_genome_to_params, bjt_params_to_genome, BjtBounds, BjtFittingResult, BjtOptimizer,
+    BjtTargetParams,
+};
+pub use super::polisher::{
+    polish_model_parameters, polish_parameters, GenericFittingResult, PolishableModel,
+};
 
 /// Target BSIM4 physical parameters optimized during device parameter extraction.
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -80,7 +91,7 @@ impl Bsim4TargetParams {
         let body_term = (phi_s - v_bs_eff).max(1e-4).sqrt() - phi_s.sqrt();
         let delta_vth_body = gamma * body_term;
 
-        // DIBL & short-channel effect rolloff
+        // DIBL and short-channel effect rolloff
         let l_ref = 100e-9;
         let delta_vth_sce = self.dvt0 * 0.02 * (l_ref / l).min(3.0);
         let delta_vth_dibl = self.eta0 * v_ds;
@@ -131,15 +142,64 @@ impl Bsim4TargetParams {
     }
 }
 
-/// Evaluation and convergence telemetry from a completed curve fitting execution.
+/// Bounding constraints for BSIM4 parameter optimization.
 #[derive(Debug, Clone, PartialEq)]
-pub struct FittingResult {
-    pub params: Bsim4TargetParams,
-    pub rmse: f64,
-    pub r_squared: f64,
-    pub iterations: usize,
-    pub converged: bool,
+pub struct Bsim4Bounds {
+    pub vth0: (f64, f64),
+    pub u0: (f64, f64),
+    pub vsat: (f64, f64),
+    pub dvt0: (f64, f64),
+    pub eta0: (f64, f64),
+    pub rdsw: (f64, f64),
+    pub subthreshold_swing_mv_dec: (f64, f64),
 }
+
+impl Default for Bsim4Bounds {
+    fn default() -> Self {
+        Self {
+            vth0: (0.1, 1.2),
+            u0: (0.01, 0.15),
+            vsat: (5e4, 2e5),
+            dvt0: (0.1, 4.0),
+            eta0: (0.0, 0.5),
+            rdsw: (0.0, 250.0),
+            subthreshold_swing_mv_dec: (60.0, 150.0),
+        }
+    }
+}
+
+impl PolishableModel for Bsim4TargetParams {
+    fn num_params() -> usize {
+        7
+    }
+
+    fn to_normalized(&self) -> Vec<f64> {
+        params_to_genome(self).to_vec()
+    }
+
+    fn from_normalized(norm: &[f64]) -> Self {
+        let mut g = [0.0; 7];
+        if norm.len() >= 7 {
+            g.copy_from_slice(&norm[..7]);
+        }
+        genome_to_params(&g)
+    }
+
+    fn evaluate_current(&self, pt: &MeasurementPoint, curve: &MeasuredCurve) -> f64 {
+        self.evaluate_ids(
+            pt.v_ds,
+            pt.v_gs,
+            pt.v_bs,
+            curve.channel_width_m,
+            curve.channel_length_m,
+            curve.temperature_k,
+        )
+    }
+}
+
+/// Evaluation and convergence telemetry from a completed BSIM4 curve fitting execution.
+pub type FittingResult = GenericFittingResult<Bsim4TargetParams>;
+pub type Bsim4FittingResult = GenericFittingResult<Bsim4TargetParams>;
 
 /// Multi-island genetic algorithm curve-fitting engine with local refinement.
 #[derive(Debug, Clone, Copy, Default)]
@@ -160,8 +220,42 @@ struct EvalContext<'a> {
 }
 
 impl GaOptimizer {
-    /// Fits compact BSIM4 model parameters to the given measurement curve.
+    /// Fits compact BSIM4 model parameters to the given measurement curve with hybrid GA and LM polishing.
     pub fn fit_curve(
+        curve: &MeasuredCurve,
+        max_generations: usize,
+        population_size: usize,
+    ) -> FittingResult {
+        let bounds = Bsim4Bounds::default();
+        Self::fit_curve_with_bounds(curve, max_generations, population_size, &bounds)
+    }
+
+    /// Fits BSIM4 model parameters within custom parameter bounds using GA and LM polishing.
+    pub fn fit_curve_with_bounds(
+        curve: &MeasuredCurve,
+        max_generations: usize,
+        population_size: usize,
+        _bounds: &Bsim4Bounds,
+    ) -> FittingResult {
+        let ga_result = Self::fit_curve_ga_only(curve, max_generations, population_size);
+        let polished = Self::polish_parameters(&ga_result.params, curve);
+        if polished.rmse <= ga_result.rmse || polished.r_squared >= ga_result.r_squared {
+            polished
+        } else {
+            ga_result
+        }
+    }
+
+    /// Polishes candidate BSIM4 parameters using the Levenberg-Marquardt local solver.
+    pub fn polish_parameters(
+        params: &Bsim4TargetParams,
+        curve: &MeasuredCurve,
+    ) -> FittingResult {
+        polish_parameters(params, curve)
+    }
+
+    /// Fits compact BSIM4 parameters using only genetic algorithm without LM polishing.
+    pub fn fit_curve_ga_only(
         curve: &MeasuredCurve,
         max_generations: usize,
         population_size: usize,

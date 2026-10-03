@@ -1060,8 +1060,12 @@ pub use valley_acoustic::*;
 pub use valleytronics::*;
 pub use wakefield::{BetatronRadiation, BubbleRegime, LaserPulseParams, PlasmaChannelParams};
 pub use extraction::{
-    generate_bsim4_model_deck, validate_bsim4_model_deck, Bsim4TargetParams, ExtractionError,
-    FittingResult, GaOptimizer, MeasuredCurve, MeasurementPoint,
+    generate_bjt_model_deck, generate_bsim4_model_deck, generate_ekv_model_deck,
+    polish_parameters, validate_bjt_model_deck, validate_bsim4_model_deck,
+    validate_ekv_model_deck, BjtBounds, BjtFittingResult, BjtOptimizer, BjtTargetParams,
+    Bsim4Bounds, Bsim4FittingResult, Bsim4TargetParams, EkvBounds, EkvFittingResult,
+    EkvOptimizer, EkvTargetParams, ExtractionError, FittingResult, GaOptimizer,
+    GenericFittingResult, MeasuredCurve, MeasurementPoint,
 };
 pub use port_hamiltonian::*;
 pub use symplectic_multirate::*;

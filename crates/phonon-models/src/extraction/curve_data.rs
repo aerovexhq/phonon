@@ -2,7 +2,7 @@
 
 //! Measured curve data representation, experimental data ingestion, and synthetic curve synthesis.
 
-use super::optimizer::Bsim4TargetParams;
+use super::optimizer::{BjtTargetParams, Bsim4TargetParams, EkvTargetParams};
 use thiserror::Error;
 
 /// Error types occurring during curve data parsing, validation, and parameter extraction.
@@ -307,6 +307,169 @@ impl MeasuredCurve {
             temperature_k: temp_k,
             channel_length_m: l,
             channel_width_m: w,
+            points,
+        }
+    }
+
+    /// Generates a synthetic EKV transfer curve ($I_{ds}$ vs. $V_{gs}$) at a fixed $V_{ds}$ bias.
+    pub fn synthetic_ekv_transfer_curve(
+        v_ds: f64,
+        v_gs_range: (f64, f64, usize),
+        vto: f64,
+        kp: f64,
+        gamma: f64,
+        theta: f64,
+    ) -> Self {
+        let (v_start, v_end, num_points) = v_gs_range;
+        let count = num_points.max(3);
+        let step = (v_end - v_start) / ((count - 1) as f64);
+
+        let w = 10e-6;
+        let l = 100e-9;
+        let temp_k = 300.0;
+
+        let params = EkvTargetParams {
+            vto,
+            kp,
+            gamma,
+            theta,
+        };
+
+        let mut points = Vec::with_capacity(count);
+        for i in 0..count {
+            let v_gs = v_start + (i as f64) * step;
+            let i_ds = params.evaluate_ids(v_ds, v_gs, 0.0, w, l, temp_k);
+            points.push(MeasurementPoint::new(v_ds, v_gs, 0.0, i_ds, None));
+        }
+
+        Self {
+            name: format!("Synthetic_EKV_Transfer_Vds_{:.2}V", v_ds),
+            temperature_k: temp_k,
+            channel_length_m: l,
+            channel_width_m: w,
+            points,
+        }
+    }
+
+    /// Generates a synthetic EKV output curve ($I_{ds}$ vs. $V_{ds}$) at a fixed $V_{gs}$ bias.
+    pub fn synthetic_ekv_output_curve(
+        v_gs: f64,
+        v_ds_range: (f64, f64, usize),
+        vto: f64,
+        kp: f64,
+        gamma: f64,
+        theta: f64,
+    ) -> Self {
+        let (v_start, v_end, num_points) = v_ds_range;
+        let count = num_points.max(3);
+        let step = (v_end - v_start) / ((count - 1) as f64);
+
+        let w = 10e-6;
+        let l = 100e-9;
+        let temp_k = 300.0;
+
+        let params = EkvTargetParams {
+            vto,
+            kp,
+            gamma,
+            theta,
+        };
+
+        let mut points = Vec::with_capacity(count);
+        for i in 0..count {
+            let v_ds = v_start + (i as f64) * step;
+            let i_ds = params.evaluate_ids(v_ds, v_gs, 0.0, w, l, temp_k);
+            points.push(MeasurementPoint::new(v_ds, v_gs, 0.0, i_ds, None));
+        }
+
+        Self {
+            name: format!("Synthetic_EKV_Output_Vgs_{:.2}V", v_gs),
+            temperature_k: temp_k,
+            channel_length_m: l,
+            channel_width_m: w,
+            points,
+        }
+    }
+
+    /// Generates a synthetic BJT forward active curve ($I_c$ vs. $V_{be}$) at a fixed $V_{ce}$ bias.
+    pub fn synthetic_bjt_forward_active_curve(
+        v_ce: f64,
+        v_be_range: (f64, f64, usize),
+        is_val: f64,
+        bf: f64,
+        vaf: f64,
+    ) -> Self {
+        let (v_start, v_end, num_points) = v_be_range;
+        let count = num_points.max(3);
+        let step = (v_end - v_start) / ((count - 1) as f64);
+        let temp_k = 300.0;
+
+        let params = BjtTargetParams {
+            is: is_val,
+            bf,
+            vaf,
+        };
+
+        let mut points = Vec::with_capacity(count);
+        for i in 0..count {
+            let v_be = v_start + (i as f64) * step;
+            let i_c = params.evaluate_ic(v_ce, v_be, temp_k);
+            points.push(MeasurementPoint::new(v_ce, v_be, 0.0, i_c, None));
+        }
+
+        Self {
+            name: format!("Synthetic_BJT_Forward_Active_Vce_{:.2}V", v_ce),
+            temperature_k: temp_k,
+            channel_length_m: 1e-6,
+            channel_width_m: 1e-6,
+            points,
+        }
+    }
+
+    /// Generates a synthetic BJT Gummel curve ($I_c$ vs. $V_{be}$) at a fixed $V_{ce}$ bias.
+    pub fn synthetic_bjt_gummel_curve(
+        v_ce: f64,
+        v_be_range: (f64, f64, usize),
+        is_val: f64,
+        bf: f64,
+        vaf: f64,
+    ) -> Self {
+        let mut curve = Self::synthetic_bjt_forward_active_curve(v_ce, v_be_range, is_val, bf, vaf);
+        curve.name = format!("Synthetic_BJT_Gummel_Vce_{:.2}V", v_ce);
+        curve
+    }
+
+    /// Generates a synthetic BJT output curve ($I_c$ vs. $V_{ce}$) at a fixed $V_{be}$ bias.
+    pub fn synthetic_bjt_output_curve(
+        v_be: f64,
+        v_ce_range: (f64, f64, usize),
+        is_val: f64,
+        bf: f64,
+        vaf: f64,
+    ) -> Self {
+        let (v_start, v_end, num_points) = v_ce_range;
+        let count = num_points.max(3);
+        let step = (v_end - v_start) / ((count - 1) as f64);
+        let temp_k = 300.0;
+
+        let params = BjtTargetParams {
+            is: is_val,
+            bf,
+            vaf,
+        };
+
+        let mut points = Vec::with_capacity(count);
+        for i in 0..count {
+            let v_ce = v_start + (i as f64) * step;
+            let i_c = params.evaluate_ic(v_ce, v_be, temp_k);
+            points.push(MeasurementPoint::new(v_ce, v_be, 0.0, i_c, None));
+        }
+
+        Self {
+            name: format!("Synthetic_BJT_Output_Vbe_{:.2}V", v_be),
+            temperature_k: temp_k,
+            channel_length_m: 1e-6,
+            channel_width_m: 1e-6,
             points,
         }
     }
