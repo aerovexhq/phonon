@@ -476,6 +476,12 @@ fn render_top_frame_internal(
                 }
                 ui.close();
             }
+            if ui.button("Higher-Order Axion Insulator...").clicked() {
+                if let Some(a) = app.as_deref_mut() {
+                    a.axion_insulator_dialog.is_open = true;
+                }
+                ui.close();
+            }
             if ui.button("Clear Traces").clicked() {
                 if let Some(a) = app.as_deref_mut() {
                     a.oscilloscope.clear();

@@ -26,6 +26,7 @@ pub mod kerr_microcomb_dialog;
 pub mod exceptional_surface_dialog;
 pub mod soti_corner_dialog;
 pub mod lieb_lattice_dialog;
+pub mod axion_insulator_dialog;
 
 pub use chern_circulator_dialog::ChernCirculatorDialog;
 pub use cluster_dashboard_dialog::ClusterDashboardDialog;
@@ -51,4 +52,5 @@ pub use twisted_moire_dialog::TwistedMoireDialog;
 pub use weyl_semimetal_dialog::{SemimetalMode, WeylSemimetalDialog};
 pub use soti_corner_dialog::{SotiCornerDialog, SpatialModeSelection};
 pub use lieb_lattice_dialog::{LiebLatticeDialog, LiebPlotTab, LiebSpatialModeSelection};
+pub use axion_insulator_dialog::{AxionInsulatorDialog, AxionPlotTab, AxionSpatialViewMode};
 

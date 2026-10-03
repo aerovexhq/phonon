@@ -19,6 +19,7 @@ use crate::widgets::{
     WeylSemimetalDialog, FqhBraidingDialog, JtwpaDialog, FloquetMetasurfaceDialog,
     HolonomicProcessorDialog, TwistedMoireDialog, ChernCirculatorDialog,
     KerrMicrocombDialog, ExceptionalSurfaceDialog, SotiCornerDialog, LiebLatticeDialog,
+    AxionInsulatorDialog,
 };
 use eframe::{App, Frame};
 use egui::{
@@ -154,6 +155,9 @@ pub struct PhononApp {
     /// Interactive Topological Acoustic Flat-Band Lieb-Lattice Gauge Simulator Studio dialog.
     pub lieb_lattice_dialog: LiebLatticeDialog,
 
+    /// Interactive Quantum Metamaterial Higher-Order Axion Insulator Simulator Studio dialog.
+    pub axion_insulator_dialog: AxionInsulatorDialog,
+
     /// Interactive Logisim/KiCad-style component symbol and shape editor dialog.
     pub symbol_editor: SymbolEditorDialog,
 
@@ -251,6 +255,7 @@ impl Default for PhononApp {
             exceptional_surface_dialog: ExceptionalSurfaceDialog::new(),
             soti_corner_dialog: SotiCornerDialog::new(),
             lieb_lattice_dialog: LiebLatticeDialog::new(),
+            axion_insulator_dialog: AxionInsulatorDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
             dragging_component: false,
@@ -1884,6 +1889,9 @@ impl PhononApp {
 
         // 28. Interactive Topological Acoustic Flat-Band Lieb-Lattice Gauge Simulator Dialog
         self.lieb_lattice_dialog.ui(ui.ctx());
+
+        // 29. Interactive Quantum Metamaterial Higher-Order Axion Insulator Dialog
+        self.axion_insulator_dialog.ui(ui.ctx());
     }
 }
 
