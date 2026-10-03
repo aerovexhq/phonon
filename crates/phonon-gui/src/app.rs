@@ -16,7 +16,7 @@ use crate::widgets::{
     render_top_frame_with_app, ClusterDashboardDialog, ComponentPalette, ExceptionalPointDialog,
     MonteCarloYieldDialog, NeuromorphicSnnDialog, PolaritonCavityDialog, SensitivityDialog,
     SmithChartDialog, SymbolEditorDialog, ThermalFloorplanDialog, TopFrameAction, TopFrameConfig,
-    WeylSemimetalDialog, FqhBraidingDialog, JtwpaDialog,
+    WeylSemimetalDialog, FqhBraidingDialog, JtwpaDialog, FloquetMetasurfaceDialog,
 };
 use eframe::{App, Frame};
 use egui::{
@@ -128,6 +128,9 @@ pub struct PhononApp {
     /// Interactive Superconducting Josephson Traveling-Wave Parametric Amplifier (JTWPA) Studio dialog.
     pub jtwpa_dialog: JtwpaDialog,
 
+    /// Interactive Floquet Engineered Spatio-Temporal Acoustic Metasurface Studio dialog.
+    pub floquet_metasurface_dialog: FloquetMetasurfaceDialog,
+
     /// Interactive Logisim/KiCad-style component symbol and shape editor dialog.
     pub symbol_editor: SymbolEditorDialog,
 
@@ -217,6 +220,7 @@ impl Default for PhononApp {
             weyl_semimetal_dialog: WeylSemimetalDialog::new(),
             fqh_braiding_dialog: FqhBraidingDialog::new(),
             jtwpa_dialog: JtwpaDialog::new(),
+            floquet_metasurface_dialog: FloquetMetasurfaceDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
             dragging_component: false,
@@ -1826,6 +1830,9 @@ impl PhononApp {
 
         // 20. Interactive Superconducting Josephson Traveling-Wave Parametric Amplifier (JTWPA) Studio Dialog
         self.jtwpa_dialog.ui(ui.ctx());
+
+        // 21. Interactive Floquet Engineered Spatio-Temporal Acoustic Metasurface Studio Dialog
+        self.floquet_metasurface_dialog.ui(ui.ctx());
     }
 }
 

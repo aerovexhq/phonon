@@ -24,22 +24,41 @@ The ultimate destination for the Phonon platform is an autonomous, multi-scale, 
 
 ## Future
 
-### Phase 340 (Milestone): Phonon Universal Multi-Scale Visual Studio Milestone & Multi-Abstraction Transistor Speed Regression Protocol
-Periodic milestone verification across all 7 realism tiers (Tiers 0-6) validating zero performance regression against baseline thresholds.
-
 ### Phase 341: Phonon Studio Non-Abelian Holonomic Geometric Phase Quantum Acoustic Processor
 Adiabatic and non-adiabatic non-Abelian Wilczek-Zee geometric connections, multi-mode acoustic cavity holonomies, loop-space path synthesis, and fault-tolerant geometric logic gates.
+
+### Phase 342: Phonon Studio Twisted Bilayer Moiré Phonon Polariton Magic-Angle Superlattice Simulator
+Atomic relaxation continuum model, flat phononic polariton bands at magic angles, localized acoustic solitons, and non-linear harmonic generation.
 
 ---
 
 ## Current
 
-### Phase 339: Phonon Studio Floquet Engineered Spatio-Temporal Acoustic Metasurface Simulator
-Dynamic phase gradient modulation, non-reciprocal Doppler frequency shift, synthetic gauge fields, and angular momentum selective reflection.
+### Phase 340 (Milestone): Phonon Universal Multi-Scale Visual Studio Milestone & Multi-Abstraction Transistor Speed Regression Protocol
+Periodic milestone verification across all 7 realism tiers (Tiers 0-6) validating zero performance regression against baseline thresholds:
+1. Multi-Abstraction Realism Tier Benchmark Execution: Run full automated speed regression suite across Tier 0 (Majorana Anyon Braiding), Tier 1 (1D Mesh Drift-Diffusion), Tier 2a (Inverse Design Single Genome Fitness), Tier 2b (NSGA-II + Adjoint Optimization), Tier 3a (BSIM4 MOSFET), Tier 3b (Gummel-Poon BJT), Tier 3c (MNA Circuit Newton-Raphson DC Solve), Tier 4 (Cryo-CMOS 4.2K Freeze-Out), Tier 5 (Coupled Electro-Thermal Monolithic Steady-State), and Tier 6 (SIMD 4-Lane Vectorized Batch Devices).
+2. Schematic CAD Integrity Verification: Validate all 35 schematic primitive kinds, ERC diagnostics, and binary round-trip serialization.
+3. Regression Guard & Threshold Verification: Confirm zero performance regressions against established baseline limits.
 
 ---
 
 ## Done
+
+### Phase 339: Phonon Studio Floquet Engineered Spatio-Temporal Acoustic Metasurface Simulator
+Dynamic phase gradient modulation, non-reciprocal Doppler frequency shift, synthetic gauge fields, and angular momentum selective reflection:
+1. Floquet Spatio-Temporal Acoustic Metasurface Engine (`crates/phonon-solver/src/floquet_metasurface/dispersion.rs`):
+   - Implemented `MetasurfaceUnitCell` and `FloquetModulationParams` with dynamic phase profile $\Phi(x, t) = g_x x - \Omega_m t$.
+   - Modeled Generalized Snell's law with Floquet momentum addition $k_{x, n} = k_{x, inc} + n g_x$ and Doppler frequency shift $f_n = f_{inc} + n \Omega_m$.
+   - Built `FloquetMetasurfaceSolver` calculating Bessel reflection spectrum across sidebands $n \in \{-N_F, \dots, +N_F\}$ and non-reciprocal Doppler transmission isolation $S_{21} - S_{12} \ge 30.0$ dB.
+2. Synthetic Gauge Fields & Orbital Angular Momentum (OAM) Vortex Engine (`crates/phonon-solver/src/floquet_metasurface/spatio_temporal.rs`):
+   - Modeled effective synthetic vector potential $\mathbf{A}_{eff} = (g_x / \Omega_m) \hat{x}$, effective magnetic field $B_{eff}$, and closed loop Aharonov-Bohm phase.
+   - Built `OrbitalAngularMomentum` supporting vortex beam helical reflection with OAM mode purity $\ge 95\%$ and unwanted sideband suppression $\ge 25.0$ dB, with 2D polar phase map generator.
+3. Interactive Floquet Metasurface Studio Visualizer in CAD Studio (`crates/phonon-gui/src/widgets/floquet_metasurface_dialog.rs`):
+   - Built `FloquetMetasurfaceDialog` with 2D spatial acoustic pressure wavefront canvas rendering incident and steered reflected beams, Floquet harmonic spectrum bar chart, non-reciprocal transmission isolation plot, 2D helical OAM vortex phase map, and live microwave/acoustic telemetry.
+   - Integrated into `PhononApp` and top frame menu.
+4. Automated Verification Suites:
+   - `crates/phonon-solver/tests/floquet_metasurface_tests.rs`: 5/5 tests passing.
+   - `crates/phonon-gui/tests/floquet_metasurface_gui_tests.rs`: 4/4 tests passing.
 
 ### Phase 338: Phonon Studio Superconducting Josephson Traveling-Wave Parametric Amplifier (JTWPA) Simulator
 Non-linear discrete Josephson transmission line, four-wave mixing (4WM), dispersion engineering with resonant phase matching, and quantum-limited squeezing:
