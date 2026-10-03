@@ -1,6 +1,6 @@
 #![deny(unsafe_code)]
 
-//! Periodic Multi-Abstraction Transistor Speed Regression Protocol (Phase 340 Milestone).
+//! Periodic Multi-Abstraction Transistor Speed Regression Protocol (Phase 345 Milestone).
 //!
 //! Evaluates the 7-tier realism hierarchy (Tiers 0 through 6) against baseline thresholds
 //! to enforce the strict zero-performance-regression mandate:
