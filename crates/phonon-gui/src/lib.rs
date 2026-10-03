@@ -35,6 +35,7 @@ pub use widgets::icon::{self, render_phonon_icon};
 pub use widgets::palette::ComponentPalette;
 pub use widgets::sensitivity_dialog::SensitivityDialog;
 pub use widgets::monte_carlo_dialog::{MonteCarloParamEntry, MonteCarloYieldDialog};
+pub use widgets::smith_chart_dialog::{HoveredMarker, SmithChartDialog};
 pub use widgets::top_frame::{
     self, render_top_frame, render_top_frame_with_app, TopFrameAction, TopFrameConfig,
 };

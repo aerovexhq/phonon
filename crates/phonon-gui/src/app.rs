@@ -14,7 +14,7 @@ use crate::schematic::{
 use crate::thermal::{Colormap, ThermalOverlay};
 use crate::widgets::{
     render_top_frame_with_app, ComponentPalette, MonteCarloYieldDialog, SensitivityDialog,
-    SymbolEditorDialog, TopFrameAction, TopFrameConfig,
+    SmithChartDialog, SymbolEditorDialog, TopFrameAction, TopFrameConfig,
 };
 use eframe::{App, Frame};
 use egui::{
@@ -99,6 +99,9 @@ pub struct PhononApp {
     /// Interactive Monte Carlo Yield & Latin Hypercube Sampling Inspector dialog.
     pub monte_carlo_dialog: MonteCarloYieldDialog,
 
+    /// Interactive RF S-Parameters, Smith Chart & Harmonic Balance visualizer dialog.
+    pub smith_chart_dialog: SmithChartDialog,
+
     /// Interactive Logisim/KiCad-style component symbol and shape editor dialog.
     pub symbol_editor: SymbolEditorDialog,
 
@@ -179,6 +182,7 @@ impl Default for PhononApp {
             extraction_wizard: ExtractionWizardDialog::new(),
             sensitivity_dialog: SensitivityDialog::new(),
             monte_carlo_dialog: MonteCarloYieldDialog::new(),
+            smith_chart_dialog: SmithChartDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
             dragging_component: false,
@@ -1734,6 +1738,13 @@ impl PhononApp {
             self.symbol_library.register(sym);
             self.sim_status = "Custom component symbol registered into library.".to_string();
         }
+
+        // 12. Interactive RF S-Parameters, Smith Chart & Harmonic Balance Dialog
+        if self.smith_chart_dialog.run_requested {
+            self.smith_chart_dialog.run_requested = false;
+            self.smith_chart_dialog.run_simulation();
+        }
+        self.smith_chart_dialog.ui(ui.ctx());
     }
 }
 
