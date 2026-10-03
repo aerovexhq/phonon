@@ -13,8 +13,9 @@ use crate::schematic::{
 };
 use crate::thermal::{Colormap, ThermalOverlay};
 use crate::widgets::{
-    render_top_frame_with_app, ComponentPalette, MonteCarloYieldDialog, SensitivityDialog,
-    SmithChartDialog, SymbolEditorDialog, ThermalFloorplanDialog, TopFrameAction, TopFrameConfig,
+    render_top_frame_with_app, ComponentPalette, MonteCarloYieldDialog, PolaritonCavityDialog,
+    SensitivityDialog, SmithChartDialog, SymbolEditorDialog, ThermalFloorplanDialog,
+    TopFrameAction, TopFrameConfig,
 };
 use eframe::{App, Frame};
 use egui::{
@@ -105,6 +106,9 @@ pub struct PhononApp {
     /// Interactive Thermal Floorplan & Transient Co-Simulation Studio dialog.
     pub thermal_floorplan_dialog: ThermalFloorplanDialog,
 
+    /// Interactive Polariton Waveguide & Topological Photonic Cavity Simulator dialog.
+    pub polariton_cavity_dialog: PolaritonCavityDialog,
+
     /// Interactive Logisim/KiCad-style component symbol and shape editor dialog.
     pub symbol_editor: SymbolEditorDialog,
 
@@ -187,6 +191,7 @@ impl Default for PhononApp {
             monte_carlo_dialog: MonteCarloYieldDialog::new(),
             smith_chart_dialog: SmithChartDialog::new(),
             thermal_floorplan_dialog: ThermalFloorplanDialog::new(),
+            polariton_cavity_dialog: PolaritonCavityDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
             dragging_component: false,
@@ -1771,6 +1776,13 @@ impl PhononApp {
             self.run_thermal_cosim();
         }
         self.thermal_floorplan_dialog.ui(ui.ctx());
+
+        // 14. Interactive Polariton Waveguide & Topological Photonic Cavity Dialog
+        if self.polariton_cavity_dialog.run_requested {
+            self.polariton_cavity_dialog.run_requested = false;
+            self.polariton_cavity_dialog.run_simulation();
+        }
+        self.polariton_cavity_dialog.ui(ui.ctx());
     }
 }
 

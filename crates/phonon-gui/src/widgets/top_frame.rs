@@ -386,6 +386,12 @@ fn render_top_frame_internal(
                 }
                 ui.close();
             }
+            if ui.button("Polariton Waveguide & Cavity...").clicked() {
+                if let Some(a) = app.as_deref_mut() {
+                    a.polariton_cavity_dialog.is_open = true;
+                }
+                ui.close();
+            }
             if ui.button("Clear Traces").clicked() {
                 if let Some(a) = app.as_deref_mut() {
                     a.oscilloscope.clear();
@@ -412,6 +418,12 @@ fn render_top_frame_internal(
             if ui.button("RF S-Parameters & Smith Chart").clicked() {
                 if let Some(a) = app.as_deref_mut() {
                     a.smith_chart_dialog.is_open = true;
+                }
+                ui.close();
+            }
+            if ui.button("Polariton Waveguide & Cavity...").clicked() {
+                if let Some(a) = app.as_deref_mut() {
+                    a.polariton_cavity_dialog.is_open = true;
                 }
                 ui.close();
             }
