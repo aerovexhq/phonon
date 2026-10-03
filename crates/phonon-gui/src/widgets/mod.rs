@@ -23,11 +23,13 @@ pub mod holonomic_processor_dialog;
 pub mod twisted_moire_dialog;
 pub mod chern_circulator_dialog;
 pub mod kerr_microcomb_dialog;
+pub mod exceptional_surface_dialog;
 
 pub use chern_circulator_dialog::ChernCirculatorDialog;
 pub use cluster_dashboard_dialog::ClusterDashboardDialog;
 pub use dynamics_status::DynamicsStatusBadge;
 pub use exceptional_point_dialog::ExceptionalPointDialog;
+pub use exceptional_surface_dialog::ExceptionalSurfaceDialog;
 pub use floquet_metasurface_dialog::FloquetMetasurfaceDialog;
 pub use fqh_braiding_dialog::FqhBraidingDialog;
 pub use holonomic_processor_dialog::HolonomicProcessorDialog;

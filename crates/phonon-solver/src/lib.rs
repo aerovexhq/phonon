@@ -929,5 +929,10 @@ pub use kerr_microcomb::{
     CombSpectrum, DetuningScanResult, LleSplitStepSolver, MicrocombRegime, MicrocombState,
     MicroresonatorParams,
 };
+pub use exceptional_surface::{
+    ChiralDirectionalMetrics, EsComplex, EsManifoldParams, ExceptionalSurfaceArray,
+    ExceptionalSurfaceHamiltonian, RiemannSheetPoint, SensorElement, SnrAnalysis,
+    SurfaceEigenvalues, TransducerType,
+};
 
 

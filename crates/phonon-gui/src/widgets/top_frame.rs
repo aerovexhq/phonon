@@ -458,6 +458,12 @@ fn render_top_frame_internal(
                 }
                 ui.close();
             }
+            if ui.button("Exceptional Surface Sensor Array...").clicked() {
+                if let Some(a) = app.as_deref_mut() {
+                    a.exceptional_surface_dialog.is_open = true;
+                }
+                ui.close();
+            }
             if ui.button("Clear Traces").clicked() {
                 if let Some(a) = app.as_deref_mut() {
                     a.oscilloscope.clear();
