@@ -53,6 +53,12 @@ pub enum ComponentKind {
     MajoranaJunction,
     ParafermionicCavity,
     SkyrmionRouter,
+
+    // Port-Hamiltonian Articulatory Acoustics
+    PhLungs,
+    PhVocalFolds,
+    PhVocalTract,
+    PhLipRadiation,
 }
 
 impl ComponentKind {
@@ -83,6 +89,10 @@ impl ComponentKind {
             | Self::MajoranaJunction
             | Self::ParafermionicCavity
             | Self::SkyrmionRouter => ComponentCategory::TopologicalMetamaterials,
+            Self::PhLungs
+            | Self::PhVocalFolds
+            | Self::PhVocalTract
+            | Self::PhLipRadiation => ComponentCategory::PortHamiltonian,
         }
     }
 
@@ -120,10 +130,14 @@ impl ComponentKind {
             Self::MajoranaJunction => "MajoranaJunction",
             Self::ParafermionicCavity => "ParafermionicCavity",
             Self::SkyrmionRouter => "SkyrmionRouter",
+            Self::PhLungs => "PhLungs",
+            Self::PhVocalFolds => "PhVocalFolds",
+            Self::PhVocalTract => "PhVocalTract",
+            Self::PhLipRadiation => "PhLipRadiation",
         }
     }
 
-    /// All 31 categorized component kinds in static array.
+    /// All 35 categorized component kinds in static array.
     pub const ALL: &'static [Self] = &[
         Self::Resistor,
         Self::Capacitor,
@@ -156,6 +170,10 @@ impl ComponentKind {
         Self::MajoranaJunction,
         Self::ParafermionicCavity,
         Self::SkyrmionRouter,
+        Self::PhLungs,
+        Self::PhVocalFolds,
+        Self::PhVocalTract,
+        Self::PhLipRadiation,
     ];
 
     /// Alias for ALL variants.
@@ -195,6 +213,10 @@ impl ComponentKind {
             Self::MajoranaJunction => "majorana braiding junction majoranajunction topological metamaterials non-abelian topological quantum braiding junction xmj",
             Self::ParafermionicCavity => "parafermionic cavity parafermioniccavity topological metamaterials fractionalized topological quantum acoustic resonator cavity xpc",
             Self::SkyrmionRouter => "skyrmion router skyrmionrouter topological metamaterials chiral magnetic skyrmion topological acoustic wave router xsr",
+            Self::PhLungs => "lungs subglottal drive phlungs port-hamiltonian articulatory acoustics respiratory pulmonary pressure compliance xlung",
+            Self::PhVocalFolds => "hirano vocal folds phvocalfolds port-hamiltonian articulatory acoustics 3-layer cover-body self-oscillation glottis xvf",
+            Self::PhVocalTract => "webster acoustic horn tract phvocaltract port-hamiltonian articulatory acoustics riccati waveguide transmission line xvt",
+            Self::PhLipRadiation => "lip radiation impedance phlipradiation port-hamiltonian articulatory acoustics mouth spherical wavefront termination xrad",
         }
     }
 
@@ -232,6 +254,10 @@ impl ComponentKind {
             Self::MajoranaJunction => "Majorana Braiding Junction",
             Self::ParafermionicCavity => "Parafermionic Cavity",
             Self::SkyrmionRouter => "Skyrmion Router",
+            Self::PhLungs => "Lungs Subglottal Drive",
+            Self::PhVocalFolds => "Hirano Vocal Folds",
+            Self::PhVocalTract => "Webster Acoustic Horn Tract",
+            Self::PhLipRadiation => "Lip Radiation Impedance",
         }
     }
 
@@ -261,7 +287,7 @@ impl ComponentKind {
             Self::Inverter => "CMOS logic inverter NOT gate",
             Self::NandGate => "Dual-input universal CMOS NAND logic gate",
             Self::NorGate => "Dual-input universal CMOS NOR logic gate",
-            Self::Mux2to1 => "2-to-1 binary data multiplexer",
+            Self::Mux2to1 => "2:1 binary data multiplexer",
             Self::StrainGauge => "Piezoresistive acoustic strain sensor bridge",
             Self::TactileMatrix => "Piezotronic tactile force pressure sensor array",
             Self::Imu9Dof => "Nine-degree-of-freedom inertial measurement transducer",
@@ -269,6 +295,10 @@ impl ComponentKind {
             Self::MajoranaJunction => "Non-Abelian topological quantum braiding junction",
             Self::ParafermionicCavity => "Fractionalized topological quantum acoustic resonator cavity",
             Self::SkyrmionRouter => "Chiral magnetic skyrmion topological acoustic wave router",
+            Self::PhLungs => "Aerodynamic subglottal pressure source with continuous lung compliance",
+            Self::PhVocalFolds => "Nonlinear 3-layer cover-body mucosal traveling wave self-oscillating vocal folds",
+            Self::PhVocalTract => "Continuous Riccati Webster transmission-line horn with visco-thermal losses",
+            Self::PhLipRadiation => "Frequency-dependent radiation boundary impedance (+6 dB/octave high-pass)",
         }
     }
 
@@ -306,6 +336,10 @@ impl ComponentKind {
             Self::MajoranaJunction => "XMJ",
             Self::ParafermionicCavity => "XPC",
             Self::SkyrmionRouter => "XSR",
+            Self::PhLungs => "XLUNG",
+            Self::PhVocalFolds => "XVF",
+            Self::PhVocalTract => "XVT",
+            Self::PhLipRadiation => "XRAD",
         }
     }
 
@@ -343,6 +377,10 @@ impl ComponentKind {
             Self::MajoranaJunction => "TOPOMAJ_1",
             Self::ParafermionicCavity => "PARAFERM_RES",
             Self::SkyrmionRouter => "SKYRMION_RT",
+            Self::PhLungs => "PH_LUNGS",
+            Self::PhVocalFolds => "PH_VOCAL_FOLDS",
+            Self::PhVocalTract => "PH_VOCAL_TRACT",
+            Self::PhLipRadiation => "PH_LIP_RADIATION",
         }
     }
 
@@ -442,6 +480,26 @@ impl ComponentKind {
                 ("CH0", Vec2::new(30.0, -20.0)),
                 ("CH1", Vec2::new(30.0, 20.0)),
                 ("GATE", Vec2::new(0.0, -30.0)),
+            ],
+            Self::PhLungs => vec![
+                ("P_SUB", Vec2::new(0.0, -32.0)),
+                ("REF", Vec2::new(0.0, 32.0)),
+            ],
+            Self::PhVocalFolds => vec![
+                ("SUB", Vec2::new(-32.0, 0.0)),
+                ("SUPRA", Vec2::new(32.0, 0.0)),
+                ("CTRL", Vec2::new(0.0, -32.0)),
+                ("REF", Vec2::new(0.0, 32.0)),
+            ],
+            Self::PhVocalTract => vec![
+                ("IN", Vec2::new(-40.0, 0.0)),
+                ("OUT", Vec2::new(40.0, 0.0)),
+                ("WALL", Vec2::new(0.0, 32.0)),
+                ("CTRL", Vec2::new(0.0, -32.0)),
+            ],
+            Self::PhLipRadiation => vec![
+                ("IN", Vec2::new(-30.0, 0.0)),
+                ("RAD", Vec2::new(30.0, 0.0)),
             ],
         }
     }
@@ -826,6 +884,81 @@ impl ComponentKind {
                 painter.line_segment([to_screen(10.0, 10.0), to_screen(30.0, 20.0)], stroke);
                 painter.line_segment([to_screen(0.0, -30.0), to_screen(0.0, -14.0)], stroke);
             }
+            Self::PhLungs => {
+                // Trachea main stem
+                painter.line_segment([to_screen(0.0, -32.0), to_screen(0.0, -10.0)], stroke);
+                // Bronchial bifurcation
+                painter.line_segment([to_screen(0.0, -10.0), to_screen(-12.0, -2.0)], stroke);
+                painter.line_segment([to_screen(0.0, -10.0), to_screen(12.0, -2.0)], stroke);
+                // Left and right pulmonary compliance lobes
+                painter.circle_stroke(to_screen(-12.0, 8.0), 10.0 * zoom, stroke);
+                painter.circle_stroke(to_screen(12.0, 8.0), 10.0 * zoom, stroke);
+                // Lower reference ground line
+                painter.line_segment([to_screen(0.0, 18.0), to_screen(0.0, 32.0)], stroke);
+            }
+            Self::PhVocalFolds => {
+                // Convergent-divergent vocal fold tissue boundaries
+                painter.line_segment([to_screen(-20.0, -18.0), to_screen(-6.0, 0.0)], stroke);
+                painter.line_segment([to_screen(-6.0, 0.0), to_screen(-18.0, 18.0)], stroke);
+                painter.line_segment([to_screen(-18.0, 18.0), to_screen(-20.0, -18.0)], stroke);
+
+                painter.line_segment([to_screen(20.0, -18.0), to_screen(6.0, 0.0)], stroke);
+                painter.line_segment([to_screen(6.0, 0.0), to_screen(18.0, 18.0)], stroke);
+                painter.line_segment([to_screen(18.0, 18.0), to_screen(20.0, -18.0)], stroke);
+
+                // Mucosal wave glottal vibration indicator lines
+                painter.line_segment([to_screen(-3.0, -8.0), to_screen(-3.0, 8.0)], stroke);
+                painter.line_segment([to_screen(3.0, -8.0), to_screen(3.0, 8.0)], stroke);
+
+                // Subglottal and supraglottal pins
+                painter.line_segment([to_screen(-32.0, 0.0), to_screen(-20.0, 0.0)], stroke);
+                painter.line_segment([to_screen(20.0, 0.0), to_screen(32.0, 0.0)], stroke);
+                // Control and reference pins
+                painter.line_segment([to_screen(0.0, -32.0), to_screen(0.0, -18.0)], stroke);
+                painter.line_segment([to_screen(0.0, 18.0), to_screen(0.0, 32.0)], stroke);
+            }
+            Self::PhVocalTract => {
+                // Flaring Webster horn profile
+                painter.line_segment([to_screen(-24.0, -8.0), to_screen(-6.0, -10.0)], stroke);
+                painter.line_segment([to_screen(-6.0, -10.0), to_screen(12.0, -15.0)], stroke);
+                painter.line_segment([to_screen(12.0, -15.0), to_screen(24.0, -22.0)], stroke);
+
+                painter.line_segment([to_screen(-24.0, 8.0), to_screen(-6.0, 10.0)], stroke);
+                painter.line_segment([to_screen(-6.0, 10.0), to_screen(12.0, 15.0)], stroke);
+                painter.line_segment([to_screen(12.0, 15.0), to_screen(24.0, 22.0)], stroke);
+
+                // Entrance and exit boundaries
+                painter.line_segment([to_screen(-24.0, -8.0), to_screen(-24.0, 8.0)], stroke);
+                painter.line_segment([to_screen(24.0, -22.0), to_screen(24.0, 22.0)], stroke);
+
+                // Internal acoustic waveguide slice lines
+                painter.line_segment([to_screen(-6.0, -10.0), to_screen(-6.0, 10.0)], stroke);
+                painter.line_segment([to_screen(12.0, -15.0), to_screen(12.0, 15.0)], stroke);
+
+                // Terminals
+                painter.line_segment([to_screen(-40.0, 0.0), to_screen(-24.0, 0.0)], stroke);
+                painter.line_segment([to_screen(24.0, 0.0), to_screen(40.0, 0.0)], stroke);
+                painter.line_segment([to_screen(0.0, -32.0), to_screen(0.0, -12.0)], stroke);
+                painter.line_segment([to_screen(0.0, 12.0), to_screen(0.0, 32.0)], stroke);
+            }
+            Self::PhLipRadiation => {
+                // Mouth orifice boundary
+                painter.line_segment([to_screen(-30.0, 0.0), to_screen(-12.0, 0.0)], stroke);
+                painter.line_segment([to_screen(-12.0, -18.0), to_screen(-12.0, 18.0)], stroke);
+
+                // Radiating spherical wavefront arcs
+                painter.line_segment([to_screen(-6.0, -8.0), to_screen(-2.0, 0.0)], stroke);
+                painter.line_segment([to_screen(-2.0, 0.0), to_screen(-6.0, 8.0)], stroke);
+
+                painter.line_segment([to_screen(0.0, -14.0), to_screen(8.0, 0.0)], stroke);
+                painter.line_segment([to_screen(8.0, 0.0), to_screen(0.0, 14.0)], stroke);
+
+                painter.line_segment([to_screen(6.0, -20.0), to_screen(18.0, 0.0)], stroke);
+                painter.line_segment([to_screen(18.0, 0.0), to_screen(6.0, 20.0)], stroke);
+
+                // Outward radiation terminal
+                painter.line_segment([to_screen(18.0, 0.0), to_screen(30.0, 0.0)], stroke);
+            }
         }
     }
 
@@ -843,6 +976,9 @@ impl ComponentKind {
                 (Vec2::new(26.0, -12.0), Vec2::new(26.0, 8.0))
             }
             Self::OpAmp | Self::Inverter | Self::NandGate | Self::NorGate | Self::Mux2to1 => {
+                (Vec2::new(26.0, -12.0), Vec2::new(26.0, 8.0))
+            }
+            Self::PhLungs | Self::PhVocalFolds | Self::PhVocalTract | Self::PhLipRadiation => {
                 (Vec2::new(26.0, -12.0), Vec2::new(26.0, 8.0))
             }
             Self::Ground => (Vec2::new(16.0, 4.0), Vec2::new(16.0, 18.0)),

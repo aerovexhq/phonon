@@ -14,6 +14,7 @@ pub enum ComponentCategory {
     IntegratedCircuits,
     Sensors,
     TopologicalMetamaterials,
+    PortHamiltonian,
 }
 
 impl ComponentCategory {
@@ -27,6 +28,7 @@ impl ComponentCategory {
             Self::IntegratedCircuits => "Integrated Circuits & Logic",
             Self::Sensors => "Sensors & Transducers",
             Self::TopologicalMetamaterials => "Topological Metamaterials",
+            Self::PortHamiltonian => "Port-Hamiltonian Articulatory Acoustics",
         }
     }
 
@@ -40,10 +42,11 @@ impl ComponentCategory {
             Self::IntegratedCircuits => "Operational amplifiers, CMOS logic gates, and analog/digital multiplexers.",
             Self::Sensors => "Piezoresistive strain gauges, tactile force matrices, and 9-DOF inertial measurement units.",
             Self::TopologicalMetamaterials => "Surface acoustic wave (SAW) transducers, Majorana braiding junctions, parafermionic cavities, and skyrmion routers.",
+            Self::PortHamiltonian => "Biomechanical lungs subglottal drive, Hirano 3-layer vocal fold self-oscillation, Riccati Webster-horn acoustic tract, and spherical lip radiation impedance.",
         }
     }
 
-    /// Returns all 7 canonical component categories in structured order.
+    /// Returns all 8 canonical component categories in structured order.
     pub fn all_categories() -> &'static [ComponentCategory] {
         &[
             Self::Passives,
@@ -53,6 +56,7 @@ impl ComponentCategory {
             Self::IntegratedCircuits,
             Self::Sensors,
             Self::TopologicalMetamaterials,
+            Self::PortHamiltonian,
         ]
     }
 
@@ -103,6 +107,12 @@ impl ComponentCategory {
                 ComponentKind::MajoranaJunction,
                 ComponentKind::ParafermionicCavity,
                 ComponentKind::SkyrmionRouter,
+            ],
+            Self::PortHamiltonian => &[
+                ComponentKind::PhLungs,
+                ComponentKind::PhVocalFolds,
+                ComponentKind::PhVocalTract,
+                ComponentKind::PhLipRadiation,
             ],
         }
     }

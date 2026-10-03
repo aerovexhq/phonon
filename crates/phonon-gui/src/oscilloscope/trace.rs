@@ -1,12 +1,43 @@
-//! Waveform trace storage, min-max decimation, RMS/peak measurements, and FFT spectrum.
-
 use egui::Color32;
 
-/// A single electrical waveform trace (e.g. node voltage V(out) or branch current I(V1)).
+/// Physical domain of the traced waveform signal.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
+pub enum SignalDomain {
+    #[default]
+    Electrical,
+    AcousticPressure,
+    AcousticFlow,
+    Mechanical,
+}
+
+impl SignalDomain {
+    /// Returns the physical unit symbol associated with this signal domain.
+    pub fn unit_symbol(&self) -> &'static str {
+        match self {
+            Self::Electrical => "V",
+            Self::AcousticPressure => "Pa",
+            Self::AcousticFlow => "m³/s",
+            Self::Mechanical => "m",
+        }
+    }
+
+    /// Returns human-readable domain name.
+    pub fn display_name(&self) -> &'static str {
+        match self {
+            Self::Electrical => "Electrical (V / A)",
+            Self::AcousticPressure => "Acoustic Pressure (Pa)",
+            Self::AcousticFlow => "Acoustic Flow (m³/s)",
+            Self::Mechanical => "Mechanical Displacement",
+        }
+    }
+}
+
+/// A single electrical or acoustic waveform trace.
 #[derive(Debug, Clone, PartialEq)]
 pub struct WaveformTrace {
     pub name: String,
     pub color: Color32,
+    pub domain: SignalDomain,
     /// Ordered `[time_seconds, value]` pairs.
     pub samples: Vec<[f64; 2]>,
 }
@@ -16,6 +47,16 @@ impl WaveformTrace {
         Self {
             name: name.to_string(),
             color,
+            domain: SignalDomain::Electrical,
+            samples: Vec::new(),
+        }
+    }
+
+    pub fn new_with_domain(name: &str, color: Color32, domain: SignalDomain) -> Self {
+        Self {
+            name: name.to_string(),
+            color,
+            domain,
             samples: Vec::new(),
         }
     }
@@ -70,6 +111,27 @@ impl WaveformTrace {
         }
         let sum: f64 = self.samples.iter().map(|&[_, v]| v).sum();
         sum / self.samples.len() as f64
+    }
+
+    /// Peak Sound Pressure Level in dB SPL ($P_{ref} = 20\ \mu\mathrm{Pa}$).
+    pub fn peak_spl_db(&self) -> f64 {
+        if self.samples.is_empty() {
+            return 0.0;
+        }
+        let mut max_abs = 0.0f64;
+        for &[_, v] in &self.samples {
+            let abs_v = v.abs();
+            if abs_v > max_abs {
+                max_abs = abs_v;
+            }
+        }
+        let p_ref = 20e-6; // 20 uPa standard acoustic reference
+        20.0 * (max_abs / p_ref).max(1.0).log10()
+    }
+
+    /// Converts volume flow rate into $\mathrm{cm}^3/\mathrm{s}$ ($1\ \mathrm{m}^3 = 10^6\ \mathrm{cm}^3$).
+    pub fn flow_rate_cm3_s(&self) -> f64 {
+        self.v_rms() * 1.0e6
     }
 
     /// Estimates fundamental frequency via mean-crossing detection.

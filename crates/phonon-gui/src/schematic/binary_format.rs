@@ -128,6 +128,10 @@ pub fn component_kind_to_discriminant(kind: ComponentKind) -> u16 {
         ComponentKind::MajoranaJunction => 28,
         ComponentKind::ParafermionicCavity => 29,
         ComponentKind::SkyrmionRouter => 30,
+        ComponentKind::PhLungs => 31,
+        ComponentKind::PhVocalFolds => 32,
+        ComponentKind::PhVocalTract => 33,
+        ComponentKind::PhLipRadiation => 34,
     }
 }
 
@@ -165,6 +169,10 @@ pub fn component_kind_from_discriminant(d: u16) -> Result<ComponentKind, BinaryF
         28 => Ok(ComponentKind::MajoranaJunction),
         29 => Ok(ComponentKind::ParafermionicCavity),
         30 => Ok(ComponentKind::SkyrmionRouter),
+        31 => Ok(ComponentKind::PhLungs),
+        32 => Ok(ComponentKind::PhVocalFolds),
+        33 => Ok(ComponentKind::PhVocalTract),
+        34 => Ok(ComponentKind::PhLipRadiation),
         other => Err(BinaryFormatError::UnknownComponentKind(other)),
     }
 }
@@ -179,6 +187,7 @@ pub fn component_category_to_discriminant(cat: ComponentCategory) -> u8 {
         ComponentCategory::IntegratedCircuits => 4,
         ComponentCategory::Sensors => 5,
         ComponentCategory::TopologicalMetamaterials => 6,
+        ComponentCategory::PortHamiltonian => 7,
     }
 }
 
