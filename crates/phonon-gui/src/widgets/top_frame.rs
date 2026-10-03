@@ -464,6 +464,12 @@ fn render_top_frame_internal(
                 }
                 ui.close();
             }
+            if ui.button("Topological SOTI Corner Resonator...").clicked() {
+                if let Some(a) = app.as_deref_mut() {
+                    a.soti_corner_dialog.is_open = true;
+                }
+                ui.close();
+            }
             if ui.button("Clear Traces").clicked() {
                 if let Some(a) = app.as_deref_mut() {
                     a.oscilloscope.clear();

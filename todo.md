@@ -24,28 +24,39 @@ The ultimate destination for the Phonon platform is an autonomous, multi-scale, 
 
 ## Future
 
-### Phase 347: Phonon Studio Topological Higher-Order Corner State Acoustic Resonator
-Second-order topological insulator (SOTI), quadrupole acoustic lattice, quantized bulk dipole moments, localized zero-dimensional corner states, and gigahertz phononic nanocavities.
-
-### Phase 348: Phonon Studio Topological Acoustic Flat-Band Lieb-Lattice Gauge Simulator
-Lieb lattice acoustic flat bands, destructive interference localized compact states, synthetic Aharonov-Bohm caging, and dispersionless acoustic waveguiding.
-
 ### Phase 349: Phonon Studio Quantum Metamaterial Higher-Order Axion Insulator Simulator
 Axion electrodynamics coupling, quantized hinge states, chiral hinge modes, surface Hall effect, and higher-order topological acoustic axion resonators.
+
+### Phase 350 (Milestone): Phonon Universal Multi-Scale Visual Studio Milestone & Multi-Abstraction Transistor Speed Regression Protocol
+Periodic milestone verification across all 7 realism tiers (Tiers 0-6) validating zero performance regression against baseline thresholds.
 
 ---
 
 ## Current
 
-### Phase 347: Phonon Studio Topological Higher-Order Corner State Acoustic Resonator
-Second-order topological insulator (SOTI), quadrupole acoustic lattice, quantized bulk dipole moments, localized zero-dimensional corner states, and gigahertz phononic nanocavities:
-1. SOTI Quadrupole Lattice Acoustic Hamiltonian: Quantized quadrupole bulk moments $q_{xy} = 1/2$, edge dipole moments, and analytical corner eigenstate localization solver.
-2. High-Q Zero-Dimensional Corner Nanocavity Engine: Bulk bandgap calculation, localized corner mode eigenfrequencies, and defect-immune energy confinement.
-3. Interactive Higher-Order Corner State Visualizer in CAD Studio: Native egui 2D lattice spatial energy density canvas, quadrupole band structure plot, corner state localized eigenmode profile, and live topological invariants telemetry.
+### Phase 348: Phonon Studio Topological Acoustic Flat-Band Lieb-Lattice Gauge Simulator
+Lieb lattice acoustic flat bands, destructive interference localized compact states, synthetic Aharonov-Bohm caging, and dispersionless acoustic waveguiding:
+1. Lieb Lattice 3-Band Tight-Binding Acoustic Hamiltonian: Destructive interference flat band $E(k) = 0$, Dirac cone touching, synthetic gauge flux $\Phi$, and dispersionless acoustic transport.
+2. Synthetic Aharonov-Bohm Caging & Compact Localized States (CLS): Loop flux modulation, destructive interference wave packet trapping, and disorder immunity.
+3. Interactive Lieb Lattice Studio Visualizer in CAD Studio: Native egui 2D Lieb lattice real-space amplitude canvas, 3-band energy dispersion surface plot, CLS eigenmode intensity cross-section, and live gauge flux telemetry.
 
 ---
 
 ## Done
+
+### Phase 347: Phonon Studio Topological Higher-Order Corner State Acoustic Resonator
+Second-order topological insulator (SOTI), quadrupole acoustic lattice, quantized bulk dipole moments, localized zero-dimensional corner states, and gigahertz phononic nanocavities:
+1. SOTI Quadrupole Lattice Acoustic Hamiltonian (`crates/phonon-solver/src/soti_corner_resonator/bbh_hamiltonian.rs`):
+   - Implemented 4x4 Benalcazar-Bernevig-Hughes (BBH) tight-binding Hamiltonian with $\pi$-flux per plaquette and Dirac $\Gamma_i$ matrices.
+   - Evaluated 4-band analytical dispersion along square Brillouin Zone path $\Gamma \to X \to M \to Y \to \Gamma$ and bulk bandgap $\Delta_{\text{bulk}} = 2 |\lambda - \gamma|$.
+   - Quantized bulk quadrupole moment $q_{xy} = 0.5$ in SOTI topological phase ($\gamma < \lambda$) vs $0.0$ in trivial phase, with edge dipole moments $(p_x^{\text{edge}}, p_y^{\text{edge}}) = (0.5, 0.5)$.
+2. High-Q Zero-Dimensional Corner Nanocavity Engine (`crates/phonon-solver/src/soti_corner_resonator/corner_cavity.rs`):
+   - Built $N_x \times N_y$ real-space finite lattice tight-binding matrix preserving chiral sublattice symmetry.
+   - Implemented 100% safe Jacobi eigensolver extracting the 4 mid-gap zero-energy bound states ($|E| < 0.05 \Delta_{\text{bulk}}$) localized at the 4 physical corners.
+   - Verified corner energy confinement $\ge 80\%$ (typically $> 90\%$), quality factor $Q \in [10^4, 10^6]$, and defect immunity against random coupling disorder $[-W, W]$.
+3. Interactive Higher-Order Corner State Visualizer in CAD Studio (`crates/phonon-gui/src/widgets/soti_corner_dialog.rs`):
+   - Built `SotiCornerDialog` featuring 2D lattice spatial energy density canvas with Turbo/Magma/Inferno colormaps, highlighting glowing zero-dimensional corner nanocavities.
+   - Integrated quadrupole 4-band dispersion plot, discrete energy spectrum displaying mid-gap corner modes, disorder toggle, topological vs trivial presets, and live physical telemetry.
 
 ### Phase 346: Phonon Studio Non-Hermitian Chiral Exceptional Surface Acoustic Sensing Array
 Two-dimensional exceptional surfaces, complex Jordan vectors, directional sensitivity amplification, and noise-resilient ultrasonic arrays:

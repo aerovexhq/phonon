@@ -115,6 +115,7 @@ pub mod molecular_spintronics;
 pub mod superradiance_laser;
 pub mod topological_axion;
 pub mod exceptional_surface;
+pub mod soti_corner_resonator;
 pub mod floquet_anyon;
 pub mod skyrmionic_memory;
 pub mod quadrupole_qubit;
@@ -934,5 +935,10 @@ pub use exceptional_surface::{
     ExceptionalSurfaceHamiltonian, RiemannSheetPoint, SensorElement, SnrAnalysis,
     SurfaceEigenvalues, TransducerType,
 };
+pub use soti_corner_resonator::{
+    BandDispersionPoint, BbhComplex, BbhHamiltonian, CornerEigenstate, CornerId,
+    HighSymmetryPoint, QuadrupoleParams, SotiLattice, SotiLatticeResult, HIGH_SYMMETRY_PATH,
+};
+
 
 
