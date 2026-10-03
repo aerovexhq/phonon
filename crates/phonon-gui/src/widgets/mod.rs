@@ -16,10 +16,12 @@ pub mod symbol_editor;
 pub mod thermal_floorplan_dialog;
 pub mod top_frame;
 pub mod weyl_semimetal_dialog;
+pub mod fqh_braiding_dialog;
 
 pub use cluster_dashboard_dialog::ClusterDashboardDialog;
 pub use dynamics_status::DynamicsStatusBadge;
 pub use exceptional_point_dialog::ExceptionalPointDialog;
+pub use fqh_braiding_dialog::FqhBraidingDialog;
 pub use icon::render_phonon_icon;
 pub use monte_carlo_dialog::{MonteCarloParamEntry, MonteCarloYieldDialog};
 pub use neuromorphic_snn_dialog::NeuromorphicSnnDialog;
