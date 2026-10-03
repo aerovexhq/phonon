@@ -398,6 +398,12 @@ fn render_top_frame_internal(
                 }
                 ui.close();
             }
+            if ui.button("Neuromorphic SNN Studio...").clicked() {
+                if let Some(a) = app.as_deref_mut() {
+                    a.neuromorphic_snn_dialog.is_open = true;
+                }
+                ui.close();
+            }
             if ui.button("Clear Traces").clicked() {
                 if let Some(a) = app.as_deref_mut() {
                     a.oscilloscope.clear();

@@ -14,8 +14,8 @@ use crate::schematic::{
 use crate::thermal::{Colormap, ThermalOverlay};
 use crate::widgets::{
     render_top_frame_with_app, ClusterDashboardDialog, ComponentPalette, MonteCarloYieldDialog,
-    PolaritonCavityDialog, SensitivityDialog, SmithChartDialog, SymbolEditorDialog,
-    ThermalFloorplanDialog, TopFrameAction, TopFrameConfig,
+    NeuromorphicSnnDialog, PolaritonCavityDialog, SensitivityDialog, SmithChartDialog,
+    SymbolEditorDialog, ThermalFloorplanDialog, TopFrameAction, TopFrameConfig,
 };
 use eframe::{App, Frame};
 use egui::{
@@ -112,6 +112,9 @@ pub struct PhononApp {
     /// Interactive Distributed Cloud Parameter Sweep Cluster Engine Dashboard dialog.
     pub cluster_dashboard_dialog: ClusterDashboardDialog,
 
+    /// Interactive Neuromorphic Studio Canvas & Synaptic Weight Visualizer dialog.
+    pub neuromorphic_snn_dialog: NeuromorphicSnnDialog,
+
     /// Interactive Logisim/KiCad-style component symbol and shape editor dialog.
     pub symbol_editor: SymbolEditorDialog,
 
@@ -196,6 +199,7 @@ impl Default for PhononApp {
             thermal_floorplan_dialog: ThermalFloorplanDialog::new(),
             polariton_cavity_dialog: PolaritonCavityDialog::new(),
             cluster_dashboard_dialog: ClusterDashboardDialog::new(),
+            neuromorphic_snn_dialog: NeuromorphicSnnDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
             dragging_component: false,
@@ -1790,6 +1794,9 @@ impl PhononApp {
 
         // 15. Interactive Distributed Cloud Parameter Sweep Cluster Dashboard Dialog
         self.cluster_dashboard_dialog.ui(ui.ctx());
+
+        // 16. Interactive Neuromorphic Studio Canvas & Synaptic Weight Visualizer Dialog
+        self.neuromorphic_snn_dialog.ui(ui.ctx());
     }
 }
 
