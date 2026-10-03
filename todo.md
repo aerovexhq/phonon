@@ -24,25 +24,43 @@ The ultimate destination for the Phonon platform is an autonomous, multi-scale, 
 
 ## Future
 
-### Phase 334: Phonon Studio Non-Hermitian Exceptional Point Sensor & Parity-Time (PT) Symmetric Circuit Simulator
-Higher-order exceptional point bifurcation, non-Hermitian skin effect, and ultra-sensitive perturbation sensing.
-
 ### Phase 335 (Milestone): Phonon Universal Multi-Scale Visual Studio Milestone & Multi-Abstraction Transistor Speed Regression Protocol
 Periodic milestone verification across all 7 realism tiers (Tiers 0-6) validating zero performance regression against baseline thresholds.
+
+### Phase 336: Phonon Studio Universal Topological Dirac & Weyl Semimetal Metamaterial Simulator
+3D Weyl point dispersion, Fermi arc surface states, chiral anomaly transport, and topological acoustic metamaterial beam splitting.
 
 ---
 
 ## Current
 
-### Phase 333: Phonon Studio Autonomous Neuromorphic Synaptic Spiking Neural Network (SNN) Co-Design Engine
-Memristive crossbar array simulation, spike-timing-dependent plasticity (STDP), and neuromorphic mixed-signal circuit co-design:
-1. Memristor Dynamic State Variable Solver: Filamentary conductance switching models $G(w)$ with non-linear window functions (Joglekar, Biolek) and threshold-driven resistance states ($R_{on}, R_{off}$).
-2. Spiking Crossbar Array & STDP Learning Kernel: Leaky Integrate-and-Fire (LIF) neurons coupled to $M \times N$ memristor crossbars with Spike-Timing-Dependent Plasticity ($\Delta w = A_+ e^{-\Delta t / \tau_+}$ for LTP, $-A_- e^{\Delta t / \tau_-}$ for LTD).
-3. Interactive Neuromorphic Studio Canvas & Synaptic Weight Visualizer: Native egui live conductance matrix colormap heatmap, neuron membrane potential traces, and spike raster activity trains.
+### Phase 334: Phonon Studio Non-Hermitian Exceptional Point Sensor & Parity-Time (PT) Symmetric Circuit Simulator
+Higher-order exceptional point bifurcation, non-Hermitian skin effect, and ultra-sensitive perturbation sensing:
+1. Non-Hermitian Hamiltonian & Jordan Block Eigensolver: Effective non-Hermitian Hamiltonian $H_{eff} = H_0 - i\Gamma/2$ eigenvalue topology, Exceptional Points (EP2, EP3, EP4) coalescence of eigenvalues and eigenvectors, and square/cube-root perturbation sensitivity $\Delta \lambda \propto \epsilon^{1/N}$.
+2. Parity-Time (PT) Symmetric Circuit Solver: Coupled gain-loss RLC resonators and non-Hermitian active circuits, PT-symmetry breaking phase transitions, and non-Hermitian skin effect directed amplification.
+3. Interactive Exceptional Point Visualizer in CAD Studio: Native egui Riemann surface sheet representation of complex eigenvalues $(\text{Re}(\lambda), \text{Im}(\lambda))$ over perturbation space, Jordan block canonical decomposition, and live sub-threshold sensing sensitivity gauge.
 
 ---
 
 ## Done
+
+### Phase 333: Phonon Studio Autonomous Neuromorphic Synaptic Spiking Neural Network (SNN) Co-Design Engine
+Memristive crossbar array simulation, spike-timing-dependent plasticity (STDP), and neuromorphic mixed-signal circuit co-design:
+1. Memristor Dynamic State Variable Solver (`crates/phonon-solver/src/neuromorphic/snn_co_design.rs`):
+   - Implemented `WindowFunction` supporting Linear, Joglekar, and Biolek non-linear boundary window functions.
+   - Implemented `MemristorState` tracking continuous state variable $w \in [0, 1]$, non-linear drift $dw/dt$, threshold-gated resistance states ($R_{on}, R_{off}$), and chord conductance $G(w)$.
+2. Spiking Crossbar Array & STDP Learning Kernel (`crates/phonon-solver/src/neuromorphic/snn_co_design.rs`):
+   - Implemented `LifNeuron` integrating leaky membrane dynamics ($C_m dV/dt = -(V - V_{rest})/R_{leak} + I_{syn}$), refractory periods, and threshold spike emissions.
+   - Built `SpikingCrossbarNetwork` performing $M \times N$ analog vector-matrix multiplication (VMM) dendritic current summing $I_j = \sum_i V_{pre, i} G_{ij}$.
+   - Implemented online Spike-Timing-Dependent Plasticity (STDP) updating synaptic weights via exponential kernels ($A_+ \exp(-\Delta t/\tau_+)$ for LTP, $-A_- \exp(\Delta t/\tau_-)$ for LTD).
+   - Generates complete `SnnTrajectory` capturing potential traces, raster spike events, weight matrices, and energy dissipation (fJ/SOP).
+3. Interactive Neuromorphic Studio Canvas & Synaptic Weight Visualizer (`crates/phonon-gui/src/widgets/neuromorphic_snn_dialog.rs`):
+   - Built `NeuromorphicSnnDialog` in Phonon Visual Studio featuring live crossbar conductance heatmap (Turbo/Magma/Inferno), membrane potential multi-channel plots, input/output spike raster train displays, and physical telemetry (spikes, energy fJ/SOP, firing frequency).
+   - Integrated into `PhononApp` and top frame menu.
+4. Automated Verification Suites:
+   - `crates/phonon-solver/tests/neuromorphic_snn_co_design_tests.rs`: 5/5 tests passing.
+   - `crates/phonon-gui/tests/neuromorphic_snn_gui_tests.rs`: 4/4 tests passing.
+
 
 ### Phase 332: Phonon Universal Multi-Scale Visual Studio Distributed Cloud Parameter Sweep Cluster Engine
 Distributed multi-node RPC worker daemon, web cluster dispatch queue, and parallel Monte Carlo cluster synthesis:

@@ -378,8 +378,10 @@ pub use net::{
     CoSimStepReport, NetworkBenchmarkReport, NetworkBenchmarkRunner, NetworkCoSimulator,
 };
 pub use neuromorphic::{
-    generate_lorenz63, generate_mackey_glass, generate_narma10, LiquidStateMachine, LsmConfig,
-    NeuromorphicBenchmarkReport, NeuromorphicBenchmarkRunner, ReservoirSolver, TrainedReadout,
+    generate_lorenz63, generate_mackey_glass, generate_narma10, LifNeuron, LiquidStateMachine,
+    LsmConfig, MemristorState, NeuromorphicBenchmarkReport, NeuromorphicBenchmarkRunner,
+    ReservoirSolver, SnnTrajectory, SpikingCrossbarNetwork, StdpParams, TrainedReadout,
+    WindowFunction,
 };
 pub use non_hermitian::{
     LaserSimulationResult, MaxwellBlochSolver, NonHermitianEigenResult, NonHermitianEigensolver,

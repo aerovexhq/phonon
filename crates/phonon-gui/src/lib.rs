@@ -36,6 +36,7 @@ pub use widgets::icon::{self, render_phonon_icon};
 pub use widgets::palette::ComponentPalette;
 pub use widgets::sensitivity_dialog::SensitivityDialog;
 pub use widgets::monte_carlo_dialog::{MonteCarloParamEntry, MonteCarloYieldDialog};
+pub use widgets::neuromorphic_snn_dialog::NeuromorphicSnnDialog;
 pub use widgets::polariton_cavity_dialog::PolaritonCavityDialog;
 pub use widgets::smith_chart_dialog::{HoveredMarker, SmithChartDialog};
 pub use widgets::thermal_floorplan_dialog::ThermalFloorplanDialog;
