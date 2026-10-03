@@ -2524,6 +2524,9 @@ dependencies = [
  "phonon-solver",
  "phonon-thermal",
  "thiserror 2.0.21",
+ "wasm-bindgen",
+ "wasm-bindgen-futures",
+ "web-sys",
 ]
 
 [[package]]

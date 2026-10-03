@@ -4,9 +4,6 @@ on:
   push:
     branches:
       - main
-    paths:
-      - 'web/**'
-      - '.github/workflows/deploy-pages.yml'
   workflow_dispatch:
 
 permissions:
@@ -29,6 +26,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Setup Rust with wasm32 target
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -37,6 +39,13 @@ jobs:
           cache-dependency-path: |
             web/docs/package.json
             web/studio/package.json
+
+      - name: Build WebAssembly Phonon Studio Engine
+        run: |
+          cargo build --release -p phonon-gui --target wasm32-unknown-unknown
+          curl -sSL https://github.com/rustwasm/wasm-bindgen/releases/download/0.2.129/wasm-bindgen-0.2.129-x86_64-unknown-linux-musl.tar.gz | tar -xz
+          mkdir -p web/studio/public/wasm
+          ./wasm-bindgen-0.2.129-x86_64-unknown-linux-musl/wasm-bindgen target/wasm32-unknown-unknown/release/phonon_gui.wasm --out-dir web/studio/public/wasm --target web --no-typescript
 
       - name: Build Web CAD Studio (/studio)
         run: |

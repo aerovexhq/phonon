@@ -659,6 +659,80 @@ pub fn compile_schematic(
                     comp.name, in_node, ch0, ch1, gate, comp.value_str
                 ));
             }
+
+            // Port-Hamiltonian Articulatory Acoustics
+            ComponentKind::PhLungs => {
+                let p_sub = get_net(&comp.name, "P_SUB");
+                let p_ref = get_net(&comp.name, "REF");
+                let v_name = format!("{}_VPL", comp.name);
+                let r_name = format!("{}_RL", comp.name);
+                graph
+                    .add_voltage_source(&v_name, &p_sub, &p_ref, 800.0)
+                    .map_err(|e| e.to_string())?;
+                graph
+                    .add_resistor(&r_name, &p_sub, &p_ref, 1e5)
+                    .map_err(|e| e.to_string())?;
+                subckts.insert("PH_LUNGS".to_string());
+                spice_lines.push(format!(
+                    "X{} {} {} {}",
+                    comp.name, p_sub, p_ref, comp.value_str
+                ));
+            }
+            ComponentKind::PhVocalFolds => {
+                let sub = get_net(&comp.name, "SUB");
+                let supra = get_net(&comp.name, "SUPRA");
+                let ctrl = get_net(&comp.name, "CTRL");
+                let p_ref = get_net(&comp.name, "REF");
+                let r_glot = format!("{}_RGLOT", comp.name);
+                let r_ctrl = format!("{}_RCTRL", comp.name);
+                graph
+                    .add_resistor(&r_glot, &sub, &supra, 1000.0)
+                    .map_err(|e| e.to_string())?;
+                graph
+                    .add_resistor(&r_ctrl, &ctrl, &p_ref, 1e6)
+                    .map_err(|e| e.to_string())?;
+                subckts.insert("PH_VOCAL_FOLDS".to_string());
+                spice_lines.push(format!(
+                    "X{} {} {} {} {} {}",
+                    comp.name, sub, supra, ctrl, p_ref, comp.value_str
+                ));
+            }
+            ComponentKind::PhVocalTract => {
+                let in_node = get_net(&comp.name, "IN");
+                let out_node = get_net(&comp.name, "OUT");
+                let wall = get_net(&comp.name, "WALL");
+                let ctrl = get_net(&comp.name, "CTRL");
+                let r_tract = format!("{}_RTRACT", comp.name);
+                let r_wall = format!("{}_RWALL", comp.name);
+                let r_ctrl = format!("{}_RCTRL", comp.name);
+                graph
+                    .add_resistor(&r_tract, &in_node, &out_node, 120.0)
+                    .map_err(|e| e.to_string())?;
+                graph
+                    .add_resistor(&r_wall, &in_node, &wall, 1e5)
+                    .map_err(|e| e.to_string())?;
+                graph
+                    .add_resistor(&r_ctrl, &ctrl, "0", 1e7)
+                    .map_err(|e| e.to_string())?;
+                subckts.insert("PH_VOCAL_TRACT".to_string());
+                spice_lines.push(format!(
+                    "X{} {} {} {} {} {}",
+                    comp.name, in_node, out_node, wall, ctrl, comp.value_str
+                ));
+            }
+            ComponentKind::PhLipRadiation => {
+                let in_node = get_net(&comp.name, "IN");
+                let rad = get_net(&comp.name, "RAD");
+                let r_rad = format!("{}_RRAD", comp.name);
+                graph
+                    .add_resistor(&r_rad, &in_node, &rad, 1.5e6)
+                    .map_err(|e| e.to_string())?;
+                subckts.insert("PH_LIP_RADIATION".to_string());
+                spice_lines.push(format!(
+                    "X{} {} {} {}",
+                    comp.name, in_node, rad, comp.value_str
+                ));
+            }
         }
     }
 
@@ -748,6 +822,34 @@ pub fn compile_schematic(
                 spice_lines.push("R1 IN CH1 50".to_string());
                 spice_lines.push("RG GATE 0 1MEG".to_string());
                 spice_lines.push(".ENDS SKYRMION_RT".to_string());
+            }
+            "PH_LUNGS" => {
+                spice_lines.push(".SUBCKT PH_LUNGS PSUB REF".to_string());
+                spice_lines.push("VPL PSUB INT 800.0".to_string());
+                spice_lines.push("CLUNG INT REF 1.2u".to_string());
+                spice_lines.push("RLUNG PSUB REF 100K".to_string());
+                spice_lines.push(".ENDS PH_LUNGS".to_string());
+            }
+            "PH_VOCAL_FOLDS" => {
+                spice_lines.push(".SUBCKT PH_VOCAL_FOLDS SUB SUPRA CTRL REF".to_string());
+                spice_lines.push("RGLOT SUB SUPRA 1K".to_string());
+                spice_lines.push("CVF CTRL REF 100p".to_string());
+                spice_lines.push("RVF CTRL REF 1MEG".to_string());
+                spice_lines.push(".ENDS PH_VOCAL_FOLDS".to_string());
+            }
+            "PH_VOCAL_TRACT" => {
+                spice_lines.push(".SUBCKT PH_VOCAL_TRACT IN OUT WALL CTRL".to_string());
+                spice_lines.push("LTRACT IN N1 25m".to_string());
+                spice_lines.push("CTRACT N1 WALL 40n".to_string());
+                spice_lines.push("RTRACT N1 OUT 120".to_string());
+                spice_lines.push("RCTRL CTRL 0 10MEG".to_string());
+                spice_lines.push(".ENDS PH_VOCAL_TRACT".to_string());
+            }
+            "PH_LIP_RADIATION" => {
+                spice_lines.push(".SUBCKT PH_LIP_RADIATION IN RAD".to_string());
+                spice_lines.push("RRAD IN RAD 1.5MEG".to_string());
+                spice_lines.push("LRAD IN RAD 85".to_string());
+                spice_lines.push(".ENDS PH_LIP_RADIATION".to_string());
             }
             _ => {}
         }

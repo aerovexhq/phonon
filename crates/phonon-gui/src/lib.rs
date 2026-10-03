@@ -38,6 +38,7 @@ pub use widgets::top_frame::{
     self, render_top_frame, render_top_frame_with_app, TopFrameAction, TopFrameConfig,
 };
 
+#[cfg(not(target_arch = "wasm32"))]
 use phonon_core::PhysicsDynamicsBackend;
 
 /// Instant boot theme configuration providing fast-path styling without D-Bus / X11 desktop portal theme queries.
@@ -68,6 +69,7 @@ pub fn default_theme() -> egui::Theme {
     egui::Theme::Dark
 }
 
+#[cfg(not(target_arch = "wasm32"))]
 /// Determines the preferred graphics renderer based on the `PHONON_RENDERER` environment variable,
 /// defaulting to OpenGL/EGL (`eframe::Renderer::Glow`) for instant sub-200ms cold startup.
 pub fn determine_boot_renderer() -> eframe::Renderer {
@@ -77,6 +79,7 @@ pub fn determine_boot_renderer() -> eframe::Renderer {
     }
 }
 
+#[cfg(not(target_arch = "wasm32"))]
 /// Generates optimized `eframe::NativeOptions` for sub-200ms cold startup.
 pub fn default_native_options() -> eframe::NativeOptions {
     let renderer = determine_boot_renderer();
@@ -91,6 +94,7 @@ pub fn default_native_options() -> eframe::NativeOptions {
     }
 }
 
+#[cfg(not(target_arch = "wasm32"))]
 /// Runs the native desktop CAD interface and visualization studio with default auto-selecting dynamics backend.
 pub fn run_gui() -> Result<(), Box<dyn std::error::Error>> {
     let native_options = default_native_options();
@@ -103,6 +107,7 @@ pub fn run_gui() -> Result<(), Box<dyn std::error::Error>> {
     .map_err(|e| Box::new(e) as Box<dyn std::error::Error>)
 }
 
+#[cfg(not(target_arch = "wasm32"))]
 /// Runs the native desktop CAD interface and visualization studio with a custom physics dynamics backend injected in-process.
 pub fn run_gui_with_custom_backend(
     backend: Box<dyn PhysicsDynamicsBackend>,
@@ -115,4 +120,35 @@ pub fn run_gui_with_custom_backend(
         Box::new(move |cc| Ok(Box::new(PhononApp::with_backend(cc, backend)))),
     )
     .map_err(|e| Box::new(e) as Box<dyn std::error::Error>)
+}
+
+#[cfg(target_arch = "wasm32")]
+use wasm_bindgen::prelude::*;
+
+#[cfg(target_arch = "wasm32")]
+/// Generates default `eframe::WebOptions` for WebAssembly execution inside browser canvas.
+pub fn default_web_options() -> eframe::WebOptions {
+    eframe::WebOptions::default()
+}
+
+#[cfg(target_arch = "wasm32")]
+#[wasm_bindgen]
+/// Starts the Phonon Studio WebAssembly application mounted onto the specified HTML `<canvas>` ID.
+pub async fn start(canvas_id: &str) -> Result<(), JsValue> {
+    use wasm_bindgen::JsCast;
+    let window = web_sys::window().ok_or_else(|| JsValue::from_str("No window found"))?;
+    let document = window.document().ok_or_else(|| JsValue::from_str("No document found"))?;
+    let canvas = document
+        .get_element_by_id(canvas_id)
+        .ok_or_else(|| JsValue::from_str(&format!("Canvas element #{canvas_id} not found")))?
+        .dyn_into::<web_sys::HtmlCanvasElement>()
+        .map_err(|_| JsValue::from_str("Element is not an HtmlCanvasElement"))?;
+
+    eframe::WebRunner::new()
+        .start(
+            canvas,
+            default_web_options(),
+            Box::new(|cc| Ok(Box::new(PhononApp::new(cc)))),
+        )
+        .await
 }

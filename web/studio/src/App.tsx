@@ -66,6 +66,12 @@ const COMPONENT_KINDS: ComponentKindDef[] = [
   // Topological Metamaterials
   { kind: 'saw', name: 'SAW IDT (SAW)', category: 'Topological Metamaterials', prefix: 'X', defaultValue: '12.0 GHz', description: 'Surface acoustic wave interdigital transducer', pinCount: 2 },
   { kind: 'majorana', name: 'Majorana Junction (MAJORANA)', category: 'Topological Metamaterials', prefix: 'X', defaultValue: '10 mK meV=35', description: 'Topological superconducting nanowire', pinCount: 2 },
+
+  // Port-Hamiltonian Articulatory Acoustics
+  { kind: 'ph_lungs', name: 'Lungs Subglottal Drive (PH_LUNGS)', category: 'Port-Hamiltonian Articulatory Acoustics', prefix: 'XLUNG', defaultValue: 'Pl=800Pa C=1.2u', description: 'Aerodynamic subglottal pressure source with continuous compliance', pinCount: 2 },
+  { kind: 'ph_vf', name: 'Hirano Vocal Folds (PH_VF)', category: 'Port-Hamiltonian Articulatory Acoustics', prefix: 'XVF', defaultValue: 'M=0.15g K=42N/m', description: 'Nonlinear 3-layer cover-body self-oscillating vocal folds', pinCount: 4 },
+  { kind: 'ph_vt', name: 'Webster Acoustic Horn (PH_VT)', category: 'Port-Hamiltonian Articulatory Acoustics', prefix: 'XVT', defaultValue: 'L=17.5cm A0=3.2cm2', description: 'Continuous Riccati Webster transmission-line acoustic horn', pinCount: 4 },
+  { kind: 'ph_rad', name: 'Lip Radiation Impedance (PH_RAD)', category: 'Port-Hamiltonian Articulatory Acoustics', prefix: 'XRAD', defaultValue: 'Rrad=1.5M Lrad=85', description: 'Spherical acoustic wave radiation termination (+6 dB/octave)', pinCount: 2 },
 ]
 
 const CATEGORIES = [
@@ -76,6 +82,7 @@ const CATEGORIES = [
   'Integrated Circuits',
   'Sensors & Actuators',
   'Topological Metamaterials',
+  'Port-Hamiltonian Articulatory Acoustics',
 ]
 
 interface ComponentInstance {
@@ -203,6 +210,7 @@ export default function App() {
     'Integrated Circuits': false,
     'Sensors & Actuators': false,
     'Topological Metamaterials': false,
+    'Port-Hamiltonian Articulatory Acoustics': false,
   })
 
   // Settings State (loaded from localStorage with default fallbacks)
@@ -231,6 +239,21 @@ export default function App() {
   // Modals & Popups state
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false)
+  const [engineMode, setEngineMode] = useState<'vector' | 'wasm'>('vector')
+
+  useEffect(() => {
+    if (engineMode === 'wasm') {
+      const wasmJsPath: string = '/studio/wasm/phonon_gui.js'
+      import(/* @vite-ignore */ wasmJsPath)
+        .then(async (mod: any) => {
+          await mod.default('/studio/wasm/phonon_gui_bg.wasm')
+          await mod.start('phonon_canvas')
+        })
+        .catch((err) => {
+          console.warn('WASM desktop engine initialization deferred:', err)
+        })
+    }
+  }, [engineMode])
   const [confirmState, setConfirmState] = useState<{
     isOpen: boolean
     title: string
@@ -804,6 +827,21 @@ export default function App() {
       if (pinIdx === 0) { rx = 0; ry = -25 } // Drain
       else if (pinIdx === 1) { rx = -25; ry = 0 } // Gate
       else { rx = 0; ry = 25 } // Source
+    } else if (kind === 'ph_lungs') {
+      ry = pinIdx === 0 ? -25 : 25
+    } else if (kind === 'ph_vf') {
+      if (pinIdx === 0) { rx = -25; ry = 0 } // Subglottal
+      else if (pinIdx === 1) { rx = 25; ry = 0 } // Supraglottal
+      else if (pinIdx === 2) { rx = 0; ry = -25 } // Control
+      else { rx = 0; ry = 25 } // Reference
+    } else if (kind === 'ph_vt') {
+      if (pinIdx === 0) { rx = -30; ry = 0 } // In
+      else if (pinIdx === 1) { rx = 30; ry = 0 } // Out
+      else if (pinIdx === 2) { rx = 0; ry = 25 } // Wall
+      else { rx = 0; ry = -25 } // Control
+    } else if (kind === 'ph_rad') {
+      rx = pinIdx === 0 ? -20 : 20
+      ry = 0
     } else {
       ry = pinIdx === 0 ? -25 : 25
     }
@@ -1713,6 +1751,42 @@ export default function App() {
 
         {/* Right side shortcuts */}
         <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
+          {/* Studio Engine Mode Toggle: Vector Studio vs Desktop Engine (WASM/WebGL) */}
+          <div style={{ display: 'flex', alignItems: 'center', backgroundColor: 'var(--bg-canvas, #090d16)', border: '1px solid var(--border-button, #334155)', borderRadius: '3px', padding: '2px', gap: '2px' }}>
+            <button
+              onClick={() => setEngineMode('vector')}
+              title="Interactive React SVG Vector Studio"
+              style={{
+                padding: '2px 8px',
+                backgroundColor: engineMode === 'vector' ? 'var(--accent-cyan, #0284c7)' : 'transparent',
+                border: 'none',
+                borderRadius: '2px',
+                color: engineMode === 'vector' ? '#ffffff' : 'var(--text-muted, #94a3b8)',
+                fontSize: '10px',
+                fontWeight: 600,
+                cursor: 'pointer',
+              }}
+            >
+              Vector Studio
+            </button>
+            <button
+              onClick={() => setEngineMode('wasm')}
+              title="Native Desktop Phonon Engine running in browser WebGL canvas"
+              style={{
+                padding: '2px 8px',
+                backgroundColor: engineMode === 'wasm' ? 'var(--accent-cyan, #0284c7)' : 'transparent',
+                border: 'none',
+                borderRadius: '2px',
+                color: engineMode === 'wasm' ? '#ffffff' : 'var(--text-muted, #94a3b8)',
+                fontSize: '10px',
+                fontWeight: 600,
+                cursor: 'pointer',
+              }}
+            >
+              Desktop Engine (WASM)
+            </button>
+          </div>
+
           {/* Quick Inspector Toggle Button */}
           <button
             onClick={toggleRightPanel}
@@ -2072,6 +2146,15 @@ export default function App() {
         {/* CENTER SCHEMATIC CANVAS */}
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden' }}>
           <div style={{ flex: 1, position: 'relative', backgroundColor: '#0b0f19', overflow: 'hidden' }}>
+            {engineMode === 'wasm' ? (
+              <div style={{ width: '100%', height: '100%', position: 'relative' }}>
+                <canvas
+                  id="phonon_canvas"
+                  tabIndex={0}
+                  style={{ width: '100%', height: '100%', display: 'block', outline: 'none' }}
+                />
+              </div>
+            ) : (
             <svg
               ref={canvasRef}
               style={{ width: '100%', height: '100%', cursor: isPanning ? 'grabbing' : activeTool === 'wire' ? 'crosshair' : 'default', touchAction: 'none' }}
@@ -2288,6 +2371,55 @@ export default function App() {
                           <line x1="0" y1="10" x2="0" y2="25" stroke="#94a3b8" strokeWidth="1.5" />
                         </g>
                       )}
+
+                      {/* PhLungs */}
+                      {comp.kind === 'ph_lungs' && (
+                        <g>
+                          <line x1="0" y1="-25" x2="0" y2="-10" stroke="#94a3b8" strokeWidth="1.5" />
+                          <line x1="0" y1="-10" x2="-10" y2="-2" stroke="#94a3b8" strokeWidth="1.5" />
+                          <line x1="0" y1="-10" x2="10" y2="-2" stroke="#94a3b8" strokeWidth="1.5" />
+                          <circle cx="-10" cy="8" r="8" fill="rgba(56, 189, 248, 0.1)" stroke="#38bdf8" strokeWidth="1.5" />
+                          <circle cx="10" cy="8" r="8" fill="rgba(56, 189, 248, 0.1)" stroke="#38bdf8" strokeWidth="1.5" />
+                          <line x1="0" y1="16" x2="0" y2="25" stroke="#94a3b8" strokeWidth="1.5" />
+                        </g>
+                      )}
+
+                      {/* PhVocalFolds */}
+                      {comp.kind === 'ph_vf' && (
+                        <g>
+                          <polygon points="-20,-14 -6,0 -18,14" fill="rgba(56, 189, 248, 0.1)" stroke="#38bdf8" strokeWidth="1.5" />
+                          <polygon points="20,-14 6,0 18,14" fill="rgba(56, 189, 248, 0.1)" stroke="#38bdf8" strokeWidth="1.5" />
+                          <line x1="-3" y1="-6" x2="-3" y2="6" stroke="#94a3b8" strokeWidth="1.5" />
+                          <line x1="3" y1="-6" x2="3" y2="6" stroke="#94a3b8" strokeWidth="1.5" />
+                          <line x1="-25" y1="0" x2="-18" y2="0" stroke="#94a3b8" strokeWidth="1.5" />
+                          <line x1="18" y1="0" x2="25" y2="0" stroke="#94a3b8" strokeWidth="1.5" />
+                          <line x1="0" y1="-25" x2="0" y2="-14" stroke="#94a3b8" strokeWidth="1.5" />
+                          <line x1="0" y1="14" x2="0" y2="25" stroke="#94a3b8" strokeWidth="1.5" />
+                        </g>
+                      )}
+
+                      {/* PhVocalTract */}
+                      {comp.kind === 'ph_vt' && (
+                        <g>
+                          <path d="M -20 -8 Q 0 -12 20 -18 L 20 18 Q 0 12 -20 8 Z" fill="rgba(56, 189, 248, 0.1)" stroke="#38bdf8" strokeWidth="1.5" />
+                          <line x1="-30" y1="0" x2="-20" y2="0" stroke="#94a3b8" strokeWidth="1.5" />
+                          <line x1="20" y1="0" x2="30" y2="0" stroke="#94a3b8" strokeWidth="1.5" />
+                          <line x1="0" y1="-25" x2="0" y2="-12" stroke="#94a3b8" strokeWidth="1.5" />
+                          <line x1="0" y1="12" x2="0" y2="25" stroke="#94a3b8" strokeWidth="1.5" />
+                        </g>
+                      )}
+
+                      {/* PhLipRadiation */}
+                      {comp.kind === 'ph_rad' && (
+                        <g>
+                          <line x1="-20" y1="0" x2="-8" y2="0" stroke="#94a3b8" strokeWidth="1.5" />
+                          <line x1="-8" y1="-14" x2="-8" y2="14" stroke="#94a3b8" strokeWidth="2" />
+                          <path d="M -4 -8 Q 0 0 -4 8" fill="none" stroke="#38bdf8" strokeWidth="1.5" />
+                          <path d="M 2 -12 Q 8 0 2 12" fill="none" stroke="#38bdf8" strokeWidth="1.5" />
+                          <path d="M 8 -16 Q 16 0 8 16" fill="none" stroke="#38bdf8" strokeWidth="1.5" />
+                          <line x1="14" y1="0" x2="20" y2="0" stroke="#94a3b8" strokeWidth="1.5" />
+                        </g>
+                      )}
                       {/* Custom User Module Symbols */}
                       {(() => {
                         const customDef = customSymbols.find((cs) => cs.id === comp.kind)
@@ -2417,6 +2549,7 @@ export default function App() {
               })}
               </g>
             </svg>
+            )}
           </div>
 
           {/* DOCKED VIRTUAL OSCILLOSCOPE */}

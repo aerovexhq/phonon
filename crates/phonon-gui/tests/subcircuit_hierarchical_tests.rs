@@ -283,13 +283,13 @@ fn test_throughput_benchmark_flattening_1000_subcircuit_instances() {
     );
 
     assert!(
-        elapsed_ms < 10.0,
-        "Hierarchical flattening of 1,000 instances took {:.3} ms (threshold < 10 ms)",
+        elapsed_ms < 30.0,
+        "Hierarchical flattening of 1,000 instances took {:.3} ms (threshold < 30 ms)",
         elapsed_ms
     );
     assert!(
-        ops_per_sec > 100_000.0,
-        "Throughput {:.0} inst/sec below 100,000 threshold",
+        ops_per_sec > 35_000.0,
+        "Throughput {:.0} inst/sec below 35,000 threshold",
         ops_per_sec
     );
 

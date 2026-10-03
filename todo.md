@@ -24,9 +24,6 @@ The ultimate destination for the Phonon platform is an autonomous, multi-scale, 
 
 ## Future
 
-### Phase 325 (Milestone): Phonon Universal Multi-Scale Visual Studio Milestone & Multi-Abstraction Transistor Speed Regression Protocol
-Execute periodic milestone verification across all 6 realism tiers (Tiers 0-6) validating zero performance regression against baseline thresholds.
-
 ### Phase 326: Phonon Studio Full SPICE Component Optimization & Evolutionary Parameter Estimation Engine
 Autonomous parameter extraction and inverse fitting from empirical measurement curves.
 
@@ -37,15 +34,32 @@ Large-scale Latin Hypercube Sampling, multi-core Rayon parameter sweeps, and sta
 
 ## Current
 
-### Phase 324: Phonon Studio Visual Schematic Port-Hamiltonian Biomechanical Articulatory Library & Real-Time Waveform Oscilloscope
-Integrate Port-Hamiltonian components into the visual CAD palette and oscilloscope:
-1. Palette Macro-Blocks: Schematic symbol blocks for Lungs, Hirano Vocal Folds, Webster Vocal Tract, and Lip Radiation.
-2. Dual-Domain Oscilloscope: Simultaneous display of electrical voltage/current and acoustic pressure/volume flow.
-3. Netlist Ingestion: Export and compile Port-Hamiltonian components to standard SPICE subcircuits with companion MNA stamps.
+### Phase 325 (Milestone): Phonon Universal Multi-Scale Visual Studio Milestone & Multi-Abstraction Transistor Speed Regression Protocol
+Execute periodic milestone verification across all 6 realism tiers (Tiers 0-6) validating zero performance regression against baseline thresholds:
+1. Automated Multi-Abstraction Regression Suite: Execute Tier 0 to Tier 6 regression benchmark suites (`transistor_speed_benchmark.rs`, `electrothermal_speed_benchmark.rs`) validating sustained throughput.
+2. Milestone Engine Verification: Ensure all 35 schematic CAD primitives, ERC diagnostic engine, hierarchical subcircuit compiler, and WebAssembly engine satisfy zero-regression performance and memory targets.
+3. Cross-Platform Studio Parity: Confirm that desktop native and static WebAssembly eframe engines produce bit-identical schematic graphs, ERC results, and SPICE netlists.
 
 ---
 
 ## Done
+
+### Phase 324: Phonon Studio Visual Schematic Port-Hamiltonian Biomechanical Articulatory Library & Real-Time Waveform Oscilloscope
+Integrate Port-Hamiltonian components into visual CAD palette, dual-domain oscilloscope, and WASM eframe engine:
+1. Visual CAD Palette Macro-Blocks (`crates/phonon-gui/src/schematic/`):
+   - Added 8th category `ComponentCategory::PortHamiltonian` ("Port-Hamiltonian Articulatory Acoustics").
+   - Registered 4 articulatory primitives: `PhLungs` (`XLUNG`), `PhVocalFolds` (`XVF`), `PhVocalTract` (`XVT`), and `PhLipRadiation` (`XRAD`) with exact pin topologies and vector geometric CAD symbol drawing.
+   - Assigned stable binary serialization discriminants (31-34 for primitives, 7 for category) with 100% backward-compatible binary round-trip.
+2. Dual-Domain Oscilloscope (`crates/phonon-gui/src/oscilloscope/`):
+   - Introduced `SignalDomain` enum supporting `Electrical`, `AcousticPressure`, `AcousticFlow`, and `Mechanical` domains.
+   - Implemented domain-aware acoustic metrics: acoustic pressure RMS/peak, peak SPL (dB SPL referenced to 20 uPa), and volume flow rate (cm3/s).
+   - Added dynamic dual-domain multi-axis labeling and telemetry readouts.
+3. Netlist Ingestion & SPICE Subcircuit Compiler (`crates/phonon-gui/src/schematic/circuit_compiler.rs`):
+   - Generated standard hierarchical SPICE `.SUBCKT` definitions (`PH_LUNGS`, `PH_VOCAL_FOLDS`, `PH_VOCAL_TRACT`, `PH_LIP_RADIATION`) with companion MNA stamps.
+4. Universal Eframe WebAssembly Parity (`crates/phonon-gui/`, `web/studio/`, `.github/workflows/deploy-pages.yml`):
+   - Configured `phonon-gui` with `cdylib` and `eframe::WebRunner` export for `wasm32-unknown-unknown`.
+   - Updated GitHub Pages CI workflow to compile and stage WebAssembly release bundle.
+   - Added dual-engine switcher in Web Studio allowing seamless switching between Vector Studio and Desktop Engine (WASM/WebGL).
 
 ### Phase 323: Phonon Studio Interactive Transient Audio DSP Synthesizer & Soundcard Driver
 Direct audio output streaming from Port-Hamiltonian circuits at 48 kHz:

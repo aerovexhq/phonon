@@ -1,12 +1,12 @@
 //! Virtual multi-trace oscilloscope and FFT spectrum analyzer panel.
 
 pub mod trace;
-pub use trace::WaveformTrace;
+pub use trace::{SignalDomain, WaveformTrace};
 
 use egui::Ui;
 use egui_plot::{Legend, Line, Plot, PlotPoints};
 
-/// Interactive oscilloscope visualizer component.
+/// Interactive dual-domain oscilloscope visualizer component.
 #[derive(Debug, Clone, Default)]
 pub struct OscilloscopePanel {
     pub traces: Vec<WaveformTrace>,
@@ -32,7 +32,7 @@ impl OscilloscopePanel {
     /// Renders the oscilloscope UI and waveform plot.
     pub fn show(&mut self, ui: &mut Ui) {
         ui.horizontal(|ui| {
-            ui.heading("Virtual Oscilloscope");
+            ui.heading("Dual-Domain Virtual Oscilloscope");
             ui.separator();
 
             ui.checkbox(&mut self.fft_mode, "FFT Spectrum Mode");
@@ -43,11 +43,26 @@ impl OscilloscopePanel {
 
             ui.separator();
 
-            // Display readouts for the first trace if available
+            // Display readouts for active traces with domain-specific metrics
             if let Some(first) = self.traces.first() {
                 ui.label(format!("Trace: {}", first.name));
-                ui.label(format!("Vpp: {:.3} V", first.v_pp()));
-                ui.label(format!("Vrms: {:.3} V", first.v_rms()));
+                match first.domain {
+                    SignalDomain::Electrical => {
+                        ui.label(format!("Vpp: {:.3} V", first.v_pp()));
+                        ui.label(format!("Vrms: {:.3} V", first.v_rms()));
+                    }
+                    SignalDomain::AcousticPressure => {
+                        ui.label(format!("Ppeak: {:.2} Pa", first.v_pp() * 0.5));
+                        ui.label(format!("Prms: {:.2} Pa", first.v_rms()));
+                        ui.label(format!("SPL: {:.1} dB SPL", first.peak_spl_db()));
+                    }
+                    SignalDomain::AcousticFlow => {
+                        ui.label(format!("Flow: {:.1} cm³/s", first.flow_rate_cm3_s()));
+                    }
+                    SignalDomain::Mechanical => {
+                        ui.label(format!("Disp: {:.3} mm", first.v_pp() * 1000.0));
+                    }
+                }
                 if let Some(freq) = first.estimate_frequency() {
                     ui.label(format!("Freq: {:.1} Hz", freq));
                 }
@@ -64,7 +79,17 @@ impl OscilloscopePanel {
         let y_label = if self.fft_mode {
             "Magnitude (dB)"
         } else {
-            "Amplitude (V)"
+            let has_electrical = self.traces.iter().any(|t| t.domain == SignalDomain::Electrical);
+            let has_acoustic = self.traces.iter().any(|t| {
+                t.domain == SignalDomain::AcousticPressure || t.domain == SignalDomain::AcousticFlow
+            });
+            if has_electrical && has_acoustic {
+                "Amplitude [V | Pa | cm³/s]"
+            } else if has_acoustic {
+                "Acoustic Pressure (Pa) / Volume Flow (cm³/s)"
+            } else {
+                "Amplitude (V)"
+            }
         };
 
         let plot = Plot::new("oscilloscope_plot")
@@ -88,7 +113,8 @@ impl OscilloscopePanel {
                     PlotPoints::from(decimated)
                 };
 
-                let line = Line::new(&trace.name, points).color(trace.color).width(1.8);
+                let label = format!("{} [{}]", trace.name, trace.domain.unit_symbol());
+                let line = Line::new(label, points).color(trace.color).width(1.8);
 
                 plot_ui.line(line);
             }

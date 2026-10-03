@@ -3,5 +3,12 @@
 //! Phonon GUI executable.
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    phonon_gui::run_gui()
+    #[cfg(not(target_arch = "wasm32"))]
+    {
+        phonon_gui::run_gui()
+    }
+    #[cfg(target_arch = "wasm32")]
+    {
+        Ok(())
+    }
 }
