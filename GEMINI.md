@@ -32,6 +32,8 @@
 ### 5. Git Policy
 - **Authorized Operations**: You are explicitly permitted to stage (`git add`), commit (`git commit`), update branch refs (`git update-ref refs/heads/main HEAD`), and push (`git push origin main`) changes responsibly upon completion of each prompt or phase.
 - **Strictly Prohibited Operations**: Never execute destructive git operations such as `git reset`, `git checkout`, `git restore`, `git clean`, `git stash`, `git rebase`, or force push (`--force`).
+- **Commit Message Hygiene**: Use standard Conventional Commits format (`feat:`, `fix:`, `docs:`, `chore:`, `refactor:`). Commit titles and bodies must NEVER include phase numbers (e.g. strictly do NOT mention "Phase <num>", "Phase 324", "Phase 325", etc.) or arbitrary milestone tags. Provide clear, descriptive, professional, and human-readable information explaining what the commit accomplishes.
+- **Commit and Push After Each Phase**: Always stage, commit, and push changes to `origin/main` upon completion of each roadmap phase.
 
 ### 6. Documentation & Autonomous Lifecycle Tracking
 - **Phonon Autonomous Roadmap**: All Phonon-specific tasks and roadmap phases are tracked exclusively inside `todo.md`.

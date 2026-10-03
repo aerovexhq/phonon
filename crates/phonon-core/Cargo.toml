@@ -14,9 +14,11 @@ default = []
 serde = ["dep:serde"]
 
 [dev-dependencies]
+egui = { workspace = true }
 phonon-models = { path = "../phonon-models" }
 phonon-solver = { path = "../phonon-solver" }
 phonon-thermal = { path = "../phonon-thermal" }
+phonon-gui = { path = "../phonon-gui" }
 
 [lints]
 workspace = true
