@@ -24,25 +24,43 @@ The ultimate destination for the Phonon platform is an autonomous, multi-scale, 
 
 ## Future
 
-### Phase 337: Phonon Studio Fractional Quantum Hall Anyon Braiding & Non-Abelian Topological Circuit Co-Simulator
-Non-Abelian Moore-Read $\nu=5/2$ Pfaffian and Fibonacci anyon braiding matrix emulator, chiral edge interferometers, and topological quantum gate synthesis.
-
 ### Phase 338: Phonon Studio Superconducting Josephson Traveling-Wave Parametric Amplifier (JTWPA) Simulator
 Non-linear discrete Josephson transmission line, four-wave mixing (4WM), dispersion engineering with resonant phase matching, and quantum-limited squeezing.
+
+### Phase 339: Phonon Studio Floquet Engineered Spatio-Temporal Acoustic Metasurface Simulator
+Dynamic phase gradient modulation, non-reciprocal Doppler frequency shift, synthetic gauge fields, and angular momentum selective reflection.
 
 ---
 
 ## Current
 
-### Phase 336: Phonon Studio Universal Topological Dirac & Weyl Semimetal Metamaterial Simulator
-3D Weyl point dispersion, Fermi arc surface states, chiral anomaly transport, and topological acoustic metamaterial beam splitting:
-1. 3D Weyl & Dirac Dispersion Solver: Linear crossing nodes in momentum space $E(\mathbf{k}) = \pm v_F |\mathbf{k} - \mathbf{k}_0|$, chiral charges $\mathcal{C} = \pm 1$, and Type-I / Type-II tilted conical dispersions.
-2. Fermi Arc Surface State & Chiral Anomaly Kernel: Non-closed open Fermi arc states connecting surface projections of bulk Weyl points, non-local transport, and negative magnetoresistance signature $\sigma \propto B^2$.
-3. Interactive Weyl Semimetal Studio Visualizer in CAD Studio: Native egui 3D Brillouin zone node visualizer, Fermi arc surface state contours, and acoustic beam splitter simulation.
+### Phase 337: Phonon Studio Fractional Quantum Hall Anyon Braiding & Non-Abelian Topological Circuit Co-Simulator
+Non-Abelian Moore-Read $\nu=5/2$ Pfaffian and Fibonacci anyon braiding matrix emulator, chiral edge interferometers, and topological quantum gate synthesis:
+1. Non-Abelian Anyon Braiding Matrix Engine: Multi-quasiparticle braiding generators $\rho(\sigma_i)$ across conformal blocks, Yang-Baxter topological consistency, and fault-tolerant Clifford+$T$ / universal gate synthesis.
+2. Fractional Quantum Hall Edge Interferometer Solver: Fabry-Pérot and Mach-Zehnder chiral edge channel interference, Aharonov-Bohm flux phase oscillations, and fractional charge $e^* = e/4, e/3$ shot noise signatures.
+3. Interactive Anyon Braiding & Edge Interferometer Visualizer in CAD Studio: Native egui world-line braiding trajectory canvas, interference conductance oscillations, and topological quantum circuit compiler.
 
 ---
 
 ## Done
+
+### Phase 336: Phonon Studio Universal Topological Dirac & Weyl Semimetal Metamaterial Simulator
+3D Weyl point dispersion, Fermi arc surface states, chiral anomaly transport, and topological acoustic metamaterial beam splitting:
+1. 3D Weyl & Dirac Dispersion Solver (`crates/phonon-solver/src/weyl_semimetal/dispersion.rs`):
+   - Implemented `WeylNodeType` covering Type-I ($t < 1.0$) and Type-II overtilted ($t > 1.0$) conical band crossings.
+   - Built `WeylNode` with 3D momentum coordinates $\mathbf{k}_0$, Fermi velocity $\mathbf{v}_F$, tilt vector $\mathbf{w}$, Berry curvature monopole $\mathbf{\Omega}(\mathbf{k}) = \mathcal{C} \frac{\delta \mathbf{k}}{2 |\delta \mathbf{k}|^3}$, and enclosing sphere flux $\oint \mathbf{\Omega} \cdot d\mathbf{S} = 2\pi \mathcal{C}$.
+   - Built `WeylSemimetalModel` supporting TRS-broken (2 nodes), Inversion-broken (4 nodes), and Dirac semimetals, enforcing Nielsen-Ninomiya topological neutrality ($\sum \mathcal{C}_i = 0$).
+2. Fermi Arc Surface State & Chiral Anomaly Kernel (`crates/phonon-solver/src/weyl_semimetal/fermi_arc.rs`):
+   - Implemented `FermiArcSurface` generating open Fermi arc contours on (001) surface Brillouin zone connecting projected bulk Weyl points $W_+$ and $W_-$, with exponential depth decay $\psi(z) \propto e^{-z/\xi}$.
+   - Implemented `ChiralAnomalyTransport` modeling negative longitudinal magnetoresistance and quadratic magnetoconductance $\sigma(B) = \sigma_0 + C_{chiral} B^2 \cos^2\theta$ under parallel fields ($\mathbf{E} \parallel \mathbf{B}$).
+   - Simulated topological acoustic beam splitting with $\ge 95\%$ transmission ($96.5\% - 99.0\%$) and cross-talk isolation $\ge 30$ dB ($32 - 34$ dB).
+3. Interactive Weyl Semimetal Studio Visualizer in CAD Studio (`crates/phonon-gui/src/widgets/weyl_semimetal_dialog.rs`):
+   - Built `WeylSemimetalDialog` in Phonon Visual Studio featuring 3D Brillouin zone orbit canvas, 2D open Fermi arc surface contour plot, chiral anomaly $\sigma(B)$ curve, acoustic beam splitter diagram, and real-time physical telemetry.
+   - Integrated into `PhononApp` and top frame menu.
+4. Automated Verification Suites:
+   - `crates/phonon-solver/tests/weyl_semimetal_simulator_tests.rs`: 6/6 tests passing.
+   - `crates/phonon-gui/tests/weyl_semimetal_gui_tests.rs`: 4/4 tests passing.
+
 
 ### Phase 335 (Milestone): Phonon Universal Multi-Scale Visual Studio Milestone & Multi-Abstraction Transistor Speed Regression Protocol
 Periodic milestone verification across all 7 realism tiers (Tiers 0-6) validating zero performance regression against baseline thresholds:

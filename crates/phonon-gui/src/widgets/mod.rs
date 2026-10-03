@@ -15,6 +15,7 @@ pub mod smith_chart_dialog;
 pub mod symbol_editor;
 pub mod thermal_floorplan_dialog;
 pub mod top_frame;
+pub mod weyl_semimetal_dialog;
 
 pub use cluster_dashboard_dialog::ClusterDashboardDialog;
 pub use dynamics_status::DynamicsStatusBadge;
@@ -29,3 +30,4 @@ pub use smith_chart_dialog::{HoveredMarker, SmithChartDialog};
 pub use symbol_editor::{SymbolEditorDialog, SymbolEditorTool};
 pub use thermal_floorplan_dialog::ThermalFloorplanDialog;
 pub use top_frame::{render_top_frame, render_top_frame_with_app, TopFrameAction, TopFrameConfig};
+pub use weyl_semimetal_dialog::{SemimetalMode, WeylSemimetalDialog};

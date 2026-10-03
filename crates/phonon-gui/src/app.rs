@@ -16,6 +16,7 @@ use crate::widgets::{
     render_top_frame_with_app, ClusterDashboardDialog, ComponentPalette, ExceptionalPointDialog,
     MonteCarloYieldDialog, NeuromorphicSnnDialog, PolaritonCavityDialog, SensitivityDialog,
     SmithChartDialog, SymbolEditorDialog, ThermalFloorplanDialog, TopFrameAction, TopFrameConfig,
+    WeylSemimetalDialog,
 };
 use eframe::{App, Frame};
 use egui::{
@@ -118,6 +119,9 @@ pub struct PhononApp {
     /// Interactive Exceptional Point Sensor & PT-Symmetric Circuit Simulator dialog.
     pub exceptional_point_dialog: ExceptionalPointDialog,
 
+    /// Interactive Universal Topological Dirac & Weyl Semimetal Metamaterial Studio dialog.
+    pub weyl_semimetal_dialog: WeylSemimetalDialog,
+
     /// Interactive Logisim/KiCad-style component symbol and shape editor dialog.
     pub symbol_editor: SymbolEditorDialog,
 
@@ -204,6 +208,7 @@ impl Default for PhononApp {
             cluster_dashboard_dialog: ClusterDashboardDialog::new(),
             neuromorphic_snn_dialog: NeuromorphicSnnDialog::new(),
             exceptional_point_dialog: ExceptionalPointDialog::new(),
+            weyl_semimetal_dialog: WeylSemimetalDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
             dragging_component: false,
@@ -1804,6 +1809,9 @@ impl PhononApp {
 
         // 17. Interactive Exceptional Point Sensor & PT-Symmetric Circuit Simulator Dialog
         self.exceptional_point_dialog.ui(ui.ctx());
+
+        // 18. Interactive Universal Topological Dirac & Weyl Semimetal Metamaterial Studio Dialog
+        self.weyl_semimetal_dialog.ui(ui.ctx());
     }
 }
 
