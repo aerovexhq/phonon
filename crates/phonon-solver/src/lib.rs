@@ -51,6 +51,7 @@ pub mod floquet_anyon_braiding;
 pub mod floquet_corner_transduction;
 pub mod floquet_majorana_braiding_processor;
 pub mod floquet_topological;
+pub mod floquet_metasurface;
 pub mod fqh;
 pub mod fqh_acoustic_interferometer;
 pub mod fqh_interferometer;
@@ -900,4 +901,10 @@ pub use jtwpa_simulator::{
     GainSpectrumPoint, JosephsonCellParams, JosephsonTransmissionLine, JtwpaParams, JtwpaSolver,
     QuantumSqueezing, RpmStubParams,
 };
+pub use floquet_metasurface::{
+    bessel_j, FloquetMetasurfaceSolver, FloquetModulationParams, FloquetSidebandResult,
+    MetasurfaceUnitCell, NonReciprocalScattering, OrbitalAngularMomentum, PolarPhaseMap,
+    SyntheticGaugeField,
+};
+
 
