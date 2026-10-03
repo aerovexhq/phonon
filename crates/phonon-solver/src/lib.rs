@@ -288,6 +288,7 @@ pub mod valleytronics;
 pub mod verification;
 pub mod wakefield;
 pub mod polariton_waveguide;
+pub mod weyl_semimetal;
 
 pub use acoustic::{
     AcousticBenchmarkReport, AcousticBenchmarkRunner, AcousticLinkSimulator, AcousticRealismTier,
@@ -883,4 +884,8 @@ pub use cluster::{
 pub use ep_sensor::{
     EpOrder, NhseLattice, NhseResult, NonHermitianHamiltonian, PtCircuitParams, PtCircuitState,
     PtPhase, RiemannBranchPoint,
+};
+pub use weyl_semimetal::{
+    BandPoint, BeamSplitterResult, ChiralAnomalyTransport, FermiArcPoint, FermiArcSurface,
+    WeylNode, WeylNodeType, WeylSemimetalModel,
 };

@@ -44,6 +44,7 @@ pub use widgets::thermal_floorplan_dialog::ThermalFloorplanDialog;
 pub use widgets::top_frame::{
     self, render_top_frame, render_top_frame_with_app, TopFrameAction, TopFrameConfig,
 };
+pub use widgets::weyl_semimetal_dialog::{SemimetalMode, WeylSemimetalDialog};
 
 #[cfg(not(target_arch = "wasm32"))]
 use phonon_core::PhysicsDynamicsBackend;
