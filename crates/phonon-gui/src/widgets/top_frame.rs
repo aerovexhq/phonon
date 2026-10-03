@@ -434,6 +434,12 @@ fn render_top_frame_internal(
                 }
                 ui.close();
             }
+            if ui.button("Holonomic Quantum Processor...").clicked() {
+                if let Some(a) = app.as_deref_mut() {
+                    a.holonomic_processor_dialog.is_open = true;
+                }
+                ui.close();
+            }
             if ui.button("Clear Traces").clicked() {
                 if let Some(a) = app.as_deref_mut() {
                     a.oscilloscope.clear();

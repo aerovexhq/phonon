@@ -19,12 +19,14 @@ pub mod weyl_semimetal_dialog;
 pub mod fqh_braiding_dialog;
 pub mod jtwpa_dialog;
 pub mod floquet_metasurface_dialog;
+pub mod holonomic_processor_dialog;
 
 pub use cluster_dashboard_dialog::ClusterDashboardDialog;
 pub use dynamics_status::DynamicsStatusBadge;
 pub use exceptional_point_dialog::ExceptionalPointDialog;
 pub use floquet_metasurface_dialog::FloquetMetasurfaceDialog;
 pub use fqh_braiding_dialog::FqhBraidingDialog;
+pub use holonomic_processor_dialog::HolonomicProcessorDialog;
 pub use icon::render_phonon_icon;
 pub use jtwpa_dialog::JtwpaDialog;
 pub use monte_carlo_dialog::{MonteCarloParamEntry, MonteCarloYieldDialog};

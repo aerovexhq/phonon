@@ -17,6 +17,7 @@ use crate::widgets::{
     MonteCarloYieldDialog, NeuromorphicSnnDialog, PolaritonCavityDialog, SensitivityDialog,
     SmithChartDialog, SymbolEditorDialog, ThermalFloorplanDialog, TopFrameAction, TopFrameConfig,
     WeylSemimetalDialog, FqhBraidingDialog, JtwpaDialog, FloquetMetasurfaceDialog,
+    HolonomicProcessorDialog,
 };
 use eframe::{App, Frame};
 use egui::{
@@ -131,6 +132,9 @@ pub struct PhononApp {
     /// Interactive Floquet Engineered Spatio-Temporal Acoustic Metasurface Studio dialog.
     pub floquet_metasurface_dialog: FloquetMetasurfaceDialog,
 
+    /// Interactive Non-Abelian Holonomic Geometric Phase Quantum Acoustic Processor dialog.
+    pub holonomic_processor_dialog: HolonomicProcessorDialog,
+
     /// Interactive Logisim/KiCad-style component symbol and shape editor dialog.
     pub symbol_editor: SymbolEditorDialog,
 
@@ -221,6 +225,7 @@ impl Default for PhononApp {
             fqh_braiding_dialog: FqhBraidingDialog::new(),
             jtwpa_dialog: JtwpaDialog::new(),
             floquet_metasurface_dialog: FloquetMetasurfaceDialog::new(),
+            holonomic_processor_dialog: HolonomicProcessorDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
             dragging_component: false,
@@ -1833,6 +1838,9 @@ impl PhononApp {
 
         // 21. Interactive Floquet Engineered Spatio-Temporal Acoustic Metasurface Studio Dialog
         self.floquet_metasurface_dialog.ui(ui.ctx());
+
+        // 22. Interactive Non-Abelian Holonomic Geometric Phase Quantum Acoustic Processor Dialog
+        self.holonomic_processor_dialog.ui(ui.ctx());
     }
 }
 
