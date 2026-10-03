@@ -380,6 +380,12 @@ fn render_top_frame_internal(
                 }
                 ui.close();
             }
+            if ui.button("Thermal Floorplan & Co-Sim...").clicked() {
+                if let Some(a) = app.as_deref_mut() {
+                    a.thermal_floorplan_dialog.is_open = true;
+                }
+                ui.close();
+            }
             if ui.button("Clear Traces").clicked() {
                 if let Some(a) = app.as_deref_mut() {
                     a.oscilloscope.clear();

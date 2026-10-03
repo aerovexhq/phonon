@@ -24,25 +24,42 @@ The ultimate destination for the Phonon platform is an autonomous, multi-scale, 
 
 ## Future
 
-### Phase 330 (Milestone): Phonon Universal Multi-Scale Visual Studio Milestone & Multi-Abstraction Transistor Speed Regression Protocol
-Periodic milestone verification across all 7 realism tiers (Tiers 0-6) validating zero performance regression against baseline thresholds.
-
 ### Phase 331: Phonon Studio Quantum Metamaterial Polariton Waveguide & Topological Photonic Cavity Simulator
 Multi-mode polariton waveguide dispersion solver, chiral edge mode propagation, and topological cavity QED co-simulation.
+
+### Phase 332: Phonon Universal Multi-Scale Visual Studio Distributed Cloud Parameter Sweep Cluster Engine
+Distributed multi-node RPC worker daemon, web cluster dispatch queue, and parallel Monte Carlo cluster synthesis.
 
 ---
 
 ## Current
 
-### Phase 329: Phonon Studio Electro-Thermal Transient Multi-Scale Co-Simulation & Dynamic Floorplan Mesh Generator
-Multi-scale transient electro-thermal simulation coupling non-linear electrical MNA with dynamic 2D/3D thermal finite-difference conduction:
-1. Dynamic Floorplan Heat Diffusion Mesh: 2D adaptive finite-difference grid generator calculating spatial heat spreading $\rho c_p \frac{\partial T}{\partial t} = \nabla \cdot (k \nabla T) + P_d(x,y,t)$ across semiconductor dies, heat spreaders, and convection boundaries.
-2. Monolithic Transient Electro-Thermal Solver: Bi-directional lockstep coupling between transient circuit voltages/currents, instantaneous device power dissipation $P_d = V_{ds} I_{ds}$, and local device junction temperatures $T_j$.
-3. Real-Time Thermal Heatmap Overlay in CAD Studio: Live colored thermography layer overlaid onto schematic components and physical layout floorplan with isothermal contours and peak hot-spot telemetry.
+### Phase 330 (Milestone): Phonon Universal Multi-Scale Visual Studio Milestone & Multi-Abstraction Transistor Speed Regression Protocol
+Periodic milestone verification across all 7 realism tiers (Tiers 0-6) validating zero performance regression against baseline thresholds.
 
 ---
 
 ## Done
+
+### Phase 329: Phonon Studio Electro-Thermal Transient Multi-Scale Co-Simulation & Dynamic Floorplan Mesh Generator
+Multi-scale transient electro-thermal simulation coupling non-linear electrical MNA with dynamic 2D/3D thermal finite-difference conduction:
+1. Dynamic Floorplan Heat Diffusion Mesh (`crates/phonon-thermal/src/floorplan.rs`):
+   - Implemented `FloorplanComponent` with bounding boxes, continuous coordinates, and layer indices.
+   - Implemented `DieProperties` supporting temperature-dependent silicon thermal conductivity $\kappa(T)$, volumetric heat capacity $\rho c_p$, and Robin boundary convection.
+   - Built `DynamicFloorplanMesh` with 2D Peaceman-Rachford Alternating Direction Implicit (ADI) diffusion solver solving $\rho c_p \frac{\partial T}{\partial t} = \nabla \cdot (k \nabla T) + P_d - h_{conv} \frac{T - T_{amb}}{\mathrm{thickness}}$ via $O(N)$ tridiagonal Thomas algorithms.
+   - Implemented Marching Squares algorithm generating continuous `IsothermalContour` curves.
+2. Monolithic Transient Electro-Thermal Solver (`crates/phonon-thermal/src/transient_co_sim.rs`):
+   - Implemented `ElectroThermalCoSimulator` coupling circuit MNA state with floorplan mesh dynamics.
+   - Tracks instantaneous power dissipation across diodes ($I \cdot V$), resistors ($V^2 / R$), MOSFETs ($V_{ds} \cdot I_{ds}$), and BJTs ($V_{ce} \cdot I_c + V_{be} \cdot I_b$).
+   - Dynamic junction temperature feedback into device operating points with lockstep time integration and thermal runaway detection.
+   - Generates complete time-series `ElectroThermalTransientTrajectory` recording electrical states and 2D thermal snapshots.
+3. Interactive CAD Studio Thermal Floorplan & Heatmap Visualizer (`crates/phonon-gui/src/widgets/thermal_floorplan_dialog.rs`):
+   - Built `ThermalFloorplanDialog` in Phonon Visual Studio featuring 2D die floorplan canvas with component footprints, Turbo/Magma/Inferno colormaps, isothermal contour overlays, and peak hot-spot telemetry.
+   - Integrated playback scrubber timeline, auto-placement helper, and menu integration in `PhononApp`.
+4. Automated Verification Suites:
+   - `crates/phonon-thermal/tests/electrothermal_transient_co_sim_tests.rs`: 5/5 tests passing.
+   - `crates/phonon-gui/tests/thermal_floorplan_gui_tests.rs`: 4/5 tests passing.
+
 
 ### Phase 328: Phonon Studio RF & Microwave S-Parameter Extraction & Harmonic Balance Frequency-Domain Engine
 Multi-port scattering parameter (S-parameter) extraction, interactive Smith chart CAD visualizer, and non-linear harmonic balance frequency-domain solver:

@@ -14,7 +14,7 @@ use crate::schematic::{
 use crate::thermal::{Colormap, ThermalOverlay};
 use crate::widgets::{
     render_top_frame_with_app, ComponentPalette, MonteCarloYieldDialog, SensitivityDialog,
-    SmithChartDialog, SymbolEditorDialog, TopFrameAction, TopFrameConfig,
+    SmithChartDialog, SymbolEditorDialog, ThermalFloorplanDialog, TopFrameAction, TopFrameConfig,
 };
 use eframe::{App, Frame};
 use egui::{
@@ -102,6 +102,9 @@ pub struct PhononApp {
     /// Interactive RF S-Parameters, Smith Chart & Harmonic Balance visualizer dialog.
     pub smith_chart_dialog: SmithChartDialog,
 
+    /// Interactive Thermal Floorplan & Transient Co-Simulation Studio dialog.
+    pub thermal_floorplan_dialog: ThermalFloorplanDialog,
+
     /// Interactive Logisim/KiCad-style component symbol and shape editor dialog.
     pub symbol_editor: SymbolEditorDialog,
 
@@ -183,6 +186,7 @@ impl Default for PhononApp {
             sensitivity_dialog: SensitivityDialog::new(),
             monte_carlo_dialog: MonteCarloYieldDialog::new(),
             smith_chart_dialog: SmithChartDialog::new(),
+            thermal_floorplan_dialog: ThermalFloorplanDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
             dragging_component: false,
@@ -840,6 +844,21 @@ impl PhononApp {
                 );
                 self.monte_carlo_dialog.is_open = true;
                 self.sim_status = self.monte_carlo_dialog.status_msg.clone();
+            }
+        }
+    }
+
+    /// Runs dynamic electro-thermal co-simulation with thermal floorplan dialog.
+    pub fn run_thermal_cosim(&mut self) {
+        match compile_schematic(&self.components, &self.wires) {
+            Err(err) => {
+                self.sim_status = format!("Compilation Error: {}", err);
+            }
+            Ok(compiled) => {
+                self.thermal_floorplan_dialog.auto_place_components(&compiled.graph);
+                self.thermal_floorplan_dialog.run_simulation(&compiled.graph, &compiled.model_ctx);
+                self.thermal_floorplan_dialog.is_open = true;
+                self.sim_status = self.thermal_floorplan_dialog.status_msg.clone();
             }
         }
     }
@@ -1745,6 +1764,13 @@ impl PhononApp {
             self.smith_chart_dialog.run_simulation();
         }
         self.smith_chart_dialog.ui(ui.ctx());
+
+        // 13. Interactive Thermal Floorplan & Co-Simulation Dialog
+        if self.thermal_floorplan_dialog.run_requested {
+            self.thermal_floorplan_dialog.run_requested = false;
+            self.run_thermal_cosim();
+        }
+        self.thermal_floorplan_dialog.ui(ui.ctx());
     }
 }
 
