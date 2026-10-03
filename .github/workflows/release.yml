@@ -233,6 +233,7 @@ jobs:
         with:
           files: all-dist/*
           tag_name: rolling
+          target_commitish: ${{ github.sha }}
           name: "Phonon Continuous Development Build (0.1.0-dev)"
           body: |
             Automated continuous development release tracking the latest commit (`${{ github.sha }}`).
