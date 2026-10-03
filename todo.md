@@ -24,15 +24,43 @@ The ultimate destination for the Phonon platform is an autonomous, multi-scale, 
 
 ## Future
 
-### Phase 351: Phonon Studio Topological Acoustic Floquet Time Crystal Simulator
+### Phase 351: Phonon Studio Multi-Item Selection, Marquee Region Drag & Group Transforms
+Multi-selection state for components and wires (`HashSet<usize>`), Shift + Click toggling, marquee selection box, group translation, group deletion, group duplication, and group rotation.
+
+### Phase 352: Phonon Studio Project Lifecycle, Browser Storage & Unsaved Changes Modals
+Unified confirmation modal dialog for Load Demo, Clear Canvas, New Project, and Close; session dirty-state tracking (`modification_epoch`); WebAssembly browser storage adapter (`localStorage` autosave, blob export, file picker loading); desktop file dialog integration.
+
+### Phase 353: Phonon Studio Scalable Binary History Format & Preferences Dialog
+Reversible ID-tagged binary action log (`ActionType`), configurable in-memory and on-disk history depth limits, categorized `File > Preferences` modal dialog (General, Canvas, Simulation, Thermal, History), moving thermal controls from Inspector to Preferences.
+
+### Phase 354: Phonon Studio Oscilloscope Usability, Wire Current Probing & Zoom-Aware Badges
+Oscilloscope "Reset View / Auto-Fit" button, dampened and bounded zoom scaling with nanosecond engineering notation, wire current computation with hover/click inspector telemetry, proportional zoom text scaling, and unified pill badges for voltage and temperature.
+
+### Phase 355: Phonon Studio Embedded Lua Testbench Scripting & Expression Graphing
+Pure safe Rust Lua scripting VM compiling on `wasm32-unknown-unknown`, `Simulation > Lua Testbench Console...` dialog, Phonon Lua API for simulation execution, voltage/current extraction, automated assertions, and custom mathematical expression waveform graphing.
+
+---
+
+## When Coming Back To Backend Development
+
+### Milestone: Phonon Universal Multi-Scale Visual Studio Milestone & Multi-Abstraction Transistor Speed Regression Protocol
+Periodic milestone verification across all 7 realism tiers (Tiers 0-6) validating zero performance regression against baseline thresholds.
+
+### Topological Acoustic Floquet Time Crystal Simulator
 Discrete time-crystalline subharmonic order, Floquet drive Hamiltonian, spontaneous time-translation symmetry breaking, spatio-temporal rigid subharmonics, and disorder-immune period doubling.
+
+### Quantum Acoustic Protected Braiding Lattice Processor
+Topologically protected Majorana zero mode braiding lattices, non-Abelian quantum logic gates, parity readout, and surface code stabilizer circuits.
+
+### Cavity Optomechanical Squeezing & Phonon Counting Engine
+Phonon number state resolution, mechanical quadrature squeezing below standard quantum limit, optomechanical cooling, and non-classical phononic states.
 
 ---
 
 ## Current
 
-### Phase 350 (Milestone): Phonon Universal Multi-Scale Visual Studio Milestone & Multi-Abstraction Transistor Speed Regression Protocol
-Periodic milestone verification across all 7 realism tiers (Tiers 0-6) validating zero performance regression against baseline thresholds.
+### Phase 350: Phonon Studio UI Core Aesthetics, Manhattan Routing & Demo Circuit Integrity
+Pin-aware smart Manhattan wire auto-routing (V->H vs H->V based on terminal normal vectors), automatic viewport centering of default and loaded circuits, repairing ERC violations in BJT Common Emitter and CMOS Inverter demos, removing redundant "Demo Circuits" section from left drawer, enriching palette categories with analog, digital, and RF primitives, updating top bar title with `{project_title}{*}` and rename capability, and turning `Toggle ERC Overlay` into a checkbox while keeping View menu open on toggles.
 
 ---
 
