@@ -24,6 +24,7 @@ pub mod twisted_moire_dialog;
 pub mod chern_circulator_dialog;
 pub mod kerr_microcomb_dialog;
 pub mod exceptional_surface_dialog;
+pub mod soti_corner_dialog;
 
 pub use chern_circulator_dialog::ChernCirculatorDialog;
 pub use cluster_dashboard_dialog::ClusterDashboardDialog;
@@ -47,3 +48,4 @@ pub use thermal_floorplan_dialog::ThermalFloorplanDialog;
 pub use top_frame::{render_top_frame, render_top_frame_with_app, TopFrameAction, TopFrameConfig};
 pub use twisted_moire_dialog::TwistedMoireDialog;
 pub use weyl_semimetal_dialog::{SemimetalMode, WeylSemimetalDialog};
+pub use soti_corner_dialog::{SotiCornerDialog, SpatialModeSelection};

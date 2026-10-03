@@ -18,7 +18,7 @@ use crate::widgets::{
     SmithChartDialog, SymbolEditorDialog, ThermalFloorplanDialog, TopFrameAction, TopFrameConfig,
     WeylSemimetalDialog, FqhBraidingDialog, JtwpaDialog, FloquetMetasurfaceDialog,
     HolonomicProcessorDialog, TwistedMoireDialog, ChernCirculatorDialog,
-    KerrMicrocombDialog, ExceptionalSurfaceDialog,
+    KerrMicrocombDialog, ExceptionalSurfaceDialog, SotiCornerDialog,
 };
 use eframe::{App, Frame};
 use egui::{
@@ -148,6 +148,9 @@ pub struct PhononApp {
     /// Interactive Non-Hermitian Chiral Exceptional Surface Acoustic Sensing Array Studio dialog.
     pub exceptional_surface_dialog: ExceptionalSurfaceDialog,
 
+    /// Interactive Topological Higher-Order Corner State Acoustic Resonator Studio dialog.
+    pub soti_corner_dialog: SotiCornerDialog,
+
     /// Interactive Logisim/KiCad-style component symbol and shape editor dialog.
     pub symbol_editor: SymbolEditorDialog,
 
@@ -243,6 +246,7 @@ impl Default for PhononApp {
             chern_circulator_dialog: ChernCirculatorDialog::new(),
             kerr_microcomb_dialog: KerrMicrocombDialog::new(),
             exceptional_surface_dialog: ExceptionalSurfaceDialog::new(),
+            soti_corner_dialog: SotiCornerDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
             dragging_component: false,
@@ -1870,6 +1874,9 @@ impl PhononApp {
 
         // 26. Interactive Non-Hermitian Chiral Exceptional Surface Acoustic Sensing Array Studio Dialog
         self.exceptional_surface_dialog.ui(ui.ctx());
+
+        // 27. Interactive Topological Higher-Order Corner State Acoustic Resonator Dialog
+        self.soti_corner_dialog.ui(ui.ctx());
     }
 }
 
