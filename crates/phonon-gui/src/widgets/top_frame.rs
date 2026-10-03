@@ -368,6 +368,12 @@ fn render_top_frame_internal(
                 }
                 ui.close();
             }
+            if ui.button("Monte Carlo Yield Analysis").clicked() {
+                if let Some(a) = app.as_deref_mut() {
+                    a.monte_carlo_dialog.is_open = true;
+                }
+                ui.close();
+            }
             if ui.button("Clear Traces").clicked() {
                 if let Some(a) = app.as_deref_mut() {
                     a.oscilloscope.clear();
@@ -382,6 +388,12 @@ fn render_top_frame_internal(
             if ui.button("Transient Sensitivity Analysis").clicked() {
                 if let Some(a) = app.as_deref_mut() {
                     a.sensitivity_dialog.is_open = true;
+                }
+                ui.close();
+            }
+            if ui.button("Monte Carlo Yield Analysis").clicked() {
+                if let Some(a) = app.as_deref_mut() {
+                    a.monte_carlo_dialog.is_open = true;
                 }
                 ui.close();
             }
