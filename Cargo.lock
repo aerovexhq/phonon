@@ -2504,6 +2504,8 @@ dependencies = [
 name = "phonon-core"
 version = "0.1.0"
 dependencies = [
+ "egui",
+ "phonon-gui",
  "phonon-models",
  "phonon-solver",
  "phonon-thermal",
