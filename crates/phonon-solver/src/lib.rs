@@ -285,6 +285,7 @@ pub mod valley_acoustic;
 pub mod valleytronics;
 pub mod verification;
 pub mod wakefield;
+pub mod polariton_waveguide;
 
 pub use acoustic::{
     AcousticBenchmarkReport, AcousticBenchmarkRunner, AcousticLinkSimulator, AcousticRealismTier,
@@ -866,3 +867,7 @@ pub use port_hamiltonian::*;
 pub use symplectic_multirate::*;
 pub use audio_dsp_synth::*;
 pub use monte_carlo::*;
+pub use polariton_waveguide::{
+    ChiralEdgeModeSolver, ChiralLatticeDefect, ChiralTransmissionPoint, ChiralWavefunction2D,
+    MultiModePolaritonDispersionSolver, PolaritonWaveguideParams,
+};

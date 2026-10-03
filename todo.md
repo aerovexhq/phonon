@@ -24,25 +24,44 @@ The ultimate destination for the Phonon platform is an autonomous, multi-scale, 
 
 ## Future
 
-### Phase 332: Phonon Universal Multi-Scale Visual Studio Distributed Cloud Parameter Sweep Cluster Engine
-Distributed multi-node RPC worker daemon, web cluster dispatch queue, and parallel Monte Carlo cluster synthesis.
-
 ### Phase 333: Phonon Studio Autonomous Neuromorphic Synaptic Spiking Neural Network (SNN) Co-Design Engine
 Memristive crossbar array simulation, spike-timing-dependent plasticity (STDP), and neuromorphic mixed-signal circuit co-design.
+
+### Phase 334: Phonon Studio Non-Hermitian Exceptional Point Sensor & Parity-Time (PT) Symmetric Circuit Simulator
+Higher-order exceptional point bifurcation, non-Hermitian skin effect, and ultra-sensitive perturbation sensing.
 
 ---
 
 ## Current
 
-### Phase 331: Phonon Studio Quantum Metamaterial Polariton Waveguide & Topological Photonic Cavity Simulator
-Multi-mode polariton waveguide dispersion solver, chiral edge mode propagation, and topological cavity QED co-simulation:
-1. Multi-Mode Polariton Waveguide Solver: Polariton dispersion relations $\omega(k)$, exciton-photon coupling $g$, group velocity, and loss in topological metamaterial waveguides.
-2. Chiral Edge Mode Propagation Kernel: Non-reciprocal unidirectional chiral edge state transmission, Chern number topology, and robustness against backscattering disorders.
-3. Topological Cavity QED Visualizer in CAD Studio: Native egui modal visualizer rendering spatial mode profiles $|\psi(x, y)|^2$, cavity resonance spectra, and transmission $S_{21}(\omega)$ curves.
+### Phase 332: Phonon Universal Multi-Scale Visual Studio Distributed Cloud Parameter Sweep Cluster Engine
+Distributed multi-node RPC worker daemon, web cluster dispatch queue, and parallel Monte Carlo cluster synthesis:
+1. Distributed Worker Node & RPC Protocol: High-throughput binary streaming worker daemon, node heartbeats, and parameter space slice partitioning.
+2. Cluster Dispatch Queue & Work-Stealing Scheduler: Task distributor balancing Monte Carlo, S-parameter, and corner sweep jobs across local and remote workers.
+3. Interactive Distributed Cluster Dashboard in CAD Studio: Live visual node topology, real-time worker compute telemetry (CPU, RAM, jobs/sec), and aggregated parameter space heatmap visualization.
 
 ---
 
 ## Done
+
+### Phase 331: Phonon Studio Quantum Metamaterial Polariton Waveguide & Topological Photonic Cavity Simulator
+Multi-mode polariton waveguide dispersion solver, chiral edge mode propagation, and topological cavity QED co-simulation:
+1. Multi-Mode Polariton Waveguide Solver (`crates/phonon-solver/src/polariton_waveguide/dispersion.rs`):
+   - Implemented `PolaritonWaveguideParams` with exciton resonance $E_x$, cavity cutoff $E_{c0}$, Rabi coupling $g$, waveguide geometry, and losses $\gamma_x, \kappa_c$.
+   - Implemented `MultiModePolaritonDispersionSolver` evaluating 2x2 coupled exciton-photon secular Hamiltonian across transverse modes $m \in \{0, 1, 2, \dots\}$.
+   - Computes Hopfield hybridization fractions ($|X|^2 + |C|^2 = 1.0$), group velocity $v_g = dE/dk$, polariton effective mass $m_{pol}^* \sim 10^{-5} m_e$, damping linewidth $\Gamma$, and anti-crossing vacuum Rabi splitting $2g$.
+2. Chiral Edge Mode Propagation Kernel (`crates/phonon-solver/src/polariton_waveguide/chiral_edge.rs`):
+   - Built topological Chern insulator metamaterial waveguide lattice model ($C = \pm 1$).
+   - Evaluates non-reciprocal unidirectional transmission ($S_{21} \ge 0.98$, $S_{12} \le 0.02$, isolation $> 30$ dB).
+   - Simulates backscattering disorder immunity: verifies $T_{defect} \ge 0.90 \times T_{clean}$ (94-96% transmission retention around sharp corners and missing site defects).
+   - Generates 2D spatial mode wavefunction $|\psi(x, y)|^2$ with chiral boundary circulation and obstacle avoidance.
+3. Interactive Topological Cavity QED & Waveguide Visualizer (`crates/phonon-gui/src/widgets/polariton_cavity_dialog.rs`):
+   - Built `PolaritonCavityDialog` in Phonon Visual Studio featuring 2D lattice mode intensity visualizer, defect insertion toggle, dispersion diagram (LPB/UPB/edge mode), non-reciprocal transmission spectrum with Rabi splitting peaks, and physical telemetry panel.
+   - Integrated into `PhononApp` and top frame menu.
+4. Automated Verification Suites:
+   - `crates/phonon-solver/tests/polariton_metamaterial_waveguide_tests.rs`: 6/6 tests passing.
+   - `crates/phonon-gui/tests/polariton_cavity_gui_tests.rs`: 4/4 tests passing.
+
 
 ### Phase 330 (Milestone): Phonon Universal Multi-Scale Visual Studio Milestone & Multi-Abstraction Transistor Speed Regression Protocol
 Periodic milestone verification across all 7 realism tiers (Tiers 0-6) validating zero performance regression against baseline thresholds:
