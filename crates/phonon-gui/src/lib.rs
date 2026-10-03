@@ -11,7 +11,7 @@ pub mod widgets;
 
 pub use app::{PhononApp, ToolMode};
 pub use egui::Theme;
-pub use extraction::ExtractionWizardDialog;
+pub use extraction::{DeviceModelKind, ExtractionWizardDialog};
 pub use schematic::binary_format::{
     component_category_to_discriminant, component_kind_from_discriminant,
     component_kind_to_discriminant, compute_adler32, deserialize_project, load_project_from_file,
