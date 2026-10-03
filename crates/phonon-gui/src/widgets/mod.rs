@@ -25,6 +25,7 @@ pub mod chern_circulator_dialog;
 pub mod kerr_microcomb_dialog;
 pub mod exceptional_surface_dialog;
 pub mod soti_corner_dialog;
+pub mod lieb_lattice_dialog;
 
 pub use chern_circulator_dialog::ChernCirculatorDialog;
 pub use cluster_dashboard_dialog::ClusterDashboardDialog;
@@ -49,3 +50,5 @@ pub use top_frame::{render_top_frame, render_top_frame_with_app, TopFrameAction,
 pub use twisted_moire_dialog::TwistedMoireDialog;
 pub use weyl_semimetal_dialog::{SemimetalMode, WeylSemimetalDialog};
 pub use soti_corner_dialog::{SotiCornerDialog, SpatialModeSelection};
+pub use lieb_lattice_dialog::{LiebLatticeDialog, LiebPlotTab, LiebSpatialModeSelection};
+

@@ -24,25 +24,36 @@ The ultimate destination for the Phonon platform is an autonomous, multi-scale, 
 
 ## Future
 
-### Phase 349: Phonon Studio Quantum Metamaterial Higher-Order Axion Insulator Simulator
-Axion electrodynamics coupling, quantized hinge states, chiral hinge modes, surface Hall effect, and higher-order topological acoustic axion resonators.
-
 ### Phase 350 (Milestone): Phonon Universal Multi-Scale Visual Studio Milestone & Multi-Abstraction Transistor Speed Regression Protocol
 Periodic milestone verification across all 7 realism tiers (Tiers 0-6) validating zero performance regression against baseline thresholds.
+
+### Phase 351: Phonon Studio Topological Acoustic Floquet Time Crystal Simulator
+Discrete time-crystalline subharmonic order, Floquet drive Hamiltonian, spontaneous time-translation symmetry breaking, spatio-temporal rigid subharmonics, and disorder-immune period doubling.
 
 ---
 
 ## Current
 
-### Phase 348: Phonon Studio Topological Acoustic Flat-Band Lieb-Lattice Gauge Simulator
-Lieb lattice acoustic flat bands, destructive interference localized compact states, synthetic Aharonov-Bohm caging, and dispersionless acoustic waveguiding:
-1. Lieb Lattice 3-Band Tight-Binding Acoustic Hamiltonian: Destructive interference flat band $E(k) = 0$, Dirac cone touching, synthetic gauge flux $\Phi$, and dispersionless acoustic transport.
-2. Synthetic Aharonov-Bohm Caging & Compact Localized States (CLS): Loop flux modulation, destructive interference wave packet trapping, and disorder immunity.
-3. Interactive Lieb Lattice Studio Visualizer in CAD Studio: Native egui 2D Lieb lattice real-space amplitude canvas, 3-band energy dispersion surface plot, CLS eigenmode intensity cross-section, and live gauge flux telemetry.
+### Phase 349: Phonon Studio Quantum Metamaterial Higher-Order Axion Insulator Simulator
+Axion electrodynamics coupling, quantized hinge states, chiral hinge modes, surface Hall effect, and higher-order topological acoustic axion resonators.
 
 ---
 
 ## Done
+
+### Phase 348: Phonon Studio Topological Acoustic Flat-Band Lieb-Lattice Gauge Simulator
+Lieb lattice acoustic flat bands, destructive interference localized compact states, synthetic Aharonov-Bohm caging, and dispersionless acoustic waveguiding:
+1. Lieb Lattice 3-Band Tight-Binding Acoustic Hamiltonian (`crates/phonon-solver/src/lieb_lattice/hamiltonian.rs`):
+   - Implemented 3x3 momentum-space tight-binding Hamiltonian with sites A (corner), B (horizontal edge), and C (vertical edge).
+   - Proven exact destructive interference flat band $E(k) = 0.0$ across the full Brillouin Zone (flatness error $< 10^{-12}$), dispersive bands $E_\pm(k) = \pm 2 \sqrt{J_x^2 \cos^2(k_x/2) + J_y^2 \cos^2(k_y/2)}$, and Dirac cone touching at $M(\pi, \pi)$.
+   - Verified strictly zero flat-band group velocity $v_g = 0.0$ m/s everywhere in momentum space.
+2. Synthetic Aharonov-Bohm Caging & Compact Localized States (`crates/phonon-solver/src/lieb_lattice/ab_caging.rs`):
+   - Built $N_x \times N_y$ real-space finite lattice with Peierls synthetic gauge flux $\Phi$, cyclic Jacobi eigensolver, and complex Hermitian diagonalization in 100% safe Rust.
+   - Verified single-plaquette analytical Compact Localized States (CLS) with amplitudes $(+1, -1, +1, -1) / 2$, vanishing residual into corner sites $A$, and 100% spatial confinement.
+   - Solved time-dependent wave packet dynamics $|\psi(t)|^2 = |\exp(-i H t) \psi(0)|^2$ and Inverse Participation Ratio (IPR) localization, validating Aharonov-Bohm caging at $\Phi = \pi$ and disorder resilience $[-W, W]$.
+3. Interactive Lieb Lattice Studio Visualizer in CAD Studio (`crates/phonon-gui/src/widgets/lieb_lattice_dialog.rs`):
+   - Built `LiebLatticeDialog` modal visualizer featuring 2D Lieb lattice real-space amplitude canvas with Turbo/Magma/Inferno colormaps and alternating phase signs ($+1/2, -1/2$) on plaquette edge nodes.
+   - Integrated native `egui_plot` 3-band dispersion plot with Dirac touching marker at $M$, synthetic AB caging curve vs gauge flux $\Phi \in [0, 2\pi]$, wave packet time-evolution dynamics, and live telemetry footer.
 
 ### Phase 347: Phonon Studio Topological Higher-Order Corner State Acoustic Resonator
 Second-order topological insulator (SOTI), quadrupole acoustic lattice, quantized bulk dipole moments, localized zero-dimensional corner states, and gigahertz phononic nanocavities:

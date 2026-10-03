@@ -54,6 +54,7 @@ pub use widgets::chern_circulator_dialog::ChernCirculatorDialog;
 pub use widgets::kerr_microcomb_dialog::KerrMicrocombDialog;
 pub use widgets::exceptional_surface_dialog::ExceptionalSurfaceDialog;
 pub use widgets::soti_corner_dialog::SotiCornerDialog;
+pub use widgets::lieb_lattice_dialog::LiebLatticeDialog;
 
 #[cfg(not(target_arch = "wasm32"))]
 use phonon_core::PhysicsDynamicsBackend;
