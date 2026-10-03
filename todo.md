@@ -24,22 +24,41 @@ The ultimate destination for the Phonon platform is an autonomous, multi-scale, 
 
 ## Future
 
-### Phase 346: Phonon Studio Non-Hermitian Chiral Exceptional Surface Acoustic Sensing Array
-Two-dimensional exceptional surfaces, complex Jordan vectors, directional sensitivity amplification, and noise-resilient ultrasonic arrays.
-
 ### Phase 347: Phonon Studio Topological Higher-Order Corner State Acoustic Resonator
 Second-order topological insulator (SOTI), quadrupole acoustic lattice, quantized bulk dipole moments, localized zero-dimensional corner states, and gigahertz phononic nanocavities.
+
+### Phase 348: Phonon Studio Topological Acoustic Flat-Band Lieb-Lattice Gauge Simulator
+Lieb lattice acoustic flat bands, destructive interference localized compact states, synthetic Aharonov-Bohm caging, and dispersionless acoustic waveguiding.
 
 ---
 
 ## Current
 
-### Phase 345 (Milestone): Phonon Universal Multi-Scale Visual Studio Milestone & Multi-Abstraction Transistor Speed Regression Protocol
-Periodic milestone verification across all 7 realism tiers (Tiers 0-6) validating zero performance regression against baseline thresholds.
+### Phase 346: Phonon Studio Non-Hermitian Chiral Exceptional Surface Acoustic Sensing Array
+Two-dimensional exceptional surfaces, complex Jordan vectors, directional sensitivity amplification, and noise-resilient ultrasonic arrays:
+1. Non-Hermitian Exceptional Surface Hamiltonian Engine: 2D parameter space degeneracies, defective Jordan manifolds, and generalized Petermann factor divergence.
+2. Directional Chiral Acoustic Sensing & Perturbation Resolver: Square-root and cubic sensitivity amplification, directional acoustic emission/absorption, and noise-floor degradation bounds.
+3. Interactive Exceptional Surface Studio Visualizer in CAD Studio: Native egui 3D/2D Riemann eigenvalue sheets, chiral sensitivity polar response plot, ultrasonic transducer array spatial layout, and live perturbation telemetry.
 
 ---
 
 ## Done
+
+### Phase 345 (Milestone): Phonon Universal Multi-Scale Visual Studio Milestone & Multi-Abstraction Transistor Speed Regression Protocol
+Periodic milestone verification across all 7 realism tiers (Tiers 0-6) validating zero performance regression against baseline thresholds:
+1. Multi-Abstraction Speed Regression Benchmark Execution (`crates/phonon-core/tests/transistor_speed_regression_tests.rs`):
+   - Tier 0: Topological Quantum Acoustics (Majorana Braiding): measured 0.0395 us/eval (39.54 ns/eval, 25.29 M-evals/s) [Threshold: < 100.00 us/eval] [PASS, Zero Regression, Sub-Microsecond Throughput].
+   - Tier 1: TCAD 1D Mesh Drift-Diffusion (Poisson-Scharfetter-Gummel): measured 640.30 us/eval (1.56 k-evals/s) [Threshold: < 7500.00 us/eval] [PASS, Zero Regression].
+   - Tier 2a: Inverse Design Single Genome Fitness: measured 58.88 ns/eval (16.99 M-evals/s) [Threshold: < 200.00 ns/eval] [PASS, Zero Regression].
+   - Tier 2b: Full NSGA-II + Adjoint 36-pop 5-gen Optimization: measured 2.96 ms/run (338.33 runs/s) [Threshold: < 50.00 ms/run] [PASS, Zero Regression].
+   - Tier 3a: Compact BSIM4 MOSFET + Ward-Dutton Charges: measured 64.49 ns/eval (15.51 M-evals/s) [Threshold: < 150.00 ns/eval] [PASS, Zero Regression].
+   - Tier 3b: Compact Gummel-Poon BJT: measured 37.48 ns/eval (26.68 M-evals/s) [Threshold: < 250.00 ns/eval] [PASS, Zero Regression].
+   - Tier 3c: Full MNA Circuit Newton-Raphson DC Solve: measured 27.64 us/solve (36.18 k-solves/s) [Threshold: < 250.00 us/solve] [PASS, Zero Regression].
+   - Tier 4: Cryo-CMOS 4.2K Freeze-Out & Central-Diff Jacobians: measured 588.16 ns/eval (1700.23 k-evals/s) [Threshold: < 2000.00 ns/eval] [PASS, Zero Regression].
+   - Tier 5: Coupled Electro-Thermal Monolithic Steady-State: measured 344.52 us/solve (2902.59 solves/s) [Threshold: < 1500.00 us/solve] [PASS, Zero Regression].
+   - Tier 6: SIMD 4-Lane Vectorized Batch 1,024 Devices: measured 75.72 ns/transistor (13.21 M-devices/s) [Threshold: < 250.00 ns/transistor] [PASS, Zero Regression].
+   - Schematic CAD Integrity: all 35 primitives verified, ERC diagnostics verified, binary format round-trip verified [PASS].
+2. Verification Results: 8/8 tests passed with 0 regression across all tiers.
 
 ### Phase 344: Phonon Studio Non-Linear Soliton Kerr Microcomb Phononic Frequency Comb Engine
 Acousto-optic Kerr non-linearity, Lugiato-Lefever equation (LLE) split-step Fourier solver, dissipative Kerr solitons, and octave-spanning acoustic comb generation:
