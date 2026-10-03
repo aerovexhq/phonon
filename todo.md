@@ -30,19 +30,36 @@ Second-order topological insulator (SOTI), quadrupole acoustic lattice, quantize
 ### Phase 348: Phonon Studio Topological Acoustic Flat-Band Lieb-Lattice Gauge Simulator
 Lieb lattice acoustic flat bands, destructive interference localized compact states, synthetic Aharonov-Bohm caging, and dispersionless acoustic waveguiding.
 
+### Phase 349: Phonon Studio Quantum Metamaterial Higher-Order Axion Insulator Simulator
+Axion electrodynamics coupling, quantized hinge states, chiral hinge modes, surface Hall effect, and higher-order topological acoustic axion resonators.
+
 ---
 
 ## Current
 
-### Phase 346: Phonon Studio Non-Hermitian Chiral Exceptional Surface Acoustic Sensing Array
-Two-dimensional exceptional surfaces, complex Jordan vectors, directional sensitivity amplification, and noise-resilient ultrasonic arrays:
-1. Non-Hermitian Exceptional Surface Hamiltonian Engine: 2D parameter space degeneracies, defective Jordan manifolds, and generalized Petermann factor divergence.
-2. Directional Chiral Acoustic Sensing & Perturbation Resolver: Square-root and cubic sensitivity amplification, directional acoustic emission/absorption, and noise-floor degradation bounds.
-3. Interactive Exceptional Surface Studio Visualizer in CAD Studio: Native egui 3D/2D Riemann eigenvalue sheets, chiral sensitivity polar response plot, ultrasonic transducer array spatial layout, and live perturbation telemetry.
+### Phase 347: Phonon Studio Topological Higher-Order Corner State Acoustic Resonator
+Second-order topological insulator (SOTI), quadrupole acoustic lattice, quantized bulk dipole moments, localized zero-dimensional corner states, and gigahertz phononic nanocavities:
+1. SOTI Quadrupole Lattice Acoustic Hamiltonian: Quantized quadrupole bulk moments $q_{xy} = 1/2$, edge dipole moments, and analytical corner eigenstate localization solver.
+2. High-Q Zero-Dimensional Corner Nanocavity Engine: Bulk bandgap calculation, localized corner mode eigenfrequencies, and defect-immune energy confinement.
+3. Interactive Higher-Order Corner State Visualizer in CAD Studio: Native egui 2D lattice spatial energy density canvas, quadrupole band structure plot, corner state localized eigenmode profile, and live topological invariants telemetry.
 
 ---
 
 ## Done
+
+### Phase 346: Phonon Studio Non-Hermitian Chiral Exceptional Surface Acoustic Sensing Array
+Two-dimensional exceptional surfaces, complex Jordan vectors, directional sensitivity amplification, and noise-resilient ultrasonic arrays:
+1. Non-Hermitian Exceptional Surface Hamiltonian Engine (`crates/phonon-solver/src/exceptional_surface/hamiltonian.rs`):
+   - Implemented 3x3 non-Hermitian Hamiltonian with continuous 2D parameter space condition $4 c_1^3 = 27 \beta^2$.
+   - Built analytical Cardano cubic solver extracting complex eigenvalues and Jordan block coalescence along the continuous exceptional surface manifold.
+   - Evaluated Jordan defectiveness, Petermann excess noise factor $K$, fractional perturbation splitting $\Delta \lambda \propto \sqrt{\epsilon}$, and Riemann surface sheets.
+2. Directional Chiral Acoustic Sensing & Perturbation Resolver (`crates/phonon-solver/src/exceptional_surface/sensing_array.rs`):
+   - Implemented `ExceptionalSurfaceArray` modeling non-Hermitian phased ultrasonic transducer arrays.
+   - Designed chiral directional response achieving forward-to-backward directivity $\ge 25.0$ dB via directional perturbation coupling.
+   - Implemented `SnrAnalysis` with lifted-degeneracy effective Petermann factor proving sub-threshold net SNR advantage ($> 1.0$) over conventional Hermitian sensors.
+3. Interactive Exceptional Surface Studio Visualizer in CAD Studio (`crates/phonon-gui/src/widgets/exceptional_surface_dialog.rs`):
+   - Built `ExceptionalSurfaceDialog` featuring 2D phased array layout canvas, polar directivity pattern, eigenvalue Riemann sheets, and fractional sensitivity log-log plot.
+   - Integrated optimal operating point presets, live perturbation sweep controls, and comprehensive physical telemetry.
 
 ### Phase 345 (Milestone): Phonon Universal Multi-Scale Visual Studio Milestone & Multi-Abstraction Transistor Speed Regression Protocol
 Periodic milestone verification across all 7 realism tiers (Tiers 0-6) validating zero performance regression against baseline thresholds:

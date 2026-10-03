@@ -18,7 +18,7 @@ use crate::widgets::{
     SmithChartDialog, SymbolEditorDialog, ThermalFloorplanDialog, TopFrameAction, TopFrameConfig,
     WeylSemimetalDialog, FqhBraidingDialog, JtwpaDialog, FloquetMetasurfaceDialog,
     HolonomicProcessorDialog, TwistedMoireDialog, ChernCirculatorDialog,
-    KerrMicrocombDialog,
+    KerrMicrocombDialog, ExceptionalSurfaceDialog,
 };
 use eframe::{App, Frame};
 use egui::{
@@ -145,6 +145,9 @@ pub struct PhononApp {
     /// Interactive Non-Linear Soliton Kerr Microcomb Phononic Frequency Comb Studio dialog.
     pub kerr_microcomb_dialog: KerrMicrocombDialog,
 
+    /// Interactive Non-Hermitian Chiral Exceptional Surface Acoustic Sensing Array Studio dialog.
+    pub exceptional_surface_dialog: ExceptionalSurfaceDialog,
+
     /// Interactive Logisim/KiCad-style component symbol and shape editor dialog.
     pub symbol_editor: SymbolEditorDialog,
 
@@ -239,6 +242,7 @@ impl Default for PhononApp {
             twisted_moire_dialog: TwistedMoireDialog::new(),
             chern_circulator_dialog: ChernCirculatorDialog::new(),
             kerr_microcomb_dialog: KerrMicrocombDialog::new(),
+            exceptional_surface_dialog: ExceptionalSurfaceDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
             dragging_component: false,
@@ -1863,6 +1867,9 @@ impl PhononApp {
 
         // 25. Interactive Non-Linear Soliton Kerr Microcomb Phononic Frequency Comb Studio Dialog
         self.kerr_microcomb_dialog.ui(ui.ctx());
+
+        // 26. Interactive Non-Hermitian Chiral Exceptional Surface Acoustic Sensing Array Studio Dialog
+        self.exceptional_surface_dialog.ui(ui.ctx());
     }
 }
 
