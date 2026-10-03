@@ -21,7 +21,9 @@ pub mod jtwpa_dialog;
 pub mod floquet_metasurface_dialog;
 pub mod holonomic_processor_dialog;
 pub mod twisted_moire_dialog;
+pub mod chern_circulator_dialog;
 
+pub use chern_circulator_dialog::ChernCirculatorDialog;
 pub use cluster_dashboard_dialog::ClusterDashboardDialog;
 pub use dynamics_status::DynamicsStatusBadge;
 pub use exceptional_point_dialog::ExceptionalPointDialog;

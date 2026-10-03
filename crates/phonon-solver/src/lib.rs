@@ -4,6 +4,7 @@
 //! Markowitz threshold pivoting, dynamic TR-BDF2 transient solver, and physical conservation probes.
 
 pub mod acoustic;
+pub mod acoustic_chern_circulator;
 pub mod acoustic_holonomic_processor;
 pub mod acoustic_metasurface_holography;
 pub mod acoustic_microcomb_soliton;
@@ -917,6 +918,11 @@ pub use twisted_moire_superlattice::{
     AtomicRelaxationField, BilayerLatticeParams, DensityOfStates, DosPoint, HighSymmetryKPoint,
     LocalizedAcousticSoliton, MoireBandPoint, MoireBandStructure, StackingClassification,
     StrainTensor,
+};
+pub use acoustic_chern_circulator::{
+    BerryCurvaturePoint, ChernLatticeParams, ChernLatticeState, ChiralEdgeMode, CirculatorPort,
+    DefectImmunityResult, EdgeDispersionPoint, ObstacleKind, SParameterSpectrum,
+    SParameterSpectrumPoint, ScatteringMatrix3x3, ThreePortCirculator,
 };
 
 

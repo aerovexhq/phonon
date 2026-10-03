@@ -24,25 +24,43 @@ The ultimate destination for the Phonon platform is an autonomous, multi-scale, 
 
 ## Future
 
-### Phase 344: Phonon Studio Non-Linear Soliton Kerr Microcomb Phononic Frequency Comb Engine
-Acousto-optic Kerr non-linearity, Lugiato-Lefever equation (LLE) split-step Fourier solver, dissipative Kerr solitons, and octave-spanning acoustic comb generation.
-
 ### Phase 345 (Milestone): Phonon Universal Multi-Scale Visual Studio Milestone & Multi-Abstraction Transistor Speed Regression Protocol
 Periodic milestone verification across all 7 realism tiers (Tiers 0-6) validating zero performance regression against baseline thresholds.
+
+### Phase 346: Phonon Studio Non-Hermitian Chiral Exceptional Surface Acoustic Sensing Array
+Two-dimensional exceptional surfaces, complex Jordan vectors, directional sensitivity amplification, and noise-resilient ultrasonic arrays.
 
 ---
 
 ## Current
 
-### Phase 343: Phonon Studio Topological Acoustic Chern Insulator Chiral Circulator & Non-Reciprocal Router
-Continuous-wave acoustic circulator, high-isolation 3-port chiral scattering matrix, broken time-reversal symmetry with spinning fluid flow, and backscattering-immune corner bending:
-1. Acoustic Chern Insulator & Non-Reciprocal Scattering Engine: Honeycomb acoustic crystal with spinning fluid cylinders, Haldane-like acoustic effective mass term, non-zero Chern number $C = \pm 1$, and chiral topological edge state dispersion.
-2. 3-Port Chiral Circulator Kernel: Non-reciprocal scattering matrix $[S]$ with cyclic transmission $1 \to 2 \to 3 \to 1$, insertion loss $\le 0.5$ dB, isolation $\ge 35.0$ dB, and backscattering-free routing around 90-degree and 120-degree sharp corners with zero reflection.
-3. Interactive Chiral Circulator Visualizer in CAD Studio: Native egui 2D acoustic pressure distribution canvas with spinning circulation vortex vectors, 3-port S-parameter isolation spectrum $S_{ij}(f)$, defect immunity toggle, and live acoustic telemetry.
+### Phase 344: Phonon Studio Non-Linear Soliton Kerr Microcomb Phononic Frequency Comb Engine
+Acousto-optic Kerr non-linearity, Lugiato-Lefever equation (LLE) split-step Fourier solver, dissipative Kerr solitons, and octave-spanning acoustic comb generation:
+1. Phononic Lugiato-Lefever Equation (LLE) Engine: Non-linear microresonator field evolution with acoustic Kerr coefficient $n_{2,ac}$, chromatic dispersion $D_2$, pump detuning $\delta_0$, external laser/acoustic drive $F_0$, and split-step Fourier spectral solver.
+2. Dissipative Kerr Soliton & Microcomb Kernel: Multi-comb generation spanning an octave (e.g., 500 MHz repetition rate), bright dissipative soliton formation, Turing pattern roll instabilities, and soliton frequency stability metrics.
+3. Interactive Kerr Microcomb Studio Visualizer in CAD Studio: Native egui optical/acoustic microresonator cavity canvas, optical spectrum analyzer (OSA) comb tooth power spectrum (dBm), cavity field intensity profile $|\psi(\theta)|^2$, soliton step-scan resonance curve, and live microcomb telemetry.
 
 ---
 
 ## Done
+
+### Phase 343: Phonon Studio Topological Acoustic Chern Insulator Chiral Circulator & Non-Reciprocal Router
+Continuous-wave acoustic circulator, high-isolation 3-port chiral scattering matrix, broken time-reversal symmetry with spinning fluid flow, and backscattering-immune corner bending:
+1. Acoustic Chern Insulator & Non-Reciprocal Scattering Engine (`crates/phonon-solver/src/acoustic_chern_circulator/chern_lattice.rs`):
+   - Implemented `ChernLatticeParams` with honeycomb lattice constant $a_0 = 20.0$ mm and spinning fluid cylinder radius $r_{cyl} = 4.0$ mm.
+   - Modeled time-reversal symmetry breaking via fluid circulation $\Gamma = 2\pi r_{cyl}^2 \Omega$, non-zero topological Chern number $C = \pm 1$ ($C = +1$ for $\Omega = 1200$ rad/s), and topological bandgap $\Delta_{topo} \approx 1.50$ kHz around center frequency $f_0 = 4.0$ kHz.
+   - Calculated unidirectional chiral edge mode group velocity $v_{edge} > 0$ (~198 m/s).
+2. 3-Port Chiral Circulator Kernel (`crates/phonon-solver/src/acoustic_chern_circulator/chiral_router.rs`):
+   - Implemented `ThreePortCirculator` with 3 ports arranged at $0^\circ, 120^\circ, 240^\circ$ satisfying cyclic routing $1 \to 2 \to 3 \to 1$.
+   - Verified insertion loss $\le 0.5$ dB ($|S_{21}| \ge 0.94$), isolation $\ge 35.0$ dB ($|S_{31}| \le 0.0178$), and return loss $\le -25.0$ dB ($|S_{11}| \le 0.056$).
+   - Built `DefectImmunity` confirming backscattering-free routing around $90^\circ$ and $120^\circ$ sharp corners and vacancy obstacles with defect transmission ratio $T_{defect} \ge 0.95 \times T_{clean}$.
+3. Interactive Chiral Circulator Visualizer in CAD Studio (`crates/phonon-gui/src/widgets/chern_circulator_dialog.rs`):
+   - Built `ChernCirculatorDialog` featuring 2D acoustic pressure distribution canvas with spinning fluid cylinder vortex markers and unidirectional perimeter routing.
+   - Integrated 3-port S-parameter spectrum plot ($S_{21}, S_{31}, S_{11}$) over 3.0 - 5.0 kHz, corner defect toggle, active input port selector, and live acoustic telemetry.
+   - Integrated into `PhononApp` and top frame menu.
+4. Automated Verification Suites:
+   - `crates/phonon-solver/tests/acoustic_chern_circulator_tests.rs`: 4/4 tests passing.
+   - `crates/phonon-gui/tests/chern_circulator_gui_tests.rs`: 4/4 tests passing.
 
 ### Phase 342: Phonon Studio Twisted Bilayer Moiré Phonon Polariton Magic-Angle Superlattice Simulator
 Atomic relaxation continuum model, flat phononic polariton bands at magic angles, localized acoustic solitons, and non-linear harmonic generation:
