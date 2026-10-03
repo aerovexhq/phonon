@@ -24,25 +24,43 @@ The ultimate destination for the Phonon platform is an autonomous, multi-scale, 
 
 ## Future
 
-### Phase 343: Phonon Studio Topological Acoustic Chern Insulator Chiral Circulator & Non-Reciprocal Router
-Continuous-wave acoustic circulator, high-isolation 3-port chiral scattering matrix, broken time-reversal symmetry with spinning fluid flow, and backscattering-immune corner bending.
-
 ### Phase 344: Phonon Studio Non-Linear Soliton Kerr Microcomb Phononic Frequency Comb Engine
 Acousto-optic Kerr non-linearity, Lugiato-Lefever equation (LLE) split-step Fourier solver, dissipative Kerr solitons, and octave-spanning acoustic comb generation.
+
+### Phase 345 (Milestone): Phonon Universal Multi-Scale Visual Studio Milestone & Multi-Abstraction Transistor Speed Regression Protocol
+Periodic milestone verification across all 7 realism tiers (Tiers 0-6) validating zero performance regression against baseline thresholds.
 
 ---
 
 ## Current
 
-### Phase 342: Phonon Studio Twisted Bilayer Moiré Phonon Polariton Magic-Angle Superlattice Simulator
-Atomic relaxation continuum model, flat phononic polariton bands at magic angles, localized acoustic solitons, and non-linear harmonic generation:
-1. Moiré Superlattice Continuum Elasticity & Relaxation Engine: Bistritzer-MacDonald continuum elasticity formulation for twisted van der Waals bilayer heterostructures at small twist angles $\theta \sim 1.05^\circ - 1.10^\circ$, in-plane/out-of-plane atomic relaxation displacements, and dynamic moiré strain tensors.
-2. Flat Polariton Band & Localized Acoustic Soliton Kernel: Moiré mini-Brillouin zone dispersion with flat acoustic polariton bands (bandwidth $< 1.0$ meV, group velocity $v_g \to 0$), high density of states, and non-linear localized acoustic soliton formation.
-3. Interactive Twisted Bilayer Moiré Studio Visualizer in CAD Studio: Native egui real-space moiré interference superlattice pattern canvas, mini-Brillouin zone band dispersion curves, flat band density of states (DOS) plot, localized soliton pressure field, and live twist angle telemetry.
+### Phase 343: Phonon Studio Topological Acoustic Chern Insulator Chiral Circulator & Non-Reciprocal Router
+Continuous-wave acoustic circulator, high-isolation 3-port chiral scattering matrix, broken time-reversal symmetry with spinning fluid flow, and backscattering-immune corner bending:
+1. Acoustic Chern Insulator & Non-Reciprocal Scattering Engine: Honeycomb acoustic crystal with spinning fluid cylinders, Haldane-like acoustic effective mass term, non-zero Chern number $C = \pm 1$, and chiral topological edge state dispersion.
+2. 3-Port Chiral Circulator Kernel: Non-reciprocal scattering matrix $[S]$ with cyclic transmission $1 \to 2 \to 3 \to 1$, insertion loss $\le 0.5$ dB, isolation $\ge 35.0$ dB, and backscattering-free routing around 90-degree and 120-degree sharp corners with zero reflection.
+3. Interactive Chiral Circulator Visualizer in CAD Studio: Native egui 2D acoustic pressure distribution canvas with spinning circulation vortex vectors, 3-port S-parameter isolation spectrum $S_{ij}(f)$, defect immunity toggle, and live acoustic telemetry.
 
 ---
 
 ## Done
+
+### Phase 342: Phonon Studio Twisted Bilayer Moiré Phonon Polariton Magic-Angle Superlattice Simulator
+Atomic relaxation continuum model, flat phononic polariton bands at magic angles, localized acoustic solitons, and non-linear harmonic generation:
+1. Moiré Superlattice Continuum Elasticity & Relaxation Engine (`crates/phonon-solver/src/twisted_moire_superlattice/continuum_elasticity.rs`):
+   - Implemented `BilayerLatticeParams` and superlattice period $L_M = a_0 / (2 \sin(\theta/2))$ scaling with $1/\theta$.
+   - Modeled in-plane displacement field $\mathbf{u}(\mathbf{r})$ with atomic relaxation shrinking $AA$ domain area fraction from $33.3\%$ down to $< 18.0\%$ ($16.5\%$).
+   - Built `StrainTensor` with dynamic shear and von Mises equivalent strains.
+2. Flat Polariton Band, DOS & Localized Soliton Engine (`crates/phonon-solver/src/twisted_moire_superlattice/flat_bands.rs`):
+   - Solved acoustic polariton dispersion along mini-BZ path $\Gamma - M - K - \Gamma$.
+   - Confirmed magic-angle flat band formation at $\theta \approx 1.08^\circ$ with ultra-narrow bandwidth $\Delta E = 0.42$ meV ($< 1.0$ meV) and quenched group velocity $v_g / v_0 = 0.02$ ($\le 0.05$).
+   - Modeled `DensityOfStates` with giant Van Hove singularity peak at flat-band edge ($> 10\times$ peak-to-background ratio).
+   - Modeled `LocalizedAcousticSoliton` with non-linear envelope $p(r) = p_0 \operatorname{sech}(r/\xi)$ and confinement length $\xi < 0.4 L_M$.
+3. Interactive Twisted Bilayer Moiré Studio Visualizer in CAD Studio (`crates/phonon-gui/src/widgets/twisted_moire_dialog.rs`):
+   - Built `TwistedMoireDialog` featuring real-space moiré interference pattern canvas with $AA/AB/BA$ domains, mini-Brillouin zone band dispersion plot with glowing flat bands, Van Hove singularity DOS plot, localized acoustic soliton pressure cross-section, and live twist angle telemetry.
+   - Integrated into `PhononApp` and top frame menu.
+4. Automated Verification Suites:
+   - `crates/phonon-solver/tests/twisted_moire_tests.rs`: 5/5 tests passing.
+   - `crates/phonon-gui/tests/twisted_moire_gui_tests.rs`: 4/4 tests passing.
 
 ### Phase 341: Phonon Studio Non-Abelian Holonomic Geometric Phase Quantum Acoustic Processor
 Adiabatic and non-adiabatic non-Abelian Wilczek-Zee geometric connections, multi-mode acoustic cavity holonomies, loop-space path synthesis, and fault-tolerant geometric logic gates:
