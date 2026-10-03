@@ -290,6 +290,7 @@ pub mod verification;
 pub mod wakefield;
 pub mod polariton_waveguide;
 pub mod weyl_semimetal;
+pub mod jtwpa_simulator;
 
 pub use acoustic::{
     AcousticBenchmarkReport, AcousticBenchmarkRunner, AcousticLinkSimulator, AcousticRealismTier,
@@ -894,5 +895,9 @@ pub use fqh_braiding::{
     AnyonModelKind, BraidGenerator, BraidSequence, Complex as FqhComplex, ComplexMatrix2x2,
     ComplexMatrix4x4, FillingFraction, FqhEdgeInterferometer, InterferometerType,
     SynthesisResult, TargetGate, TopologicalGateSynthesizer,
+};
+pub use jtwpa_simulator::{
+    GainSpectrumPoint, JosephsonCellParams, JosephsonTransmissionLine, JtwpaParams, JtwpaSolver,
+    QuantumSqueezing, RpmStubParams,
 };
 

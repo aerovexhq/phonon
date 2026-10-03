@@ -422,6 +422,12 @@ fn render_top_frame_internal(
                 }
                 ui.close();
             }
+            if ui.button("Superconducting JTWPA Studio...").clicked() {
+                if let Some(a) = app.as_deref_mut() {
+                    a.jtwpa_dialog.is_open = true;
+                }
+                ui.close();
+            }
             if ui.button("Clear Traces").clicked() {
                 if let Some(a) = app.as_deref_mut() {
                     a.oscilloscope.clear();
