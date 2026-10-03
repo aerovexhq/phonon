@@ -30,6 +30,7 @@ pub use schematic::subcircuit::{
     SubcircuitDefinition, SubcircuitInstance, SubcircuitPin,
 };
 pub use schematic::wire::{compute_junction_dots, SchematicWire, WireSegment};
+pub use widgets::cluster_dashboard_dialog::ClusterDashboardDialog;
 pub use widgets::dynamics_status::DynamicsStatusBadge;
 pub use widgets::icon::{self, render_phonon_icon};
 pub use widgets::palette::ComponentPalette;

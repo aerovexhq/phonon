@@ -24,25 +24,44 @@ The ultimate destination for the Phonon platform is an autonomous, multi-scale, 
 
 ## Future
 
-### Phase 333: Phonon Studio Autonomous Neuromorphic Synaptic Spiking Neural Network (SNN) Co-Design Engine
-Memristive crossbar array simulation, spike-timing-dependent plasticity (STDP), and neuromorphic mixed-signal circuit co-design.
-
 ### Phase 334: Phonon Studio Non-Hermitian Exceptional Point Sensor & Parity-Time (PT) Symmetric Circuit Simulator
 Higher-order exceptional point bifurcation, non-Hermitian skin effect, and ultra-sensitive perturbation sensing.
+
+### Phase 335 (Milestone): Phonon Universal Multi-Scale Visual Studio Milestone & Multi-Abstraction Transistor Speed Regression Protocol
+Periodic milestone verification across all 7 realism tiers (Tiers 0-6) validating zero performance regression against baseline thresholds.
 
 ---
 
 ## Current
 
-### Phase 332: Phonon Universal Multi-Scale Visual Studio Distributed Cloud Parameter Sweep Cluster Engine
-Distributed multi-node RPC worker daemon, web cluster dispatch queue, and parallel Monte Carlo cluster synthesis:
-1. Distributed Worker Node & RPC Protocol: High-throughput binary streaming worker daemon, node heartbeats, and parameter space slice partitioning.
-2. Cluster Dispatch Queue & Work-Stealing Scheduler: Task distributor balancing Monte Carlo, S-parameter, and corner sweep jobs across local and remote workers.
-3. Interactive Distributed Cluster Dashboard in CAD Studio: Live visual node topology, real-time worker compute telemetry (CPU, RAM, jobs/sec), and aggregated parameter space heatmap visualization.
+### Phase 333: Phonon Studio Autonomous Neuromorphic Synaptic Spiking Neural Network (SNN) Co-Design Engine
+Memristive crossbar array simulation, spike-timing-dependent plasticity (STDP), and neuromorphic mixed-signal circuit co-design:
+1. Memristor Dynamic State Variable Solver: Filamentary conductance switching models $G(w)$ with non-linear window functions (Joglekar, Biolek) and threshold-driven resistance states ($R_{on}, R_{off}$).
+2. Spiking Crossbar Array & STDP Learning Kernel: Leaky Integrate-and-Fire (LIF) neurons coupled to $M \times N$ memristor crossbars with Spike-Timing-Dependent Plasticity ($\Delta w = A_+ e^{-\Delta t / \tau_+}$ for LTP, $-A_- e^{\Delta t / \tau_-}$ for LTD).
+3. Interactive Neuromorphic Studio Canvas & Synaptic Weight Visualizer: Native egui live conductance matrix colormap heatmap, neuron membrane potential traces, and spike raster activity trains.
 
 ---
 
 ## Done
+
+### Phase 332: Phonon Universal Multi-Scale Visual Studio Distributed Cloud Parameter Sweep Cluster Engine
+Distributed multi-node RPC worker daemon, web cluster dispatch queue, and parallel Monte Carlo cluster synthesis:
+1. Distributed Worker Node & RPC Protocol (`crates/phonon-solver/src/cluster/protocol.rs`):
+   - Implemented `WorkerNodeInfo` tracking hardware capacity (cores, RAM), status (`Online`, `Busy`, `Idle`, `Offline`), heartbeats, and job throughput.
+   - Built `RpcMessage` supporting registration, heartbeats, batch dispatching, batch results, and graceful/forced deregistrations with zero unsafe binary wire serialization.
+   - Built `SimulatedClusterWorker` executing Monte Carlo, S-parameter sweeps, and DC corners across worker nodes with resource telemetry.
+2. Cluster Dispatch Queue & Work-Stealing Scheduler (`crates/phonon-solver/src/cluster/scheduler.rs`):
+   - Implemented dynamic parameter space slice partitioning allocating $N$ samples into chunked batches across registered worker nodes.
+   - Implemented work-stealing scheduler with global and per-worker pending queues balancing heterogeneous node compute speeds.
+   - Implemented heartbeat monitoring and automatic fault-recovery re-queuing in-flight tasks upon node dropout/timeout.
+   - Implemented `ClusterSweepResult` aggregating sample statistics (mean, std dev, min, max, yield %), speedup factors vs single core, and histogram distributions.
+3. Interactive Distributed Cluster Dashboard in CAD Studio (`crates/phonon-gui/src/widgets/cluster_dashboard_dialog.rs`):
+   - Built `ClusterDashboardDialog` in Phonon Visual Studio featuring node topology cards, CPU utilization meters, cluster sweep dispatch controls, real-time aggregate throughput gauge (samples/sec), and yield distribution histograms.
+   - Integrated into `PhononApp` and top frame menu.
+4. Automated Verification Suites:
+   - `crates/phonon-solver/tests/distributed_cluster_sweep_tests.rs`: 6/6 tests passing.
+   - `crates/phonon-gui/tests/cluster_dashboard_gui_tests.rs`: 4/4 tests passing.
+
 
 ### Phase 331: Phonon Studio Quantum Metamaterial Polariton Waveguide & Topological Photonic Cavity Simulator
 Multi-mode polariton waveguide dispersion solver, chiral edge mode propagation, and topological cavity QED co-simulation:

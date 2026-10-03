@@ -23,6 +23,7 @@ pub mod cavity_acoustomagnonic;
 pub mod cavity_magnomechanics;
 pub mod cavity_magnon_polariton_comb;
 pub mod cavity_spintronics;
+pub mod cluster;
 pub mod chiral_acoustic_router;
 pub mod chiral_axion_circulator;
 pub mod chiral_chern_anyon_braiding;
@@ -870,4 +871,9 @@ pub use monte_carlo::*;
 pub use polariton_waveguide::{
     ChiralEdgeModeSolver, ChiralLatticeDefect, ChiralTransmissionPoint, ChiralWavefunction2D,
     MultiModePolaritonDispersionSolver, PolaritonWaveguideParams,
+};
+pub use cluster::{
+    ClusterDispatchQueue, ClusterSweepResult, NodeStatus, ProtocolError, RpcMessage,
+    SimulatedClusterWorker, SimulationType, SweepSample, WorkerNodeInfo, PROTOCOL_MAGIC,
+    PROTOCOL_VERSION,
 };
