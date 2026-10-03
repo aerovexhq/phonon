@@ -20,6 +20,7 @@ pub mod fqh_braiding_dialog;
 pub mod jtwpa_dialog;
 pub mod floquet_metasurface_dialog;
 pub mod holonomic_processor_dialog;
+pub mod twisted_moire_dialog;
 
 pub use cluster_dashboard_dialog::ClusterDashboardDialog;
 pub use dynamics_status::DynamicsStatusBadge;
@@ -38,4 +39,5 @@ pub use smith_chart_dialog::{HoveredMarker, SmithChartDialog};
 pub use symbol_editor::{SymbolEditorDialog, SymbolEditorTool};
 pub use thermal_floorplan_dialog::ThermalFloorplanDialog;
 pub use top_frame::{render_top_frame, render_top_frame_with_app, TopFrameAction, TopFrameConfig};
+pub use twisted_moire_dialog::TwistedMoireDialog;
 pub use weyl_semimetal_dialog::{SemimetalMode, WeylSemimetalDialog};

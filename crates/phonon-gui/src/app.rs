@@ -17,7 +17,7 @@ use crate::widgets::{
     MonteCarloYieldDialog, NeuromorphicSnnDialog, PolaritonCavityDialog, SensitivityDialog,
     SmithChartDialog, SymbolEditorDialog, ThermalFloorplanDialog, TopFrameAction, TopFrameConfig,
     WeylSemimetalDialog, FqhBraidingDialog, JtwpaDialog, FloquetMetasurfaceDialog,
-    HolonomicProcessorDialog,
+    HolonomicProcessorDialog, TwistedMoireDialog,
 };
 use eframe::{App, Frame};
 use egui::{
@@ -135,6 +135,9 @@ pub struct PhononApp {
     /// Interactive Non-Abelian Holonomic Geometric Phase Quantum Acoustic Processor dialog.
     pub holonomic_processor_dialog: HolonomicProcessorDialog,
 
+    /// Interactive Twisted Bilayer Moiré Phonon Polariton Magic-Angle Superlattice Studio dialog.
+    pub twisted_moire_dialog: TwistedMoireDialog,
+
     /// Interactive Logisim/KiCad-style component symbol and shape editor dialog.
     pub symbol_editor: SymbolEditorDialog,
 
@@ -226,6 +229,7 @@ impl Default for PhononApp {
             jtwpa_dialog: JtwpaDialog::new(),
             floquet_metasurface_dialog: FloquetMetasurfaceDialog::new(),
             holonomic_processor_dialog: HolonomicProcessorDialog::new(),
+            twisted_moire_dialog: TwistedMoireDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
             dragging_component: false,
@@ -1841,6 +1845,9 @@ impl PhononApp {
 
         // 22. Interactive Non-Abelian Holonomic Geometric Phase Quantum Acoustic Processor Dialog
         self.holonomic_processor_dialog.ui(ui.ctx());
+
+        // 23. Interactive Twisted Bilayer Moiré Phonon Polariton Magic-Angle Superlattice Studio Dialog
+        self.twisted_moire_dialog.ui(ui.ctx());
     }
 }
 
