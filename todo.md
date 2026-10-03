@@ -59,7 +59,7 @@ Integrate Port-Hamiltonian components into visual CAD palette, dual-domain oscil
 4. Universal Eframe WebAssembly Parity (`crates/phonon-gui/`, `web/studio/`, `.github/workflows/deploy-pages.yml`):
    - Configured `phonon-gui` with `cdylib` and `eframe::WebRunner` export for `wasm32-unknown-unknown`.
    - Updated GitHub Pages CI workflow to compile and stage WebAssembly release bundle.
-   - Added dual-engine switcher in Web Studio allowing seamless switching between Vector Studio and Desktop Engine (WASM/WebGL).
+   - Fully migrated Web Studio exclusively to native eframe WebAssembly engine on full-viewport WebGL canvas, purging legacy React DOM CAD studio for 100% desktop-web visual parity.
 
 ### Phase 323: Phonon Studio Interactive Transient Audio DSP Synthesizer & Soundcard Driver
 Direct audio output streaming from Port-Hamiltonian circuits at 48 kHz:
