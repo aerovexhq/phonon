@@ -292,6 +292,7 @@ pub mod wakefield;
 pub mod polariton_waveguide;
 pub mod weyl_semimetal;
 pub mod jtwpa_simulator;
+pub mod non_abelian_holonomic;
 
 pub use acoustic::{
     AcousticBenchmarkReport, AcousticBenchmarkRunner, AcousticLinkSimulator, AcousticRealismTier,
@@ -905,6 +906,11 @@ pub use floquet_metasurface::{
     bessel_j, FloquetMetasurfaceSolver, FloquetModulationParams, FloquetSidebandResult,
     MetasurfaceUnitCell, NonReciprocalScattering, OrbitalAngularMomentum, PolarPhaseMap,
     SyntheticGaugeField,
+};
+pub use non_abelian_holonomic::{
+    DarkSubspace, HolonomicComplex, HolonomicComplexMatrix2x2, HolonomicGateType,
+    HolonomicSynthesisResult, HolonomicTrajectorySimulation, ParameterLoop,
+    TripartiteCavityParams, TripartiteCoSimulator, WilczekZeeConnection, WilsonLoopIntegrator,
 };
 
 
