@@ -16,7 +16,7 @@ use crate::widgets::{
     render_top_frame_with_app, ClusterDashboardDialog, ComponentPalette, ExceptionalPointDialog,
     MonteCarloYieldDialog, NeuromorphicSnnDialog, PolaritonCavityDialog, SensitivityDialog,
     SmithChartDialog, SymbolEditorDialog, ThermalFloorplanDialog, TopFrameAction, TopFrameConfig,
-    WeylSemimetalDialog,
+    WeylSemimetalDialog, FqhBraidingDialog,
 };
 use eframe::{App, Frame};
 use egui::{
@@ -122,6 +122,9 @@ pub struct PhononApp {
     /// Interactive Universal Topological Dirac & Weyl Semimetal Metamaterial Studio dialog.
     pub weyl_semimetal_dialog: WeylSemimetalDialog,
 
+    /// Interactive Fractional Quantum Hall Anyon Braiding & Non-Abelian Topological Circuit Co-Simulator dialog.
+    pub fqh_braiding_dialog: FqhBraidingDialog,
+
     /// Interactive Logisim/KiCad-style component symbol and shape editor dialog.
     pub symbol_editor: SymbolEditorDialog,
 
@@ -209,6 +212,7 @@ impl Default for PhononApp {
             neuromorphic_snn_dialog: NeuromorphicSnnDialog::new(),
             exceptional_point_dialog: ExceptionalPointDialog::new(),
             weyl_semimetal_dialog: WeylSemimetalDialog::new(),
+            fqh_braiding_dialog: FqhBraidingDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
             dragging_component: false,
@@ -1812,6 +1816,9 @@ impl PhononApp {
 
         // 18. Interactive Universal Topological Dirac & Weyl Semimetal Metamaterial Studio Dialog
         self.weyl_semimetal_dialog.ui(ui.ctx());
+
+        // 19. Interactive Fractional Quantum Hall Anyon Braiding & Non-Abelian Topological Circuit Dialog
+        self.fqh_braiding_dialog.ui(ui.ctx());
     }
 }
 

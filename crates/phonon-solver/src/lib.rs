@@ -54,6 +54,7 @@ pub mod floquet_topological;
 pub mod fqh;
 pub mod fqh_acoustic_interferometer;
 pub mod fqh_interferometer;
+pub mod fqh_braiding;
 pub mod fractional_chern;
 pub mod fractional_hall_parafermion;
 pub mod fractional_josephson_parafermion;
@@ -889,3 +890,9 @@ pub use weyl_semimetal::{
     BandPoint, BeamSplitterResult, ChiralAnomalyTransport, FermiArcPoint, FermiArcSurface,
     WeylNode, WeylNodeType, WeylSemimetalModel,
 };
+pub use fqh_braiding::{
+    AnyonModelKind, BraidGenerator, BraidSequence, Complex as FqhComplex, ComplexMatrix2x2,
+    ComplexMatrix4x4, FillingFraction, FqhEdgeInterferometer, InterferometerType,
+    SynthesisResult, TargetGate, TopologicalGateSynthesizer,
+};
+
