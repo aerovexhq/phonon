@@ -16,7 +16,7 @@ use crate::widgets::{
     render_top_frame_with_app, ClusterDashboardDialog, ComponentPalette, ExceptionalPointDialog,
     MonteCarloYieldDialog, NeuromorphicSnnDialog, PolaritonCavityDialog, SensitivityDialog,
     SmithChartDialog, SymbolEditorDialog, ThermalFloorplanDialog, TopFrameAction, TopFrameConfig,
-    WeylSemimetalDialog, FqhBraidingDialog,
+    WeylSemimetalDialog, FqhBraidingDialog, JtwpaDialog,
 };
 use eframe::{App, Frame};
 use egui::{
@@ -125,6 +125,9 @@ pub struct PhononApp {
     /// Interactive Fractional Quantum Hall Anyon Braiding & Non-Abelian Topological Circuit Co-Simulator dialog.
     pub fqh_braiding_dialog: FqhBraidingDialog,
 
+    /// Interactive Superconducting Josephson Traveling-Wave Parametric Amplifier (JTWPA) Studio dialog.
+    pub jtwpa_dialog: JtwpaDialog,
+
     /// Interactive Logisim/KiCad-style component symbol and shape editor dialog.
     pub symbol_editor: SymbolEditorDialog,
 
@@ -213,6 +216,7 @@ impl Default for PhononApp {
             exceptional_point_dialog: ExceptionalPointDialog::new(),
             weyl_semimetal_dialog: WeylSemimetalDialog::new(),
             fqh_braiding_dialog: FqhBraidingDialog::new(),
+            jtwpa_dialog: JtwpaDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
             dragging_component: false,
@@ -1819,6 +1823,9 @@ impl PhononApp {
 
         // 19. Interactive Fractional Quantum Hall Anyon Braiding & Non-Abelian Topological Circuit Dialog
         self.fqh_braiding_dialog.ui(ui.ctx());
+
+        // 20. Interactive Superconducting Josephson Traveling-Wave Parametric Amplifier (JTWPA) Studio Dialog
+        self.jtwpa_dialog.ui(ui.ctx());
     }
 }
 

@@ -46,6 +46,7 @@ pub use widgets::top_frame::{
 };
 pub use widgets::weyl_semimetal_dialog::{SemimetalMode, WeylSemimetalDialog};
 pub use widgets::fqh_braiding_dialog::FqhBraidingDialog;
+pub use widgets::jtwpa_dialog::JtwpaDialog;
 
 #[cfg(not(target_arch = "wasm32"))]
 use phonon_core::PhysicsDynamicsBackend;
