@@ -447,7 +447,14 @@ pub use relay::{
     CoupledSolverConfig, RelayBenchmarkReport, RelayBenchmarkRunner, RelaySynthesisTarget,
     SynthesizedRelayGate,
 };
-pub use rf::{Complex64, TwoPortSParameters};
+pub use rf::{
+    constant_reactance_arc, constant_reactance_circle, constant_resistance_circle,
+    format_touchstone_s2p, gamma_to_normalized_z, gamma_to_z, load_stability_circle,
+    normalized_z_to_gamma, source_stability_circle, standard_reactance_values,
+    standard_resistance_values, z_to_gamma, Complex64, FrequencySweep, HarmonicBalanceResult,
+    HarmonicBalanceSolver, HarmonicComponent, MultiPortSSolver, MultiPortSSweepResult,
+    NonLinearMetrics, NonlinearDevice, SmithCircle, SweepType, TwoPortSParameters,
+};
 pub use sensors::{
     AerovexCoSimPacket, AerovexPhononBridge, AerovexRigidBodyState, EskfConfig, EskfNominalState,
     FailsafeMode, FaultInjectionConfig, HilActuatorControls, HilBenchmarkReport,

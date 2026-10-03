@@ -24,25 +24,46 @@ The ultimate destination for the Phonon platform is an autonomous, multi-scale, 
 
 ## Future
 
-### Phase 329: Phonon Studio Electro-Thermal Transient Multi-Scale Co-Simulation & Dynamic Floorplan Mesh Generator
-Dynamic thermal mesh refinement, heat dissipation heatmaps, and transient Cauer RC ladder coupling.
-
 ### Phase 330 (Milestone): Phonon Universal Multi-Scale Visual Studio Milestone & Multi-Abstraction Transistor Speed Regression Protocol
 Periodic milestone verification across all 7 realism tiers (Tiers 0-6) validating zero performance regression against baseline thresholds.
+
+### Phase 331: Phonon Studio Quantum Metamaterial Polariton Waveguide & Topological Photonic Cavity Simulator
+Multi-mode polariton waveguide dispersion solver, chiral edge mode propagation, and topological cavity QED co-simulation.
 
 ---
 
 ## Current
 
-### Phase 328: Phonon Studio RF & Microwave S-Parameter Extraction & Harmonic Balance Frequency-Domain Engine
-Multi-port scattering parameter (S-parameter) extraction, interactive Smith chart CAD visualizer, and non-linear harmonic balance frequency-domain solver:
-1. Multi-Port S-Parameter Solver: Implement linear high-frequency multi-port network analysis computing S11, S21, S12, S22 over logarithmic frequency sweeps (100 kHz to 100 GHz) with reference impedance normalization.
-2. Interactive Smith Chart Visualizer in CAD Studio: Native egui vector Smith chart plotting impedance/admittance loci, constant-resistance/reactance circles, and stability circles.
-3. Non-Linear Harmonic Balance Engine: Multi-tone harmonic balance solver combining frequency-domain linear network MNA with time-domain non-linear device evaluation via FFT/IFFT.
+### Phase 329: Phonon Studio Electro-Thermal Transient Multi-Scale Co-Simulation & Dynamic Floorplan Mesh Generator
+Multi-scale transient electro-thermal simulation coupling non-linear electrical MNA with dynamic 2D/3D thermal finite-difference conduction:
+1. Dynamic Floorplan Heat Diffusion Mesh: 2D adaptive finite-difference grid generator calculating spatial heat spreading $\rho c_p \frac{\partial T}{\partial t} = \nabla \cdot (k \nabla T) + P_d(x,y,t)$ across semiconductor dies, heat spreaders, and convection boundaries.
+2. Monolithic Transient Electro-Thermal Solver: Bi-directional lockstep coupling between transient circuit voltages/currents, instantaneous device power dissipation $P_d = V_{ds} I_{ds}$, and local device junction temperatures $T_j$.
+3. Real-Time Thermal Heatmap Overlay in CAD Studio: Live colored thermography layer overlaid onto schematic components and physical layout floorplan with isothermal contours and peak hot-spot telemetry.
 
 ---
 
 ## Done
+
+### Phase 328: Phonon Studio RF & Microwave S-Parameter Extraction & Harmonic Balance Frequency-Domain Engine
+Multi-port scattering parameter (S-parameter) extraction, interactive Smith chart CAD visualizer, and non-linear harmonic balance frequency-domain solver:
+1. Multi-Port S-Parameter Solver (`crates/phonon-solver/src/rf/s_parameters.rs`):
+   - Implemented logarithmic and linear frequency sweeps covering 100 kHz to 100 GHz.
+   - Evaluates 2-port scattering parameters ($S_{11}, S_{21}, S_{12}, S_{22}$), return loss, insertion loss, and VSWR across transmission lines, RLC resonators, and arbitrary RF networks.
+   - Computes Rollett stability factor $K$, $\Delta$, Edwards-Sinsky factors $\mu_1, \mu_2$, Maximum Available Gain (MAG), and Maximum Stable Gain (MSG).
+   - Generates industry-standard Touchstone S2P file format strings.
+2. Smith Chart Geometry Engine (`crates/phonon-solver/src/rf/smith_chart.rs`):
+   - Bidirectional mapping between reflection coefficient $\Gamma$ and normalized/physical impedance ($z = r + jx, Z = z \cdot Z_0$).
+   - Generates constant resistance circles, constant reactance arcs, and Source/Load stability circles.
+3. Non-Linear Harmonic Balance Frequency-Domain Solver (`crates/phonon-solver/src/rf/harmonic_balance.rs`):
+   - Multi-tone frequency-domain non-linear solver with $H$ harmonics solving $\mathbf{Y}(\omega) \mathbf{V}(\omega) + \mathbf{I}_{NL}(\mathbf{V}) = \mathbf{I}_S(\omega)$ using Newton-Raphson iteration with exact Jacobian and Fourier evaluation.
+   - Computes 1-dB compression point (P1dB input/output) and third-order intercept point (IP3 / TOI).
+4. Interactive Smith Chart Visualizer in CAD Studio (`crates/phonon-gui/src/widgets/smith_chart_dialog.rs`):
+   - Built `SmithChartDialog` in Phonon Visual Studio featuring vector Smith chart rendering, $S_{11}/S_{22}$ trajectory overlays, cursor readouts, stability circles, Harmonic Balance spectrum bar chart, and Touchstone export.
+   - Integrated into `PhononApp` and top frame menu.
+5. Automated Verification Suites:
+   - `crates/phonon-solver/tests/rf_harmonic_balance_tests.rs`: 6/6 tests passing.
+   - `crates/phonon-gui/tests/smith_chart_gui_tests.rs`: 5/5 tests passing.
+   - Full GUI regression suite passing with zero regressions.
 
 ### Phase 327: Phonon Universal Multi-Scale Visual Studio Distributed Multi-Threaded Parameter Space Exploration & Monte Carlo Sensitivity Harvester
 Large-scale Latin Hypercube Sampling, multi-core Rayon parameter sweeps, and statistical yield analysis:
