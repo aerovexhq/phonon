@@ -22,6 +22,7 @@ pub mod floquet_metasurface_dialog;
 pub mod holonomic_processor_dialog;
 pub mod twisted_moire_dialog;
 pub mod chern_circulator_dialog;
+pub mod kerr_microcomb_dialog;
 
 pub use chern_circulator_dialog::ChernCirculatorDialog;
 pub use cluster_dashboard_dialog::ClusterDashboardDialog;
@@ -32,6 +33,7 @@ pub use fqh_braiding_dialog::FqhBraidingDialog;
 pub use holonomic_processor_dialog::HolonomicProcessorDialog;
 pub use icon::render_phonon_icon;
 pub use jtwpa_dialog::JtwpaDialog;
+pub use kerr_microcomb_dialog::KerrMicrocombDialog;
 pub use monte_carlo_dialog::{MonteCarloParamEntry, MonteCarloYieldDialog};
 pub use neuromorphic_snn_dialog::NeuromorphicSnnDialog;
 pub use palette::ComponentPalette;

@@ -24,25 +24,40 @@ The ultimate destination for the Phonon platform is an autonomous, multi-scale, 
 
 ## Future
 
-### Phase 345 (Milestone): Phonon Universal Multi-Scale Visual Studio Milestone & Multi-Abstraction Transistor Speed Regression Protocol
-Periodic milestone verification across all 7 realism tiers (Tiers 0-6) validating zero performance regression against baseline thresholds.
-
 ### Phase 346: Phonon Studio Non-Hermitian Chiral Exceptional Surface Acoustic Sensing Array
 Two-dimensional exceptional surfaces, complex Jordan vectors, directional sensitivity amplification, and noise-resilient ultrasonic arrays.
+
+### Phase 347: Phonon Studio Topological Higher-Order Corner State Acoustic Resonator
+Second-order topological insulator (SOTI), quadrupole acoustic lattice, quantized bulk dipole moments, localized zero-dimensional corner states, and gigahertz phononic nanocavities.
 
 ---
 
 ## Current
 
-### Phase 344: Phonon Studio Non-Linear Soliton Kerr Microcomb Phononic Frequency Comb Engine
-Acousto-optic Kerr non-linearity, Lugiato-Lefever equation (LLE) split-step Fourier solver, dissipative Kerr solitons, and octave-spanning acoustic comb generation:
-1. Phononic Lugiato-Lefever Equation (LLE) Engine: Non-linear microresonator field evolution with acoustic Kerr coefficient $n_{2,ac}$, chromatic dispersion $D_2$, pump detuning $\delta_0$, external laser/acoustic drive $F_0$, and split-step Fourier spectral solver.
-2. Dissipative Kerr Soliton & Microcomb Kernel: Multi-comb generation spanning an octave (e.g., 500 MHz repetition rate), bright dissipative soliton formation, Turing pattern roll instabilities, and soliton frequency stability metrics.
-3. Interactive Kerr Microcomb Studio Visualizer in CAD Studio: Native egui optical/acoustic microresonator cavity canvas, optical spectrum analyzer (OSA) comb tooth power spectrum (dBm), cavity field intensity profile $|\psi(\theta)|^2$, soliton step-scan resonance curve, and live microcomb telemetry.
+### Phase 345 (Milestone): Phonon Universal Multi-Scale Visual Studio Milestone & Multi-Abstraction Transistor Speed Regression Protocol
+Periodic milestone verification across all 7 realism tiers (Tiers 0-6) validating zero performance regression against baseline thresholds.
 
 ---
 
 ## Done
+
+### Phase 344: Phonon Studio Non-Linear Soliton Kerr Microcomb Phononic Frequency Comb Engine
+Acousto-optic Kerr non-linearity, Lugiato-Lefever equation (LLE) split-step Fourier solver, dissipative Kerr solitons, and octave-spanning acoustic comb generation:
+1. Phononic Lugiato-Lefever Equation (LLE) Engine (`crates/phonon-solver/src/kerr_microcomb/lle_solver.rs`):
+   - Implemented `MicroresonatorParams` with loaded Q-factor, FSR, intrinsic decay rate kappa, anomalous chromatic dispersion $D_2 > 0$, Kerr parameter $g_{kerr}$, detuning $\alpha$, and pump drive $F_0$.
+   - Built `LleSplitStepSolver` integrating the normalized Lugiato-Lefever equation using split-step Fourier method with exact dispersion in spectral domain and exact non-linear phase rotation plus drive in real space.
+   - Identified microcomb regimes: `LowPowerCw`, `TuringRolls`, `ModulationInstabilityChaos`, `DissipativeSoliton`, `BreatherSoliton`.
+   - Built detuning scan mapper tracking intracavity power vs detuning $\alpha$ to map the characteristic soliton step plateau.
+2. Dissipative Kerr Soliton & Frequency Comb Metrics (`crates/phonon-solver/src/kerr_microcomb/comb_metrics.rs`):
+   - Implemented `CombSpectrum` computing comb tooth powers $S(\mu)$ in dBm, 3-dB / 10-dB / 20-dB bandwidths, and comb line counts.
+   - Built hyperbolic secant ($\operatorname{sech}^2$) non-linear envelope fit extracting temporal pulse duration $\tau_{FWHM}$ in picoseconds, peak intensity, and $R^2$ goodness-of-fit.
+3. Interactive Kerr Microcomb Studio Visualizer in CAD Studio (`crates/phonon-gui/src/widgets/kerr_microcomb_dialog.rs`):
+   - Built `KerrMicrocombDialog` featuring 2D circular microresonator ring cavity canvas rendering circulating intensity $|\psi(\theta)|^2$ with circulating bright soliton packet.
+   - Integrated Optical Spectrum Analyzer (OSA) bar chart, detuning hysteresis scan curve, temporal $\operatorname{sech}^2$ pulse profile, preset switchers (Single Soliton vs Turing Rolls), detuning sweep trigger, and live physical telemetry.
+   - Integrated into `PhononApp` and top frame menu.
+4. Automated Verification Suites:
+   - `crates/phonon-solver/tests/kerr_microcomb_tests.rs`: 5/5 tests passing.
+   - `crates/phonon-gui/tests/kerr_microcomb_gui_tests.rs`: 5/5 tests passing.
 
 ### Phase 343: Phonon Studio Topological Acoustic Chern Insulator Chiral Circulator & Non-Reciprocal Router
 Continuous-wave acoustic circulator, high-isolation 3-port chiral scattering matrix, broken time-reversal symmetry with spinning fluid flow, and backscattering-immune corner bending:

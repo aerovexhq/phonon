@@ -51,6 +51,7 @@ pub use widgets::floquet_metasurface_dialog::FloquetMetasurfaceDialog;
 pub use widgets::holonomic_processor_dialog::HolonomicProcessorDialog;
 pub use widgets::twisted_moire_dialog::TwistedMoireDialog;
 pub use widgets::chern_circulator_dialog::ChernCirculatorDialog;
+pub use widgets::kerr_microcomb_dialog::KerrMicrocombDialog;
 
 #[cfg(not(target_arch = "wasm32"))]
 use phonon_core::PhysicsDynamicsBackend;
