@@ -3,26 +3,26 @@
 //! The central Phonon GUI application orchestrator, CAD layout, and interactive simulation.
 
 use crate::extraction::ExtractionWizardDialog;
-use crate::oscilloscope::{OscilloscopePanel, WaveformTrace};
+use crate::oscilloscope::{MultiGraphManager, OscilloscopePanel, WaveformTrace};
 use crate::schematic::{
-    compile_schematic, compute_junction_dots, deserialize_project, load_project_from_file,
-    save_project_to_file, serialize_project, BinaryFormatError, CanvasCommand, CompiledCircuit,
-    ComponentKind, ErcDiagnostic, ErcEngine, ErcSeverity, HistoryStack, MultiSheetManager,
-    NetlistSyncEngine, SchematicBus, SchematicCanvas, SchematicComponent, SchematicWire,
-    SubcircuitDefinition, SymbolLibrary,
+    compile_schematic, compute_junction_dots, compute_wire_telemetry, deserialize_project,
+    load_project_from_file, save_project_to_file, serialize_project, BinaryFormatError,
+    CanvasCommand, CompiledCircuit, ComponentKind, ErcDiagnostic, ErcEngine, ErcSeverity,
+    HistoryStack, MultiSheetManager, NetlistSyncEngine, SchematicBus, SchematicCanvas,
+    SchematicComponent, SchematicWire, SubcircuitDefinition, SubcircuitRegistry, SymbolLibrary,
 };
 use crate::thermal::{Colormap, ThermalOverlay};
 use crate::storage::ProjectStorageManager;
 use crate::widgets::{
-    render_top_frame_with_app, ClusterDashboardDialog, ComponentPalette, ConfirmationDecision,
-    ConfirmationModal, DemoCircuitKind, ExceptionalPointDialog, FloatingToolbarAction,
-    FloatingToolbarState, FloquetMetasurfaceDialog, FqhBraidingDialog, HolonomicProcessorDialog,
-    JtwpaDialog, KerrMicrocombDialog, MonteCarloYieldDialog, NeuromorphicSnnDialog,
-    PendingAction, PolaritonCavityDialog, ProjectDialog, ProjectDialogAction,
-    SensitivityDialog, SmithChartDialog, SymbolEditorDialog, ThermalFloorplanDialog, TopFrameAction,
-    TopFrameConfig, TwistedMoireDialog, WeylSemimetalDialog, ChernCirculatorDialog,
-    ExceptionalSurfaceDialog, SotiCornerDialog, LiebLatticeDialog, AxionInsulatorDialog,
-    CommandPalette, PreferencesDialog,
+    render_top_frame_with_app, AxionInsulatorDialog, ChernCirculatorDialog, ClusterDashboardDialog,
+    CommandPalette, ComponentPalette, ConfirmationDecision, ConfirmationModal, DemoCircuitKind,
+    ExceptionalPointDialog, ExceptionalSurfaceDialog, FloatingToolbarAction, FloatingToolbarState,
+    FloquetMetasurfaceDialog, FqhBraidingDialog, HolonomicProcessorDialog, JtwpaDialog,
+    KerrMicrocombDialog, LiebLatticeDialog, MonteCarloYieldDialog, NeuromorphicSnnDialog,
+    PaletteAction, PendingAction, PolaritonCavityDialog, PreferencesDialog, ProjectDialog,
+    ProjectDialogAction, SensitivityDialog, SmithChartDialog, SotiCornerDialog,
+    SubcircuitDialogAction, SubcircuitPackageDialog, SymbolEditorDialog, ThermalFloorplanDialog,
+    TopFrameAction, TopFrameConfig, TwistedMoireDialog, WeylSemimetalDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -100,6 +100,7 @@ pub struct PhononApp {
     pub buses: Vec<SchematicBus>,
 
     pub oscilloscope: OscilloscopePanel,
+    pub multi_graph: MultiGraphManager,
     pub thermal: ThermalOverlay,
 
     pub show_oscilloscope: bool,
@@ -108,8 +109,12 @@ pub struct PhononApp {
 
     pub sim_status: String,
     pub dc_node_voltages: HashMap<String, f64>,
+    pub wire_voltages: HashMap<usize, f64>,
+    pub wire_currents: HashMap<usize, f64>,
     pub component_temperatures: HashMap<String, f64>,
     pub compiled_circuit: Option<CompiledCircuit>,
+    pub subcircuit_registry: SubcircuitRegistry,
+    pub subcircuit_dialog: SubcircuitPackageDialog,
     pub spice_netlist_text: String,
 
     /// Real-time bidirectional SPICE netlist synchronization engine.
@@ -253,6 +258,9 @@ pub struct PhononApp {
 
     /// Whether close has been confirmed and should trigger viewport close.
     pub should_close: bool,
+
+    /// Last recorded interactive canvas viewport rect.
+    pub last_canvas_rect: egui::Rect,
 }
 
 impl std::fmt::Debug for PhononApp {
@@ -299,14 +307,19 @@ impl Default for PhononApp {
             subcircuits: HashMap::new(),
             buses: Vec::new(),
             oscilloscope: OscilloscopePanel::new(),
+            multi_graph: MultiGraphManager::new(),
             thermal: ThermalOverlay::new(),
             show_oscilloscope: true,
             show_thermal_overlay: true,
             show_netlist_window: false,
             sim_status: String::new(),
             dc_node_voltages: HashMap::with_capacity(32),
+            wire_voltages: HashMap::with_capacity(64),
+            wire_currents: HashMap::with_capacity(64),
             component_temperatures: HashMap::with_capacity(32),
             compiled_circuit: None,
+            subcircuit_registry: SubcircuitRegistry::new(),
+            subcircuit_dialog: SubcircuitPackageDialog::new(),
             spice_netlist_text: String::new(),
             netlist_sync: NetlistSyncEngine::new(),
             erc_diagnostics: Vec::new(),
@@ -356,6 +369,7 @@ impl Default for PhononApp {
             preferences: AppPreferences::default(),
             preferences_dialog: PreferencesDialog::new(),
             should_close: false,
+            last_canvas_rect: egui::Rect::from_min_size(egui::Pos2::ZERO, egui::Vec2::new(800.0, 600.0)),
         };
 
         // Load saved preferences
@@ -663,6 +677,8 @@ impl PhononApp {
         self.clear_selection();
         self.active_wire_start = None;
         self.dc_node_voltages.clear();
+        self.wire_voltages.clear();
+        self.wire_currents.clear();
         self.component_temperatures.clear();
         self.compiled_circuit = None;
         self.spice_netlist_text.clear();
@@ -1243,6 +1259,15 @@ impl PhononApp {
                             }
                         }
 
+                        let (w_volts, w_currs) = compute_wire_telemetry(
+                            &self.components,
+                            &self.wires,
+                            &compiled,
+                            &self.dc_node_voltages,
+                        );
+                        self.wire_voltages = w_volts;
+                        self.wire_currents = w_currs;
+
                         self.sim_status = format!(
                             "DC Solved: {} nodes, cond ratio = {:.2e}",
                             sol.node_voltages.len(),
@@ -1283,9 +1308,9 @@ impl PhononApp {
             trace_temp.push(t, temp);
         }
 
-        self.oscilloscope.add_trace(trace_vin);
-        self.oscilloscope.add_trace(trace_vout);
-        self.oscilloscope.add_trace(trace_temp);
+        self.multi_graph
+            .route_simulation_traces(&[trace_vin.clone(), trace_vout.clone(), trace_temp.clone()]);
+        self.oscilloscope = self.multi_graph.primary_scope.clone();
 
         self.sim_status = "Transient Solved: 3 traces, 3,600 samples".to_string();
     }
@@ -1960,6 +1985,7 @@ impl PhononApp {
         let (response, painter) =
             ui.allocate_painter(ui.available_size_before_wrap(), Sense::click_and_drag());
         let viewport = response.rect;
+        self.last_canvas_rect = viewport;
 
         if self.pending_auto_center {
             self.center_on_bounding_box(viewport);
@@ -2028,6 +2054,27 @@ impl PhononApp {
         if let Some(mouse_screen) = mouse_pos {
             let mouse_world = self.canvas.screen_to_world(mouse_screen);
             let snapped_world = self.canvas.snap_to_grid(mouse_world);
+
+            // Wire hover telemetry badge (V and I readouts)
+            if self.selected_tool == ToolMode::Select || self.selected_tool == ToolMode::Probe {
+                let hover_tol = 8.0 / self.canvas.zoom;
+                if let Some(hovered_wire) = self.wires.iter().find(|w| w.contains(mouse_world, hover_tol)) {
+                    let v = self.wire_voltages.get(&hovered_wire.id).copied().unwrap_or(0.0);
+                    let i = self.wire_currents.get(&hovered_wire.id).copied().unwrap_or(0.0);
+                    let v_str = crate::oscilloscope::format_voltage_si(v);
+                    let i_str = crate::oscilloscope::format_current_si(i);
+                    crate::widgets::render_dual_telemetry_pill(
+                        &painter,
+                        mouse_screen + Vec2::new(20.0, -20.0),
+                        "V",
+                        &v_str,
+                        "I",
+                        &i_str,
+                        &crate::widgets::PillBadgeStyle::wire_telemetry(),
+                        self.canvas.zoom,
+                    );
+                }
+            }
 
             // Handle tool actions on click
             if response.clicked_by(PointerButton::Primary) {
@@ -2291,7 +2338,7 @@ impl PhononApp {
                         .canvas
                         .world_to_screen(comp.pos + Vec2::new(-35.0, 48.0));
                     self.thermal
-                        .render_junction_badge(&painter, badge_pos, temp_c, &comp.name);
+                        .render_junction_badge_scaled(&painter, badge_pos, temp_c, &comp.name, self.canvas.zoom);
                 }
             }
 
@@ -2353,19 +2400,74 @@ impl PhononApp {
         }
     }
 
-    /// Renders the left component palette panel.
+    /// Renders the left component palette and project hierarchy panel.
     fn render_palette(&mut self, ui: &mut egui::Ui) {
-        ui.heading("Components");
+        let current_place_kind = self.selected_tool.place_kind();
+        let subcircuits = self.subcircuit_registry.list();
+        let action = self.palette.render(
+            ui,
+            &self.top_frame_config.circuit_name,
+            &self.components,
+            &self.wires,
+            &subcircuits,
+            &self.dc_node_voltages,
+            current_place_kind,
+            self.selected_component_id,
+        );
 
-        egui::ScrollArea::vertical().show(ui, |ui| {
-            let current_place_kind = self.selected_tool.place_kind();
-            if let Some(kind) = self.palette.render(ui, current_place_kind) {
-                self.selected_tool = ToolMode::PlaceComponent(kind);
-                self.placement_rotation = 0;
-                self.active_wire_start = None;
-                self.clear_selection();
+        if let Some(act) = action {
+            match act {
+                PaletteAction::SelectKind(kind) => {
+                    self.selected_tool = ToolMode::PlaceComponent(kind);
+                    self.placement_rotation = 0;
+                    self.active_wire_start = None;
+                    self.clear_selection();
+                }
+                PaletteAction::SelectSubcircuit(pkg_name) => {
+                    self.sim_status = format!("Selected subcircuit package: {}", pkg_name);
+                }
+                PaletteAction::SelectComponent(cid) => {
+                    self.select_component(cid, false);
+                }
+                PaletteAction::FocusComponent(cid) => {
+                    if let Some(comp) = self.components.iter().find(|c| c.id == cid) {
+                        let vp_center = self.last_canvas_rect.center();
+                        self.canvas.pan = vp_center.to_vec2() - comp.pos.to_vec2() * self.canvas.zoom;
+                        self.select_component(cid, false);
+                    }
+                }
+                PaletteAction::SelectNet(net) => {
+                    self.clear_selection();
+                    for wire in &self.wires {
+                        if wire.net_name.as_deref() == Some(&net) {
+                            self.canvas.selected_wire_ids.insert(wire.id);
+                            self.selected_wire_id = Some(wire.id);
+                        }
+                    }
+                }
+                PaletteAction::OpenPackageDialog => {
+                    let sel_comps: Vec<_> = self
+                        .components
+                        .iter()
+                        .filter(|c| self.is_component_selected(c.id))
+                        .cloned()
+                        .collect();
+                    let sel_wires: Vec<_> = self
+                        .wires
+                        .iter()
+                        .filter(|w| self.canvas.is_wire_selected(w.id))
+                        .cloned()
+                        .collect();
+                    let (comps_to_pkg, wires_to_pkg) = if !sel_comps.is_empty() {
+                        (sel_comps, sel_wires)
+                    } else {
+                        (self.components.clone(), self.wires.clone())
+                    };
+                    self.subcircuit_dialog
+                        .open_with_selection(comps_to_pkg, wires_to_pkg);
+                }
             }
-        });
+        }
     }
 
     /// Renders the right inspector panel for selected components and simulation parameters.
@@ -2508,10 +2610,32 @@ impl PhononApp {
         } else if let Some(wid) = self.selected_wire_id {
             let mut do_delete_wire = false;
             if let Some(wire) = self.wires.iter().find(|w| w.id == wid) {
-                ui.label(format!("Wire ID: {}", wire.id));
+                ui.label(RichText::new(format!("Wire #{} Telemetry", wire.id)).strong());
+                ui.separator();
+                let net = self
+                    .compiled_circuit
+                    .as_ref()
+                    .and_then(|c| c.wire_to_net.get(&wire.id))
+                    .cloned()
+                    .or_else(|| wire.net_name.clone())
+                    .unwrap_or_else(|| "Unassigned".to_string());
+                ui.monospace(format!("Net: {}", net));
                 ui.label(format!("Segments: {}", wire.segments.len()));
                 let total_len: f32 = wire.segments.iter().map(|s| s.length()).sum();
-                ui.label(format!("Total Length: {:.1} px", total_len));
+                ui.label(format!("Total Length: {:.1} px ({:.2} mm)", total_len, total_len * 0.254));
+
+                if let Some(&v) = self.wire_voltages.get(&wire.id) {
+                    ui.monospace(format!("DC Voltage: {}", crate::oscilloscope::format_voltage_si(v)));
+                }
+                if let Some(&i) = self.wire_currents.get(&wire.id) {
+                    ui.monospace(format!("Branch Current: {}", crate::oscilloscope::format_current_si(i)));
+                    if let Some(&v) = self.wire_voltages.get(&wire.id) {
+                        let power = (v * i).abs();
+                        ui.label(format!("Carried Power: {:.3} mW", power * 1.0e3));
+                    }
+                }
+
+                ui.add_space(6.0);
                 if ui.button("Delete Wire").clicked() {
                     do_delete_wire = true;
                 }
@@ -2701,7 +2825,13 @@ impl PhononApp {
                 .resizable(true)
                 .default_size(240.0)
                 .show(ui, |ui| {
-                    self.oscilloscope.show(ui);
+                    ui.horizontal(|ui| {
+                        if ui.button("+ Detach Floating Window").clicked() {
+                            self.multi_graph.detach_primary_to_floating();
+                        }
+                    });
+                    self.multi_graph.primary_scope.show(ui);
+                    self.oscilloscope = self.multi_graph.primary_scope.clone();
                 });
         }
 
@@ -2862,6 +2992,20 @@ impl PhononApp {
 
         // 29. Interactive Quantum Metamaterial Higher-Order Axion Insulator Dialog
         self.axion_insulator_dialog.ui(ui.ctx());
+
+        // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
+        if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {
+            match action {
+                SubcircuitDialogAction::SavePackage(pkg) => {
+                    self.sim_status = format!("Subcircuit package '{}' registered", pkg.name);
+                    self.subcircuit_registry.register(pkg);
+                }
+                SubcircuitDialogAction::Cancel => {}
+            }
+        }
+
+        // 29c. Multi-Graph Floating Oscilloscope Windows
+        self.multi_graph.render_floating_windows(ui.ctx());
 
         // 30. Unsaved Changes Confirmation Modal
         if let Some(pending) = self.pending_confirmation_action.clone() {

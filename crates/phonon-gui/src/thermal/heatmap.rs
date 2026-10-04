@@ -2,7 +2,7 @@
 
 //! 2D spatial thermal heatmaps, colormap gradients (Turbo, Magma, Inferno), and hotspot alerts.
 
-use egui::{Align2, Color32, FontId, Painter, Pos2, Rect, Stroke, StrokeKind, Vec2};
+use egui::{Align2, Color32, FontId, Painter, Pos2, Vec2};
 
 /// Colormaps for scientific thermal visualization.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
@@ -79,6 +79,51 @@ impl ThermalOverlay {
         sample_colormap(norm, self.colormap)
     }
 
+    /// Renders a thermal junction badge near a component scaled with canvas zoom.
+    pub fn render_junction_badge_scaled(
+        &self,
+        painter: &Painter,
+        pos_screen: Pos2,
+        temp_c: f64,
+        component_name: &str,
+        zoom: f32,
+    ) {
+        if !self.enabled {
+            return;
+        }
+
+        let is_hotspot = temp_c >= self.runaway_threshold_c;
+        let badge_color = self.temp_to_color(temp_c);
+        let style = crate::widgets::pill_badge::PillBadgeStyle::temperature(badge_color, is_hotspot);
+
+        let text = if is_hotspot {
+            format!("{:.1}°C [HOT]", temp_c)
+        } else {
+            format!("{:.1}°C", temp_c)
+        };
+
+        let badge_rect = crate::widgets::pill_badge::render_pill_badge(
+            painter,
+            pos_screen,
+            &text,
+            &style,
+            zoom,
+        );
+
+        // Warning indicator if exceeding safe thermal limits
+        if is_hotspot {
+            let scale = crate::widgets::pill_badge::proportional_zoom_scale(zoom);
+            let icon_pos = badge_rect.right_top() + Vec2::new(4.0 * scale, 1.0 * scale);
+            painter.text(
+                icon_pos,
+                Align2::LEFT_TOP,
+                format!("[WARN] {} HOT", component_name),
+                FontId::proportional(9.5 * scale),
+                Color32::from_rgb(255, 80, 80),
+            );
+        }
+    }
+
     /// Renders a thermal junction badge near a component.
     pub fn render_junction_badge(
         &self,
@@ -87,53 +132,6 @@ impl ThermalOverlay {
         temp_c: f64,
         component_name: &str,
     ) {
-        if !self.enabled {
-            return;
-        }
-
-        let is_hotspot = temp_c >= self.runaway_threshold_c;
-        let badge_color = self.temp_to_color(temp_c);
-
-        let badge_rect = Rect::from_min_size(pos_screen, Vec2::new(75.0, 24.0));
-        let bg_color = Color32::from_rgba_unmultiplied(20, 24, 30, 220);
-        painter.rect_filled(badge_rect, 4.0, bg_color);
-
-        let stroke_color = if is_hotspot {
-            Color32::from_rgb(255, 60, 60)
-        } else {
-            badge_color
-        };
-        painter.rect_stroke(
-            badge_rect,
-            4.0,
-            Stroke::new(1.5, stroke_color),
-            StrokeKind::Inside,
-        );
-
-        // Temperature text
-        let text = format!("{:.1}°C", temp_c);
-        painter.text(
-            badge_rect.center(),
-            Align2::CENTER_CENTER,
-            text,
-            FontId::monospace(11.0),
-            if is_hotspot {
-                Color32::from_rgb(255, 100, 100)
-            } else {
-                Color32::WHITE
-            },
-        );
-
-        // Warning indicator if exceeding safe thermal limits
-        if is_hotspot {
-            let icon_pos = badge_rect.right_top() + Vec2::new(4.0, 2.0);
-            painter.text(
-                icon_pos,
-                Align2::LEFT_TOP,
-                format!("[WARN] {} HOT", component_name),
-                FontId::proportional(10.0),
-                Color32::from_rgb(255, 80, 80),
-            );
-        }
+        self.render_junction_badge_scaled(painter, pos_screen, temp_c, component_name, 1.0);
     }
 }

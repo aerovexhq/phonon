@@ -14,6 +14,7 @@ pub mod history;
 pub mod netlist_sync;
 pub mod sheet;
 pub mod subcircuit;
+pub mod subcircuit_package;
 pub mod symbol;
 pub mod wire;
 
@@ -30,7 +31,7 @@ pub use binary_history::{
 pub use bus::{BusSignal, BusTapOff, SchematicBus};
 pub use canvas::SchematicCanvas;
 pub use categories::ComponentCategory;
-pub use circuit_compiler::{compile_schematic, CompiledCircuit};
+pub use circuit_compiler::{compile_schematic, compute_wire_telemetry, CompiledCircuit};
 pub use components::{ComponentKind, SchematicComponent};
 pub use erc::{ErcCode, ErcDiagnostic, ErcEngine, ErcSeverity};
 pub use history::{CanvasCommand, HistoryStack};
@@ -39,6 +40,10 @@ pub use sheet::{MultiSheetManager, SchematicSheet};
 pub use subcircuit::{
     flatten_hierarchical_netlist, flatten_hierarchical_netlist_with_instances, PinDirection,
     SubcircuitDefinition, SubcircuitInstance, SubcircuitPin,
+};
+pub use subcircuit_package::{
+    discover_boundary_ports, PortDirection, PortEdge, SubcircuitPackage, SubcircuitPort,
+    SubcircuitRegistry,
 };
 pub use symbol::{
     CustomComponentSymbol, LabelPlacement, SymbolLibrary, SymbolPin, SymbolPinDirection,

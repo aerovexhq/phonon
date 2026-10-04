@@ -30,9 +30,15 @@ pub mod axion_insulator_dialog;
 pub mod command_palette;
 pub mod confirmation_modal;
 pub mod floating_toolbar;
+pub mod pill_badge;
 pub mod preferences_dialog;
 pub mod project_dialog;
+pub mod subcircuit_dialog;
 
+pub use pill_badge::{
+    proportional_zoom_scale, render_dual_telemetry_pill, render_pill_badge, PillBadgeStyle,
+};
+pub use subcircuit_dialog::{SubcircuitDialogAction, SubcircuitPackageDialog};
 pub use command_palette::CommandPalette;
 pub use confirmation_modal::{
     ConfirmationDecision, ConfirmationModal, DemoCircuitKind, PendingAction,
@@ -53,7 +59,7 @@ pub use jtwpa_dialog::JtwpaDialog;
 pub use kerr_microcomb_dialog::KerrMicrocombDialog;
 pub use monte_carlo_dialog::{MonteCarloParamEntry, MonteCarloYieldDialog};
 pub use neuromorphic_snn_dialog::NeuromorphicSnnDialog;
-pub use palette::ComponentPalette;
+pub use palette::{ComponentPalette, PaletteAction, SidebarTab};
 pub use polariton_cavity_dialog::PolaritonCavityDialog;
 pub use sensitivity_dialog::SensitivityDialog;
 pub use smith_chart_dialog::{HoveredMarker, SmithChartDialog};

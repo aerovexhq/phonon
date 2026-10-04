@@ -20,6 +20,8 @@ pub struct CompiledCircuit {
     pub model_ctx: ModelContext,
     /// Maps `(component_name, pin_name)` -> `net_name` (e.g. `("R1", "1") -> "net1"`).
     pub pin_to_net: HashMap<(String, String), String>,
+    /// Maps `wire_id` -> `net_name`.
+    pub wire_to_net: HashMap<usize, String>,
     pub net_names: Vec<String>,
     pub spice_netlist: String,
 }
@@ -858,11 +860,118 @@ pub fn compile_schematic(
     spice_lines.push(".OP".to_string());
     spice_lines.push(".END".to_string());
 
+    // Map each wire to its resolved net
+    let mut wire_to_net = HashMap::new();
+    for wire in wires {
+        let p_start = quantize(wire.start_point());
+        let root = dsu.find(p_start);
+        if let Some(net) = root_to_net.get(&root) {
+            wire_to_net.insert(wire.id, net.clone());
+        } else {
+            let p_end = quantize(wire.end_point());
+            let root_end = dsu.find(p_end);
+            if let Some(net) = root_to_net.get(&root_end) {
+                wire_to_net.insert(wire.id, net.clone());
+            }
+        }
+    }
+
     Ok(CompiledCircuit {
         graph,
         model_ctx,
         pin_to_net,
+        wire_to_net,
         net_names: all_nets,
         spice_netlist: spice_lines.join("\n"),
     })
+}
+
+/// Computes DC voltages and branch currents flowing through wires.
+pub fn compute_wire_telemetry(
+    components: &[SchematicComponent],
+    wires: &[SchematicWire],
+    compiled: &CompiledCircuit,
+    node_voltages: &HashMap<String, f64>,
+) -> (HashMap<usize, f64>, HashMap<usize, f64>) {
+    let mut wire_voltages = HashMap::new();
+    let mut wire_currents = HashMap::new();
+
+    // 1. Calculate wire voltages from net mapping
+    for wire in wires {
+        let net = compiled.wire_to_net.get(&wire.id);
+        let v = net.and_then(|n| node_voltages.get(n)).copied().unwrap_or(0.0);
+        wire_voltages.insert(wire.id, v);
+    }
+
+    // 2. Map component terminal currents to connected pins
+    let mut pin_currents: HashMap<(String, String), f64> = HashMap::new();
+
+    for comp in components {
+        let pins = comp.all_pins();
+        if pins.len() >= 2 {
+            let n1 = compiled
+                .pin_to_net
+                .get(&(comp.name.clone(), pins[0].0.to_string()))
+                .cloned()
+                .unwrap_or_else(|| "0".to_string());
+            let n2 = compiled
+                .pin_to_net
+                .get(&(comp.name.clone(), pins[1].0.to_string()))
+                .cloned()
+                .unwrap_or_else(|| "0".to_string());
+            let v1 = node_voltages.get(&n1).copied().unwrap_or(0.0);
+            let v2 = node_voltages.get(&n2).copied().unwrap_or(0.0);
+            let vdrop = v1 - v2;
+
+            let current = match comp.kind {
+                ComponentKind::Resistor => {
+                    let r = parse_spice_number(&comp.value_str, 1).unwrap_or(1000.0);
+                    vdrop / r.max(1e-9)
+                }
+                ComponentKind::Diode => {
+                    let vt = 0.026;
+                    let is_sat = 1.0e-14;
+                    if vdrop > 0.0 {
+                        is_sat * ((vdrop / vt).min(40.0).exp() - 1.0)
+                    } else {
+                        -is_sat
+                    }
+                }
+                ComponentKind::VoltageSource => {
+                    let r_est = 1000.0;
+                    vdrop.abs() / r_est
+                }
+                ComponentKind::CurrentSource => {
+                    parse_spice_number(&comp.value_str, 1).unwrap_or(1e-3)
+                }
+                _ => 1.0e-6,
+            };
+
+            pin_currents.insert((comp.name.clone(), pins[0].0.to_string()), current);
+            pin_currents.insert((comp.name.clone(), pins[1].0.to_string()), -current);
+        }
+    }
+
+    // 3. Associate wire currents from connected pin terminals
+    for wire in wires {
+        let mut total_curr = 0.0f64;
+        let p_start = wire.start_point();
+        let p_end = wire.end_point();
+
+        for comp in components {
+            for (pname, pos) in comp.all_pins() {
+                let d_start = (pos - p_start).length();
+                let d_end = (pos - p_end).length();
+                if d_start < 6.0 || d_end < 6.0 {
+                    if let Some(&i) = pin_currents.get(&(comp.name.clone(), pname.to_string())) {
+                        total_curr += i.abs();
+                    }
+                }
+            }
+        }
+
+        wire_currents.insert(wire.id, total_curr);
+    }
+
+    (wire_voltages, wire_currents)
 }

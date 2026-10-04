@@ -1215,13 +1215,15 @@ impl SchematicComponent {
         if let Some(voltages) = node_voltages {
             for (pin_name, pin_pos) in self.all_pins() {
                 if let Some(&(_, v)) = voltages.iter().find(|(name, _)| *name == pin_name) {
-                    let badge_pos = canvas.world_to_screen(pin_pos + Vec2::new(8.0, -8.0));
-                    painter.text(
+                    let badge_pos = canvas.world_to_screen(pin_pos + Vec2::new(16.0, -10.0));
+                    let text = format!("{:.2}V", v);
+                    let style = crate::widgets::pill_badge::PillBadgeStyle::voltage(theme.voltage_badge);
+                    crate::widgets::pill_badge::render_pill_badge(
+                        painter,
                         badge_pos,
-                        Align2::LEFT_CENTER,
-                        format!("{:.2}V", v),
-                        FontId::monospace(10.0 * canvas.zoom.clamp(0.8, 1.5)),
-                        theme.voltage_badge,
+                        &text,
+                        &style,
+                        canvas.zoom,
                     );
                 }
             }

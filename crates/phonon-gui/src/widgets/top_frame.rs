@@ -257,7 +257,7 @@ fn render_top_frame_internal(
                 }
                 if ui.button("Subcircuit Macro (.phnc)...").clicked() {
                     if let Some(a) = app.as_deref_mut() {
-                        a.symbol_editor.is_open = true;
+                        a.subcircuit_dialog.is_open = true;
                     }
                     ui.close();
                 }
@@ -495,6 +495,7 @@ fn render_top_frame_internal(
             if ui.button("Clear Oscilloscope Traces").clicked() {
                 if let Some(a) = app.as_deref_mut() {
                     a.oscilloscope.clear();
+                    a.multi_graph.primary_scope.clear();
                 }
                 ui.close();
             }
