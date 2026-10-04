@@ -3,7 +3,7 @@
 //! Orthogonal Manhattan wire routing, segment management, and junction detection.
 
 use super::canvas::SchematicCanvas;
-use egui::{Color32, Painter, Pos2, Stroke};
+use egui::{Color32, Painter, Pos2, Rect, Stroke};
 
 /// Pin normal or departure orientation for pin-aware Manhattan routing.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -72,6 +72,22 @@ impl WireSegment {
         );
 
         (p - projection).length() <= tol
+    }
+
+    /// Checks if this wire segment intersects or is contained within the given rectangle in world coordinates.
+    pub fn intersects_rect(&self, rect: &Rect) -> bool {
+        if rect.contains(self.start) || rect.contains(self.end) {
+            return true;
+        }
+        let p_tl = rect.min;
+        let p_tr = Pos2::new(rect.max.x, rect.min.y);
+        let p_br = rect.max;
+        let p_bl = Pos2::new(rect.min.x, rect.max.y);
+
+        segments_intersect(self.start, self.end, p_tl, p_tr)
+            || segments_intersect(self.start, self.end, p_tr, p_br)
+            || segments_intersect(self.start, self.end, p_br, p_bl)
+            || segments_intersect(self.start, self.end, p_bl, p_tl)
     }
 }
 
@@ -212,6 +228,29 @@ impl SchematicWire {
         w
     }
 
+    /// Checks if any segment of this wire intersects or is contained within the given rectangle.
+    pub fn intersects_rect(&self, rect: &Rect) -> bool {
+        self.segments.iter().any(|seg| seg.intersects_rect(rect))
+    }
+
+    /// Computes the axis-aligned bounding box enclosing all wire segments.
+    pub fn bounding_box(&self) -> Rect {
+        if self.segments.is_empty() {
+            return Rect::from_min_max(Pos2::ZERO, Pos2::ZERO);
+        }
+        let mut min_x = f32::INFINITY;
+        let mut min_y = f32::INFINITY;
+        let mut max_x = f32::NEG_INFINITY;
+        let mut max_y = f32::NEG_INFINITY;
+        for seg in &self.segments {
+            min_x = min_x.min(seg.start.x).min(seg.end.x);
+            min_y = min_y.min(seg.start.y).min(seg.end.y);
+            max_x = max_x.max(seg.start.x).max(seg.end.x);
+            max_y = max_y.max(seg.start.y).max(seg.end.y);
+        }
+        Rect::from_min_max(Pos2::new(min_x, min_y), Pos2::new(max_x, max_y))
+    }
+
     /// Hit testing for wire selection.
     pub fn contains(&self, world_pos: Pos2, tol: f32) -> bool {
         self.segments
@@ -282,3 +321,44 @@ pub fn compute_junction_dots(wires: &[SchematicWire], pins: &[Pos2]) -> Vec<Pos2
 
     junctions
 }
+
+/// Checks if two 2D line segments (p1-p2 and p3-p4) intersect.
+pub fn segments_intersect(a: Pos2, b: Pos2, c: Pos2, d: Pos2) -> bool {
+    fn ccw(p1: Pos2, p2: Pos2, p3: Pos2) -> f32 {
+        (p2.x - p1.x) * (p3.y - p1.y) - (p2.y - p1.y) * (p3.x - p1.x)
+    }
+
+    let d1 = ccw(c, d, a);
+    let d2 = ccw(c, d, b);
+    let d3 = ccw(a, b, c);
+    let d4 = ccw(a, b, d);
+
+    if ((d1 > 0.0 && d2 < 0.0) || (d1 < 0.0 && d2 > 0.0))
+        && ((d3 > 0.0 && d4 < 0.0) || (d3 < 0.0 && d4 > 0.0))
+    {
+        return true;
+    }
+
+    let on_segment = |p: Pos2, q: Pos2, r: Pos2| -> bool {
+        q.x >= p.x.min(r.x) - 1e-4
+            && q.x <= p.x.max(r.x) + 1e-4
+            && q.y >= p.y.min(r.y) - 1e-4
+            && q.y <= p.y.max(r.y) + 1e-4
+    };
+
+    if d1.abs() < 1e-5 && on_segment(c, a, d) {
+        return true;
+    }
+    if d2.abs() < 1e-5 && on_segment(c, b, d) {
+        return true;
+    }
+    if d3.abs() < 1e-5 && on_segment(a, c, b) {
+        return true;
+    }
+    if d4.abs() < 1e-5 && on_segment(a, d, b) {
+        return true;
+    }
+
+    false
+}
+

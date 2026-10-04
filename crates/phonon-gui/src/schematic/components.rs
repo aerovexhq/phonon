@@ -1119,10 +1119,19 @@ impl SchematicComponent {
             .collect()
     }
 
+    /// Returns the axis-aligned bounding box of this component in world coordinates.
+    pub fn bounding_box(&self) -> Rect {
+        Rect::from_center_size(self.pos, Vec2::new(70.0, 70.0))
+    }
+
+    /// Checks if this component's bounding box intersects with the given rectangle in world coordinates.
+    pub fn intersects_rect(&self, rect: &Rect) -> bool {
+        rect.intersects(self.bounding_box())
+    }
+
     /// Hit-test: checks if a world position lies within the component's bounding box.
     pub fn contains(&self, world_pos: Pos2) -> bool {
-        let bbox = Rect::from_center_size(self.pos, Vec2::new(70.0, 70.0));
-        bbox.contains(world_pos)
+        self.bounding_box().contains(world_pos)
     }
 
     /// Renders the component schematic symbol onto the screen painter.

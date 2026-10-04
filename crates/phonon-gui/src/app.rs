@@ -19,21 +19,23 @@ use crate::widgets::{
     WeylSemimetalDialog, FqhBraidingDialog, JtwpaDialog, FloquetMetasurfaceDialog,
     HolonomicProcessorDialog, TwistedMoireDialog, ChernCirculatorDialog,
     KerrMicrocombDialog, ExceptionalSurfaceDialog, SotiCornerDialog, LiebLatticeDialog,
-    AxionInsulatorDialog,
+    AxionInsulatorDialog, CommandPalette, FloatingToolbarAction, FloatingToolbarState,
 };
+use crate::actions::{ActionId, ActionRegistry};
 use eframe::{App, Frame};
 use egui::{
-    CentralPanel, Color32, FontId, Key, Panel, PointerButton, Pos2, RichText, Sense, Stroke, Ui, Vec2,
+    CentralPanel, Color32, FontId, Key, Panel, PointerButton, Pos2, Rect, RichText, Sense, Stroke, Ui, Vec2,
 };
 use phonon_core::{AutoSelectingDynamicsBackend, PhysicsDynamicsBackend};
 use phonon_solver::{solve_dc_non_linear, NewtonOptions};
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 /// Current interaction mode of the CAD canvas.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ToolMode {
     Select,
     Wire,
+    Bus,
     Place(ComponentKind),
     PlaceComponent(ComponentKind),
     Probe,
@@ -60,9 +62,29 @@ pub struct PhononApp {
     pub next_comp_id: usize,
     pub next_wire_id: usize,
     pub selected_tool: ToolMode,
+    /// Set of selected component IDs for multi-selection.
+    pub selected_component_ids: HashSet<usize>,
+    /// Set of selected wire IDs for multi-selection.
+    pub selected_wire_ids: HashSet<usize>,
     pub selected_component_id: Option<usize>,
     pub selected_wire_id: Option<usize>,
     pub active_wire_start: Option<Pos2>,
+    /// Rubberband marquee drag start point in world coordinates.
+    pub marquee_start: Option<Pos2>,
+    /// Rubberband marquee drag current point in world coordinates.
+    pub marquee_current: Option<Pos2>,
+    /// Whether the floating CAD tools island is visible.
+    pub show_floating_toolbar: bool,
+    /// State and coordinates of the floating CAD tools island.
+    pub floating_toolbar_state: FloatingToolbarState,
+    /// Searchable command palette modal overlay.
+    pub command_palette: CommandPalette,
+    /// Centralized registry of all executable CAD commands.
+    pub action_registry: ActionRegistry,
+    /// Active multi-item drag tracking state.
+    pub dragging_selection: bool,
+    /// Original positions of components before drag started.
+    pub drag_start_positions: Vec<(usize, Pos2)>,
 
     /// Multi-sheet schematic canvas manager.
     pub sheets: MultiSheetManager,
@@ -165,8 +187,8 @@ pub struct PhononApp {
     pub symbol_library: SymbolLibrary,
 
     // Drag tracking for selected component
-    dragging_component: bool,
-    drag_start_pos: Option<(usize, Pos2)>,
+    pub dragging_component: bool,
+    pub drag_start_pos: Option<(usize, Pos2)>,
 
     /// Reversible undo/redo history stack and command engine.
     pub history: HistoryStack,
@@ -227,9 +249,19 @@ impl Default for PhononApp {
             next_comp_id: 1,
             next_wire_id: 1,
             selected_tool: ToolMode::Select,
+            selected_component_ids: HashSet::new(),
+            selected_wire_ids: HashSet::new(),
             selected_component_id: None,
             selected_wire_id: None,
             active_wire_start: None,
+            marquee_start: None,
+            marquee_current: None,
+            show_floating_toolbar: true,
+            floating_toolbar_state: FloatingToolbarState::new(),
+            command_palette: CommandPalette::new(),
+            action_registry: ActionRegistry::new(),
+            dragging_selection: false,
+            drag_start_positions: Vec::new(),
             sheets: MultiSheetManager::new("Main"),
             subcircuits: HashMap::new(),
             buses: Vec::new(),
@@ -344,6 +376,7 @@ impl PhononApp {
         self.next_wire_id = 1;
         self.selected_component_id = None;
         self.selected_wire_id = None;
+        self.clear_selection();
         self.active_wire_start = None;
         self.dc_node_voltages.clear();
         self.component_temperatures.clear();
@@ -351,6 +384,8 @@ impl PhononApp {
         self.spice_netlist_text.clear();
         self.sim_status.clear();
         self.drag_start_pos = None;
+        self.drag_start_positions.clear();
+        self.dragging_selection = false;
         self.editing_comp_value = None;
         self.canvas.clear();
         self.erc_diagnostics.clear();
@@ -362,6 +397,7 @@ impl PhononApp {
         self.canvas.components = self.components.clone();
         self.canvas.wires = self.wires.clone();
         self.canvas.buses = self.buses.clone();
+        self.sync_selection_to_canvas();
 
         let active = self.sheets.active_sheet_mut();
         active.canvas.components = self.components.clone();
@@ -984,90 +1020,576 @@ impl PhononApp {
         }
     }
 
-    /// Deletes the currently selected component or wire.
-    pub fn delete_selected(&mut self) {
-        if let Some(cid) = self.selected_component_id {
-            if let Some(idx) = self.components.iter().position(|c| c.id == cid) {
-                let comp = self.components.remove(idx);
-                self.history.record(CanvasCommand::DeleteComponent(comp));
-            }
-            self.selected_component_id = None;
-            self.sim_status.clear();
-        } else if let Some(wid) = self.selected_wire_id {
-            if let Some(idx) = self.wires.iter().position(|w| w.id == wid) {
-                let wire = self.wires.remove(idx);
-                self.history.record(CanvasCommand::DeleteWire(wire));
-            }
-            self.selected_wire_id = None;
-            self.sim_status.clear();
-        }
+    /// Checks whether a component with the given ID is selected.
+    pub fn is_component_selected(&self, id: usize) -> bool {
+        self.selected_component_ids.contains(&id) || self.selected_component_id == Some(id)
     }
 
-    /// Rotates the active component (selected, being dragged, or held during placement) clockwise by 90 degrees.
-    pub fn rotate_active(&mut self) {
-        if let Some(cid) = self.selected_component_id {
-            if let Some(comp) = self.components.iter_mut().find(|c| c.id == cid) {
-                let from_rot = comp.rotation;
-                comp.rotate_clockwise();
-                let to_rot = comp.rotation;
-                self.history.record(CanvasCommand::RotateComponent {
-                    id: cid,
-                    from_rot,
-                    to_rot,
-                });
-                self.sim_status.clear();
-                return;
+    /// Checks whether a wire with the given ID is selected.
+    pub fn is_wire_selected(&self, id: usize) -> bool {
+        self.selected_wire_ids.contains(&id) || self.selected_wire_id == Some(id)
+    }
+
+    /// Clears all component and wire selections.
+    pub fn clear_selection(&mut self) {
+        self.selected_component_ids.clear();
+        self.selected_wire_ids.clear();
+        self.selected_component_id = None;
+        self.selected_wire_id = None;
+        self.sync_selection_to_canvas();
+    }
+
+    /// Synchronizes selection state from PhononApp to SchematicCanvas.
+    pub fn sync_selection_to_canvas(&mut self) {
+        self.canvas.selected_component_ids = self.selected_component_ids.clone();
+        self.canvas.selected_wire_ids = self.selected_wire_ids.clone();
+        self.canvas.selected_component_id = self.selected_component_id;
+        self.canvas.selected_wire_id = self.selected_wire_id;
+        self.canvas.marquee_start = self.marquee_start;
+        self.canvas.marquee_current = self.marquee_current;
+    }
+
+    /// Selects a single component or adds to selection if multi is true.
+    pub fn select_component(&mut self, id: usize, multi: bool) {
+        if !multi {
+            self.clear_selection();
+        }
+        self.selected_component_ids.insert(id);
+        self.selected_component_id = Some(id);
+        self.sync_selection_to_canvas();
+    }
+
+    /// Selects a single wire or adds to selection if multi is true.
+    pub fn select_wire(&mut self, id: usize, multi: bool) {
+        if !multi {
+            self.clear_selection();
+        }
+        self.selected_wire_ids.insert(id);
+        self.selected_wire_id = Some(id);
+        self.sync_selection_to_canvas();
+    }
+
+    /// Toggles a component's selection state (for Shift+Click).
+    pub fn toggle_component_selection(&mut self, id: usize) {
+        if self.selected_component_ids.contains(&id) {
+            self.selected_component_ids.remove(&id);
+            if self.selected_component_id == Some(id) {
+                self.selected_component_id = self.selected_component_ids.iter().next().copied();
+            }
+        } else {
+            self.selected_component_ids.insert(id);
+            self.selected_component_id = Some(id);
+        }
+        self.sync_selection_to_canvas();
+    }
+
+    /// Toggles a wire's selection state (for Shift+Click).
+    pub fn toggle_wire_selection(&mut self, id: usize) {
+        if self.selected_wire_ids.contains(&id) {
+            self.selected_wire_ids.remove(&id);
+            if self.selected_wire_id == Some(id) {
+                self.selected_wire_id = self.selected_wire_ids.iter().next().copied();
+            }
+        } else {
+            self.selected_wire_ids.insert(id);
+            self.selected_wire_id = Some(id);
+        }
+        self.sync_selection_to_canvas();
+    }
+
+    /// Selects all components and wires in the current schematic sheet.
+    pub fn select_all(&mut self) {
+        self.selected_component_ids = self.components.iter().map(|c| c.id).collect();
+        self.selected_wire_ids = self.wires.iter().map(|w| w.id).collect();
+        self.selected_component_id = self.selected_component_ids.iter().next().copied();
+        self.selected_wire_id = self.selected_wire_ids.iter().next().copied();
+        self.sync_selection_to_canvas();
+    }
+
+    /// Selects all components and wires intersecting the given rectangle in world coordinates.
+    pub fn select_in_rect(&mut self, rect: egui::Rect, add: bool) {
+        if !add {
+            self.clear_selection();
+        }
+        for comp in &self.components {
+            if comp.intersects_rect(&rect) {
+                self.selected_component_ids.insert(comp.id);
+                self.selected_component_id = Some(comp.id);
             }
         }
+        for wire in &self.wires {
+            if wire.intersects_rect(&rect) {
+                self.selected_wire_ids.insert(wire.id);
+                self.selected_wire_id = Some(wire.id);
+            }
+        }
+        self.sync_selection_to_canvas();
+    }
+
+    /// Translates all selected components and wires by delta in world coordinates.
+    /// Also updates attached wire endpoints connected to moved components.
+    pub fn translate_selection(&mut self, delta: Vec2) {
+        if delta == Vec2::ZERO {
+            return;
+        }
+
+        let mut moving_pins = Vec::new();
+        for comp in &self.components {
+            if self.is_component_selected(comp.id) {
+                for (_, p) in comp.all_pins() {
+                    moving_pins.push(p);
+                }
+            }
+        }
+
+        let sel_comp_ids = self.selected_component_ids.clone();
+        let sel_comp_id = self.selected_component_id;
+        let is_comp_sel = |id: usize| sel_comp_ids.contains(&id) || sel_comp_id == Some(id);
+
+        for comp in &mut self.components {
+            if is_comp_sel(comp.id) {
+                comp.pos += delta;
+            }
+        }
+
+        let sel_wire_ids = self.selected_wire_ids.clone();
+        let sel_wire_id = self.selected_wire_id;
+        let is_wire_sel = |id: usize| sel_wire_ids.contains(&id) || sel_wire_id == Some(id);
+
+        for wire in &mut self.wires {
+            if is_wire_sel(wire.id) {
+                for seg in &mut wire.segments {
+                    seg.start += delta;
+                    seg.end += delta;
+                }
+            } else if !moving_pins.is_empty() {
+                let start_attached = wire.segments.first().map_or(false, |s| {
+                    moving_pins.iter().any(|&p| (p - s.start).length() <= 4.0)
+                });
+                let end_attached = wire.segments.last().map_or(false, |s| {
+                    moving_pins.iter().any(|&p| (p - s.end).length() <= 4.0)
+                });
+
+                if start_attached && end_attached {
+                    for seg in &mut wire.segments {
+                        seg.start += delta;
+                        seg.end += delta;
+                    }
+                } else if start_attached {
+                    let old_end = wire.end_point();
+                    let new_start = wire.start_point() + delta;
+                    *wire = SchematicWire::manhattan_route_hv_with_net(
+                        wire.id,
+                        new_start,
+                        old_end,
+                        wire.net_name.clone(),
+                    );
+                } else if end_attached {
+                    let old_start = wire.start_point();
+                    let new_end = wire.end_point() + delta;
+                    *wire = SchematicWire::manhattan_route_hv_with_net(
+                        wire.id,
+                        old_start,
+                        new_end,
+                        wire.net_name.clone(),
+                    );
+                }
+            }
+        }
+
+        self.sync_selection_to_canvas();
+    }
+
+    /// Deletes all currently selected components and wires in a unified atomic undo/redo command.
+    pub fn delete_selected(&mut self) {
+        let mut target_comp_ids = self.selected_component_ids.clone();
+        if let Some(cid) = self.selected_component_id {
+            target_comp_ids.insert(cid);
+        }
+
+        let mut target_wire_ids = self.selected_wire_ids.clone();
+        if let Some(wid) = self.selected_wire_id {
+            target_wire_ids.insert(wid);
+        }
+
+        if target_comp_ids.is_empty() && target_wire_ids.is_empty() {
+            return;
+        }
+
+        let mut to_delete_comps = Vec::new();
+        let mut to_delete_wires = Vec::new();
+
+        self.components.retain(|c| {
+            if target_comp_ids.contains(&c.id) {
+                to_delete_comps.push(c.clone());
+                false
+            } else {
+                true
+            }
+        });
+
+        self.wires.retain(|w| {
+            if target_wire_ids.contains(&w.id) {
+                to_delete_wires.push(w.clone());
+                false
+            } else {
+                true
+            }
+        });
+
+        let mut batch = Vec::new();
+        for comp in to_delete_comps {
+            batch.push(CanvasCommand::DeleteComponent(comp));
+        }
+        for wire in to_delete_wires {
+            batch.push(CanvasCommand::DeleteWire(wire));
+        }
+
+        if !batch.is_empty() {
+            if batch.len() == 1 {
+                self.history.record(batch.remove(0));
+            } else {
+                self.history.record(CanvasCommand::Batch(batch));
+            }
+        }
+
+        self.clear_selection();
+        self.sim_status.clear();
+    }
+
+    /// Duplicates all selected components and intra-selection wires, offset by (+40.0, +40.0) world coordinates.
+    pub fn duplicate_selected(&mut self) {
+        let mut target_comp_ids = self.selected_component_ids.clone();
+        if let Some(cid) = self.selected_component_id {
+            target_comp_ids.insert(cid);
+        }
+
+        let mut target_wire_ids = self.selected_wire_ids.clone();
+        if let Some(wid) = self.selected_wire_id {
+            target_wire_ids.insert(wid);
+        }
+
+        if target_comp_ids.is_empty() && target_wire_ids.is_empty() {
+            return;
+        }
+
+        let offset = Vec2::new(40.0, 40.0);
+
+        // 1. Duplicate components
+        let mut new_comps = Vec::new();
+        for comp in &self.components {
+            if target_comp_ids.contains(&comp.id) {
+                let new_id = self.next_comp_id;
+                self.next_comp_id += 1;
+                let count = self.components.iter().filter(|c| c.kind == comp.kind).count()
+                    + 1
+                    + new_comps.iter().filter(|c: &&SchematicComponent| c.kind == comp.kind).count();
+
+                let mut cloned = comp.clone();
+                cloned.id = new_id;
+                cloned.pos += offset;
+                cloned.name = format!("{}{}", comp.kind.prefix(), count);
+                new_comps.push(cloned);
+            }
+        }
+
+        // 2. Intra-selection wires
+        let mut selected_pins = Vec::new();
+        for comp in &self.components {
+            if target_comp_ids.contains(&comp.id) {
+                for (_, p) in comp.all_pins() {
+                    selected_pins.push(p);
+                }
+            }
+        }
+
+        let mut new_wires = Vec::new();
+        for wire in &self.wires {
+            let explicitly_selected = target_wire_ids.contains(&wire.id);
+            let intra_selection = if selected_pins.is_empty() {
+                false
+            } else {
+                let start_connected = wire.segments.first().map_or(false, |s| {
+                    selected_pins.iter().any(|&p| (p - s.start).length() <= 4.0)
+                });
+                let end_connected = wire.segments.last().map_or(false, |s| {
+                    selected_pins.iter().any(|&p| (p - s.end).length() <= 4.0)
+                });
+                start_connected && end_connected
+            };
+
+            if explicitly_selected || intra_selection {
+                let new_wid = self.next_wire_id;
+                self.next_wire_id += 1;
+
+                let mut cloned_wire = wire.clone();
+                cloned_wire.id = new_wid;
+                for seg in &mut cloned_wire.segments {
+                    seg.start += offset;
+                    seg.end += offset;
+                }
+                new_wires.push(cloned_wire);
+            }
+        }
+
+        // 3. Atomically add items
+        let mut batch = Vec::new();
+        for comp in &new_comps {
+            batch.push(CanvasCommand::AddComponent(comp.clone()));
+            self.components.push(comp.clone());
+        }
+        for wire in &new_wires {
+            batch.push(CanvasCommand::AddWire(wire.clone()));
+            self.wires.push(wire.clone());
+        }
+
+        if !batch.is_empty() {
+            if batch.len() == 1 {
+                self.history.record(batch.remove(0));
+            } else {
+                self.history.record(CanvasCommand::Batch(batch));
+            }
+        }
+
+        // 4. Select newly duplicated items
+        self.selected_component_ids = new_comps.iter().map(|c| c.id).collect();
+        self.selected_wire_ids = new_wires.iter().map(|w| w.id).collect();
+        self.selected_component_id = self.selected_component_ids.iter().next().copied();
+        self.selected_wire_id = self.selected_wire_ids.iter().next().copied();
+        self.sync_selection_to_canvas();
+
+        self.sim_status = format!(
+            "Duplicated {} components, {} wires",
+            new_comps.len(),
+            new_wires.len()
+        );
+    }
+
+    /// Rotates the active component(s) clockwise by 90 degrees.
+    pub fn rotate_active(&mut self) {
+        let mut target_comp_ids = self.selected_component_ids.clone();
+        if let Some(cid) = self.selected_component_id {
+            target_comp_ids.insert(cid);
+        }
+
+        if !target_comp_ids.is_empty() {
+            let mut batch = Vec::new();
+            for comp in &mut self.components {
+                if target_comp_ids.contains(&comp.id) {
+                    let from_rot = comp.rotation;
+                    comp.rotate_clockwise();
+                    let to_rot = comp.rotation;
+                    batch.push(CanvasCommand::RotateComponent {
+                        id: comp.id,
+                        from_rot,
+                        to_rot,
+                    });
+                }
+            }
+
+            if !batch.is_empty() {
+                if batch.len() == 1 {
+                    self.history.record(batch.remove(0));
+                } else {
+                    self.history.record(CanvasCommand::Batch(batch));
+                }
+            }
+            self.sync_selection_to_canvas();
+            self.sim_status.clear();
+            return;
+        }
+
         if self.selected_tool.is_place() {
             self.placement_rotation = (self.placement_rotation + 1) % 4;
             self.sim_status.clear();
         }
     }
 
-    /// Rotates the selected component clockwise by 90 degrees.
+    /// Rotates the selected component(s) clockwise by 90 degrees.
     pub fn rotate_selected(&mut self) {
         self.rotate_active();
     }
 
-    /// Handles global hotkeys and keyboard shortcuts.
+    /// Executes a registered CAD action by identifier.
+    pub fn execute_action(&mut self, action_id: ActionId) {
+        match action_id {
+            ActionId::NewProject => self.clear_all(),
+            ActionId::ExportNetlist => {
+                self.show_netlist_window = true;
+                self.spice_netlist_text = self.netlist_sync.sync_from_canvas(&self.canvas).to_string();
+            }
+            ActionId::Undo => {
+                self.undo();
+            }
+            ActionId::Redo => {
+                self.redo();
+            }
+            ActionId::Delete => self.delete_selected(),
+            ActionId::Duplicate => self.duplicate_selected(),
+            ActionId::SelectAll => self.select_all(),
+            ActionId::ClearSelection => self.clear_selection(),
+            ActionId::RotateClockwise => self.rotate_active(),
+            ActionId::ToggleFloatingToolbar => {
+                self.show_floating_toolbar = !self.show_floating_toolbar;
+                self.floating_toolbar_state.is_visible = self.show_floating_toolbar;
+            }
+            ActionId::ToggleGrid => self.canvas.show_grid = !self.canvas.show_grid,
+            ActionId::ZoomFit => self.pending_auto_center = true,
+            ActionId::TogglePalette => self.show_palette = !self.show_palette,
+            ActionId::ToggleOscilloscope => self.show_oscilloscope = !self.show_oscilloscope,
+            ActionId::ToggleThermal => self.show_thermal_overlay = !self.show_thermal_overlay,
+            ActionId::ToggleErcOverlay => self.show_erc_overlay = !self.show_erc_overlay,
+            ActionId::RunSimulation => self.run_dc_op(),
+            ActionId::RunErc => self.run_erc(),
+            ActionId::ToolSelect => {
+                self.selected_tool = ToolMode::Select;
+                self.active_wire_start = None;
+            }
+            ActionId::ToolWire => {
+                self.selected_tool = ToolMode::Wire;
+                self.active_wire_start = None;
+            }
+            ActionId::ToolBus => {
+                self.selected_tool = ToolMode::Bus;
+                self.active_wire_start = None;
+            }
+            ActionId::ToolProbe => {
+                self.selected_tool = ToolMode::Probe;
+                self.active_wire_start = None;
+            }
+            ActionId::ClearWire => self.active_wire_start = None,
+            ActionId::OpenCommandPalette => self.command_palette.open(),
+        }
+    }
+
+    /// Handles global hotkeys and keyboard shortcuts using a 3-tier priority hierarchy.
     fn handle_shortcuts(&mut self, ctx: &egui::Context) {
         let ctrl = ctx.input(|i| i.modifiers.command || i.modifiers.ctrl);
         let shift = ctx.input(|i| i.modifiers.shift);
 
+        // =========================================================================
+        // TIER 1: System Reserved Keys (Protected - always active)
+        // =========================================================================
+
+        // Command Palette: Ctrl+K
+        if ctrl && ctx.input(|i| i.key_pressed(Key::K)) {
+            self.command_palette.toggle();
+            return;
+        }
+
         // Undo: Ctrl+Z
         if ctrl && !shift && ctx.input(|i| i.key_pressed(Key::Z)) {
             self.undo();
+            return;
         }
+
         // Redo: Ctrl+Y or Ctrl+Shift+Z
         if (ctrl && ctx.input(|i| i.key_pressed(Key::Y)))
             || (ctrl && shift && ctx.input(|i| i.key_pressed(Key::Z)))
         {
             self.redo();
+            return;
         }
 
-        if !ctrl && ctx.input(|i| i.key_pressed(Key::R)) {
-            self.rotate_active();
+        // Escape: Cancel active wire, cancel placement, close palette, clear selection
+        if ctx.input(|i| i.key_pressed(Key::Escape)) {
+            if self.command_palette.is_open {
+                self.command_palette.close();
+            } else {
+                self.active_wire_start = None;
+                self.selected_tool = ToolMode::Select;
+                self.clear_selection();
+                self.placement_rotation = 0;
+            }
+            return;
         }
+
+        // =========================================================================
+        // TIER 2: Text Input Focus Masking
+        // =========================================================================
+        // If user is actively typing in a search bar, rename field, or dialog input,
+        // CAD hotkeys MUST be strictly masked to prevent unintended tool switches or rotations.
+        if ctx.egui_wants_keyboard_input() {
+            return;
+        }
+
+        // =========================================================================
+        // TIER 3: CAD Hotkeys and Tool Modifiers
+        // =========================================================================
+
+        // Duplicate: Ctrl+D
+        if ctrl && ctx.input(|i| i.key_pressed(Key::D)) {
+            self.duplicate_selected();
+            return;
+        }
+
+        // Select All: Ctrl+A
+        if ctrl && ctx.input(|i| i.key_pressed(Key::A)) {
+            self.select_all();
+            return;
+        }
+
+        // Delete: Delete or Backspace
         if ctx.input(|i| i.key_pressed(Key::Delete) || i.key_pressed(Key::Backspace)) {
             self.delete_selected();
+            return;
         }
-        if ctx.input(|i| i.key_pressed(Key::Escape)) {
-            self.active_wire_start = None;
+
+        // Rotate: R
+        if !ctrl && ctx.input(|i| i.key_pressed(Key::R)) {
+            self.rotate_active();
+            return;
+        }
+
+        // Toggle Floating CAD Toolbar: H
+        if !ctrl && ctx.input(|i| i.key_pressed(Key::H)) {
+            self.show_floating_toolbar = !self.show_floating_toolbar;
+            self.floating_toolbar_state.is_visible = self.show_floating_toolbar;
+            return;
+        }
+
+        // Zoom to Fit: F
+        if !ctrl && ctx.input(|i| i.key_pressed(Key::F)) {
+            self.pending_auto_center = true;
+            return;
+        }
+
+        // Toggle Grid: G
+        if !ctrl && ctx.input(|i| i.key_pressed(Key::G)) {
+            self.canvas.show_grid = !self.canvas.show_grid;
+            return;
+        }
+
+        // Select Tool: V or S
+        if !ctrl && (ctx.input(|i| i.key_pressed(Key::V)) || ctx.input(|i| i.key_pressed(Key::S))) {
             self.selected_tool = ToolMode::Select;
-            self.selected_component_id = None;
-            self.selected_wire_id = None;
+            self.active_wire_start = None;
             self.placement_rotation = 0;
+            return;
         }
+
+        // Wire Tool: W
         if !ctrl && ctx.input(|i| i.key_pressed(Key::W)) {
             self.selected_tool = ToolMode::Wire;
             self.active_wire_start = None;
             self.placement_rotation = 0;
+            return;
         }
-        if !ctrl && ctx.input(|i| i.key_pressed(Key::S)) {
-            self.selected_tool = ToolMode::Select;
+
+        // Bus Tool: B
+        if !ctrl && ctx.input(|i| i.key_pressed(Key::B)) {
+            self.selected_tool = ToolMode::Bus;
             self.active_wire_start = None;
             self.placement_rotation = 0;
+            return;
+        }
+
+        // Probe Tool: P
+        if !ctrl && ctx.input(|i| i.key_pressed(Key::P)) {
+            self.selected_tool = ToolMode::Probe;
+            self.active_wire_start = None;
+            self.placement_rotation = 0;
+            return;
         }
     }
 
@@ -1096,9 +1618,11 @@ impl PhononApp {
             }
         }
 
+        self.sync_selection_to_canvas();
+
         // 3. Render wires
         for wire in &self.wires {
-            let is_sel = self.selected_wire_id == Some(wire.id);
+            let is_sel = self.is_wire_selected(wire.id);
             wire.render(&painter, &self.canvas, is_sel);
         }
 
@@ -1129,6 +1653,12 @@ impl PhononApp {
             );
         }
 
+        // 4b. Render illuminated selection halos
+        self.canvas.render_selection_halos(&painter);
+
+        // 4c. Render rubberband marquee drag box
+        self.canvas.render_marquee(&painter);
+
         // 5. Mouse interactions on canvas
         let mouse_pos = ui.input(|i| i.pointer.hover_pos());
         if let Some(mouse_screen) = mouse_pos {
@@ -1137,6 +1667,7 @@ impl PhononApp {
 
             // Handle tool actions on click
             if response.clicked_by(PointerButton::Primary) {
+                let shift = ui.input(|i| i.modifiers.shift);
                 match &self.selected_tool {
                     ToolMode::Select => {
                         // Hit-test components
@@ -1146,19 +1677,26 @@ impl PhononApp {
                             .rev()
                             .find(|c| c.contains(mouse_world))
                         {
-                            self.selected_component_id = Some(comp.id);
-                            self.selected_wire_id = None;
+                            let cid = comp.id;
+                            if shift {
+                                self.toggle_component_selection(cid);
+                            } else {
+                                self.select_component(cid, false);
+                            }
                         } else if let Some(wire) = self
                             .wires
                             .iter()
                             .rev()
                             .find(|w| w.contains(mouse_world, 6.0))
                         {
-                            self.selected_wire_id = Some(wire.id);
-                            self.selected_component_id = None;
-                        } else {
-                            self.selected_component_id = None;
-                            self.selected_wire_id = None;
+                            let wid = wire.id;
+                            if shift {
+                                self.toggle_wire_selection(wid);
+                            } else {
+                                self.select_wire(wid, false);
+                            }
+                        } else if !shift {
+                            self.clear_selection();
                         }
                     }
                     ToolMode::Place(kind) | ToolMode::PlaceComponent(kind) => {
@@ -1198,6 +1736,23 @@ impl PhononApp {
                             self.active_wire_start = Some(nearest_pin.unwrap_or(snapped_world));
                         }
                     }
+                    ToolMode::Bus => {
+                        if let Some(start) = self.active_wire_start {
+                            if (start - snapped_world).length() > 5.0 {
+                                let mut segs = Vec::new();
+                                segs.push(crate::schematic::wire::WireSegment::new(start, snapped_world));
+                                let bus = crate::schematic::bus::SchematicBus::new(
+                                    self.buses.len() + 1,
+                                    crate::schematic::bus::BusSignal::new("DATA", 7, 0),
+                                    segs,
+                                );
+                                self.buses.push(bus);
+                                self.active_wire_start = Some(snapped_world);
+                            }
+                        } else {
+                            self.active_wire_start = Some(snapped_world);
+                        }
+                    }
                     ToolMode::Probe => {
                         // Check if user clicked a pin
                         let mut probed = false;
@@ -1232,44 +1787,84 @@ impl PhononApp {
                 self.active_wire_start = None;
             }
 
-            // Drag selected component with left mouse button
+            // Drag handling for selection moving or rubberband marquee
             if response.drag_started_by(PointerButton::Primary)
                 && self.selected_tool == ToolMode::Select
             {
-                if let Some(cid) = self.selected_component_id {
-                    if let Some(comp) = self.components.iter().find(|c| c.id == cid) {
-                        if comp.contains(mouse_world) {
-                            self.dragging_component = true;
-                            self.drag_start_pos = Some((comp.id, comp.pos));
+                let shift = ui.input(|i| i.modifiers.shift);
+                if let Some(comp) = self.components.iter().rev().find(|c| c.contains(mouse_world)) {
+                    let comp_id = comp.id;
+                    if shift {
+                        self.toggle_component_selection(comp_id);
+                    } else {
+                        if !self.is_component_selected(comp_id) {
+                            self.select_component(comp_id, false);
                         }
+                        self.dragging_selection = true;
+                        self.drag_start_positions = self
+                            .components
+                            .iter()
+                            .filter(|c| self.is_component_selected(c.id))
+                            .map(|c| (c.id, c.pos))
+                            .collect();
                     }
+                } else if let Some(wire) = self.wires.iter().rev().find(|w| w.contains(mouse_world, 6.0)) {
+                    let wire_id = wire.id;
+                    if shift {
+                        self.toggle_wire_selection(wire_id);
+                    } else {
+                        self.select_wire(wire_id, false);
+                    }
+                } else {
+                    // Empty canvas: Start rubberband marquee box
+                    self.marquee_start = Some(mouse_world);
+                    self.marquee_current = Some(mouse_world);
+                    self.sync_selection_to_canvas();
                 }
             }
-            if response.dragged_by(PointerButton::Primary) && self.dragging_component {
-                if let Some(cid) = self.selected_component_id {
-                    if let Some(comp) = self.components.iter_mut().find(|c| c.id == cid) {
-                        let delta = response.drag_delta() / self.canvas.zoom;
-                        comp.pos += delta;
-                    }
+
+            if response.dragged_by(PointerButton::Primary) && self.selected_tool == ToolMode::Select {
+                if self.dragging_selection {
+                    let delta = response.drag_delta() / self.canvas.zoom;
+                    self.translate_selection(delta);
+                } else if self.marquee_start.is_some() {
+                    self.marquee_current = Some(mouse_world);
+                    self.sync_selection_to_canvas();
                 }
             }
-            if response.drag_stopped() && self.dragging_component {
-                if let Some(cid) = self.selected_component_id {
-                    if let Some(comp) = self.components.iter_mut().find(|c| c.id == cid) {
-                        comp.pos = self.canvas.snap_to_grid(comp.pos);
-                        if let Some((start_id, start_pos)) = self.drag_start_pos.take() {
-                            if start_id == comp.id && start_pos != comp.pos {
-                                self.history.record(CanvasCommand::MoveComponent {
-                                    id: comp.id,
+
+            if response.drag_stopped() && self.selected_tool == ToolMode::Select {
+                if self.dragging_selection {
+                    let mut batch = Vec::new();
+                    for (id, start_pos) in self.drag_start_positions.drain(..) {
+                        if let Some(comp) = self.components.iter_mut().find(|c| c.id == id) {
+                            comp.pos = self.canvas.snap_to_grid(comp.pos);
+                            if comp.pos != start_pos {
+                                batch.push(CanvasCommand::MoveComponent {
+                                    id,
                                     from: start_pos,
                                     to: comp.pos,
                                 });
                             }
                         }
                     }
+                    if !batch.is_empty() {
+                        if batch.len() == 1 {
+                            self.history.record(batch.remove(0));
+                        } else {
+                            self.history.record(CanvasCommand::Batch(batch));
+                        }
+                    }
+                    self.dragging_selection = false;
+                    self.sync_selection_to_canvas();
+                } else if let (Some(m_start), Some(m_curr)) = (self.marquee_start.take(), self.marquee_current.take()) {
+                    let marquee_rect = Rect::from_two_pos(m_start, m_curr);
+                    if marquee_rect.width() > 3.0 || marquee_rect.height() > 3.0 {
+                        let shift = ui.input(|i| i.modifiers.shift);
+                        self.select_in_rect(marquee_rect, shift);
+                    }
+                    self.sync_selection_to_canvas();
                 }
-                self.drag_start_pos = None;
-                self.dragging_component = false;
             }
 
             // Render wire routing rubberband preview
@@ -1293,7 +1888,7 @@ impl PhononApp {
 
         // 6. Render components and thermal overlay
         for comp in &self.components {
-            let is_sel = self.selected_component_id == Some(comp.id);
+            let is_sel = self.is_component_selected(comp.id);
 
             // Collect pin voltages for this component if available
             let mut pin_voltages = Vec::new();
@@ -1361,45 +1956,37 @@ impl PhononApp {
             self.show_erc_overlay,
             mouse_pos,
         );
+
+        // 8. Floating CAD Tools Island (rendered in Order::Middle)
+        let toolbar_action = self.floating_toolbar_state.show(
+            ui.ctx(),
+            viewport,
+            &self.selected_tool,
+        );
+        if let Some(act) = toolbar_action {
+            match act {
+                FloatingToolbarAction::SelectTool(tool) => {
+                    self.selected_tool = tool;
+                    self.active_wire_start = None;
+                }
+                FloatingToolbarAction::Rotate => self.rotate_active(),
+                FloatingToolbarAction::Delete => self.delete_selected(),
+                FloatingToolbarAction::Clear => {
+                    self.active_wire_start = None;
+                    self.clear_selection();
+                }
+            }
+        }
+
+        // 9. Command Palette Modal (rendered in Order::Foreground)
+        let palette_action = self.command_palette.show(ui.ctx(), &self.action_registry);
+        if let Some(action_id) = palette_action {
+            self.execute_action(action_id);
+        }
     }
 
-    /// Renders the left tool and component palette panel.
+    /// Renders the left component palette panel.
     fn render_palette(&mut self, ui: &mut egui::Ui) {
-        ui.heading("CAD Tools");
-        ui.horizontal(|ui| {
-            if ui
-                .selectable_label(self.selected_tool == ToolMode::Select, "Select (S)")
-                .clicked()
-            {
-                self.selected_tool = ToolMode::Select;
-                self.placement_rotation = 0;
-                self.active_wire_start = None;
-            }
-            if ui
-                .selectable_label(self.selected_tool == ToolMode::Wire, "Wire (W)")
-                .clicked()
-            {
-                self.selected_tool = ToolMode::Wire;
-                self.placement_rotation = 0;
-                self.active_wire_start = None;
-            }
-        });
-
-        ui.horizontal(|ui| {
-            if ui
-                .selectable_label(self.selected_tool == ToolMode::Probe, "Probe")
-                .clicked()
-            {
-                self.selected_tool = ToolMode::Probe;
-                self.placement_rotation = 0;
-                self.active_wire_start = None;
-            }
-            if ui.button("Clear Wire").clicked() {
-                self.active_wire_start = None;
-            }
-        });
-
-        ui.separator();
         ui.heading("Components");
 
         egui::ScrollArea::vertical().show(ui, |ui| {
@@ -1408,8 +1995,7 @@ impl PhononApp {
                 self.selected_tool = ToolMode::PlaceComponent(kind);
                 self.placement_rotation = 0;
                 self.active_wire_start = None;
-                self.selected_component_id = None;
-                self.selected_wire_id = None;
+                self.clear_selection();
             }
         });
     }

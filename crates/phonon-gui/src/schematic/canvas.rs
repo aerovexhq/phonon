@@ -9,6 +9,8 @@ use super::subcircuit::SubcircuitInstance;
 use super::wire::SchematicWire;
 use egui::{Color32, FontId, Painter, Pos2, Rect, Stroke, StrokeKind, Vec2};
 
+use std::collections::HashSet;
+
 /// Manages infinite vector canvas pan, zoom, coordinate transformations, and visual schematic objects.
 #[derive(Debug, Clone, PartialEq)]
 pub struct SchematicCanvas {
@@ -20,6 +22,18 @@ pub struct SchematicCanvas {
     pub wires: Vec<SchematicWire>,
     pub subcircuit_instances: Vec<SubcircuitInstance>,
     pub buses: Vec<SchematicBus>,
+    /// Set of selected component IDs for multi-selection.
+    pub selected_component_ids: HashSet<usize>,
+    /// Set of selected wire IDs for multi-selection.
+    pub selected_wire_ids: HashSet<usize>,
+    /// Backward-compatible primary/last selected component ID.
+    pub selected_component_id: Option<usize>,
+    /// Backward-compatible primary/last selected wire ID.
+    pub selected_wire_id: Option<usize>,
+    /// Rubberband marquee drag start position in world coordinates.
+    pub marquee_start: Option<Pos2>,
+    /// Rubberband marquee drag current position in world coordinates.
+    pub marquee_current: Option<Pos2>,
 }
 
 impl Default for SchematicCanvas {
@@ -33,6 +47,12 @@ impl Default for SchematicCanvas {
             wires: Vec::new(),
             subcircuit_instances: Vec::new(),
             buses: Vec::new(),
+            selected_component_ids: HashSet::new(),
+            selected_wire_ids: HashSet::new(),
+            selected_component_id: None,
+            selected_wire_id: None,
+            marquee_start: None,
+            marquee_current: None,
         }
     }
 }
@@ -68,6 +88,241 @@ impl SchematicCanvas {
         self.wires.clear();
         self.subcircuit_instances.clear();
         self.buses.clear();
+        self.clear_selection();
+        self.marquee_start = None;
+        self.marquee_current = None;
+    }
+
+    /// Checks whether a component with the given ID is selected.
+    pub fn is_component_selected(&self, id: usize) -> bool {
+        self.selected_component_ids.contains(&id) || self.selected_component_id == Some(id)
+    }
+
+    /// Checks whether a wire with the given ID is selected.
+    pub fn is_wire_selected(&self, id: usize) -> bool {
+        self.selected_wire_ids.contains(&id) || self.selected_wire_id == Some(id)
+    }
+
+    /// Clears all selection state.
+    pub fn clear_selection(&mut self) {
+        self.selected_component_ids.clear();
+        self.selected_wire_ids.clear();
+        self.selected_component_id = None;
+        self.selected_wire_id = None;
+    }
+
+    /// Selects a single component or adds to selection if multi is true.
+    pub fn select_component(&mut self, id: usize, multi: bool) {
+        if !multi {
+            self.clear_selection();
+        }
+        self.selected_component_ids.insert(id);
+        self.selected_component_id = Some(id);
+    }
+
+    /// Selects a single wire or adds to selection if multi is true.
+    pub fn select_wire(&mut self, id: usize, multi: bool) {
+        if !multi {
+            self.clear_selection();
+        }
+        self.selected_wire_ids.insert(id);
+        self.selected_wire_id = Some(id);
+    }
+
+    /// Toggles a component's selection state (for Shift+Click).
+    pub fn toggle_component_selection(&mut self, id: usize) {
+        if self.selected_component_ids.contains(&id) {
+            self.selected_component_ids.remove(&id);
+            if self.selected_component_id == Some(id) {
+                self.selected_component_id = self.selected_component_ids.iter().next().copied();
+            }
+        } else {
+            self.selected_component_ids.insert(id);
+            self.selected_component_id = Some(id);
+        }
+    }
+
+    /// Toggles a wire's selection state (for Shift+Click).
+    pub fn toggle_wire_selection(&mut self, id: usize) {
+        if self.selected_wire_ids.contains(&id) {
+            self.selected_wire_ids.remove(&id);
+            if self.selected_wire_id == Some(id) {
+                self.selected_wire_id = self.selected_wire_ids.iter().next().copied();
+            }
+        } else {
+            self.selected_wire_ids.insert(id);
+            self.selected_wire_id = Some(id);
+        }
+    }
+
+    /// Selects all components and wires on the canvas.
+    pub fn select_all(&mut self) {
+        self.selected_component_ids = self.components.iter().map(|c| c.id).collect();
+        self.selected_wire_ids = self.wires.iter().map(|w| w.id).collect();
+        self.selected_component_id = self.selected_component_ids.iter().next().copied();
+        self.selected_wire_id = self.selected_wire_ids.iter().next().copied();
+    }
+
+    /// Selects all components and wires intersecting the given rectangle in world coordinates.
+    /// If `add` is false, clears prior selection before selecting.
+    pub fn select_in_rect(&mut self, rect: Rect, add: bool) {
+        if !add {
+            self.clear_selection();
+        }
+        for comp in &self.components {
+            if comp.intersects_rect(&rect) {
+                self.selected_component_ids.insert(comp.id);
+                self.selected_component_id = Some(comp.id);
+            }
+        }
+        for wire in &self.wires {
+            if wire.intersects_rect(&rect) {
+                self.selected_wire_ids.insert(wire.id);
+                self.selected_wire_id = Some(wire.id);
+            }
+        }
+    }
+
+    /// Translates all currently selected components and wires by delta in world coordinates.
+    /// Also updates any unselected wires connected to the moved components.
+    pub fn translate_selection(&mut self, delta: Vec2) {
+        if delta == Vec2::ZERO {
+            return;
+        }
+
+        // Collect old pin positions of moving components to identify attached wires
+        let mut moving_pins = Vec::new();
+        for comp in &self.components {
+            if self.is_component_selected(comp.id) {
+                for (_, p) in comp.all_pins() {
+                    moving_pins.push(p);
+                }
+            }
+        }
+
+        // 1. Translate selected components
+        let sel_comp_ids = self.selected_component_ids.clone();
+        let sel_comp_id = self.selected_component_id;
+        let is_comp_sel = |id: usize| sel_comp_ids.contains(&id) || sel_comp_id == Some(id);
+
+        for comp in &mut self.components {
+            if is_comp_sel(comp.id) {
+                comp.pos += delta;
+            }
+        }
+
+        // 2. Translate selected wires or attached wire endpoints
+        let sel_wire_ids = self.selected_wire_ids.clone();
+        let sel_wire_id = self.selected_wire_id;
+        let is_wire_sel = |id: usize| sel_wire_ids.contains(&id) || sel_wire_id == Some(id);
+
+        for wire in &mut self.wires {
+            if is_wire_sel(wire.id) {
+                // Entire wire moves with delta
+                for seg in &mut wire.segments {
+                    seg.start += delta;
+                    seg.end += delta;
+                }
+            } else if !moving_pins.is_empty() {
+                // Check if wire endpoints are attached to moving pins
+                let start_attached = wire.segments.first().map_or(false, |s| {
+                    moving_pins.iter().any(|&p| (p - s.start).length() <= 4.0)
+                });
+                let end_attached = wire.segments.last().map_or(false, |s| {
+                    moving_pins.iter().any(|&p| (p - s.end).length() <= 4.0)
+                });
+
+                if start_attached && end_attached {
+                    // Both endpoints attached: move whole wire
+                    for seg in &mut wire.segments {
+                        seg.start += delta;
+                        seg.end += delta;
+                    }
+                } else if start_attached {
+                    let old_end = wire.end_point();
+                    let new_start = wire.start_point() + delta;
+                    *wire = SchematicWire::manhattan_route_hv_with_net(
+                        wire.id,
+                        new_start,
+                        old_end,
+                        wire.net_name.clone(),
+                    );
+                } else if end_attached {
+                    let old_start = wire.start_point();
+                    let new_end = wire.end_point() + delta;
+                    *wire = SchematicWire::manhattan_route_hv_with_net(
+                        wire.id,
+                        old_start,
+                        new_end,
+                        wire.net_name.clone(),
+                    );
+                }
+            }
+        }
+    }
+
+    /// Renders the rubberband marquee box if active.
+    pub fn render_marquee(&self, painter: &Painter) {
+        if let (Some(start_world), Some(current_world)) = (self.marquee_start, self.marquee_current) {
+            let start_screen = self.world_to_screen(start_world);
+            let current_screen = self.world_to_screen(current_world);
+            let screen_rect = Rect::from_two_pos(start_screen, current_screen);
+
+            // Semi-transparent fill with theme stroke
+            painter.rect_filled(
+                screen_rect,
+                2.0,
+                Color32::from_rgba_unmultiplied(60, 140, 240, 35),
+            );
+            painter.rect_stroke(
+                screen_rect,
+                2.0,
+                Stroke::new(1.5, Color32::from_rgba_unmultiplied(100, 180, 255, 220)),
+                StrokeKind::Outside,
+            );
+        }
+    }
+
+    /// Renders illuminated selection halos around all selected components and wires.
+    pub fn render_selection_halos(&self, painter: &Painter) {
+        // Halos for selected components
+        for comp in &self.components {
+            if self.is_component_selected(comp.id) {
+                let bbox_world = comp.bounding_box();
+                let min_screen = self.world_to_screen(bbox_world.min);
+                let max_screen = self.world_to_screen(bbox_world.max);
+                let screen_rect = Rect::from_min_max(min_screen, max_screen).expand(4.0 * self.zoom.clamp(0.8, 1.5));
+
+                // Soft glowing background halo
+                painter.rect_filled(
+                    screen_rect,
+                    6.0,
+                    Color32::from_rgba_unmultiplied(255, 180, 50, 28),
+                );
+                // Outer illuminated stroke
+                painter.rect_stroke(
+                    screen_rect,
+                    6.0,
+                    Stroke::new(2.0 * self.zoom.clamp(0.8, 1.8), Color32::from_rgba_unmultiplied(255, 190, 60, 200)),
+                    StrokeKind::Outside,
+                );
+            }
+        }
+
+        // Halos for selected wires
+        for wire in &self.wires {
+            if self.is_wire_selected(wire.id) {
+                let halo_stroke = Stroke::new(
+                    6.0 * self.zoom.clamp(0.8, 2.0),
+                    Color32::from_rgba_unmultiplied(255, 180, 50, 80),
+                );
+                for seg in &wire.segments {
+                    let s_screen = self.world_to_screen(seg.start);
+                    let e_screen = self.world_to_screen(seg.end);
+                    painter.line_segment([s_screen, e_screen], halo_stroke);
+                }
+            }
+        }
     }
 
     /// Renders visual ERC diagnostic overlay with color-coded pulsing rings and hover tooltips.

@@ -27,7 +27,11 @@ pub mod exceptional_surface_dialog;
 pub mod soti_corner_dialog;
 pub mod lieb_lattice_dialog;
 pub mod axion_insulator_dialog;
+pub mod command_palette;
+pub mod floating_toolbar;
 
+pub use command_palette::CommandPalette;
+pub use floating_toolbar::{FloatingToolbarAction, FloatingToolbarState};
 pub use chern_circulator_dialog::ChernCirculatorDialog;
 pub use cluster_dashboard_dialog::ClusterDashboardDialog;
 pub use dynamics_status::DynamicsStatusBadge;

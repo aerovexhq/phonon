@@ -309,7 +309,23 @@ fn render_top_frame_internal(
                 }
                 ui.close();
             }
+            if ui.button("Duplicate (Ctrl+D)").clicked() {
+                if let Some(a) = app.as_deref_mut() {
+                    a.duplicate_selected();
+                }
+                ui.close();
+            }
             if ui.button("Select All (Ctrl+A)").clicked() {
+                if let Some(a) = app.as_deref_mut() {
+                    a.select_all();
+                }
+                ui.close();
+            }
+            ui.separator();
+            if ui.button("Command Palette (Ctrl+K)").clicked() {
+                if let Some(a) = app.as_deref_mut() {
+                    a.command_palette.open();
+                }
                 ui.close();
             }
         });
@@ -318,7 +334,8 @@ fn render_top_frame_internal(
         // View Menu
         ui.menu_button("View", |ui| {
             if let Some(a) = app.as_deref_mut() {
-                ui.checkbox(&mut a.canvas.show_grid, "Show Grid");
+                ui.checkbox(&mut a.canvas.show_grid, "Show Grid (G)");
+                ui.checkbox(&mut a.show_floating_toolbar, "Show Floating CAD Tools (H)");
                 ui.checkbox(&mut a.show_oscilloscope, "Show Oscilloscope");
                 ui.checkbox(&mut a.show_thermal_overlay, "Show Thermal Badges");
                 ui.checkbox(&mut a.show_palette, "Show Component Palette");
