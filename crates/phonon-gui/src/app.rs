@@ -12,14 +12,17 @@ use crate::schematic::{
     SubcircuitDefinition, SymbolLibrary,
 };
 use crate::thermal::{Colormap, ThermalOverlay};
+use crate::storage::ProjectStorageManager;
 use crate::widgets::{
-    render_top_frame_with_app, ClusterDashboardDialog, ComponentPalette, ExceptionalPointDialog,
-    MonteCarloYieldDialog, NeuromorphicSnnDialog, PolaritonCavityDialog, SensitivityDialog,
-    SmithChartDialog, SymbolEditorDialog, ThermalFloorplanDialog, TopFrameAction, TopFrameConfig,
-    WeylSemimetalDialog, FqhBraidingDialog, JtwpaDialog, FloquetMetasurfaceDialog,
-    HolonomicProcessorDialog, TwistedMoireDialog, ChernCirculatorDialog,
-    KerrMicrocombDialog, ExceptionalSurfaceDialog, SotiCornerDialog, LiebLatticeDialog,
-    AxionInsulatorDialog, CommandPalette, FloatingToolbarAction, FloatingToolbarState,
+    render_top_frame_with_app, ClusterDashboardDialog, ComponentPalette, ConfirmationDecision,
+    ConfirmationModal, DemoCircuitKind, ExceptionalPointDialog, FloatingToolbarAction,
+    FloatingToolbarState, FloquetMetasurfaceDialog, FqhBraidingDialog, HolonomicProcessorDialog,
+    JtwpaDialog, KerrMicrocombDialog, MonteCarloYieldDialog, NeuromorphicSnnDialog,
+    PendingAction, PolaritonCavityDialog, ProjectDialog, ProjectDialogAction,
+    SensitivityDialog, SmithChartDialog, SymbolEditorDialog, ThermalFloorplanDialog, TopFrameAction,
+    TopFrameConfig, TwistedMoireDialog, WeylSemimetalDialog, ChernCirculatorDialog,
+    ExceptionalSurfaceDialog, SotiCornerDialog, LiebLatticeDialog, AxionInsulatorDialog,
+    CommandPalette,
 };
 use crate::actions::{ActionId, ActionRegistry};
 use eframe::{App, Frame};
@@ -222,6 +225,27 @@ pub struct PhononApp {
 
     /// Whether project has unsaved modifications.
     pub is_modified: bool,
+
+    /// Session modification epoch tracking changes since clean baseline.
+    pub modification_epoch: u64,
+
+    /// Last confirmed clean epoch timestamp.
+    pub clean_epoch: u64,
+
+    /// Active file system path for project saving on desktop.
+    pub current_project_path: Option<std::path::PathBuf>,
+
+    /// Pending lifecycle action awaiting confirmation modal decision.
+    pub pending_confirmation_action: Option<PendingAction>,
+
+    /// Unified project storage and virtual file system manager.
+    pub storage_manager: ProjectStorageManager,
+
+    /// Project Manager modal dialog.
+    pub project_dialog: ProjectDialog,
+
+    /// Whether close has been confirmed and should trigger viewport close.
+    pub should_close: bool,
 }
 
 impl std::fmt::Debug for PhononApp {
@@ -236,6 +260,8 @@ impl std::fmt::Debug for PhononApp {
             .field("boot_theme_config", &self.boot_theme_config)
             .field("project_title", &self.project_title)
             .field("is_modified", &self.is_modified)
+            .field("modification_epoch", &self.modification_epoch)
+            .field("clean_epoch", &self.clean_epoch)
             .finish()
     }
 }
@@ -314,11 +340,26 @@ impl Default for PhononApp {
             pending_auto_center: true,
             project_title: "Untitled1".to_string(),
             is_modified: false,
+            modification_epoch: 0,
+            clean_epoch: 0,
+            current_project_path: None,
+            pending_confirmation_action: None,
+            storage_manager: ProjectStorageManager::new(),
+            project_dialog: ProjectDialog::new(),
+            should_close: false,
         };
 
-        // Initialize with default Voltage Divider demo
-        app.load_voltage_divider_demo();
+        // If a saved project from last time exists, continue from there. Otherwise load default Voltage Divider demo.
+        if !app.try_restore_last_project() {
+            app.load_voltage_divider_demo();
+            app.project_title = "Untitled1".to_string();
+            app.top_frame_config.circuit_name = "Untitled1".to_string();
+        }
         app.history.clear();
+        app.modification_epoch = 0;
+        app.clean_epoch = 0;
+        app.is_modified = false;
+        app.top_frame_config.is_modified = false;
         app
     }
 }
@@ -363,8 +404,229 @@ impl PhononApp {
 
     /// Updates the active project title and synchronization metadata.
     pub fn rename_project(&mut self, new_name: impl Into<String>) {
-        self.project_title = new_name.into();
+        let name = new_name.into();
+        if self.project_title != name {
+            self.project_title = name;
+            self.top_frame_config.circuit_name = self.project_title.clone();
+            self.mark_dirty();
+        }
+    }
+
+    /// Checks whether the project has unsaved modifications.
+    #[inline]
+    pub fn is_dirty(&self) -> bool {
+        self.modification_epoch != self.clean_epoch
+    }
+
+    /// Marks the project state as modified and records a new modification epoch.
+    pub fn mark_dirty(&mut self) {
+        self.modification_epoch += 1;
+        self.is_modified = true;
+        self.top_frame_config.is_modified = true;
+        self.autosave_current_project();
+    }
+
+    /// Marks the project state as clean, synchronizing clean_epoch to modification_epoch.
+    pub fn mark_clean(&mut self) {
+        self.clean_epoch = self.modification_epoch;
+        self.is_modified = false;
+        self.top_frame_config.is_modified = false;
+    }
+
+    /// Intercepts user requests (demo load, new project, clear canvas, close) with confirmation if dirty.
+    pub fn request_action(&mut self, action: PendingAction) {
+        if self.is_dirty() {
+            self.pending_confirmation_action = Some(action);
+        } else {
+            self.execute_confirmation_action(action);
+        }
+    }
+
+    /// Executes a confirmed or uncontested lifecycle action.
+    pub fn execute_confirmation_action(&mut self, action: PendingAction) {
+        match action {
+            PendingAction::NewProject => self.new_project(),
+            PendingAction::OpenProject(path) => {
+                if let Some(p) = path {
+                    #[cfg(not(target_arch = "wasm32"))]
+                    let is_file = p.exists();
+                    #[cfg(target_arch = "wasm32")]
+                    let is_file = false;
+
+                    if is_file {
+                        let _ = self.load_project_from_path(p);
+                    } else {
+                        let name = p.to_string_lossy().to_string();
+                        let _ = self.load_project_by_name(&name);
+                    }
+                } else {
+                    self.open_open_dialog();
+                }
+            }
+            PendingAction::LoadDemo(demo) => match demo {
+                DemoCircuitKind::VoltageDivider => self.load_voltage_divider_demo(),
+                DemoCircuitKind::DiodeClipper => self.load_diode_clipper_demo(),
+                DemoCircuitKind::BjtAmplifier => self.load_bjt_amplifier_demo(),
+                DemoCircuitKind::CmosInverter => self.load_cmos_inverter_demo(),
+                DemoCircuitKind::NmosSwitch => self.load_nmos_switch_demo(),
+            },
+            PendingAction::ClearCanvas => self.clear_canvas_user(),
+            PendingAction::CloseApp => {
+                self.should_close = true;
+            }
+        }
+    }
+
+    /// Initializes a fresh untitled project.
+    pub fn new_project(&mut self) {
+        self.clear_canvas_state();
+        self.history.clear();
+        self.project_title = "Untitled1".to_string();
+        self.current_project_path = None;
+        self.modification_epoch = 0;
+        self.clean_epoch = 0;
+        self.is_modified = false;
         self.top_frame_config.circuit_name = self.project_title.clone();
+        self.top_frame_config.is_modified = false;
+        self.pending_auto_center = true;
+        self.sim_status = "New Project".to_string();
+    }
+
+    /// Clears canvas by explicit user request and marks project as modified.
+    pub fn clear_canvas_user(&mut self) {
+        self.clear_all();
+        self.mark_dirty();
+        self.sim_status = "Canvas cleared".to_string();
+    }
+
+    /// Opens the Project Manager in Open mode.
+    pub fn open_open_dialog(&mut self) {
+        self.project_dialog.open_for_open();
+    }
+
+    /// Opens the Project Manager in SaveAs mode.
+    pub fn open_save_as_dialog(&mut self) {
+        self.project_dialog.open_for_save_as(&self.project_title);
+    }
+
+    /// Saves the current project state to storage and filesystem.
+    pub fn save_project(&mut self) -> Result<(), String> {
+        let title = self.project_title.clone();
+        self.storage_manager
+            .save_project(&title, &self.components, &self.wires)?;
+
+        if let Some(path) = &self.current_project_path {
+            let _ = save_project_to_file(path, &title, &self.components, &self.wires);
+        }
+
+        self.mark_clean();
+        self.sim_status = format!("Project '{}' saved", title);
+        Ok(())
+    }
+
+    /// Saves the current project state under a new title.
+    pub fn save_project_as(&mut self, new_name: &str) -> Result<(), String> {
+        self.rename_project(new_name);
+        self.save_project()
+    }
+
+    /// Loads a project by name from the virtual project file system.
+    pub fn load_project_by_name(&mut self, name: &str) -> Result<(), String> {
+        let proj = self.storage_manager.load_project(name)?;
+        self.clear_canvas_state();
+        self.history.clear();
+        self.project_title = proj.title;
+        self.components = proj.components;
+        self.wires = proj.wires;
+        self.next_comp_id = self.components.iter().map(|c| c.id).max().unwrap_or(0) + 1;
+        self.next_wire_id = self.wires.iter().map(|w| w.id).max().unwrap_or(0) + 1;
+        self.sync_canvas_state();
+        self.modification_epoch = 0;
+        self.clean_epoch = 0;
+        self.is_modified = false;
+        self.top_frame_config.circuit_name = self.project_title.clone();
+        self.top_frame_config.is_modified = false;
+        self.pending_auto_center = true;
+        self.run_erc();
+        self.sim_status = format!("Loaded project '{}'", name);
+        Ok(())
+    }
+
+    /// Loads a project from an explicit filesystem path on disk.
+    pub fn load_project_from_path(&mut self, path: impl AsRef<std::path::Path>) -> Result<(), String> {
+        let p = path.as_ref();
+        let proj = load_project_from_file(p).map_err(|e| e.to_string())?;
+        self.clear_canvas_state();
+        self.history.clear();
+        self.project_title = proj.title;
+        self.current_project_path = Some(p.to_path_buf());
+        self.components = proj.components;
+        self.wires = proj.wires;
+        self.next_comp_id = self.components.iter().map(|c| c.id).max().unwrap_or(0) + 1;
+        self.next_wire_id = self.wires.iter().map(|w| w.id).max().unwrap_or(0) + 1;
+        self.sync_canvas_state();
+        self.modification_epoch = 0;
+        self.clean_epoch = 0;
+        self.is_modified = false;
+        self.top_frame_config.circuit_name = self.project_title.clone();
+        self.top_frame_config.is_modified = false;
+        self.pending_auto_center = true;
+        self.run_erc();
+        self.sim_status = format!("Loaded from {}", p.display());
+        Ok(())
+    }
+
+    /// Automatically records the active project in autosave session storage.
+    pub fn autosave_current_project(&mut self) {
+        let _ = self.storage_manager.save_autosave(
+            &self.project_title,
+            &self.components,
+            &self.wires,
+        );
+    }
+
+    /// Attempts to restore the previous session from autosave storage. Returns true if restored.
+    pub fn try_restore_last_project(&mut self) -> bool {
+        if let Some(proj) = self.storage_manager.load_autosave() {
+            if !proj.components.is_empty() || !proj.wires.is_empty() {
+                self.clear_canvas_state();
+                self.history.clear();
+                self.project_title = proj.title;
+                self.components = proj.components;
+                self.wires = proj.wires;
+                self.next_comp_id = self.components.iter().map(|c| c.id).max().unwrap_or(0) + 1;
+                self.next_wire_id = self.wires.iter().map(|w| w.id).max().unwrap_or(0) + 1;
+                self.sync_canvas_state();
+                self.pending_auto_center = true;
+                return true;
+            }
+        }
+        false
+    }
+
+    /// Exports a project payload to a browser download or desktop file.
+    pub fn export_project(&mut self, name: &str) {
+        let data = if name == self.project_title {
+            serialize_project(&self.project_title, &self.components, &self.wires)
+        } else if let Ok(proj) = self.storage_manager.load_project(name) {
+            serialize_project(&proj.title, &proj.components, &proj.wires)
+        } else {
+            return;
+        };
+
+        let filename = format!("{}.phn", name);
+        #[cfg(target_arch = "wasm32")]
+        {
+            let _ = crate::storage::BrowserStorageAdapter::trigger_download(&filename, &data);
+        }
+        #[cfg(not(target_arch = "wasm32"))]
+        {
+            let export_dir = std::env::temp_dir().join("phonon").join("exports");
+            let _ = std::fs::create_dir_all(&export_dir);
+            let path = export_dir.join(&filename);
+            let _ = std::fs::write(&path, &data);
+            self.sim_status = format!("Exported to {}", path.display());
+        }
     }
 
     /// Clears canvas state without pushing an undo command.
@@ -480,6 +742,7 @@ impl PhononApp {
                 components: self.components.clone(),
                 wires: self.wires.clone(),
             });
+            self.mark_dirty();
         }
         self.clear_canvas_state();
     }
@@ -500,6 +763,7 @@ impl PhononApp {
             if self.next_wire_id <= max_w_id {
                 self.next_wire_id = max_w_id + 1;
             }
+            self.mark_dirty();
         }
         success
     }
@@ -520,6 +784,7 @@ impl PhononApp {
             if self.next_wire_id <= max_w_id {
                 self.next_wire_id = max_w_id + 1;
             }
+            self.mark_dirty();
         }
         success
     }
@@ -535,6 +800,7 @@ impl PhononApp {
                     old_val,
                     new_val,
                 });
+                self.mark_dirty();
             }
         }
     }
@@ -568,7 +834,7 @@ impl PhononApp {
     }
 
     /// Serializes project and resets the history clean index to mark current state as saved.
-    pub fn save_project(&mut self) -> Vec<u8> {
+    pub fn save_project_to_bytes(&mut self) -> Vec<u8> {
         self.history.mark_clean();
         self.save_to_bytes()
     }
@@ -642,6 +908,13 @@ impl PhononApp {
         self.run_erc();
         self.sim_status.clear();
         self.pending_auto_center = true;
+        self.project_title = "Voltage Divider".to_string();
+        self.current_project_path = None;
+        self.modification_epoch = 0;
+        self.clean_epoch = 0;
+        self.is_modified = false;
+        self.top_frame_config.circuit_name = self.project_title.clone();
+        self.top_frame_config.is_modified = false;
     }
 
     /// Loads an interactive Diode Limiter / Clipper demo circuit.
@@ -674,6 +947,13 @@ impl PhononApp {
         self.run_erc();
         self.sim_status.clear();
         self.pending_auto_center = true;
+        self.project_title = "Diode Clipper".to_string();
+        self.current_project_path = None;
+        self.modification_epoch = 0;
+        self.clean_epoch = 0;
+        self.is_modified = false;
+        self.top_frame_config.circuit_name = self.project_title.clone();
+        self.top_frame_config.is_modified = false;
     }
 
     /// Loads an interactive BJT Common Emitter Amplifier demo circuit.
@@ -748,6 +1028,13 @@ impl PhononApp {
         self.run_erc();
         self.sim_status.clear();
         self.pending_auto_center = true;
+        self.project_title = "BJT CE Amplifier".to_string();
+        self.current_project_path = None;
+        self.modification_epoch = 0;
+        self.clean_epoch = 0;
+        self.is_modified = false;
+        self.top_frame_config.circuit_name = self.project_title.clone();
+        self.top_frame_config.is_modified = false;
     }
 
     /// Loads an interactive CMOS Inverter Pair demo circuit.
@@ -796,6 +1083,13 @@ impl PhononApp {
         self.run_erc();
         self.sim_status.clear();
         self.pending_auto_center = true;
+        self.project_title = "CMOS Inverter".to_string();
+        self.current_project_path = None;
+        self.modification_epoch = 0;
+        self.clean_epoch = 0;
+        self.is_modified = false;
+        self.top_frame_config.circuit_name = self.project_title.clone();
+        self.top_frame_config.is_modified = false;
     }
 
     /// Loads an interactive NMOS Switch demo circuit.
@@ -842,6 +1136,13 @@ impl PhononApp {
         self.run_erc();
         self.sim_status.clear();
         self.pending_auto_center = true;
+        self.project_title = "NMOS Switch".to_string();
+        self.current_project_path = None;
+        self.modification_epoch = 0;
+        self.clean_epoch = 0;
+        self.is_modified = false;
+        self.top_frame_config.circuit_name = self.project_title.clone();
+        self.top_frame_config.is_modified = false;
     }
 
     /// Compiles schematic and runs the non-linear DC Operating Point (.OP) solver.
@@ -1251,6 +1552,7 @@ impl PhononApp {
             } else {
                 self.history.record(CanvasCommand::Batch(batch));
             }
+            self.mark_dirty();
         }
 
         self.clear_selection();
@@ -1349,6 +1651,7 @@ impl PhononApp {
             } else {
                 self.history.record(CanvasCommand::Batch(batch));
             }
+            self.mark_dirty();
         }
 
         // 4. Select newly duplicated items
@@ -1393,6 +1696,7 @@ impl PhononApp {
                 } else {
                     self.history.record(CanvasCommand::Batch(batch));
                 }
+                self.mark_dirty();
             }
             self.sync_selection_to_canvas();
             self.sim_status.clear();
@@ -1413,7 +1717,14 @@ impl PhononApp {
     /// Executes a registered CAD action by identifier.
     pub fn execute_action(&mut self, action_id: ActionId) {
         match action_id {
-            ActionId::NewProject => self.clear_all(),
+            ActionId::NewProject => self.request_action(PendingAction::NewProject),
+            ActionId::OpenProject => self.open_open_dialog(),
+            ActionId::SaveProject => {
+                let _ = self.save_project();
+            }
+            ActionId::SaveProjectAs => self.open_save_as_dialog(),
+            ActionId::ClearCanvas => self.request_action(PendingAction::ClearCanvas),
+            ActionId::CloseApp => self.request_action(PendingAction::CloseApp),
             ActionId::ExportNetlist => {
                 self.show_netlist_window = true;
                 self.spice_netlist_text = self.netlist_sync.sync_from_canvas(&self.canvas).to_string();
@@ -1474,6 +1785,30 @@ impl PhononApp {
         // Command Palette: Ctrl+K
         if ctrl && ctx.input(|i| i.key_pressed(Key::K)) {
             self.command_palette.toggle();
+            return;
+        }
+
+        // New Project: Ctrl+N
+        if ctrl && !shift && ctx.input(|i| i.key_pressed(Key::N)) {
+            self.request_action(PendingAction::NewProject);
+            return;
+        }
+
+        // Open Project: Ctrl+O
+        if ctrl && !shift && ctx.input(|i| i.key_pressed(Key::O)) {
+            self.open_open_dialog();
+            return;
+        }
+
+        // Save Project: Ctrl+S
+        if ctrl && !shift && ctx.input(|i| i.key_pressed(Key::S)) {
+            let _ = self.save_project();
+            return;
+        }
+
+        // Save Project As: Ctrl+Shift+S
+        if ctrl && shift && ctx.input(|i| i.key_pressed(Key::S)) {
+            self.open_save_as_dialog();
             return;
         }
 
@@ -1712,6 +2047,7 @@ impl PhononApp {
                         self.next_comp_id += 1;
                         self.sim_status = format!("Placed {}", kind.prefix());
                         self.history.record(CanvasCommand::AddComponent(new_comp));
+                        self.mark_dirty();
                     }
                     ToolMode::Wire => {
                         if let Some(start) = self.active_wire_start {
@@ -1725,6 +2061,7 @@ impl PhononApp {
                                 self.wires.push(wire.clone());
                                 self.next_wire_id += 1;
                                 self.history.record(CanvasCommand::AddWire(wire));
+                                self.mark_dirty();
                                 self.active_wire_start = Some(snapped_world); // Continue routing from current point
                             }
                         } else {
@@ -1854,6 +2191,7 @@ impl PhononApp {
                         } else {
                             self.history.record(CanvasCommand::Batch(batch));
                         }
+                        self.mark_dirty();
                     }
                     self.dragging_selection = false;
                     self.sync_selection_to_canvas();
@@ -2196,19 +2534,19 @@ impl PhononApp {
         // 1. Bespoke Custom Top Frame
         let mut top_config = self.top_frame_config.clone();
         top_config.circuit_name = self.project_title.clone();
-        top_config.is_modified = self.is_modified || self.history.is_dirty();
+        top_config.is_modified = self.is_dirty();
 
         Panel::top("custom_top_frame").show(ui, |ui| {
             let action = render_top_frame_with_app(ui, &top_config, self);
             match action {
                 TopFrameAction::Close => {
-                    ui.ctx().send_viewport_cmd(egui::ViewportCommand::Close);
+                    self.request_action(PendingAction::CloseApp);
                 }
                 TopFrameAction::SaveProject => {
-                    let _ = self.save_project_file("project.phn");
+                    let _ = self.save_project();
                 }
                 TopFrameAction::OpenProject => {
-                    let _ = self.load_project_file("project.phn");
+                    self.open_open_dialog();
                 }
                 _ => {}
             }
@@ -2229,7 +2567,7 @@ impl PhononApp {
                     self.show_netlist_window = true;
                 }
                 if ui.button("Clear Canvas").clicked() {
-                    self.clear_all();
+                    self.clear_canvas_user();
                 }
             });
         });
@@ -2508,6 +2846,55 @@ impl PhononApp {
 
         // 29. Interactive Quantum Metamaterial Higher-Order Axion Insulator Dialog
         self.axion_insulator_dialog.ui(ui.ctx());
+
+        // 30. Unsaved Changes Confirmation Modal
+        if let Some(pending) = self.pending_confirmation_action.clone() {
+            let decision = ConfirmationModal::show(ui.ctx(), &self.project_title, &pending);
+            match decision {
+                ConfirmationDecision::SaveAndProceed => {
+                    let _ = self.save_project();
+                    self.pending_confirmation_action = None;
+                    self.execute_confirmation_action(pending);
+                }
+                ConfirmationDecision::DiscardAndProceed => {
+                    self.pending_confirmation_action = None;
+                    self.execute_confirmation_action(pending);
+                }
+                ConfirmationDecision::Cancel => {
+                    self.pending_confirmation_action = None;
+                }
+                ConfirmationDecision::None => {}
+            }
+        }
+
+        // 31. Project Manager Modal Dialog
+        let project_list = self.storage_manager.list_projects().unwrap_or_default();
+        let dialog_action = self.project_dialog.show(ui.ctx(), &project_list);
+        match dialog_action {
+            ProjectDialogAction::Open(name) => {
+                self.project_dialog.close();
+                self.request_action(PendingAction::OpenProject(Some(std::path::PathBuf::from(name))));
+            }
+            ProjectDialogAction::SaveAs(name) => {
+                let _ = self.save_project_as(&name);
+                self.project_dialog.close();
+            }
+            ProjectDialogAction::Delete(name) => {
+                let _ = self.storage_manager.delete_project(&name);
+            }
+            ProjectDialogAction::Export(name) => {
+                self.export_project(&name);
+            }
+            ProjectDialogAction::Close => {
+                self.project_dialog.close();
+            }
+            ProjectDialogAction::None => {}
+        }
+
+        // 32. Application Close Command handling
+        if self.should_close {
+            ui.ctx().send_viewport_cmd(egui::ViewportCommand::Close);
+        }
     }
 }
 

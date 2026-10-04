@@ -6,6 +6,7 @@
 //! draggable window chrome, and desktop/web divergence controls.
 
 use crate::schematic::compile_schematic;
+use crate::widgets::confirmation_modal::{DemoCircuitKind, PendingAction};
 use crate::widgets::icon::render_phonon_icon;
 use egui::{pos2, vec2, Color32, FontId, OpenUrl, Rect, RichText, Sense, Stroke, StrokeKind, Ui, ViewportCommand};
 
@@ -162,12 +163,23 @@ fn render_top_frame_internal(
     ui.horizontal(|ui| {
         ui.spacing_mut().item_spacing = vec2(6.0, 0.0);
 
-        // 1. Top-Left: Burger Menu Button for Palette Toggle
-        let burger_btn = ui.add(
-            egui::Button::new(RichText::new("[=]").size(13.0).color(Color32::from_rgb(56, 189, 248)))
-                .frame(false),
-        );
-        if burger_btn
+        // 1. Top-Left: Vector Burger Menu Button for Palette Toggle
+        let (burger_rect, burger_resp) = ui.allocate_exact_size(vec2(20.0, 20.0), Sense::click());
+        if burger_resp.hovered() {
+            ui.painter().rect_filled(burger_rect, 3.0, Color32::from_rgb(30, 41, 59));
+        }
+        let burger_color = if burger_resp.hovered() {
+            Color32::from_rgb(125, 211, 252)
+        } else {
+            Color32::from_rgb(56, 189, 248)
+        };
+        let b_stroke = Stroke::new(1.8, burger_color);
+        let bx_start = burger_rect.min.x + 3.0;
+        let bx_end = burger_rect.max.x - 3.0;
+        ui.painter().line_segment([pos2(bx_start, burger_rect.min.y + 5.0), pos2(bx_end, burger_rect.min.y + 5.0)], b_stroke);
+        ui.painter().line_segment([pos2(bx_start, burger_rect.min.y + 10.0), pos2(bx_end, burger_rect.min.y + 10.0)], b_stroke);
+        ui.painter().line_segment([pos2(bx_start, burger_rect.min.y + 15.0), pos2(bx_end, burger_rect.min.y + 15.0)], b_stroke);
+        if burger_resp
             .on_hover_text("Toggle Component Palette (Burger Menu)")
             .clicked()
         {
@@ -195,18 +207,32 @@ fn render_top_frame_internal(
 
         // File Menu
         ui.menu_button("File", |ui| {
-            if ui.button("New").clicked() {
+            if ui.button("New Project (Ctrl+N)").clicked() {
                 if let Some(a) = app.as_deref_mut() {
-                    a.clear_all();
+                    a.request_action(PendingAction::NewProject);
                 }
                 ui.close();
             }
-            if ui.button("Save Project (.phn)").clicked() {
-                action = TopFrameAction::SaveProject;
+            if ui.button("Open Project... (Ctrl+O)").clicked() {
+                if let Some(a) = app.as_deref_mut() {
+                    a.open_open_dialog();
+                } else {
+                    action = TopFrameAction::OpenProject;
+                }
                 ui.close();
             }
-            if ui.button("Open Project (.phn)").clicked() {
-                action = TopFrameAction::OpenProject;
+            if ui.button("Save Project (Ctrl+S)").clicked() {
+                if let Some(a) = app.as_deref_mut() {
+                    let _ = a.save_project();
+                } else {
+                    action = TopFrameAction::SaveProject;
+                }
+                ui.close();
+            }
+            if ui.button("Save Project As... (Ctrl+Shift+S)").clicked() {
+                if let Some(a) = app.as_deref_mut() {
+                    a.open_save_as_dialog();
+                }
                 ui.close();
             }
             if ui.button("Rename Project...").clicked() {
@@ -221,50 +247,78 @@ fn render_top_frame_internal(
                 });
                 ui.close();
             }
+            ui.separator();
+            ui.menu_button("Import", |ui| {
+                if ui.button("SPICE Netlist (.cir, .net, .sp)...").clicked() {
+                    if let Some(a) = app.as_deref_mut() {
+                        a.show_netlist_window = true;
+                    }
+                    ui.close();
+                }
+                if ui.button("Subcircuit Macro (.phnc)...").clicked() {
+                    if let Some(a) = app.as_deref_mut() {
+                        a.symbol_editor.is_open = true;
+                    }
+                    ui.close();
+                }
+            });
+            ui.menu_button("Export", |ui| {
+                if ui.button("SPICE Netlist (.cir)...").clicked() {
+                    if let Some(a) = app.as_deref_mut() {
+                        if let Ok(compiled) = compile_schematic(&a.components, &a.wires) {
+                            a.spice_netlist_text = compiled.spice_netlist;
+                        }
+                        a.show_netlist_window = true;
+                    }
+                    ui.close();
+                }
+                if ui.button("Phonon Project (.phn)...").clicked() {
+                    if let Some(a) = app.as_deref_mut() {
+                        let _ = a.save_project();
+                    }
+                    ui.close();
+                }
+            });
+            ui.separator();
             ui.menu_button("Load Demos", |ui| {
                 if ui.button("Voltage Divider").clicked() {
                     if let Some(a) = app.as_deref_mut() {
-                        a.load_voltage_divider_demo();
+                        a.request_action(PendingAction::LoadDemo(DemoCircuitKind::VoltageDivider));
                     }
                     ui.close();
                 }
                 if ui.button("Diode Clipper").clicked() {
                     if let Some(a) = app.as_deref_mut() {
-                        a.load_diode_clipper_demo();
+                        a.request_action(PendingAction::LoadDemo(DemoCircuitKind::DiodeClipper));
                     }
                     ui.close();
                 }
                 if ui.button("BJT CE Amplifier").clicked() {
                     if let Some(a) = app.as_deref_mut() {
-                        a.load_bjt_amplifier_demo();
+                        a.request_action(PendingAction::LoadDemo(DemoCircuitKind::BjtAmplifier));
                     }
                     ui.close();
                 }
                 if ui.button("CMOS Inverter").clicked() {
                     if let Some(a) = app.as_deref_mut() {
-                        a.load_cmos_inverter_demo();
+                        a.request_action(PendingAction::LoadDemo(DemoCircuitKind::CmosInverter));
                     }
                     ui.close();
                 }
                 if ui.button("NMOS Switch").clicked() {
                     if let Some(a) = app.as_deref_mut() {
-                        a.load_nmos_switch_demo();
+                        a.request_action(PendingAction::LoadDemo(DemoCircuitKind::NmosSwitch));
                     }
                     ui.close();
                 }
             });
-            if ui.button("Export SPICE Netlist").clicked() {
-                if let Some(a) = app.as_deref_mut() {
-                    if let Ok(compiled) = compile_schematic(&a.components, &a.wires) {
-                        a.spice_netlist_text = compiled.spice_netlist;
-                    }
-                    a.show_netlist_window = true;
-                }
-                ui.close();
-            }
             ui.separator();
-            if ui.button("Exit").clicked() {
-                action = TopFrameAction::Close;
+            if ui.button("Exit (Alt+F4 / Ctrl+Q)").clicked() {
+                if let Some(a) = app.as_deref_mut() {
+                    a.request_action(PendingAction::CloseApp);
+                } else {
+                    action = TopFrameAction::Close;
+                }
                 ui.close();
             }
         });
@@ -318,6 +372,13 @@ fn render_top_frame_internal(
             if ui.button("Select All (Ctrl+A)").clicked() {
                 if let Some(a) = app.as_deref_mut() {
                     a.select_all();
+                }
+                ui.close();
+            }
+            ui.separator();
+            if ui.button("Clear Canvas...").clicked() {
+                if let Some(a) = app.as_deref_mut() {
+                    a.request_action(PendingAction::ClearCanvas);
                 }
                 ui.close();
             }
@@ -394,39 +455,67 @@ fn render_top_frame_internal(
         });
         ui.label(RichText::new("|").color(Color32::from_rgb(60, 70, 85)).size(11.0));
 
-        // Simulation Menu
-        ui.menu_button("Simulation", |ui| {
-            if ui.button("Run DC .OP").clicked() {
+        // Simulate Menu
+        ui.menu_button("Simulate", |ui| {
+            if ui.button("Run DC Operating Point (.OP)").clicked() {
                 if let Some(a) = app.as_deref_mut() {
                     a.run_dc_op();
                 }
                 ui.close();
             }
-            if ui.button("Run Transient .TRAN").clicked() {
+            if ui.button("Run Transient (.TRAN)").clicked() {
                 if let Some(a) = app.as_deref_mut() {
                     a.run_transient_demo();
                 }
                 ui.close();
             }
-            if ui.button("Run ERC Check").clicked() {
+            if ui.button("Run ERC Rules Check").clicked() {
                 if let Some(a) = app.as_deref_mut() {
                     a.run_erc();
                 }
                 ui.close();
             }
-            if ui.button("Transient Sensitivity Analysis").clicked() {
+            ui.separator();
+            if ui.button("Netlist Inspector...").clicked() {
                 if let Some(a) = app.as_deref_mut() {
-                    a.sensitivity_dialog.is_open = true;
+                    if let Ok(compiled) = compile_schematic(&a.components, &a.wires) {
+                        a.spice_netlist_text = compiled.spice_netlist;
+                    }
+                    a.show_netlist_window = true;
                 }
                 ui.close();
             }
-            if ui.button("Monte Carlo Yield Analysis").clicked() {
+            if ui.button("Clear Oscilloscope Traces").clicked() {
+                if let Some(a) = app.as_deref_mut() {
+                    a.oscilloscope.clear();
+                }
+                ui.close();
+            }
+        });
+        ui.label(RichText::new("|").color(Color32::from_rgb(60, 70, 85)).size(11.0));
+
+        // Analysis Menu
+        ui.menu_button("Analysis", |ui| {
+            if ui.button("Monte Carlo Yield Analysis...").clicked() {
                 if let Some(a) = app.as_deref_mut() {
                     a.monte_carlo_dialog.is_open = true;
                 }
                 ui.close();
             }
-            if ui.button("RF S-Parameters & Smith Chart").clicked() {
+            if ui.button("Transient Sensitivity Analysis...").clicked() {
+                if let Some(a) = app.as_deref_mut() {
+                    a.sensitivity_dialog.is_open = true;
+                }
+                ui.close();
+            }
+            if ui.button("Distributed Cluster Sweep...").clicked() {
+                if let Some(a) = app.as_deref_mut() {
+                    a.cluster_dashboard_dialog.is_open = true;
+                }
+                ui.close();
+            }
+            ui.separator();
+            if ui.button("RF S-Parameters & Smith Chart...").clicked() {
                 if let Some(a) = app.as_deref_mut() {
                     a.smith_chart_dialog.is_open = true;
                 }
@@ -438,146 +527,119 @@ fn render_top_frame_internal(
                 }
                 ui.close();
             }
-            if ui.button("Polariton Waveguide & Cavity...").clicked() {
-                if let Some(a) = app.as_deref_mut() {
-                    a.polariton_cavity_dialog.is_open = true;
-                }
-                ui.close();
-            }
-            if ui.button("Distributed Cluster Dashboard...").clicked() {
-                if let Some(a) = app.as_deref_mut() {
-                    a.cluster_dashboard_dialog.is_open = true;
-                }
-                ui.close();
-            }
-            if ui.button("Neuromorphic SNN Studio...").clicked() {
-                if let Some(a) = app.as_deref_mut() {
-                    a.neuromorphic_snn_dialog.is_open = true;
-                }
-                ui.close();
-            }
-            if ui.button("Exceptional Point & PT Circuit...").clicked() {
-                if let Some(a) = app.as_deref_mut() {
-                    a.exceptional_point_dialog.is_open = true;
-                }
-                ui.close();
-            }
-            if ui.button("Weyl Semimetal Studio...").clicked() {
-                if let Some(a) = app.as_deref_mut() {
-                    a.weyl_semimetal_dialog.is_open = true;
-                }
-                ui.close();
-            }
-            if ui.button("Anyon Braiding & FQH Studio...").clicked() {
-                if let Some(a) = app.as_deref_mut() {
-                    a.fqh_braiding_dialog.is_open = true;
-                }
-                ui.close();
-            }
-            if ui.button("Superconducting JTWPA Studio...").clicked() {
+            if ui.button("Superconducting JTWPA Amplifier...").clicked() {
                 if let Some(a) = app.as_deref_mut() {
                     a.jtwpa_dialog.is_open = true;
                 }
                 ui.close();
             }
-            if ui.button("Floquet Acoustic Metasurface...").clicked() {
-                if let Some(a) = app.as_deref_mut() {
-                    a.floquet_metasurface_dialog.is_open = true;
+            ui.separator();
+            ui.menu_button("Advanced Quantum & Metamaterials", |ui| {
+                if ui.button("Polariton Waveguide & Cavity...").clicked() {
+                    if let Some(a) = app.as_deref_mut() {
+                        a.polariton_cavity_dialog.is_open = true;
+                    }
+                    ui.close();
                 }
-                ui.close();
-            }
-            if ui.button("Holonomic Quantum Processor...").clicked() {
-                if let Some(a) = app.as_deref_mut() {
-                    a.holonomic_processor_dialog.is_open = true;
+                if ui.button("Neuromorphic SNN Studio...").clicked() {
+                    if let Some(a) = app.as_deref_mut() {
+                        a.neuromorphic_snn_dialog.is_open = true;
+                    }
+                    ui.close();
                 }
-                ui.close();
-            }
-            if ui.button("Twisted Bilayer Moire Studio...").clicked() {
-                if let Some(a) = app.as_deref_mut() {
-                    a.twisted_moire_dialog.is_open = true;
+                if ui.button("Exceptional Point & PT Circuit...").clicked() {
+                    if let Some(a) = app.as_deref_mut() {
+                        a.exceptional_point_dialog.is_open = true;
+                    }
+                    ui.close();
                 }
-                ui.close();
-            }
-            if ui.button("Acoustic Chern Circulator...").clicked() {
-                if let Some(a) = app.as_deref_mut() {
-                    a.chern_circulator_dialog.is_open = true;
+                if ui.button("Weyl Semimetal Studio...").clicked() {
+                    if let Some(a) = app.as_deref_mut() {
+                        a.weyl_semimetal_dialog.is_open = true;
+                    }
+                    ui.close();
                 }
-                ui.close();
-            }
-            if ui.button("Kerr Microcomb Studio...").clicked() {
-                if let Some(a) = app.as_deref_mut() {
-                    a.kerr_microcomb_dialog.is_open = true;
+                if ui.button("Anyon Braiding & FQH Studio...").clicked() {
+                    if let Some(a) = app.as_deref_mut() {
+                        a.fqh_braiding_dialog.is_open = true;
+                    }
+                    ui.close();
                 }
-                ui.close();
-            }
-            if ui.button("Exceptional Surface Sensor Array...").clicked() {
-                if let Some(a) = app.as_deref_mut() {
-                    a.exceptional_surface_dialog.is_open = true;
+                if ui.button("Floquet Acoustic Metasurface...").clicked() {
+                    if let Some(a) = app.as_deref_mut() {
+                        a.floquet_metasurface_dialog.is_open = true;
+                    }
+                    ui.close();
                 }
-                ui.close();
-            }
-            if ui.button("Topological SOTI Corner Resonator...").clicked() {
-                if let Some(a) = app.as_deref_mut() {
-                    a.soti_corner_dialog.is_open = true;
+                if ui.button("Holonomic Quantum Processor...").clicked() {
+                    if let Some(a) = app.as_deref_mut() {
+                        a.holonomic_processor_dialog.is_open = true;
+                    }
+                    ui.close();
                 }
-                ui.close();
-            }
-            if ui.button("Topological Lieb Lattice Flat-Band...").clicked() {
-                if let Some(a) = app.as_deref_mut() {
-                    a.lieb_lattice_dialog.is_open = true;
+                if ui.button("Twisted Bilayer Moire Studio...").clicked() {
+                    if let Some(a) = app.as_deref_mut() {
+                        a.twisted_moire_dialog.is_open = true;
+                    }
+                    ui.close();
                 }
-                ui.close();
-            }
-            if ui.button("Higher-Order Axion Insulator...").clicked() {
-                if let Some(a) = app.as_deref_mut() {
-                    a.axion_insulator_dialog.is_open = true;
+                if ui.button("Acoustic Chern Circulator...").clicked() {
+                    if let Some(a) = app.as_deref_mut() {
+                        a.chern_circulator_dialog.is_open = true;
+                    }
+                    ui.close();
                 }
-                ui.close();
-            }
-            if ui.button("Clear Traces").clicked() {
-                if let Some(a) = app.as_deref_mut() {
-                    a.oscilloscope.clear();
+                if ui.button("Kerr Microcomb Studio...").clicked() {
+                    if let Some(a) = app.as_deref_mut() {
+                        a.kerr_microcomb_dialog.is_open = true;
+                    }
+                    ui.close();
                 }
-                ui.close();
-            }
+                if ui.button("Exceptional Surface Sensor Array...").clicked() {
+                    if let Some(a) = app.as_deref_mut() {
+                        a.exceptional_surface_dialog.is_open = true;
+                    }
+                    ui.close();
+                }
+                if ui.button("Topological SOTI Corner Resonator...").clicked() {
+                    if let Some(a) = app.as_deref_mut() {
+                        a.soti_corner_dialog.is_open = true;
+                    }
+                    ui.close();
+                }
+                if ui.button("Topological Lieb Lattice Flat-Band...").clicked() {
+                    if let Some(a) = app.as_deref_mut() {
+                        a.lieb_lattice_dialog.is_open = true;
+                    }
+                    ui.close();
+                }
+                if ui.button("Higher-Order Axion Insulator...").clicked() {
+                    if let Some(a) = app.as_deref_mut() {
+                        a.axion_insulator_dialog.is_open = true;
+                    }
+                    ui.close();
+                }
+            });
         });
         ui.label(RichText::new("|").color(Color32::from_rgb(60, 70, 85)).size(11.0));
 
         // Tools Menu
         ui.menu_button("Tools", |ui| {
-            if ui.button("Transient Sensitivity Analysis").clicked() {
-                if let Some(a) = app.as_deref_mut() {
-                    a.sensitivity_dialog.is_open = true;
-                }
-                ui.close();
-            }
-            if ui.button("Monte Carlo Yield Analysis").clicked() {
-                if let Some(a) = app.as_deref_mut() {
-                    a.monte_carlo_dialog.is_open = true;
-                }
-                ui.close();
-            }
-            if ui.button("RF S-Parameters & Smith Chart").clicked() {
-                if let Some(a) = app.as_deref_mut() {
-                    a.smith_chart_dialog.is_open = true;
-                }
-                ui.close();
-            }
-            if ui.button("Polariton Waveguide & Cavity...").clicked() {
-                if let Some(a) = app.as_deref_mut() {
-                    a.polariton_cavity_dialog.is_open = true;
-                }
-                ui.close();
-            }
-            if ui.button("SPICE Model Extraction Wizard").clicked() {
+            if ui.button("SPICE Model Extraction Wizard...").clicked() {
                 if let Some(a) = app.as_deref_mut() {
                     a.extraction_wizard.is_open = true;
                 }
                 ui.close();
             }
-            if ui.button("Component Symbol & Shape Editor").clicked() {
+            if ui.button("Component Symbol & Shape Editor...").clicked() {
                 if let Some(a) = app.as_deref_mut() {
                     a.symbol_editor.is_open = true;
+                }
+                ui.close();
+            }
+            if ui.button("Command Palette (Ctrl+K)").clicked() {
+                if let Some(a) = app.as_deref_mut() {
+                    a.command_palette.open();
                 }
                 ui.close();
             }
@@ -773,7 +835,11 @@ fn render_top_frame_internal(
                 Stroke::new(1.3, close_color),
             );
             if close_resp.clicked() {
-                ui.ctx().send_viewport_cmd(ViewportCommand::Close);
+                if let Some(a) = app.as_deref_mut() {
+                    a.request_action(PendingAction::CloseApp);
+                } else {
+                    ui.ctx().send_viewport_cmd(ViewportCommand::Close);
+                }
                 action = TopFrameAction::Close;
             }
         }

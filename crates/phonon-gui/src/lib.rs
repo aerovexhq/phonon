@@ -7,14 +7,23 @@ pub mod app;
 pub mod extraction;
 pub mod oscilloscope;
 pub mod schematic;
+pub mod storage;
 pub mod thermal;
 pub mod widgets;
 
 pub use actions::{ActionCategory, ActionDef, ActionId, ActionRegistry};
 pub use app::{PhononApp, ToolMode};
 pub use egui::Theme;
+pub use storage::{
+    bytes_to_hex, hex_to_bytes, MemoryStorageAdapter, ProjectMetadata, ProjectStorageManager,
+    StorageAdapter,
+};
 pub use widgets::command_palette::CommandPalette;
+pub use widgets::confirmation_modal::{
+    ConfirmationDecision, ConfirmationModal, DemoCircuitKind, PendingAction,
+};
 pub use widgets::floating_toolbar::{FloatingToolbarAction, FloatingToolbarState};
+pub use widgets::project_dialog::{ProjectDialog, ProjectDialogAction, ProjectDialogMode};
 pub use extraction::{DeviceModelKind, ExtractionWizardDialog};
 pub use schematic::binary_format::{
     component_category_to_discriminant, component_kind_from_discriminant,

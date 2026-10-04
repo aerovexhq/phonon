@@ -231,9 +231,9 @@ fn test_app_in_memory_persistence() {
     let original_wire_count = app.wires.len();
 
     // Save app state
-    let bytes = app.save_project();
+    let bytes = app.save_project_to_bytes();
     assert!(!bytes.is_empty());
-    assert!(!app.history.is_dirty(), "History must be clean after save_project");
+    assert!(!app.history.is_dirty(), "History must be clean after save_project_to_bytes");
 
     // Mutate app state
     app.clear_all();

@@ -28,6 +28,11 @@ impl ActionCategory {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum ActionId {
     NewProject,
+    OpenProject,
+    SaveProject,
+    SaveProjectAs,
+    ClearCanvas,
+    CloseApp,
     ExportNetlist,
     Undo,
     Redo,
@@ -131,7 +136,42 @@ impl ActionRegistry {
             "New Project",
             "Clear current schematic canvas and start fresh",
             ActionCategory::File,
+            Some("Ctrl+N"),
+        );
+        registry.register(
+            ActionId::OpenProject,
+            "Open Project...",
+            "Browse and open a saved schematic project from storage",
+            ActionCategory::File,
+            Some("Ctrl+O"),
+        );
+        registry.register(
+            ActionId::SaveProject,
+            "Save Project",
+            "Save current schematic project modifications",
+            ActionCategory::File,
+            Some("Ctrl+S"),
+        );
+        registry.register(
+            ActionId::SaveProjectAs,
+            "Save Project As...",
+            "Save current schematic project under a new title",
+            ActionCategory::File,
+            Some("Ctrl+Shift+S"),
+        );
+        registry.register(
+            ActionId::ClearCanvas,
+            "Clear Canvas...",
+            "Remove all components and wires from canvas with confirmation",
+            ActionCategory::Edit,
             None,
+        );
+        registry.register(
+            ActionId::CloseApp,
+            "Close Application",
+            "Close Phonon Studio CAD workspace",
+            ActionCategory::File,
+            Some("Ctrl+Q"),
         );
         registry.register(
             ActionId::ExportNetlist,
