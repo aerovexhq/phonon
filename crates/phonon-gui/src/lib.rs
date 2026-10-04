@@ -6,18 +6,25 @@ pub mod actions;
 pub mod app;
 pub mod extraction;
 pub mod oscilloscope;
+pub mod preferences;
 pub mod schematic;
 pub mod storage;
+pub mod theme;
 pub mod thermal;
 pub mod widgets;
 
 pub use actions::{ActionCategory, ActionDef, ActionId, ActionRegistry};
 pub use app::{PhononApp, ToolMode};
 pub use egui::Theme;
+pub use preferences::AppPreferences;
 pub use storage::{
     bytes_to_hex, hex_to_bytes, MemoryStorageAdapter, ProjectMetadata, ProjectStorageManager,
     StorageAdapter,
 };
+pub use theme::{
+    color32_to_hex, hex_to_color32, PhononTheme, ThemePreset,
+};
+pub use widgets::preferences_dialog::{PreferencesDialog, PreferencesTab};
 pub use widgets::command_palette::CommandPalette;
 pub use widgets::confirmation_modal::{
     ConfirmationDecision, ConfirmationModal, DemoCircuitKind, PendingAction,
@@ -35,6 +42,10 @@ pub use schematic::bus::{BusSignal, BusTapOff, SchematicBus};
 pub use schematic::categories::ComponentCategory;
 pub use schematic::components::{ComponentKind, SchematicComponent};
 pub use schematic::erc::{ErcCode, ErcDiagnostic, ErcEngine, ErcSeverity};
+pub use schematic::binary_history::{
+    adler32, deserialize_history, read_command, serialize_history, write_command, ActionOpcode,
+    BinaryHistoryError, HISTORY_MAGIC, HISTORY_VERSION,
+};
 pub use schematic::history::{CanvasCommand, HistoryStack};
 pub use schematic::netlist_sync::{NetlistSyncEngine, NetlistSyncError, SyncDelta};
 pub use schematic::sheet::{MultiSheetManager, SchematicSheet};

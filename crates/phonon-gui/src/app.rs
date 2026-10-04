@@ -22,8 +22,9 @@ use crate::widgets::{
     SensitivityDialog, SmithChartDialog, SymbolEditorDialog, ThermalFloorplanDialog, TopFrameAction,
     TopFrameConfig, TwistedMoireDialog, WeylSemimetalDialog, ChernCirculatorDialog,
     ExceptionalSurfaceDialog, SotiCornerDialog, LiebLatticeDialog, AxionInsulatorDialog,
-    CommandPalette,
+    CommandPalette, PreferencesDialog,
 };
+use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
 use eframe::{App, Frame};
 use egui::{
@@ -244,6 +245,12 @@ pub struct PhononApp {
     /// Project Manager modal dialog.
     pub project_dialog: ProjectDialog,
 
+    /// Application preferences and configuration state.
+    pub preferences: AppPreferences,
+
+    /// Preferences modal settings dialog.
+    pub preferences_dialog: PreferencesDialog,
+
     /// Whether close has been confirmed and should trigger viewport close.
     pub should_close: bool,
 }
@@ -346,8 +353,23 @@ impl Default for PhononApp {
             pending_confirmation_action: None,
             storage_manager: ProjectStorageManager::new(),
             project_dialog: ProjectDialog::new(),
+            preferences: AppPreferences::default(),
+            preferences_dialog: PreferencesDialog::new(),
             should_close: false,
         };
+
+        // Load saved preferences
+        let loaded_prefs = AppPreferences::load_from_storage(&app.storage_manager);
+        app.canvas.show_grid = loaded_prefs.show_grid;
+        app.canvas.grid_size = loaded_prefs.grid_size;
+        app.show_thermal_overlay = loaded_prefs.thermal_overlay_enabled;
+        app.thermal.colormap = match loaded_prefs.thermal_colormap.as_str() {
+            "Magma" => Colormap::Magma,
+            "Inferno" => Colormap::Inferno,
+            _ => Colormap::Turbo,
+        };
+        app.history.max_depth = loaded_prefs.in_memory_history_limit;
+        app.preferences = loaded_prefs;
 
         // If a saved project from last time exists, continue from there. Otherwise load default Voltage Divider demo.
         if !app.try_restore_last_project() {
@@ -1770,6 +1792,7 @@ impl PhononApp {
             }
             ActionId::ClearWire => self.active_wire_start = None,
             ActionId::OpenCommandPalette => self.command_palette.open(),
+            ActionId::OpenPreferences => self.preferences_dialog.is_open = true,
         }
     }
 
@@ -1777,6 +1800,10 @@ impl PhononApp {
     fn handle_shortcuts(&mut self, ctx: &egui::Context) {
         let ctrl = ctx.input(|i| i.modifiers.command || i.modifiers.ctrl);
         let shift = ctx.input(|i| i.modifiers.shift);
+
+        if ctrl && ctx.input(|i| i.key_pressed(egui::Key::Comma)) {
+            self.preferences_dialog.is_open = !self.preferences_dialog.is_open;
+        }
 
         // =========================================================================
         // TIER 1: System Reserved Keys (Protected - always active)
@@ -1942,8 +1969,10 @@ impl PhononApp {
         // 1. Pan & Zoom
         self.canvas.handle_pan_zoom(ui, &response);
 
+        let theme = self.preferences.current_theme();
+
         // 2. Render background grid
-        self.canvas.render_grid(&painter, viewport);
+        self.canvas.render_grid_themed(&painter, viewport, &theme);
 
         // Collect all pin positions for snapping and junction rendering
         let mut all_pin_positions = Vec::new();
@@ -1958,7 +1987,7 @@ impl PhononApp {
         // 3. Render wires
         for wire in &self.wires {
             let is_sel = self.is_wire_selected(wire.id);
-            wire.render(&painter, &self.canvas, is_sel);
+            wire.render_with_theme(&painter, &self.canvas, is_sel, &theme);
         }
 
         // 3b. Render buses
@@ -2220,7 +2249,7 @@ impl PhononApp {
             if let Some(kind) = self.selected_tool.place_kind() {
                 let mut ghost = SchematicComponent::new(0, kind.clone(), snapped_world, 0);
                 ghost.rotation = self.placement_rotation;
-                ghost.render(&painter, &self.canvas, true, None);
+                ghost.render_with_theme(&painter, &self.canvas, true, None, &theme);
             }
         }
 
@@ -2243,7 +2272,7 @@ impl PhononApp {
                 }
             }
 
-            comp.render(
+            comp.render_with_theme(
                 &painter,
                 &self.canvas,
                 is_sel,
@@ -2252,6 +2281,7 @@ impl PhononApp {
                 } else {
                     Some(&pin_voltages)
                 },
+                &theme,
             );
 
             // Thermal badge
@@ -2510,20 +2540,6 @@ impl PhononApp {
             ui.separator();
             ui.label("Click any component to inspect terminal voltages and operating temperature.");
         }
-
-        ui.separator();
-        ui.heading("Thermal Controls");
-        ui.checkbox(&mut self.show_thermal_overlay, "Show Thermal Overlay");
-        ui.horizontal(|ui| {
-            ui.label("Colormap:");
-            egui::ComboBox::from_id_salt("colormap_select")
-                .selected_text(format!("{:?}", self.thermal.colormap))
-                .show_ui(ui, |ui| {
-                    ui.selectable_value(&mut self.thermal.colormap, Colormap::Turbo, "Turbo");
-                    ui.selectable_value(&mut self.thermal.colormap, Colormap::Magma, "Magma");
-                    ui.selectable_value(&mut self.thermal.colormap, Colormap::Inferno, "Inferno");
-                });
-        });
     }
 
     /// Evaluates one frame of the application UI, custom top frame, action toolbar, canvas, and docked panels.
@@ -2555,18 +2571,18 @@ impl PhononApp {
         // Action Toolbar
         Panel::top("action_toolbar").show(ui, |ui| {
             ui.horizontal(|ui| {
-                if ui.button("Run DC (.OP)").clicked() {
+                if self.preferences.show_toolbar_run_dc && ui.button("Run DC (.OP)").clicked() {
                     self.run_dc_op();
                 }
-                if ui.button("Run Transient (.TRAN)").clicked() {
+                if self.preferences.show_toolbar_run_transient && ui.button("Run Transient (.TRAN)").clicked() {
                     self.run_transient_demo();
                 }
-                if ui.button("Export Netlist").clicked() {
+                if self.preferences.show_toolbar_export_netlist && ui.button("Export Netlist").clicked() {
                     self.sync_canvas_state();
                     self.spice_netlist_text = self.netlist_sync.sync_from_canvas(&self.canvas).to_string();
                     self.show_netlist_window = true;
                 }
-                if ui.button("Clear Canvas").clicked() {
+                if self.preferences.show_toolbar_clear_canvas && ui.button("Clear Canvas").clicked() {
                     self.clear_canvas_user();
                 }
             });
@@ -2889,6 +2905,23 @@ impl PhononApp {
                 self.project_dialog.close();
             }
             ProjectDialogAction::None => {}
+        }
+
+        // 31b. Preferences Modal Settings Dialog
+        let mut cmap = self.thermal.colormap;
+        if self.preferences_dialog.show(
+            ui.ctx(),
+            &mut self.preferences,
+            &self.action_registry,
+            &mut self.history,
+            &mut cmap,
+        ) {
+            self.thermal.colormap = cmap;
+            self.canvas.show_grid = self.preferences.show_grid;
+            self.canvas.grid_size = self.preferences.grid_size;
+            self.history.max_depth = self.preferences.in_memory_history_limit;
+            self.show_thermal_overlay = self.preferences.thermal_overlay_enabled;
+            let _ = self.preferences.save_to_storage(&mut self.storage_manager);
         }
 
         // 32. Application Close Command handling

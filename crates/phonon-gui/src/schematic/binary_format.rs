@@ -191,6 +191,243 @@ pub fn component_category_to_discriminant(cat: ComponentCategory) -> u8 {
     }
 }
 
+/// Writes an individual component to a binary buffer.
+pub fn write_component(comp: &SchematicComponent, buf: &mut Vec<u8>) {
+    buf.extend_from_slice(&(comp.id as u32).to_le_bytes());
+    let kind_disc = component_kind_to_discriminant(comp.kind);
+    buf.extend_from_slice(&kind_disc.to_le_bytes());
+    let cat_disc = component_category_to_discriminant(comp.kind.category());
+    buf.push(cat_disc);
+    buf.extend_from_slice(&comp.pos.x.to_le_bytes());
+    buf.extend_from_slice(&comp.pos.y.to_le_bytes());
+    buf.push(comp.rotation);
+    let val_bytes = comp.value_str.as_bytes();
+    let val_len = val_bytes.len().min(u16::MAX as usize) as u16;
+    buf.extend_from_slice(&val_len.to_le_bytes());
+    buf.extend_from_slice(&val_bytes[..val_len as usize]);
+
+    let prop_count = comp.properties.len().min(u16::MAX as usize) as u16;
+    buf.extend_from_slice(&prop_count.to_le_bytes());
+    for (k, v) in comp.properties.iter().take(prop_count as usize) {
+        let k_bytes = k.as_bytes();
+        let k_len = k_bytes.len().min(u16::MAX as usize) as u16;
+        buf.extend_from_slice(&k_len.to_le_bytes());
+        buf.extend_from_slice(&k_bytes[..k_len as usize]);
+
+        let v_bytes = v.as_bytes();
+        let v_len = v_bytes.len().min(u16::MAX as usize) as u16;
+        buf.extend_from_slice(&v_len.to_le_bytes());
+        buf.extend_from_slice(&v_bytes[..v_len as usize]);
+    }
+}
+
+/// Writes an individual wire to a binary buffer.
+pub fn write_wire(wire: &SchematicWire, buf: &mut Vec<u8>) {
+    buf.extend_from_slice(&(wire.id as u32).to_le_bytes());
+    let start = wire.start_point();
+    let end = wire.end_point();
+    buf.extend_from_slice(&start.x.to_le_bytes());
+    buf.extend_from_slice(&start.y.to_le_bytes());
+    buf.extend_from_slice(&end.x.to_le_bytes());
+    buf.extend_from_slice(&end.y.to_le_bytes());
+
+    let net_bytes = wire.net_name.as_deref().unwrap_or("").as_bytes();
+    let net_len = net_bytes.len().min(u16::MAX as usize) as u16;
+    buf.extend_from_slice(&net_len.to_le_bytes());
+    buf.extend_from_slice(&net_bytes[..net_len as usize]);
+}
+
+/// Reads an individual component from a binary byte slice at the given cursor.
+pub fn read_component(
+    bytes: &[u8],
+    cursor: &mut usize,
+) -> Result<SchematicComponent, BinaryFormatError> {
+    if *cursor + 4 + 2 + 1 + 4 + 4 + 1 + 2 > bytes.len() {
+        return Err(BinaryFormatError::TruncatedData(
+            "component record truncated".to_string(),
+        ));
+    }
+    let id = u32::from_le_bytes([
+        bytes[*cursor],
+        bytes[*cursor + 1],
+        bytes[*cursor + 2],
+        bytes[*cursor + 3],
+    ]) as usize;
+    *cursor += 4;
+    let kind_disc = u16::from_le_bytes([bytes[*cursor], bytes[*cursor + 1]]);
+    *cursor += 2;
+    let kind = component_kind_from_discriminant(kind_disc)?;
+    let _cat_disc = bytes[*cursor];
+    *cursor += 1;
+    let pos_x = f32::from_le_bytes([
+        bytes[*cursor],
+        bytes[*cursor + 1],
+        bytes[*cursor + 2],
+        bytes[*cursor + 3],
+    ]);
+    *cursor += 4;
+    let pos_y = f32::from_le_bytes([
+        bytes[*cursor],
+        bytes[*cursor + 1],
+        bytes[*cursor + 2],
+        bytes[*cursor + 3],
+    ]);
+    *cursor += 4;
+    let rotation = bytes[*cursor];
+    *cursor += 1;
+    let val_len = u16::from_le_bytes([bytes[*cursor], bytes[*cursor + 1]]) as usize;
+    *cursor += 2;
+    if *cursor + val_len > bytes.len() {
+        return Err(BinaryFormatError::TruncatedData(
+            "component value string truncated".to_string(),
+        ));
+    }
+    let value_str = std::str::from_utf8(&bytes[*cursor..*cursor + val_len])
+        .map_err(|e| BinaryFormatError::Utf8Error(e.to_string()))?
+        .to_string();
+    *cursor += val_len;
+
+    if *cursor + 2 > bytes.len() {
+        return Err(BinaryFormatError::TruncatedData(
+            "component properties count truncated".to_string(),
+        ));
+    }
+    let prop_count = u16::from_le_bytes([bytes[*cursor], bytes[*cursor + 1]]) as usize;
+    *cursor += 2;
+
+    let mut name = None;
+    let mut model_name = None;
+    let mut properties = Vec::with_capacity(prop_count);
+    for _ in 0..prop_count {
+        if *cursor + 2 > bytes.len() {
+            return Err(BinaryFormatError::TruncatedData(
+                "property key length truncated".to_string(),
+            ));
+        }
+        let k_len = u16::from_le_bytes([bytes[*cursor], bytes[*cursor + 1]]) as usize;
+        *cursor += 2;
+        if *cursor + k_len > bytes.len() {
+            return Err(BinaryFormatError::TruncatedData(
+                "property key bytes truncated".to_string(),
+            ));
+        }
+        let key = std::str::from_utf8(&bytes[*cursor..*cursor + k_len])
+            .map_err(|e| BinaryFormatError::Utf8Error(e.to_string()))?
+            .to_string();
+        *cursor += k_len;
+
+        if *cursor + 2 > bytes.len() {
+            return Err(BinaryFormatError::TruncatedData(
+                "property value length truncated".to_string(),
+            ));
+        }
+        let v_len = u16::from_le_bytes([bytes[*cursor], bytes[*cursor + 1]]) as usize;
+        *cursor += 2;
+        if *cursor + v_len > bytes.len() {
+            return Err(BinaryFormatError::TruncatedData(
+                "property value bytes truncated".to_string(),
+            ));
+        }
+        let val = std::str::from_utf8(&bytes[*cursor..*cursor + v_len])
+            .map_err(|e| BinaryFormatError::Utf8Error(e.to_string()))?
+            .to_string();
+        *cursor += v_len;
+
+        if key == "name" {
+            name = Some(val.clone());
+        } else if key == "model_name" {
+            model_name = Some(val.clone());
+        }
+        properties.push((key, val));
+    }
+
+    let name = name.unwrap_or_else(|| {
+        use std::fmt::Write;
+        let mut s = String::with_capacity(kind.prefix().len() + 8);
+        s.push_str(kind.prefix());
+        let _ = write!(s, "{}", id);
+        s
+    });
+
+    Ok(SchematicComponent {
+        id,
+        name,
+        kind,
+        pos: Pos2::new(pos_x, pos_y),
+        rotation,
+        value_str,
+        model_name,
+        properties,
+    })
+}
+
+/// Reads an individual wire from a binary byte slice at the given cursor.
+pub fn read_wire(
+    bytes: &[u8],
+    cursor: &mut usize,
+) -> Result<SchematicWire, BinaryFormatError> {
+    if *cursor + 4 + 4 + 4 + 4 + 4 + 2 > bytes.len() {
+        return Err(BinaryFormatError::TruncatedData(
+            "wire record truncated".to_string(),
+        ));
+    }
+    let id = u32::from_le_bytes([
+        bytes[*cursor],
+        bytes[*cursor + 1],
+        bytes[*cursor + 2],
+        bytes[*cursor + 3],
+    ]) as usize;
+    *cursor += 4;
+    let start_x = f32::from_le_bytes([
+        bytes[*cursor],
+        bytes[*cursor + 1],
+        bytes[*cursor + 2],
+        bytes[*cursor + 3],
+    ]);
+    *cursor += 4;
+    let start_y = f32::from_le_bytes([
+        bytes[*cursor],
+        bytes[*cursor + 1],
+        bytes[*cursor + 2],
+        bytes[*cursor + 3],
+    ]);
+    *cursor += 4;
+    let end_x = f32::from_le_bytes([
+        bytes[*cursor],
+        bytes[*cursor + 1],
+        bytes[*cursor + 2],
+        bytes[*cursor + 3],
+    ]);
+    *cursor += 4;
+    let end_y = f32::from_le_bytes([
+        bytes[*cursor],
+        bytes[*cursor + 1],
+        bytes[*cursor + 2],
+        bytes[*cursor + 3],
+    ]);
+    *cursor += 4;
+    let net_len = u16::from_le_bytes([bytes[*cursor], bytes[*cursor + 1]]) as usize;
+    *cursor += 2;
+    if *cursor + net_len > bytes.len() {
+        return Err(BinaryFormatError::TruncatedData(
+            "wire net name truncated".to_string(),
+        ));
+    }
+    let net_name_str = std::str::from_utf8(&bytes[*cursor..*cursor + net_len])
+        .map_err(|e| BinaryFormatError::Utf8Error(e.to_string()))?;
+    *cursor += net_len;
+
+    let net_name = if net_name_str.is_empty() {
+        None
+    } else {
+        Some(net_name_str.to_string())
+    };
+
+    let start = Pos2::new(start_x, start_y);
+    let end = Pos2::new(end_x, end_y);
+    Ok(SchematicWire::manhattan_route_with_net(id, start, end, net_name))
+}
+
 /// Serializes project state into ultra-compact binary format (.phn).
 pub fn serialize_project(
     title: &str,
@@ -217,48 +454,12 @@ pub fn serialize_project(
 
     // 3. Components:
     for comp in components {
-        buf.extend_from_slice(&(comp.id as u32).to_le_bytes());
-        let kind_disc = component_kind_to_discriminant(comp.kind);
-        buf.extend_from_slice(&kind_disc.to_le_bytes());
-        let cat_disc = component_category_to_discriminant(comp.kind.category());
-        buf.push(cat_disc);
-        buf.extend_from_slice(&comp.pos.x.to_le_bytes());
-        buf.extend_from_slice(&comp.pos.y.to_le_bytes());
-        buf.push(comp.rotation);
-        let val_bytes = comp.value_str.as_bytes();
-        let val_len = val_bytes.len().min(u16::MAX as usize) as u16;
-        buf.extend_from_slice(&val_len.to_le_bytes());
-        buf.extend_from_slice(&val_bytes[..val_len as usize]);
-
-        let prop_count = comp.properties.len().min(u16::MAX as usize) as u16;
-        buf.extend_from_slice(&prop_count.to_le_bytes());
-        for (k, v) in comp.properties.iter().take(prop_count as usize) {
-            let k_bytes = k.as_bytes();
-            let k_len = k_bytes.len().min(u16::MAX as usize) as u16;
-            buf.extend_from_slice(&k_len.to_le_bytes());
-            buf.extend_from_slice(&k_bytes[..k_len as usize]);
-
-            let v_bytes = v.as_bytes();
-            let v_len = v_bytes.len().min(u16::MAX as usize) as u16;
-            buf.extend_from_slice(&v_len.to_le_bytes());
-            buf.extend_from_slice(&v_bytes[..v_len as usize]);
-        }
+        write_component(comp, &mut buf);
     }
 
     // 4. Wires:
     for wire in wires {
-        buf.extend_from_slice(&(wire.id as u32).to_le_bytes());
-        let start = wire.start_point();
-        let end = wire.end_point();
-        buf.extend_from_slice(&start.x.to_le_bytes());
-        buf.extend_from_slice(&start.y.to_le_bytes());
-        buf.extend_from_slice(&end.x.to_le_bytes());
-        buf.extend_from_slice(&end.y.to_le_bytes());
-
-        let net_bytes = wire.net_name.as_deref().unwrap_or("").as_bytes();
-        let net_len = net_bytes.len().min(u16::MAX as usize) as u16;
-        buf.extend_from_slice(&net_len.to_le_bytes());
-        buf.extend_from_slice(&net_bytes[..net_len as usize]);
+        write_wire(wire, &mut buf);
     }
 
     // 5. Checksum Footer (4 bytes LE Adler-32):
@@ -315,190 +516,15 @@ pub fn deserialize_project(bytes: &[u8]) -> Result<DeserializedProject, BinaryFo
         .to_string();
     cursor += title_len;
 
+    let payload = &bytes[..payload_len];
     let mut components = Vec::with_capacity(comp_count);
     for _ in 0..comp_count {
-        if cursor + 4 + 2 + 1 + 4 + 4 + 1 + 2 > payload_len {
-            return Err(BinaryFormatError::TruncatedData(
-                "component record truncated".to_string(),
-            ));
-        }
-        let id = u32::from_le_bytes([
-            bytes[cursor],
-            bytes[cursor + 1],
-            bytes[cursor + 2],
-            bytes[cursor + 3],
-        ]) as usize;
-        cursor += 4;
-        let kind_disc = u16::from_le_bytes([bytes[cursor], bytes[cursor + 1]]);
-        cursor += 2;
-        let kind = component_kind_from_discriminant(kind_disc)?;
-        let _cat_disc = bytes[cursor];
-        cursor += 1;
-        let pos_x = f32::from_le_bytes([
-            bytes[cursor],
-            bytes[cursor + 1],
-            bytes[cursor + 2],
-            bytes[cursor + 3],
-        ]);
-        cursor += 4;
-        let pos_y = f32::from_le_bytes([
-            bytes[cursor],
-            bytes[cursor + 1],
-            bytes[cursor + 2],
-            bytes[cursor + 3],
-        ]);
-        cursor += 4;
-        let rotation = bytes[cursor];
-        cursor += 1;
-        let val_len = u16::from_le_bytes([bytes[cursor], bytes[cursor + 1]]) as usize;
-        cursor += 2;
-        if cursor + val_len > payload_len {
-            return Err(BinaryFormatError::TruncatedData(
-                "component value string truncated".to_string(),
-            ));
-        }
-        let value_str = std::str::from_utf8(&bytes[cursor..cursor + val_len])
-            .map_err(|e| BinaryFormatError::Utf8Error(e.to_string()))?
-            .to_string();
-        cursor += val_len;
-
-        if cursor + 2 > payload_len {
-            return Err(BinaryFormatError::TruncatedData(
-                "component properties count truncated".to_string(),
-            ));
-        }
-        let prop_count = u16::from_le_bytes([bytes[cursor], bytes[cursor + 1]]) as usize;
-        cursor += 2;
-
-        let mut name = None;
-        let mut model_name = None;
-        let mut properties = Vec::with_capacity(prop_count);
-        for _ in 0..prop_count {
-            if cursor + 2 > payload_len {
-                return Err(BinaryFormatError::TruncatedData(
-                    "property key length truncated".to_string(),
-                ));
-            }
-            let k_len = u16::from_le_bytes([bytes[cursor], bytes[cursor + 1]]) as usize;
-            cursor += 2;
-            if cursor + k_len > payload_len {
-                return Err(BinaryFormatError::TruncatedData(
-                    "property key bytes truncated".to_string(),
-                ));
-            }
-            let key = std::str::from_utf8(&bytes[cursor..cursor + k_len])
-                .map_err(|e| BinaryFormatError::Utf8Error(e.to_string()))?
-                .to_string();
-            cursor += k_len;
-
-            if cursor + 2 > payload_len {
-                return Err(BinaryFormatError::TruncatedData(
-                    "property value length truncated".to_string(),
-                ));
-            }
-            let v_len = u16::from_le_bytes([bytes[cursor], bytes[cursor + 1]]) as usize;
-            cursor += 2;
-            if cursor + v_len > payload_len {
-                return Err(BinaryFormatError::TruncatedData(
-                    "property value bytes truncated".to_string(),
-                ));
-            }
-            let val = std::str::from_utf8(&bytes[cursor..cursor + v_len])
-                .map_err(|e| BinaryFormatError::Utf8Error(e.to_string()))?
-                .to_string();
-            cursor += v_len;
-
-            if key == "name" {
-                name = Some(val.clone());
-            } else if key == "model_name" {
-                model_name = Some(val.clone());
-            }
-            properties.push((key, val));
-        }
-
-        let name = name.unwrap_or_else(|| {
-            use std::fmt::Write;
-            let mut s = String::with_capacity(kind.prefix().len() + 8);
-            s.push_str(kind.prefix());
-            let _ = write!(s, "{}", id);
-            s
-        });
-
-        components.push(SchematicComponent {
-            id,
-            name,
-            kind,
-            pos: Pos2::new(pos_x, pos_y),
-            rotation,
-            value_str,
-            model_name,
-            properties,
-        });
+        components.push(read_component(payload, &mut cursor)?);
     }
 
     let mut wires = Vec::with_capacity(wire_count);
     for _ in 0..wire_count {
-        if cursor + 4 + 4 + 4 + 4 + 4 + 2 > payload_len {
-            return Err(BinaryFormatError::TruncatedData(
-                "wire record truncated".to_string(),
-            ));
-        }
-        let id = u32::from_le_bytes([
-            bytes[cursor],
-            bytes[cursor + 1],
-            bytes[cursor + 2],
-            bytes[cursor + 3],
-        ]) as usize;
-        cursor += 4;
-        let start_x = f32::from_le_bytes([
-            bytes[cursor],
-            bytes[cursor + 1],
-            bytes[cursor + 2],
-            bytes[cursor + 3],
-        ]);
-        cursor += 4;
-        let start_y = f32::from_le_bytes([
-            bytes[cursor],
-            bytes[cursor + 1],
-            bytes[cursor + 2],
-            bytes[cursor + 3],
-        ]);
-        cursor += 4;
-        let end_x = f32::from_le_bytes([
-            bytes[cursor],
-            bytes[cursor + 1],
-            bytes[cursor + 2],
-            bytes[cursor + 3],
-        ]);
-        cursor += 4;
-        let end_y = f32::from_le_bytes([
-            bytes[cursor],
-            bytes[cursor + 1],
-            bytes[cursor + 2],
-            bytes[cursor + 3],
-        ]);
-        cursor += 4;
-        let net_len = u16::from_le_bytes([bytes[cursor], bytes[cursor + 1]]) as usize;
-        cursor += 2;
-        if cursor + net_len > payload_len {
-            return Err(BinaryFormatError::TruncatedData(
-                "wire net name truncated".to_string(),
-            ));
-        }
-        let net_name_str = std::str::from_utf8(&bytes[cursor..cursor + net_len])
-            .map_err(|e| BinaryFormatError::Utf8Error(e.to_string()))?;
-        cursor += net_len;
-
-        let net_name = if net_name_str.is_empty() {
-            None
-        } else {
-            Some(net_name_str.to_string())
-        };
-
-        let start = Pos2::new(start_x, start_y);
-        let end = Pos2::new(end_x, end_y);
-        let wire = SchematicWire::manhattan_route_with_net(id, start, end, net_name);
-        wires.push(wire);
+        wires.push(read_wire(payload, &mut cursor)?);
     }
 
     Ok(DeserializedProject {

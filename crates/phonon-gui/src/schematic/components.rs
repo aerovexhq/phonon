@@ -4,7 +4,7 @@
 
 use super::canvas::SchematicCanvas;
 use super::categories::ComponentCategory;
-use egui::{Align2, Color32, FontId, Painter, Pos2, Rect, Stroke, StrokeKind, Vec2};
+use egui::{Align2, FontId, Painter, Pos2, Rect, Stroke, StrokeKind, Vec2};
 
 /// The electrical or physical device type of a visual schematic component.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -1142,10 +1142,28 @@ impl SchematicComponent {
         is_selected: bool,
         node_voltages: Option<&[(&str, f64)]>,
     ) {
+        self.render_with_theme(
+            painter,
+            canvas,
+            is_selected,
+            node_voltages,
+            &crate::theme::PhononTheme::default(),
+        );
+    }
+
+    /// Renders the component onto the painter using customizable theme colors.
+    pub fn render_with_theme(
+        &self,
+        painter: &Painter,
+        canvas: &SchematicCanvas,
+        is_selected: bool,
+        node_voltages: Option<&[(&str, f64)]>,
+        theme: &crate::theme::PhononTheme,
+    ) {
         let stroke_color = if is_selected {
-            Color32::from_rgb(255, 180, 50)
+            theme.component_selected
         } else {
-            Color32::from_rgb(220, 230, 240)
+            theme.component_stroke
         };
         let stroke = Stroke::new(2.0 * canvas.zoom.clamp(0.8, 2.0), stroke_color);
 
@@ -1159,7 +1177,7 @@ impl SchematicComponent {
         self.kind.draw_symbol(painter, stroke, &to_screen, canvas.zoom);
 
         // Draw pin snap dots
-        let pin_color = Color32::from_rgb(80, 200, 255);
+        let pin_color = theme.pin_normal;
         for (_, p_world) in self.all_pins() {
             let p_screen = canvas.world_to_screen(p_world);
             painter.circle_filled(p_screen, 3.5 * canvas.zoom.clamp(0.8, 1.4), pin_color);
@@ -1177,9 +1195,9 @@ impl SchematicComponent {
             &self.name,
             FontId::proportional(font_size),
             if is_selected {
-                Color32::from_rgb(255, 200, 80)
+                theme.component_selected
             } else {
-                Color32::from_rgb(180, 220, 255)
+                theme.text_primary
             },
         );
 
@@ -1189,7 +1207,7 @@ impl SchematicComponent {
                 Align2::LEFT_CENTER,
                 &self.value_str,
                 FontId::proportional(font_size * 0.9),
-                Color32::from_rgb(170, 185, 200),
+                theme.text_secondary,
             );
         }
 
@@ -1203,7 +1221,7 @@ impl SchematicComponent {
                         Align2::LEFT_CENTER,
                         format!("{:.2}V", v),
                         FontId::monospace(10.0 * canvas.zoom.clamp(0.8, 1.5)),
-                        Color32::from_rgb(100, 255, 160),
+                        theme.voltage_badge,
                     );
                 }
             }

@@ -3,7 +3,7 @@
 //! Orthogonal Manhattan wire routing, segment management, and junction detection.
 
 use super::canvas::SchematicCanvas;
-use egui::{Color32, Painter, Pos2, Rect, Stroke};
+use egui::{Painter, Pos2, Rect, Stroke};
 
 /// Pin normal or departure orientation for pin-aware Manhattan routing.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -258,12 +258,23 @@ impl SchematicWire {
             .any(|seg| seg.contains_point(world_pos, tol))
     }
 
-    /// Renders the wire onto the painter.
+    /// Renders the wire onto the painter with default theme colors.
     pub fn render(&self, painter: &Painter, canvas: &SchematicCanvas, is_selected: bool) {
+        self.render_with_theme(painter, canvas, is_selected, &crate::theme::PhononTheme::default());
+    }
+
+    /// Renders the wire onto the painter using customizable theme colors.
+    pub fn render_with_theme(
+        &self,
+        painter: &Painter,
+        canvas: &SchematicCanvas,
+        is_selected: bool,
+        theme: &crate::theme::PhononTheme,
+    ) {
         let color = if is_selected {
-            Color32::from_rgb(255, 180, 50)
+            theme.wire_selected
         } else {
-            Color32::from_rgb(100, 220, 120) // Classic schematic wire green
+            theme.wire_normal
         };
         let stroke = Stroke::new(2.0 * canvas.zoom.clamp(0.8, 2.0), color);
 

@@ -30,6 +30,7 @@ pub mod axion_insulator_dialog;
 pub mod command_palette;
 pub mod confirmation_modal;
 pub mod floating_toolbar;
+pub mod preferences_dialog;
 pub mod project_dialog;
 
 pub use command_palette::CommandPalette;
@@ -37,6 +38,7 @@ pub use confirmation_modal::{
     ConfirmationDecision, ConfirmationModal, DemoCircuitKind, PendingAction,
 };
 pub use floating_toolbar::{FloatingToolbarAction, FloatingToolbarState};
+pub use preferences_dialog::{PreferencesDialog, PreferencesTab};
 pub use project_dialog::{ProjectDialog, ProjectDialogAction, ProjectDialogMode};
 pub use chern_circulator_dialog::ChernCirculatorDialog;
 pub use cluster_dashboard_dialog::ClusterDashboardDialog;

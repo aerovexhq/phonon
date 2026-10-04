@@ -313,6 +313,13 @@ fn render_top_frame_internal(
                 }
             });
             ui.separator();
+            if ui.button("Preferences... (Ctrl+,)").clicked() {
+                if let Some(a) = app.as_deref_mut() {
+                    a.preferences_dialog.is_open = true;
+                }
+                ui.close();
+            }
+            ui.separator();
             if ui.button("Exit (Alt+F4 / Ctrl+Q)").clicked() {
                 if let Some(a) = app.as_deref_mut() {
                     a.request_action(PendingAction::CloseApp);

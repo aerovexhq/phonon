@@ -56,6 +56,7 @@ pub enum ActionId {
     ToolProbe,
     ClearWire,
     OpenCommandPalette,
+    OpenPreferences,
 }
 
 /// Metadata definition of a single CAD studio action.
@@ -179,6 +180,13 @@ impl ActionRegistry {
             "View and export SPICE 3f5 netlist syntax",
             ActionCategory::File,
             Some("Ctrl+E"),
+        );
+        registry.register(
+            ActionId::OpenPreferences,
+            "Preferences...",
+            "Configure application preferences, theme colors, keybindings, and history depth",
+            ActionCategory::File,
+            Some("Ctrl+,"),
         );
 
         // Edit
@@ -375,6 +383,11 @@ impl ActionRegistry {
 
     /// Returns a slice of all registered actions.
     pub fn actions(&self) -> &[ActionDef] {
+        &self.actions
+    }
+
+    /// Returns a slice of all registered action definitions.
+    pub fn all(&self) -> &[ActionDef] {
         &self.actions
     }
 

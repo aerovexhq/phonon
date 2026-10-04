@@ -447,6 +447,16 @@ impl ProjectStorageManager {
     pub fn clear_autosave(&mut self) -> Result<(), String> {
         self.adapter.clear_autosave()
     }
+
+    /// Saves raw payload bytes under a key.
+    pub fn save_raw(&mut self, key: &str, data: &[u8]) -> Result<(), String> {
+        self.adapter.save_project(key, data)
+    }
+
+    /// Loads raw payload bytes for a key.
+    pub fn load_raw(&self, key: &str) -> Result<Vec<u8>, String> {
+        self.adapter.load_project(key)
+    }
 }
 
 impl Default for ProjectStorageManager {

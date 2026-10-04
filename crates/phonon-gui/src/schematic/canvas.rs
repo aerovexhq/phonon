@@ -482,8 +482,13 @@ impl SchematicCanvas {
         }
     }
 
-    /// Draws the background grid (minor dots and major lines) onto the painter.
+    /// Draws the background grid (minor dots and major lines) onto the painter using default theme colors.
     pub fn render_grid(&self, painter: &Painter, viewport: Rect) {
+        self.render_grid_themed(painter, viewport, &crate::theme::PhononTheme::default());
+    }
+
+    /// Draws the background grid using colors from the specified theme.
+    pub fn render_grid_themed(&self, painter: &Painter, viewport: Rect, theme: &crate::theme::PhononTheme) {
         if !self.show_grid {
             return;
         }
@@ -496,9 +501,8 @@ impl SchematicCanvas {
         let start_y = (top_left_world.y / self.grid_size).floor() as i32;
         let end_y = (bottom_right_world.y / self.grid_size).ceil() as i32;
 
-        let dot_color = Color32::from_rgba_unmultiplied(120, 140, 160, 45);
-        let major_line_color = Color32::from_rgba_unmultiplied(100, 130, 160, 25);
-        let major_stroke = Stroke::new(1.0, major_line_color);
+        let dot_color = theme.grid_dot;
+        let major_stroke = Stroke::new(1.0, theme.grid_line);
 
         // Major grid lines every 5 units
         for gx in start_x..=end_x {
