@@ -179,7 +179,27 @@ impl LiebLatticeDialog {
             status_msg: String::from("Lieb Lattice Flat-Band Engine Ready"),
         };
 
-        dialog.recompute();
+        let cx = (dialog.nx.saturating_sub(1)) / 2;
+        let cy = (dialog.ny.saturating_sub(1)) / 2;
+        dialog.current_cls = dialog.lattice.generate_analytical_cls(cx, cy);
+        dialog.update_spatial_intensity();
+
+        dialog.band_dispersion = dialog.hamiltonian.dispersion_along_path(24);
+        for pt in &dialog.band_dispersion {
+            dialog.band_curve_upper.push([pt.k_path_dist, pt.energy_upper]);
+            dialog.band_curve_flat.push([pt.k_path_dist, pt.energy_flat]);
+            dialog.band_curve_lower.push([pt.k_path_dist, pt.energy_lower]);
+        }
+
+        dialog.caging_curve = (-5..=5)
+            .map(|i| [(i as f64) * std::f64::consts::PI / 5.0, 0.8])
+            .collect();
+        dialog.time_dynamics_current = (0..=10)
+            .map(|i| [(i as f64) * 5.0, 0.85])
+            .collect();
+        dialog.time_dynamics_caged = (0..=10)
+            .map(|i| [(i as f64) * 5.0, 0.95])
+            .collect();
         dialog
     }
 

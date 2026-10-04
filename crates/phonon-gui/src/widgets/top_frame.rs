@@ -31,6 +31,7 @@ pub struct TopFrameConfig {
     pub title: String,
     pub app_version: String,
     pub circuit_name: String,
+    pub is_modified: bool,
 }
 
 impl Default for TopFrameConfig {
@@ -39,7 +40,8 @@ impl Default for TopFrameConfig {
             is_web: cfg!(target_arch = "wasm32"),
             title: "Phonon Studio".to_string(),
             app_version: env!("CARGO_PKG_VERSION").to_string(),
-            circuit_name: "Untitled Circuit".to_string(),
+            circuit_name: "Untitled1".to_string(),
+            is_modified: false,
         }
     }
 }
@@ -57,7 +59,25 @@ impl TopFrameConfig {
             title: title.into(),
             app_version: app_version.into(),
             circuit_name: circuit_name.into(),
+            is_modified: false,
         }
+    }
+
+    /// Builder method setting the modified state.
+    pub fn with_modified(mut self, is_modified: bool) -> Self {
+        self.is_modified = is_modified;
+        self
+    }
+
+    /// Returns the formatted circuit display title: `{project_title}{*}`.
+    pub fn formatted_title(&self) -> String {
+        let name = if self.circuit_name.is_empty() {
+            "Untitled1"
+        } else {
+            &self.circuit_name
+        };
+        let dirty = if self.is_modified { "*" } else { "" };
+        format!("{}{}", name, dirty)
     }
 
     /// Returns whether native desktop window controls (minimize, maximize, close) are enabled.
@@ -189,6 +209,18 @@ fn render_top_frame_internal(
                 action = TopFrameAction::OpenProject;
                 ui.close();
             }
+            if ui.button("Rename Project...").clicked() {
+                let cur = if config.circuit_name.is_empty() {
+                    "Untitled1".to_string()
+                } else {
+                    config.circuit_name.clone()
+                };
+                ui.data_mut(|d| {
+                    d.insert_temp(ui.id().with("top_frame_rename_active"), true);
+                    d.insert_temp(ui.id().with("top_frame_rename_buffer"), cur);
+                });
+                ui.close();
+            }
             ui.menu_button("Load Demos", |ui| {
                 if ui.button("Voltage Divider").clicked() {
                     if let Some(a) = app.as_deref_mut() {
@@ -290,10 +322,7 @@ fn render_top_frame_internal(
                 ui.checkbox(&mut a.show_oscilloscope, "Show Oscilloscope");
                 ui.checkbox(&mut a.show_thermal_overlay, "Show Thermal Badges");
                 ui.checkbox(&mut a.show_palette, "Show Component Palette");
-                if ui.button("Toggle ERC Overlay").clicked() {
-                    a.show_erc_overlay = !a.show_erc_overlay;
-                    ui.close();
-                }
+                ui.checkbox(&mut a.show_erc_overlay, "Show ERC Overlay");
                 ui.menu_button("Sheets", |ui| {
                     let mut switch_idx = None;
                     let mut add_new = false;
@@ -320,6 +349,10 @@ fn render_top_frame_internal(
                         ui.close();
                     }
                 });
+                if ui.button("Center View (Auto-Fit)").clicked() {
+                    a.pending_auto_center = true;
+                    ui.close();
+                }
                 if ui.button("Reset View").clicked() {
                     a.canvas.pan = egui::Vec2::new(100.0, 100.0);
                     a.canvas.zoom = 1.0;
@@ -329,10 +362,12 @@ fn render_top_frame_internal(
                 let mut dummy_grid = true;
                 let mut dummy_scope = true;
                 let mut dummy_thermal = true;
+                let mut dummy_erc = true;
                 ui.checkbox(&mut dummy_grid, "Show Grid");
                 ui.checkbox(&mut dummy_scope, "Show Oscilloscope");
                 ui.checkbox(&mut dummy_thermal, "Show Thermal Badges");
-                if ui.button("Toggle ERC Overlay").clicked() {
+                ui.checkbox(&mut dummy_erc, "Show ERC Overlay");
+                if ui.button("Center View (Auto-Fit)").clicked() {
                     ui.close();
                 }
                 if ui.button("Reset View").clicked() {
@@ -563,19 +598,62 @@ fn render_top_frame_internal(
             ui.ctx().send_viewport_cmd(ViewportCommand::Maximized(!is_max));
         }
 
-        // Circuit name and status in center
-        let circuit_display = if config.circuit_name.is_empty() {
-            "Untitled Circuit".to_string()
+        let edit_id = ui.id().with("top_frame_rename_active");
+        let edit_buf_id = ui.id().with("top_frame_rename_buffer");
+        let mut is_renaming: bool = ui.data(|d| d.get_temp(edit_id).unwrap_or(false));
+
+        if center_resp.secondary_clicked() {
+            is_renaming = true;
+            ui.data_mut(|d| {
+                d.insert_temp(edit_id, true);
+                let cur = if config.circuit_name.is_empty() {
+                    "Untitled1".to_string()
+                } else {
+                    config.circuit_name.clone()
+                };
+                d.insert_temp(edit_buf_id, cur);
+            });
+        }
+
+        if is_renaming {
+            let mut buf: String = ui.data(|d| {
+                d.get_temp(edit_buf_id).unwrap_or_else(|| {
+                    if config.circuit_name.is_empty() {
+                        "Untitled1".to_string()
+                    } else {
+                        config.circuit_name.clone()
+                    }
+                })
+            });
+            let edit_response = ui.put(
+                center_rect,
+                egui::TextEdit::singleline(&mut buf)
+                    .font(FontId::monospace(11.0))
+                    .hint_text("Project Title"),
+            );
+
+            ui.data_mut(|d| d.insert_temp(edit_buf_id, buf.clone()));
+
+            if edit_response.lost_focus() || ui.input(|i| i.key_pressed(egui::Key::Enter)) {
+                ui.data_mut(|d| d.insert_temp(edit_id, false));
+                let trimmed = buf.trim();
+                if !trimmed.is_empty() {
+                    if let Some(a) = app.as_deref_mut() {
+                        a.rename_project(trimmed);
+                    }
+                }
+            }
         } else {
-            format!("{} (v{})", config.circuit_name, config.app_version)
-        };
-        ui.painter().text(
-            center_rect.center(),
-            egui::Align2::CENTER_CENTER,
-            circuit_display,
-            FontId::monospace(11.0),
-            Color32::from_rgb(148, 163, 184),
-        );
+            // Display {project_title}{*} (showing * when modified)
+            let circuit_display = config.formatted_title();
+            ui.painter().text(
+                center_rect.center(),
+                egui::Align2::CENTER_CENTER,
+                &circuit_display,
+                FontId::monospace(11.0),
+                Color32::from_rgb(148, 163, 184),
+            );
+        }
 
         // 5. Top-Right Window Controls
         if config.is_web {

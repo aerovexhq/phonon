@@ -100,8 +100,28 @@ impl Default for ThermalFloorplanDialog {
             run_requested: false,
         };
 
-        // Populate baseline demo simulation so visualizer opens with active thermal data
-        dialog.run_demo_simulation();
+        // Populate baseline pre-seeded trajectory so visualizer opens with active thermal data without running heavy PDE solves during cold boot
+        let mut traj = ElectroThermalTransientTrajectory::new();
+        let mut comp_powers = std::collections::HashMap::new();
+        comp_powers.insert("D1".to_string(), 0.0);
+        comp_powers.insert("R1".to_string(), 0.0);
+        comp_powers.insert("M1".to_string(), 0.0);
+        let mut comp_temps = std::collections::HashMap::new();
+        comp_temps.insert("D1".to_string(), 300.0);
+        comp_temps.insert("R1".to_string(), 300.0);
+        comp_temps.insert("M1".to_string(), 300.0);
+        traj.timestamps.push(0.0);
+        traj.records.push(phonon_thermal::transient_co_sim::TransientStepRecord {
+            time_s: 0.0,
+            node_voltages: vec![12.0, 0.7, 0.0],
+            component_powers: comp_powers,
+            component_temperatures: comp_temps,
+            grid_temperatures: dialog.mesh.temperatures.clone(),
+            peak_temp_k: 300.0,
+            peak_pos: (0.0025, 0.0025),
+            is_runaway: false,
+        });
+        dialog.trajectory = Some(traj);
         dialog
     }
 }

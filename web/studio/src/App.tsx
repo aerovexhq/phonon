@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 
+declare const __BUILD_HASH__: string | undefined
+
 export default function App() {
   const [loading, setLoading] = useState(true)
   const [fadeSplash, setFadeSplash] = useState(false)
@@ -10,11 +12,12 @@ export default function App() {
 
     async function initPhononWasm() {
       try {
-        const wasmJsPath: string = '/studio/wasm/phonon_gui.js'
+        const cacheKey = typeof __BUILD_HASH__ !== 'undefined' ? __BUILD_HASH__ : Date.now().toString(36)
+        const wasmJsPath: string = `/studio/wasm/phonon_gui.js?v=${cacheKey}`
         const mod: any = await import(/* @vite-ignore */ wasmJsPath)
 
-        // Initialize WebAssembly binary
-        await mod.default('/studio/wasm/phonon_gui_bg.wasm')
+        // Initialize WebAssembly binary with cache-busting head key
+        await mod.default(`/studio/wasm/phonon_gui_bg.wasm?v=${cacheKey}`)
 
         // Start eframe WebRunner bound to canvas #phonon_canvas
         await mod.start('phonon_canvas')

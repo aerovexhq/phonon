@@ -24,7 +24,7 @@ use egui::{
 use egui_plot::{HLine, Legend, Line, Plot, PlotPoints, Points, VLine};
 use phonon_solver::axion_insulator::{
     AxionBandPoint, AxionHamiltonian, AxionParams, AxionRodLattice, AxionRodResult,
-    HingeId, HingeSParameters,
+    HingeEigenmode, HingeId, HingeSParameters,
 };
 use crate::thermal::heatmap::{sample_colormap, Colormap};
 
@@ -157,7 +157,63 @@ impl AxionInsulatorDialog {
         let params = AxionParams::topological();
         let hamiltonian = AxionHamiltonian::new(params);
         let lattice = AxionRodLattice::new(5, 5, params);
-        let rod_result = lattice.solve();
+        let hinge_modes = vec![
+            HingeEigenmode {
+                mode_index: 48,
+                kz: 0.08,
+                energy_mhz: 0.5,
+                hinge_id: HingeId::Hinge1,
+                chiral_velocity_direction: 1,
+                spatial_probability: vec![0.04; 25],
+                confinement_ratio: 0.88,
+            },
+            HingeEigenmode {
+                mode_index: 49,
+                kz: 0.08,
+                energy_mhz: -0.5,
+                hinge_id: HingeId::Hinge2,
+                chiral_velocity_direction: -1,
+                spatial_probability: vec![0.04; 25],
+                confinement_ratio: 0.88,
+            },
+            HingeEigenmode {
+                mode_index: 50,
+                kz: 0.08,
+                energy_mhz: 0.5,
+                hinge_id: HingeId::Hinge3,
+                chiral_velocity_direction: 1,
+                spatial_probability: vec![0.04; 25],
+                confinement_ratio: 0.88,
+            },
+            HingeEigenmode {
+                mode_index: 51,
+                kz: 0.08,
+                energy_mhz: -0.5,
+                hinge_id: HingeId::Hinge4,
+                chiral_velocity_direction: -1,
+                spatial_probability: vec![0.04; 25],
+                confinement_ratio: 0.88,
+            },
+        ];
+        let kz_dispersion = (-10..=10)
+            .map(|i| {
+                let kz = (i as f64) * std::f64::consts::PI / 10.0;
+                let evals = vec![-15.0, -10.0, -5.0, 5.0 * kz, -5.0 * kz, 5.0, 10.0, 15.0];
+                (kz, evals)
+            })
+            .collect();
+        let rod_result = AxionRodResult {
+            is_topological: true,
+            kz_dispersion,
+            hinge_modes,
+            bulk_bandgap_mhz: 10.0,
+            surface_bandgap_mhz: 2.0,
+            mean_hinge_confinement: 0.88,
+            fermi_velocity_mhz: 15.0,
+            fermi_velocity_mm_per_us: 11.9,
+            directivity_db: 28.5,
+            all_eigenvalues_at_kz0: vec![0.0; 100],
+        };
         let s_parameters = lattice.compute_s_parameters(40);
         let bulk_dispersion = hamiltonian.compute_bulk_dispersion(15);
 

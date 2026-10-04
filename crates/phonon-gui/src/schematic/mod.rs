@@ -39,5 +39,7 @@ pub use symbol::{
     CustomComponentSymbol, LabelPlacement, SymbolLibrary, SymbolPin, SymbolPinDirection,
     SymbolPrimitive, TerminalDirection,
 };
-pub use wire::{compute_junction_dots, SchematicWire, WireSegment};
+pub use wire::{
+    compute_junction_dots, PinNormal, SchematicWire, WirePinOrientation, WireSegment,
+};
 

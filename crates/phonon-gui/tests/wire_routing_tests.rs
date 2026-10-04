@@ -1,7 +1,11 @@
+#![deny(unsafe_code)]
+
 //! Integration tests for Manhattan wire routing and topological junction detection.
 
 use egui::Pos2;
-use phonon_gui::schematic::{compute_junction_dots, SchematicWire, WireSegment};
+use phonon_gui::schematic::{
+    compute_junction_dots, PinNormal, SchematicWire, WirePinOrientation, WireSegment,
+};
 
 #[test]
 fn test_manhattan_routing_segments() {
@@ -84,3 +88,53 @@ fn test_junction_dots_computation() {
         .any(|&p| (p - Pos2::new(100.0, 100.0)).length() < 1.0));
     assert_eq!(junctions.len(), 2);
 }
+
+#[test]
+fn test_vh_and_hv_and_pin_aware_manhattan_routing() {
+    let from = Pos2::new(100.0, 100.0);
+    let to = Pos2::new(200.0, 250.0);
+
+    // HV route: horizontal first to (to.x, from.y), then vertical to (to.x, to.y)
+    let w_hv = SchematicWire::manhattan_route_hv(1, from, to);
+    assert_eq!(w_hv.segments.len(), 2);
+    assert_eq!(w_hv.segments[0].start, Pos2::new(100.0, 100.0));
+    assert_eq!(w_hv.segments[0].end, Pos2::new(200.0, 100.0));
+    assert_eq!(w_hv.segments[1].start, Pos2::new(200.0, 100.0));
+    assert_eq!(w_hv.segments[1].end, Pos2::new(200.0, 250.0));
+
+    // VH route: vertical first to (from.x, to.y), then horizontal to (to.x, to.y)
+    let w_vh = SchematicWire::manhattan_route_vh(2, from, to);
+    assert_eq!(w_vh.segments.len(), 2);
+    assert_eq!(w_vh.segments[0].start, Pos2::new(100.0, 100.0));
+    assert_eq!(w_vh.segments[0].end, Pos2::new(100.0, 250.0));
+    assert_eq!(w_vh.segments[1].start, Pos2::new(100.0, 250.0));
+    assert_eq!(w_vh.segments[1].end, Pos2::new(200.0, 250.0));
+
+    // Pin aware routing: North departure chooses VH
+    let w_north = SchematicWire::manhattan_route_pin_aware(3, from, PinNormal::North, to);
+    assert_eq!(w_north.segments, w_vh.segments);
+
+    // Pin aware routing: South departure chooses VH
+    let w_south = SchematicWire::manhattan_route_pin_aware(4, from, PinNormal::South, to);
+    assert_eq!(w_south.segments, w_vh.segments);
+
+    // Pin aware routing: East departure chooses HV
+    let w_east = SchematicWire::manhattan_route_pin_aware(5, from, PinNormal::East, to);
+    assert_eq!(w_east.segments, w_hv.segments);
+
+    // Pin aware routing: West departure chooses HV
+    let w_west = SchematicWire::manhattan_route_pin_aware(6, from, PinNormal::West, to);
+    assert_eq!(w_west.segments, w_hv.segments);
+
+    // Pin aware routing with net name
+    let w_net = SchematicWire::manhattan_route_pin_aware_with_net(
+        7,
+        from,
+        WirePinOrientation::Vertical,
+        to,
+        Some("V_OUT".to_string()),
+    );
+    assert_eq!(w_net.net_name.as_deref(), Some("V_OUT"));
+    assert_eq!(w_net.segments, w_vh.segments);
+}
+

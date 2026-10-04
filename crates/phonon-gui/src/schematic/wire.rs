@@ -5,6 +5,29 @@
 use super::canvas::SchematicCanvas;
 use egui::{Color32, Painter, Pos2, Stroke};
 
+/// Pin normal or departure orientation for pin-aware Manhattan routing.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum PinNormal {
+    North,
+    South,
+    East,
+    West,
+    Vertical,
+    Horizontal,
+}
+
+impl PinNormal {
+    pub fn is_vertical(&self) -> bool {
+        matches!(self, Self::North | Self::South | Self::Vertical)
+    }
+
+    pub fn is_horizontal(&self) -> bool {
+        matches!(self, Self::East | Self::West | Self::Horizontal)
+    }
+}
+
+pub type WirePinOrientation = PinNormal;
+
 /// A single linear wire segment between two points in world coordinates.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct WireSegment {
@@ -85,8 +108,9 @@ impl SchematicWire {
         self.segments.last().map(|s| s.end).unwrap_or(Pos2::ZERO)
     }
 
-    /// Creates an orthogonal Manhattan route between two points (horizontal then vertical).
-    pub fn manhattan_route(id: usize, from: Pos2, to: Pos2) -> Self {
+    /// Creates an orthogonal Manhattan route: Horizontal first, then Vertical.
+    /// Corner is at `Pos2::new(to.x, from.y)`.
+    pub fn manhattan_route_hv(id: usize, from: Pos2, to: Pos2) -> Self {
         let mut segments = Vec::new();
         if (from.x - to.x).abs() > 0.1 && (from.y - to.y).abs() > 0.1 {
             let corner = Pos2::new(to.x, from.y);
@@ -102,14 +126,88 @@ impl SchematicWire {
         }
     }
 
-    /// Creates an orthogonal Manhattan route with an explicit net name.
+    /// Creates an orthogonal Manhattan route: Vertical first, then Horizontal.
+    /// Corner is at `Pos2::new(from.x, to.y)`.
+    pub fn manhattan_route_vh(id: usize, from: Pos2, to: Pos2) -> Self {
+        let mut segments = Vec::new();
+        if (from.x - to.x).abs() > 0.1 && (from.y - to.y).abs() > 0.1 {
+            let corner = Pos2::new(from.x, to.y);
+            segments.push(WireSegment::new(from, corner));
+            segments.push(WireSegment::new(corner, to));
+        } else if (from.x - to.x).abs() > 0.1 || (from.y - to.y).abs() > 0.1 {
+            segments.push(WireSegment::new(from, to));
+        }
+        Self {
+            id,
+            segments,
+            net_name: None,
+        }
+    }
+
+    /// Creates an orthogonal Manhattan route between two points (horizontal then vertical).
+    pub fn manhattan_route(id: usize, from: Pos2, to: Pos2) -> Self {
+        Self::manhattan_route_hv(id, from, to)
+    }
+
+    /// Creates an orthogonal Manhattan route with an explicit net name (horizontal then vertical).
     pub fn manhattan_route_with_net(
         id: usize,
         from: Pos2,
         to: Pos2,
         net_name: Option<String>,
     ) -> Self {
-        let mut w = Self::manhattan_route(id, from, to);
+        Self::manhattan_route_hv_with_net(id, from, to, net_name)
+    }
+
+    /// Creates an orthogonal Manhattan route (HV) with an explicit net name.
+    pub fn manhattan_route_hv_with_net(
+        id: usize,
+        from: Pos2,
+        to: Pos2,
+        net_name: Option<String>,
+    ) -> Self {
+        let mut w = Self::manhattan_route_hv(id, from, to);
+        w.net_name = net_name;
+        w
+    }
+
+    /// Creates an orthogonal Manhattan route (VH) with an explicit net name.
+    pub fn manhattan_route_vh_with_net(
+        id: usize,
+        from: Pos2,
+        to: Pos2,
+        net_name: Option<String>,
+    ) -> Self {
+        let mut w = Self::manhattan_route_vh(id, from, to);
+        w.net_name = net_name;
+        w
+    }
+
+    /// Creates a Manhattan route aware of the departure pin's normal or orientation.
+    /// If the pin exits vertically (North/South), routes VH (vertical first).
+    /// If the pin exits horizontally (East/West), routes HV (horizontal first).
+    pub fn manhattan_route_pin_aware(
+        id: usize,
+        from: Pos2,
+        from_normal: PinNormal,
+        to: Pos2,
+    ) -> Self {
+        if from_normal.is_vertical() {
+            Self::manhattan_route_vh(id, from, to)
+        } else {
+            Self::manhattan_route_hv(id, from, to)
+        }
+    }
+
+    /// Creates a Manhattan route aware of the departure pin's normal or orientation, with an optional net name.
+    pub fn manhattan_route_pin_aware_with_net(
+        id: usize,
+        from: Pos2,
+        from_normal: PinNormal,
+        to: Pos2,
+        net_name: Option<String>,
+    ) -> Self {
+        let mut w = Self::manhattan_route_pin_aware(id, from, from_normal, to);
         w.net_name = net_name;
         w
     }

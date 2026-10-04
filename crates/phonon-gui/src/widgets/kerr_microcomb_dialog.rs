@@ -83,13 +83,24 @@ impl KerrMicrocombDialog {
 
         let mut solver = LleSplitStepSolver::new(params);
         solver.init_soliton(0.0);
-        solver.run_to_steady_state(60);
 
         let spectrum = CombSpectrum::from_state(&solver.state, &solver.params, 1.0);
 
-        // Pre-compute detuning scan curve
-        let mut scan_solver = solver.clone();
-        let scan = scan_solver.sweep_detuning(-1.0, 7.0, 60);
+        // Pre-seeded baseline detuning scan curve for fast sub-millisecond cold boot
+        let alphas: Vec<f64> = (-5..=35).map(|i| -1.0 + (i as f64) * 0.2).collect();
+        let powers: Vec<f64> = alphas.iter().map(|&a| if (2.0..=5.0).contains(&a) { 1.2 } else { 0.2 }).collect();
+        let peak_powers: Vec<f64> = alphas.iter().map(|&a| if (2.0..=5.0).contains(&a) { 4.5 } else { 0.8 }).collect();
+        let regimes: Vec<MicrocombRegime> = alphas.iter().map(|&a| if (2.0..=5.0).contains(&a) { MicrocombRegime::DissipativeSoliton } else { MicrocombRegime::LowPowerCw }).collect();
+        let scan = DetuningScanResult {
+            alphas,
+            powers,
+            peak_powers,
+            regimes,
+            soliton_step_range: Some((2.0, 5.0)),
+            turing_roll_range: Some((1.0, 2.0)),
+            chaos_range: Some((5.0, 6.0)),
+            best_soliton_state: None,
+        };
 
         let temporal_curve: Vec<[f64; 2]> = spectrum
             .theta

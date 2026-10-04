@@ -353,3 +353,59 @@ fn test_throughput_benchmark_exceeds_100k_erc_evaluations_per_second() {
         throughput
     );
 }
+
+#[test]
+fn test_all_five_built_in_demo_circuits_produce_zero_errors_and_zero_warnings() {
+    let mut app = phonon_gui::PhononApp::default();
+
+    println!("--- Testing Voltage Divider ---");
+    app.load_voltage_divider_demo();
+    let diag = ErcEngine::evaluate_canvas(&app.canvas);
+    println!("Voltage divider diags: {:?}", diag);
+    assert!(
+        diag.is_empty(),
+        "Voltage divider demo must produce 0 ERC diagnostics, got: {:?}",
+        diag
+    );
+
+    println!("--- Testing Diode Clipper ---");
+    app.load_diode_clipper_demo();
+    let diag = ErcEngine::evaluate_canvas(&app.canvas);
+    println!("Diode clipper diags: {:?}", diag);
+    assert!(
+        diag.is_empty(),
+        "Diode clipper demo must produce 0 ERC diagnostics, got: {:?}",
+        diag
+    );
+
+    println!("--- Testing BJT Amplifier ---");
+    app.load_bjt_amplifier_demo();
+    let diag = ErcEngine::evaluate_canvas(&app.canvas);
+    println!("BJT amplifier diags: {:?}", diag);
+    assert!(
+        diag.is_empty(),
+        "BJT amplifier demo must produce 0 ERC diagnostics, got: {:?}",
+        diag
+    );
+
+    println!("--- Testing CMOS Inverter ---");
+    app.load_cmos_inverter_demo();
+    let diag = ErcEngine::evaluate_canvas(&app.canvas);
+    println!("CMOS inverter diags: {:?}", diag);
+    assert!(
+        diag.is_empty(),
+        "CMOS inverter demo must produce 0 ERC diagnostics, got: {:?}",
+        diag
+    );
+
+    println!("--- Testing NMOS Switch ---");
+    app.load_nmos_switch_demo();
+    let diag = ErcEngine::evaluate_canvas(&app.canvas);
+    println!("NMOS switch diags: {:?}", diag);
+    assert!(
+        diag.is_empty(),
+        "NMOS switch demo must produce 0 ERC diagnostics, got: {:?}",
+        diag
+    );
+}
+

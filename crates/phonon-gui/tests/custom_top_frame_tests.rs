@@ -412,3 +412,52 @@ fn test_top_frame_rendering_throughput() {
         evals_per_sec
     );
 }
+
+#[test]
+fn test_top_frame_project_title_and_modified_indicator() {
+    let mut config = TopFrameConfig::default();
+    assert_eq!(config.formatted_title(), "Untitled1");
+
+    config = config.with_modified(true);
+    assert_eq!(config.formatted_title(), "Untitled1*");
+
+    config.circuit_name = "RF_Mixer_Stage".to_string();
+    assert_eq!(config.formatted_title(), "RF_Mixer_Stage*");
+
+    config.is_modified = false;
+    assert_eq!(config.formatted_title(), "RF_Mixer_Stage");
+}
+
+#[test]
+fn test_project_title_renaming_and_auto_centering() {
+    let mut app = PhononApp::default();
+    assert_eq!(app.project_title, "Untitled1");
+    assert!(!app.is_modified);
+    assert!(app.pending_auto_center);
+
+    app.rename_project("AudioFilter");
+    assert_eq!(app.project_title, "AudioFilter");
+    assert_eq!(app.top_frame_config.circuit_name, "AudioFilter");
+
+    // Bounding box on loaded circuit
+    let bb = app.bounding_box();
+    assert!(bb.is_some(), "Canvas with components must have bounding box");
+    let bb_rect = bb.unwrap();
+    assert!(bb_rect.width() > 0.0);
+    assert!(bb_rect.height() > 0.0);
+
+    // Auto-centering on viewport
+    let viewport = egui::Rect::from_min_size(egui::Pos2::ZERO, egui::Vec2::new(1920.0, 1080.0));
+    app.center_on_bounding_box(viewport);
+    assert_eq!(app.canvas.world_to_screen(bb_rect.center()), viewport.center());
+
+    // Loading demo resets pending_auto_center to true
+    app.pending_auto_center = false;
+    app.load_bjt_amplifier_demo();
+    assert!(app.pending_auto_center);
+
+    app.pending_auto_center = false;
+    app.load_cmos_inverter_demo();
+    assert!(app.pending_auto_center);
+}
+

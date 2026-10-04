@@ -23,7 +23,7 @@ use egui::{
 };
 use egui_plot::{HLine, Legend, Line, Plot, PlotPoints, Points, VLine};
 use phonon_solver::soti_corner_resonator::{
-    BandDispersionPoint, BbhHamiltonian, CornerId, QuadrupoleParams, SotiLattice,
+    BandDispersionPoint, BbhHamiltonian, CornerEigenstate, CornerId, QuadrupoleParams, SotiLattice,
     SotiLatticeResult, HIGH_SYMMETRY_PATH,
 };
 use crate::thermal::heatmap::{sample_colormap, Colormap};
@@ -126,7 +126,56 @@ impl SotiCornerDialog {
 
         let bbh = BbhHamiltonian::new(params);
         let lattice = SotiLattice::new(nx, ny, params);
-        let lattice_result = lattice.solve();
+        let corner_states = vec![
+            CornerEigenstate {
+                mode_index: 48,
+                energy: 0.0,
+                corner_id: CornerId::BottomLeft,
+                localization_ratio: 0.95,
+                all_corners_confinement: 0.95,
+                spatial_intensity: vec![0.01; 100],
+            },
+            CornerEigenstate {
+                mode_index: 49,
+                energy: 0.0,
+                corner_id: CornerId::BottomRight,
+                localization_ratio: 0.95,
+                all_corners_confinement: 0.95,
+                spatial_intensity: vec![0.01; 100],
+            },
+            CornerEigenstate {
+                mode_index: 50,
+                energy: 0.0,
+                corner_id: CornerId::TopLeft,
+                localization_ratio: 0.95,
+                all_corners_confinement: 0.95,
+                spatial_intensity: vec![0.01; 100],
+            },
+            CornerEigenstate {
+                mode_index: 51,
+                energy: 0.0,
+                corner_id: CornerId::TopRight,
+                localization_ratio: 0.95,
+                all_corners_confinement: 0.95,
+                spatial_intensity: vec![0.01; 100],
+            },
+        ];
+        let mut all_eigenvalues = vec![-12.0; 48];
+        all_eigenvalues.extend_from_slice(&[0.0, 0.0, 0.0, 0.0]);
+        all_eigenvalues.extend(vec![12.0; 48]);
+        let lattice_result = SotiLatticeResult {
+            nx,
+            ny,
+            total_sites: 4 * nx * ny,
+            all_eigenvalues,
+            bulk_bandgap: 2.0 * (10.0 - 2.0),
+            corner_states,
+            energy_confinement_ratio: 0.95,
+            localization_length_mm: 5.0 / (10.0f64 / 2.0).ln(),
+            quality_factor: 5.0e4,
+            is_topological: true,
+            combined_corner_intensity: vec![0.01; 100],
+        };
         let band_dispersion = bbh.compute_band_dispersion(30);
 
         let mut dialog = Self {

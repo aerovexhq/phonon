@@ -191,6 +191,15 @@ pub struct PhononApp {
 
     /// Instant boot theme configuration.
     pub boot_theme_config: crate::BootThemeConfig,
+
+    /// Whether auto-centering of the viewport on bounding box is requested.
+    pub pending_auto_center: bool,
+
+    /// Active project title (displayed in top frame title bar).
+    pub project_title: String,
+
+    /// Whether project has unsaved modifications.
+    pub is_modified: bool,
 }
 
 impl std::fmt::Debug for PhononApp {
@@ -203,6 +212,8 @@ impl std::fmt::Debug for PhononApp {
             .field("dynamics_backend", &self.dynamics_backend.info())
             .field("palette", &self.palette)
             .field("boot_theme_config", &self.boot_theme_config)
+            .field("project_title", &self.project_title)
+            .field("is_modified", &self.is_modified)
             .finish()
     }
 }
@@ -268,6 +279,9 @@ impl Default for PhononApp {
             palette: ComponentPalette::new(),
             show_palette: true,
             boot_theme_config: crate::default_boot_theme_config(),
+            pending_auto_center: true,
+            project_title: "Untitled1".to_string(),
+            is_modified: false,
         };
 
         // Initialize with default Voltage Divider demo
@@ -303,6 +317,22 @@ impl PhononApp {
     /// Returns a mutable reference to the active physics dynamics backend.
     pub fn backend_mut(&mut self) -> &mut dyn PhysicsDynamicsBackend {
         self.dynamics_backend.as_mut()
+    }
+
+    /// Returns the world-coordinate bounding box of the schematic canvas content.
+    pub fn bounding_box(&self) -> Option<egui::Rect> {
+        self.canvas.bounding_box()
+    }
+
+    /// Automatically centers and fits the schematic canvas within the given viewport rect.
+    pub fn center_on_bounding_box(&mut self, viewport: egui::Rect) {
+        self.canvas.center_on_bounding_box(viewport);
+    }
+
+    /// Updates the active project title and synchronization metadata.
+    pub fn rename_project(&mut self, new_name: impl Into<String>) {
+        self.project_title = new_name.into();
+        self.top_frame_config.circuit_name = self.project_title.clone();
     }
 
     /// Clears canvas state without pushing an undo command.
@@ -561,7 +591,7 @@ impl PhononApp {
 
         // 2. Wires
         let w1 =
-            SchematicWire::manhattan_route(1, Pos2::new(200.0, 260.0), Pos2::new(360.0, 200.0));
+            SchematicWire::manhattan_route_vh(1, Pos2::new(200.0, 260.0), Pos2::new(360.0, 200.0));
         let w2 =
             SchematicWire::manhattan_route(2, Pos2::new(360.0, 280.0), Pos2::new(360.0, 320.0));
         let w3 =
@@ -575,6 +605,7 @@ impl PhononApp {
         self.sync_canvas_state();
         self.run_erc();
         self.sim_status.clear();
+        self.pending_auto_center = true;
     }
 
     /// Loads an interactive Diode Limiter / Clipper demo circuit.
@@ -606,6 +637,7 @@ impl PhononApp {
         self.sync_canvas_state();
         self.run_erc();
         self.sim_status.clear();
+        self.pending_auto_center = true;
     }
 
     /// Loads an interactive BJT Common Emitter Amplifier demo circuit.
@@ -614,56 +646,72 @@ impl PhononApp {
         self.history.clear();
 
         // 1. Components
-        // VCC: 12V Supply
-        let vcc = SchematicComponent::new(1, ComponentKind::VoltageSource, Pos2::new(420.0, 180.0), 1)
+        // VCC: 12V Supply at (500, 280) -> (+) at (500, 240), (-) at (500, 320)
+        let vcc = SchematicComponent::new(1, ComponentKind::VoltageSource, Pos2::new(500.0, 280.0), 1)
             .with_value("12.0");
-        // RC: Collector Resistor 2.2k
+        // RC: Collector Resistor 2.2k at (420, 280) -> 1=(420, 240), 2=(420, 320)
         let rc = SchematicComponent::new(2, ComponentKind::Resistor, Pos2::new(420.0, 280.0), 1)
             .with_value("2.2k");
         // Q1: BJT NPN Transistor at (400, 380) -> C=(420, 340), B=(380, 380), E=(420, 420)
         let q1 = SchematicComponent::new(3, ComponentKind::BjtNpn, Pos2::new(400.0, 380.0), 1);
-        // RE: Emitter Resistor 470
+        // RE: Emitter Resistor 470 at (420, 480) -> 1=(420, 440), 2=(420, 520)
         let re = SchematicComponent::new(4, ComponentKind::Resistor, Pos2::new(420.0, 480.0), 2)
             .with_value("470");
-        // RB1: Base Bias Upper 22k
+        // RB1: Base Bias Upper 22k at (300, 280) -> 1=(300, 240), 2=(300, 320)
         let rb1 = SchematicComponent::new(5, ComponentKind::Resistor, Pos2::new(300.0, 280.0), 3)
             .with_value("22k");
-        // RB2: Base Bias Lower 4.7k
+        // RB2: Base Bias Lower 4.7k at (300, 480) -> 1=(300, 440), 2=(300, 520)
         let rb2 = SchematicComponent::new(6, ComponentKind::Resistor, Pos2::new(300.0, 480.0), 4)
             .with_value("4.7k");
-        // VIN: AC Signal Source
+        // VIN: AC Signal Source at (180, 380) -> (+) at (180, 340), (-) at (180, 420)
         let vin = SchematicComponent::new(7, ComponentKind::AcVoltageSource, Pos2::new(180.0, 380.0), 1)
             .with_value("SIN(0 0.05 1k)");
-        // GND: Reference Ground
+        // GND: Reference Ground at (300, 560) -> pin at (300, 540)
         let gnd = SchematicComponent::new(8, ComponentKind::Ground, Pos2::new(300.0, 560.0), 1);
 
         self.components = vec![vcc, rc, q1, re, rb1, rb2, vin, gnd];
         self.next_comp_id = 9;
 
         // 2. Wires
-        // VCC top to RC pin 1
-        let w1 = SchematicWire::manhattan_route(1, Pos2::new(420.0, 140.0), Pos2::new(420.0, 240.0));
-        // VCC top to RB1 pin 1
-        let w2 = SchematicWire::manhattan_route(2, Pos2::new(420.0, 140.0), Pos2::new(300.0, 240.0));
-        // RC pin 2 to Q1 Collector (420, 340)
-        let w3 = SchematicWire::manhattan_route(3, Pos2::new(420.0, 320.0), Pos2::new(420.0, 340.0));
-        // Q1 Emitter (420, 420) to RE pin 1
-        let w4 = SchematicWire::manhattan_route(4, Pos2::new(420.0, 420.0), Pos2::new(420.0, 440.0));
-        // VIN (+) to Q1 Base / RB divider node
-        let w5 = SchematicWire::manhattan_route(5, Pos2::new(180.0, 340.0), Pos2::new(380.0, 380.0));
-        let w6 = SchematicWire::manhattan_route(6, Pos2::new(300.0, 320.0), Pos2::new(380.0, 380.0));
-        let w7 = SchematicWire::manhattan_route(7, Pos2::new(380.0, 380.0), Pos2::new(300.0, 440.0));
-        // Bottom GND rail connections
-        let w8 = SchematicWire::manhattan_route(8, Pos2::new(300.0, 520.0), Pos2::new(300.0, 540.0));
-        let w9 = SchematicWire::manhattan_route(9, Pos2::new(420.0, 520.0), Pos2::new(300.0, 540.0));
-        let w10 = SchematicWire::manhattan_route(10, Pos2::new(180.0, 420.0), Pos2::new(300.0, 540.0));
+        // Top VCC rail: VCC (+) (500, 240) -> RC pin 1 (420, 240) -> RB1 pin 1 (300, 240)
+        let w1 = SchematicWire::manhattan_route(1, Pos2::new(500.0, 240.0), Pos2::new(420.0, 240.0));
+        let w2 = SchematicWire::manhattan_route(2, Pos2::new(420.0, 240.0), Pos2::new(300.0, 240.0));
 
-        self.wires = vec![w1, w2, w3, w4, w5, w6, w7, w8, w9, w10];
-        self.next_wire_id = 11;
+        // RC pin 2 (420, 320) to Q1 Collector (420, 340)
+        let w3 = SchematicWire::manhattan_route(3, Pos2::new(420.0, 320.0), Pos2::new(420.0, 340.0));
+
+        // Q1 Emitter (420, 420) to RE pin 1 (420, 440)
+        let w4 = SchematicWire::manhattan_route(4, Pos2::new(420.0, 420.0), Pos2::new(420.0, 440.0));
+
+        // Base network:
+        // VIN (+) (180, 340) to Base tie point (300, 340)
+        let w5 = SchematicWire::manhattan_route(5, Pos2::new(180.0, 340.0), Pos2::new(300.0, 340.0));
+        // RB1 pin 2 (300, 320) to Base tie point (300, 340)
+        let w6 = SchematicWire::manhattan_route(6, Pos2::new(300.0, 320.0), Pos2::new(300.0, 340.0));
+        // Base tie point (300, 340) down to Q1 Base level (300, 380)
+        let w7 = SchematicWire::manhattan_route(7, Pos2::new(300.0, 340.0), Pos2::new(300.0, 380.0));
+        // Q1 Base (380, 380) to (300, 380)
+        let w8 = SchematicWire::manhattan_route(8, Pos2::new(300.0, 380.0), Pos2::new(380.0, 380.0));
+        // (300, 380) down to RB2 pin 1 (300, 440)
+        let w9 = SchematicWire::manhattan_route(9, Pos2::new(300.0, 380.0), Pos2::new(300.0, 440.0));
+
+        // Ground rail at y=540:
+        // RB2 pin 2 (300, 520) down to GND pin (300, 540)
+        let w10 = SchematicWire::manhattan_route(10, Pos2::new(300.0, 520.0), Pos2::new(300.0, 540.0));
+        // RE pin 2 (420, 520) via VH to GND pin (300, 540)
+        let w11 = SchematicWire::manhattan_route_vh(11, Pos2::new(420.0, 520.0), Pos2::new(300.0, 540.0));
+        // VIN (-) (180, 420) via VH to GND pin (300, 540)
+        let w12 = SchematicWire::manhattan_route_vh(12, Pos2::new(180.0, 420.0), Pos2::new(300.0, 540.0));
+        // VCC (-) (500, 320) via VH to GND pin (300, 540)
+        let w13 = SchematicWire::manhattan_route_vh(13, Pos2::new(500.0, 320.0), Pos2::new(300.0, 540.0));
+
+        self.wires = vec![w1, w2, w3, w4, w5, w6, w7, w8, w9, w10, w11, w12, w13];
+        self.next_wire_id = 14;
 
         self.sync_canvas_state();
         self.run_erc();
         self.sim_status.clear();
+        self.pending_auto_center = true;
     }
 
     /// Loads an interactive CMOS Inverter Pair demo circuit.
@@ -676,9 +724,11 @@ impl PhononApp {
         let vdd = SchematicComponent::new(1, ComponentKind::VoltageSource, Pos2::new(200.0, 240.0), 1)
             .with_value("3.3");
         // M1: PMOS Pull-up at (360, 260) -> D=(380, 220), G=(340, 260), S=(380, 300)
-        let m1 = SchematicComponent::new(2, ComponentKind::Pmos, Pos2::new(360.0, 260.0), 1);
+        let mut m1 = SchematicComponent::new(2, ComponentKind::Pmos, Pos2::new(360.0, 260.0), 1);
+        m1.name = "MP1".to_string();
         // M2: NMOS Pull-down at (360, 380) -> D=(380, 340), G=(340, 380), S=(380, 420)
-        let m2 = SchematicComponent::new(3, ComponentKind::Nmos, Pos2::new(360.0, 380.0), 1);
+        let mut m2 = SchematicComponent::new(3, ComponentKind::Nmos, Pos2::new(360.0, 380.0), 1);
+        m2.name = "MN1".to_string();
         // VIN: Pulse Generator Input
         let vin = SchematicComponent::new(4, ComponentKind::PulseGenerator, Pos2::new(180.0, 380.0), 1)
             .with_value("PULSE(0 3.3 0 1n 1n 10u 20u)");
@@ -709,6 +759,7 @@ impl PhononApp {
         self.sync_canvas_state();
         self.run_erc();
         self.sim_status.clear();
+        self.pending_auto_center = true;
     }
 
     /// Loads an interactive NMOS Switch demo circuit.
@@ -754,6 +805,7 @@ impl PhononApp {
         self.sync_canvas_state();
         self.run_erc();
         self.sim_status.clear();
+        self.pending_auto_center = true;
     }
 
     /// Compiles schematic and runs the non-linear DC Operating Point (.OP) solver.
@@ -1024,6 +1076,11 @@ impl PhononApp {
         let (response, painter) =
             ui.allocate_painter(ui.available_size_before_wrap(), Sense::click_and_drag());
         let viewport = response.rect;
+
+        if self.pending_auto_center {
+            self.center_on_bounding_box(viewport);
+            self.pending_auto_center = false;
+        }
 
         // 1. Pan & Zoom
         self.canvas.handle_pan_zoom(ui, &response);
@@ -1354,24 +1411,6 @@ impl PhononApp {
                 self.selected_component_id = None;
                 self.selected_wire_id = None;
             }
-
-            ui.separator();
-            ui.heading("Demo Circuits");
-            if ui.button("Load Voltage Divider").clicked() {
-                self.load_voltage_divider_demo();
-            }
-            if ui.button("Load Diode Clipper").clicked() {
-                self.load_diode_clipper_demo();
-            }
-            if ui.button("Load BJT CE Amplifier").clicked() {
-                self.load_bjt_amplifier_demo();
-            }
-            if ui.button("Load CMOS Inverter").clicked() {
-                self.load_cmos_inverter_demo();
-            }
-            if ui.button("Load NMOS Switch").clicked() {
-                self.load_nmos_switch_demo();
-            }
         });
     }
 
@@ -1570,17 +1609,8 @@ impl PhononApp {
 
         // 1. Bespoke Custom Top Frame
         let mut top_config = self.top_frame_config.clone();
-        let dirty_suffix = if self.history.is_dirty() { " *" } else { "" };
-        top_config.circuit_name = if self.components.is_empty() {
-            format!("Empty Schematic{}", dirty_suffix)
-        } else {
-            format!(
-                "Circuit ({} Components, {} Wires){}",
-                self.components.len(),
-                self.wires.len(),
-                dirty_suffix
-            )
-        };
+        top_config.circuit_name = self.project_title.clone();
+        top_config.is_modified = self.is_modified || self.history.is_dirty();
 
         Panel::top("custom_top_frame").show(ui, |ui| {
             let action = render_top_frame_with_app(ui, &top_config, self);

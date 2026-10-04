@@ -298,4 +298,79 @@ impl SchematicCanvas {
             }
         }
     }
+
+    /// Computes the axis-aligned bounding box enclosing all components, wires, subcircuits, and buses in world coordinates.
+    pub fn bounding_box(&self) -> Option<Rect> {
+        let mut min_x = f32::INFINITY;
+        let mut min_y = f32::INFINITY;
+        let mut max_x = f32::NEG_INFINITY;
+        let mut max_y = f32::NEG_INFINITY;
+        let mut has_points = false;
+
+        let mut include_pt = |p: Pos2| {
+            has_points = true;
+            min_x = min_x.min(p.x);
+            min_y = min_y.min(p.y);
+            max_x = max_x.max(p.x);
+            max_y = max_y.max(p.y);
+        };
+
+        for comp in &self.components {
+            include_pt(comp.pos);
+            for (_, p) in comp.all_pins() {
+                include_pt(p);
+            }
+        }
+
+        for wire in &self.wires {
+            for seg in &wire.segments {
+                include_pt(seg.start);
+                include_pt(seg.end);
+            }
+        }
+
+        for inst in &self.subcircuit_instances {
+            include_pt(inst.pos);
+            include_pt(Pos2::new(inst.pos.x - 40.0, inst.pos.y - 40.0));
+            include_pt(Pos2::new(inst.pos.x + 40.0, inst.pos.y + 40.0));
+        }
+
+        for bus in &self.buses {
+            for seg in &bus.segments {
+                include_pt(seg.start);
+                include_pt(seg.end);
+            }
+        }
+
+        if has_points {
+            Some(Rect::from_min_max(
+                Pos2::new(min_x, min_y),
+                Pos2::new(max_x, max_y),
+            ))
+        } else {
+            None
+        }
+    }
+
+    /// Automatically centers and fits the canvas contents within the given viewport rect.
+    pub fn center_on_bounding_box(&mut self, viewport: Rect) {
+        if let Some(bb) = self.bounding_box() {
+            let margin = 60.0;
+            let avail_w = (viewport.width() - margin * 2.0).max(100.0);
+            let avail_h = (viewport.height() - margin * 2.0).max(100.0);
+
+            if bb.width() > 1.0 && bb.height() > 1.0 {
+                let zoom_x = avail_w / bb.width();
+                let zoom_y = avail_h / bb.height();
+                self.zoom = zoom_x.min(zoom_y).clamp(0.4, 2.5);
+            }
+
+            let bb_center = bb.center();
+            let vp_center = viewport.center();
+            self.pan = vp_center.to_vec2() - bb_center.to_vec2() * self.zoom;
+        } else {
+            self.pan = viewport.center().to_vec2();
+            self.zoom = 1.0;
+        }
+    }
 }
