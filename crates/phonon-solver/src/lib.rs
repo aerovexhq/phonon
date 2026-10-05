@@ -5,6 +5,7 @@
 
 pub mod acoustic;
 pub mod acoustic_chern_circulator;
+pub mod acoustic_skyrmion_router;
 pub mod acoustic_holonomic_processor;
 pub mod acoustic_metasurface_holography;
 pub mod acoustic_microcomb_soliton;
@@ -970,5 +971,11 @@ pub use optomechanical_squeezing::{
     FockStateDistribution, NonClassicalityMetrics, OptomechanicalSqueezingParams,
     PhononCountingResolvedSpectrum, PhononStateKind, QuadratureSqueezingSolver,
     QuadratureVariance, ResolvedPeak, WignerQuasiProbability, HBAR, SQL_VARIANCE,
+};
+pub use acoustic_skyrmion_router::{
+    ChiralDomainWallRouter, DefectTransmissionResult, DomainWallDefect,
+    SParameterPoint as SkyrmionSParameterPoint,
+    SParameterSpectrum as SkyrmionSParameterSpectrum, SkyrmionLatticeParams, SkyrmionLatticeType,
+    ThieleDynamics, TopologicalChargeCalculator, TrajectoryPoint, Vector3Field,
 };
 

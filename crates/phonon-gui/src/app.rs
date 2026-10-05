@@ -24,6 +24,7 @@ use crate::widgets::{
     SubcircuitDialogAction, SubcircuitPackageDialog, SymbolEditorDialog, ThermalFloorplanDialog,
     TopFrameAction, TopFrameConfig, TwistedMoireDialog, WeylSemimetalDialog, LuaConsoleDialog,
     FloquetTimeCrystalDialog, QuantumBraidingLatticeDialog, OptomechanicalSqueezingDialog,
+    SkyrmionRouterDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -199,6 +200,9 @@ pub struct PhononApp {
     /// Interactive Cavity Optomechanical Squeezing & Phonon Counting Studio dialog.
     pub optomechanical_squeezing_dialog: OptomechanicalSqueezingDialog,
 
+    /// Interactive Topological Acoustic Skyrmion Vortex Lattice & Domain Wall Router Studio dialog.
+    pub skyrmion_router_dialog: SkyrmionRouterDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -361,6 +365,7 @@ impl Default for PhononApp {
             floquet_time_crystal_dialog: FloquetTimeCrystalDialog::new(),
             quantum_braiding_lattice_dialog: QuantumBraidingLatticeDialog::new(),
             optomechanical_squeezing_dialog: OptomechanicalSqueezingDialog::new(),
+            skyrmion_router_dialog: SkyrmionRouterDialog::new(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -3018,6 +3023,9 @@ impl PhononApp {
 
         // 32. Interactive Cavity Optomechanical Squeezing & Phonon Counting Studio Dialog
         self.optomechanical_squeezing_dialog.ui(ui.ctx());
+
+        // 33. Interactive Topological Acoustic Skyrmion Vortex Lattice & Domain Wall Router Dialog
+        self.skyrmion_router_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {

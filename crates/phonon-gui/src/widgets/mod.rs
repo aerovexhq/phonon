@@ -38,6 +38,7 @@ pub mod subcircuit_dialog;
 pub mod lua_console_dialog;
 pub mod quantum_braiding_lattice_dialog;
 pub mod optomechanical_squeezing_dialog;
+pub mod skyrmion_router_dialog;
 
 pub use pill_badge::{
     proportional_zoom_scale, render_dual_telemetry_pill, render_pill_badge, PillBadgeStyle,
@@ -81,4 +82,5 @@ pub use quantum_braiding_lattice_dialog::{BraidingDialogTab, QuantumBraidingLatt
 pub use optomechanical_squeezing_dialog::{
     OptomechDialogTab, OptomechanicalSqueezingDialog, WignerColormap,
 };
+pub use skyrmion_router_dialog::{SkyrmionDialogTab, SkyrmionRouterDialog};
 
