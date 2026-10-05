@@ -300,6 +300,7 @@ pub mod weyl_semimetal;
 pub mod jtwpa_simulator;
 pub mod non_abelian_holonomic;
 pub mod twisted_moire_superlattice;
+pub mod protected_braiding_lattice;
 
 pub use acoustic::{
     AcousticBenchmarkReport, AcousticBenchmarkRunner, AcousticLinkSimulator, AcousticRealismTier,
@@ -958,6 +959,11 @@ pub use floquet_time_crystal::{
     EdwardsAndersonOrder, FloquetState, FloquetStateKind, FloquetTimeCrystalParams,
     FloquetUnitaryOperator, RigidityPhaseDiagram, StroboscopicTrajectory,
     SubharmonicSpectralAnalysis,
+};
+pub use protected_braiding_lattice::{
+    BraidStep, BraidingComplex, CompiledBraidResult, CorrectionResult, MajoranaBraidingParams,
+    MajoranaMode, MajoranaTargetGate, NonAbelianBraidGenerator, ParityReadout, StabilizerCheck,
+    StabilizerKind, SurfaceCodeGrid, SyndromeResult, UnitaryMatrix, HBAR_J_S,
 };
 
 

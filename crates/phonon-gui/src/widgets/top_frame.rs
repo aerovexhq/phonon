@@ -640,6 +640,12 @@ fn render_top_frame_internal(
                     }
                     ui.close();
                 }
+                if ui.button("Quantum Braiding Lattice Processor...").clicked() {
+                    if let Some(a) = app.as_deref_mut() {
+                        a.quantum_braiding_lattice_dialog.is_open = true;
+                    }
+                    ui.close();
+                }
             });
         });
         ui.label(RichText::new("|").color(Color32::from_rgb(60, 70, 85)).size(11.0));

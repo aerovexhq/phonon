@@ -36,6 +36,7 @@ pub mod preferences_dialog;
 pub mod project_dialog;
 pub mod subcircuit_dialog;
 pub mod lua_console_dialog;
+pub mod quantum_braiding_lattice_dialog;
 
 pub use pill_badge::{
     proportional_zoom_scale, render_dual_telemetry_pill, render_pill_badge, PillBadgeStyle,
@@ -75,4 +76,5 @@ pub use lieb_lattice_dialog::{LiebLatticeDialog, LiebPlotTab, LiebSpatialModeSel
 pub use axion_insulator_dialog::{AxionInsulatorDialog, AxionPlotTab, AxionSpatialViewMode};
 pub use floquet_time_crystal_dialog::{FloquetPlotTab, FloquetTimeCrystalDialog};
 pub use lua_console_dialog::{LuaConsoleDialog, ScriptPreset};
+pub use quantum_braiding_lattice_dialog::{BraidingDialogTab, QuantumBraidingLatticeDialog};
 
