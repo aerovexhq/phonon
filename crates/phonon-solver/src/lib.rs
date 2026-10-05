@@ -9,6 +9,7 @@ pub mod acoustic_skyrmion_router;
 pub mod acoustic_domain_wall_soliton;
 pub mod valley_acoustic_multiplexer;
 pub mod quadrupole_shg;
+pub mod synthetic_4d_qhe;
 pub mod acoustic_holonomic_processor;
 pub mod acoustic_metasurface_holography;
 pub mod acoustic_microcomb_soliton;
@@ -997,6 +998,11 @@ pub use quadrupole_shg::{
     CornerShgModalMetrics, QuadrupoleShgParams, QuadrupoleShgSolver, ShgEmissionEngine,
     ShgEmissionMetrics, ShgEmissionParams, ShgHarmonicSpectrumPoint,
 };
+pub use synthetic_4d_qhe::{
+    BoundaryHyperSurfaceMode, FourDimDispersionPoint, FourDimLatticeSolver, Synthetic4dParams,
+    SyntheticHallEngine, SyntheticHallMetrics, SyntheticHallParams, SyntheticHarmonicPoint,
+};
+
 
 
 

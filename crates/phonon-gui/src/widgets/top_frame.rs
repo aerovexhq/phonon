@@ -682,6 +682,12 @@ fn render_top_frame_internal(
                     }
                     ui.close();
                 }
+                if ui.button("Topological 4D QHE & Synthetic Dimensions...").clicked() {
+                    if let Some(a) = app.as_deref_mut() {
+                        a.synthetic_4d_dialog.is_open = true;
+                    }
+                    ui.close();
+                }
             });
         });
         ui.label(RichText::new("|").color(Color32::from_rgb(60, 70, 85)).size(11.0));

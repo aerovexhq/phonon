@@ -96,6 +96,7 @@ pub use widgets::acoustic_soliton_dialog::AcousticSolitonDialog;
 pub use widgets::valley_multiplexer_dialog::{ValleyDialogTab, ValleyMultiplexerDialog};
 pub use widgets::non_hermitian_skin_dialog::{NonHermitianSkinDialog, NonHermitianSkinDialogTab};
 pub use widgets::quadrupole_shg_dialog::{QuadrupoleShgDialog, QuadrupoleShgDialogTab};
+pub use widgets::synthetic_4d_dialog::{Synthetic4dDialog, Synthetic4dDialogTab};
 
 #[cfg(not(target_arch = "wasm32"))]
 use phonon_core::PhysicsDynamicsBackend;

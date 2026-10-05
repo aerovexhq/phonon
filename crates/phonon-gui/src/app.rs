@@ -25,7 +25,7 @@ use crate::widgets::{
     TopFrameAction, TopFrameConfig, TwistedMoireDialog, WeylSemimetalDialog, LuaConsoleDialog,
     FloquetTimeCrystalDialog, QuantumBraidingLatticeDialog, OptomechanicalSqueezingDialog,
     SkyrmionRouterDialog, AcousticSolitonDialog, ValleyMultiplexerDialog,
-    NonHermitianSkinDialog, QuadrupoleShgDialog,
+    NonHermitianSkinDialog, QuadrupoleShgDialog, Synthetic4dDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -216,6 +216,9 @@ pub struct PhononApp {
     /// Interactive Topological Acoustic Quadrupole Second-Harmonic Generation Metamaterial Studio dialog.
     pub quadrupole_shg_dialog: QuadrupoleShgDialog,
 
+    /// Interactive Topological Acoustic Synthetic Dimension & 4D Quantum Hall Effect Metamaterial Studio dialog.
+    pub synthetic_4d_dialog: Synthetic4dDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -383,6 +386,7 @@ impl Default for PhononApp {
             valley_multiplexer_dialog: ValleyMultiplexerDialog::new(),
             non_hermitian_skin_dialog: NonHermitianSkinDialog::new(),
             quadrupole_shg_dialog: QuadrupoleShgDialog::new(),
+            synthetic_4d_dialog: Synthetic4dDialog::new(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -3055,6 +3059,9 @@ impl PhononApp {
 
         // 37. Interactive Topological Acoustic Quadrupole Second-Harmonic Generation Dialog
         self.quadrupole_shg_dialog.ui(ui.ctx());
+
+        // 38. Interactive Topological Acoustic Synthetic Dimension & 4D QHE Dialog
+        self.synthetic_4d_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {
