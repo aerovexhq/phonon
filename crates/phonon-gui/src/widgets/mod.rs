@@ -34,6 +34,7 @@ pub mod pill_badge;
 pub mod preferences_dialog;
 pub mod project_dialog;
 pub mod subcircuit_dialog;
+pub mod lua_console_dialog;
 
 pub use pill_badge::{
     proportional_zoom_scale, render_dual_telemetry_pill, render_pill_badge, PillBadgeStyle,
@@ -71,4 +72,5 @@ pub use weyl_semimetal_dialog::{SemimetalMode, WeylSemimetalDialog};
 pub use soti_corner_dialog::{SotiCornerDialog, SpatialModeSelection};
 pub use lieb_lattice_dialog::{LiebLatticeDialog, LiebPlotTab, LiebSpatialModeSelection};
 pub use axion_insulator_dialog::{AxionInsulatorDialog, AxionPlotTab, AxionSpatialViewMode};
+pub use lua_console_dialog::{LuaConsoleDialog, ScriptPreset};
 

@@ -8,10 +8,17 @@ pub mod extraction;
 pub mod oscilloscope;
 pub mod preferences;
 pub mod schematic;
+pub mod scripting;
 pub mod storage;
 pub mod theme;
 pub mod thermal;
 pub mod widgets;
+
+pub use scripting::{
+    evaluate_expression, generate_trace, parse_expression, AssertionRecord, ExpressionGrapher,
+    LuaEngine, LuaFunction, LuaTable, LuaValue, MathAst, MathOp, PermissionKind,
+    PermissionManager, PermissionState, TableKey,
+};
 
 pub use actions::{ActionCategory, ActionDef, ActionId, ActionRegistry};
 pub use app::{PhononApp, ToolMode};
@@ -65,6 +72,7 @@ pub use widgets::neuromorphic_snn_dialog::NeuromorphicSnnDialog;
 pub use widgets::polariton_cavity_dialog::PolaritonCavityDialog;
 pub use widgets::smith_chart_dialog::{HoveredMarker, SmithChartDialog};
 pub use widgets::thermal_floorplan_dialog::ThermalFloorplanDialog;
+pub use widgets::lua_console_dialog::{LuaConsoleDialog, ScriptPreset};
 pub use widgets::top_frame::{
     self, render_top_frame, render_top_frame_with_app, TopFrameAction, TopFrameConfig,
 };

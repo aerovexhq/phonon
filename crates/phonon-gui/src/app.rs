@@ -22,7 +22,7 @@ use crate::widgets::{
     PaletteAction, PendingAction, PolaritonCavityDialog, PreferencesDialog, ProjectDialog,
     ProjectDialogAction, SensitivityDialog, SmithChartDialog, SotiCornerDialog,
     SubcircuitDialogAction, SubcircuitPackageDialog, SymbolEditorDialog, ThermalFloorplanDialog,
-    TopFrameAction, TopFrameConfig, TwistedMoireDialog, WeylSemimetalDialog,
+    TopFrameAction, TopFrameConfig, TwistedMoireDialog, WeylSemimetalDialog, LuaConsoleDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -189,6 +189,9 @@ pub struct PhononApp {
     /// Interactive Quantum Metamaterial Higher-Order Axion Insulator Simulator Studio dialog.
     pub axion_insulator_dialog: AxionInsulatorDialog,
 
+    /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
+    pub lua_console_dialog: LuaConsoleDialog,
+
     /// Interactive Logisim/KiCad-style component symbol and shape editor dialog.
     pub symbol_editor: SymbolEditorDialog,
 
@@ -345,6 +348,7 @@ impl Default for PhononApp {
             soti_corner_dialog: SotiCornerDialog::new(),
             lieb_lattice_dialog: LiebLatticeDialog::new(),
             axion_insulator_dialog: AxionInsulatorDialog::new(),
+            lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
             dragging_component: false,
@@ -3006,6 +3010,27 @@ impl PhononApp {
 
         // 29c. Multi-Graph Floating Oscilloscope Windows
         self.multi_graph.render_floating_windows(ui.ctx());
+
+        // 29d. Interactive Lua Testbench Console Dialog & Expression Waveform Routing
+        if self.lua_console_dialog.is_open {
+            for (net, &v) in &self.dc_node_voltages {
+                self.lua_console_dialog.engine.set_voltage(net, v);
+            }
+            for (idx, &i) in &self.wire_currents {
+                self.lua_console_dialog
+                    .engine
+                    .set_current(&format!("wire_{}", idx), i);
+            }
+        }
+        self.lua_console_dialog.ui(ui.ctx());
+        if !self.lua_console_dialog.engine.generated_traces.is_empty() {
+            let traces = self.lua_console_dialog.engine.generated_traces.clone();
+            self.lua_console_dialog.engine.generated_traces.clear();
+            for trace in &traces {
+                self.multi_graph.primary_scope.add_trace(trace.clone());
+                self.oscilloscope.add_trace(trace.clone());
+            }
+        }
 
         // 30. Unsaved Changes Confirmation Modal
         if let Some(pending) = self.pending_confirmation_action.clone() {
