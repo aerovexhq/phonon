@@ -95,6 +95,7 @@ pub use widgets::skyrmion_router_dialog::SkyrmionRouterDialog;
 pub use widgets::acoustic_soliton_dialog::AcousticSolitonDialog;
 pub use widgets::valley_multiplexer_dialog::{ValleyDialogTab, ValleyMultiplexerDialog};
 pub use widgets::non_hermitian_skin_dialog::{NonHermitianSkinDialog, NonHermitianSkinDialogTab};
+pub use widgets::quadrupole_shg_dialog::{QuadrupoleShgDialog, QuadrupoleShgDialogTab};
 
 #[cfg(not(target_arch = "wasm32"))]
 use phonon_core::PhysicsDynamicsBackend;
