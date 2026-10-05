@@ -6,6 +6,7 @@
 pub mod acoustic;
 pub mod acoustic_chern_circulator;
 pub mod acoustic_skyrmion_router;
+pub mod acoustic_domain_wall_soliton;
 pub mod acoustic_holonomic_processor;
 pub mod acoustic_metasurface_holography;
 pub mod acoustic_microcomb_soliton;
@@ -978,4 +979,9 @@ pub use acoustic_skyrmion_router::{
     SParameterSpectrum as SkyrmionSParameterSpectrum, SkyrmionLatticeParams, SkyrmionLatticeType,
     ThieleDynamics, TopologicalChargeCalculator, TrajectoryPoint, Vector3Field,
 };
+pub use acoustic_domain_wall_soliton::{
+    DomainWallWaveguideParams, DomainWallWaveguideRouter, SineGordonParams, SineGordonSolver,
+    SineGordonState, SolitonKind, WaveguideSParameters,
+};
+
 
