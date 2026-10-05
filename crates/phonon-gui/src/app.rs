@@ -23,6 +23,7 @@ use crate::widgets::{
     ProjectDialogAction, SensitivityDialog, SmithChartDialog, SotiCornerDialog,
     SubcircuitDialogAction, SubcircuitPackageDialog, SymbolEditorDialog, ThermalFloorplanDialog,
     TopFrameAction, TopFrameConfig, TwistedMoireDialog, WeylSemimetalDialog, LuaConsoleDialog,
+    FloquetTimeCrystalDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -189,6 +190,9 @@ pub struct PhononApp {
     /// Interactive Quantum Metamaterial Higher-Order Axion Insulator Simulator Studio dialog.
     pub axion_insulator_dialog: AxionInsulatorDialog,
 
+    /// Interactive Floquet-Bloch Quantum Acoustic Discrete Time Crystal Simulator Studio dialog.
+    pub floquet_time_crystal_dialog: FloquetTimeCrystalDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -348,6 +352,7 @@ impl Default for PhononApp {
             soti_corner_dialog: SotiCornerDialog::new(),
             lieb_lattice_dialog: LiebLatticeDialog::new(),
             axion_insulator_dialog: AxionInsulatorDialog::new(),
+            floquet_time_crystal_dialog: FloquetTimeCrystalDialog::new(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -2996,6 +3001,9 @@ impl PhononApp {
 
         // 29. Interactive Quantum Metamaterial Higher-Order Axion Insulator Dialog
         self.axion_insulator_dialog.ui(ui.ctx());
+
+        // 30. Interactive Floquet-Bloch Quantum Acoustic Discrete Time Crystal Simulator Dialog
+        self.floquet_time_crystal_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {

@@ -53,6 +53,7 @@ pub mod floquet_corner_transduction;
 pub mod floquet_majorana_braiding_processor;
 pub mod floquet_topological;
 pub mod floquet_metasurface;
+pub mod floquet_time_crystal;
 pub mod fqh;
 pub mod fqh_acoustic_interferometer;
 pub mod fqh_interferometer;
@@ -953,6 +954,12 @@ pub use axion_insulator::{
     HighSymmetryPoint as AxionHighSymmetryPoint,
     AXION_HIGH_SYMMETRY_PATH,
 };
+pub use floquet_time_crystal::{
+    EdwardsAndersonOrder, FloquetState, FloquetStateKind, FloquetTimeCrystalParams,
+    FloquetUnitaryOperator, RigidityPhaseDiagram, StroboscopicTrajectory,
+    SubharmonicSpectralAnalysis,
+};
+
 
 
 

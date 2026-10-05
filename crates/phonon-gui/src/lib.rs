@@ -88,6 +88,7 @@ pub use widgets::exceptional_surface_dialog::ExceptionalSurfaceDialog;
 pub use widgets::soti_corner_dialog::SotiCornerDialog;
 pub use widgets::lieb_lattice_dialog::LiebLatticeDialog;
 pub use widgets::axion_insulator_dialog::AxionInsulatorDialog;
+pub use widgets::floquet_time_crystal_dialog::FloquetTimeCrystalDialog;
 
 #[cfg(not(target_arch = "wasm32"))]
 use phonon_core::PhysicsDynamicsBackend;

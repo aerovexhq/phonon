@@ -27,6 +27,7 @@ pub mod exceptional_surface_dialog;
 pub mod soti_corner_dialog;
 pub mod lieb_lattice_dialog;
 pub mod axion_insulator_dialog;
+pub mod floquet_time_crystal_dialog;
 pub mod command_palette;
 pub mod confirmation_modal;
 pub mod floating_toolbar;
@@ -72,5 +73,6 @@ pub use weyl_semimetal_dialog::{SemimetalMode, WeylSemimetalDialog};
 pub use soti_corner_dialog::{SotiCornerDialog, SpatialModeSelection};
 pub use lieb_lattice_dialog::{LiebLatticeDialog, LiebPlotTab, LiebSpatialModeSelection};
 pub use axion_insulator_dialog::{AxionInsulatorDialog, AxionPlotTab, AxionSpatialViewMode};
+pub use floquet_time_crystal_dialog::{FloquetPlotTab, FloquetTimeCrystalDialog};
 pub use lua_console_dialog::{LuaConsoleDialog, ScriptPreset};
 
