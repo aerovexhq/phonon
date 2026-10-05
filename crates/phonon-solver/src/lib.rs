@@ -988,6 +988,10 @@ pub use valley_acoustic_multiplexer::{
     MultiplexerJunctionParams, MultiplexerSParameters, ValleyBerryCurvature, ValleyIndex,
     ValleyLatticeParams, ValleyLatticeSolver, ValleyMultiplexerSolver,
 };
+pub use non_hermitian_skin::{
+    AcousticFunnelParams, AcousticFunnelSolver, FunnelSParameters, HatanoNelsonParams,
+    NonHermitianSkinSolver, PointGapTopology,
+};
 
 
 

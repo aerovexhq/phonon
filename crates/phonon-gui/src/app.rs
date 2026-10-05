@@ -25,6 +25,7 @@ use crate::widgets::{
     TopFrameAction, TopFrameConfig, TwistedMoireDialog, WeylSemimetalDialog, LuaConsoleDialog,
     FloquetTimeCrystalDialog, QuantumBraidingLatticeDialog, OptomechanicalSqueezingDialog,
     SkyrmionRouterDialog, AcousticSolitonDialog, ValleyMultiplexerDialog,
+    NonHermitianSkinDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -209,6 +210,9 @@ pub struct PhononApp {
     /// Interactive Valley-Polarized Topological Acoustic Multiplexer & Beam Splitter Studio dialog.
     pub valley_multiplexer_dialog: ValleyMultiplexerDialog,
 
+    /// Interactive Non-Hermitian Skin Effect Acoustic Sensor & Directional Funnel Studio dialog.
+    pub non_hermitian_skin_dialog: NonHermitianSkinDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -374,6 +378,7 @@ impl Default for PhononApp {
             skyrmion_router_dialog: SkyrmionRouterDialog::new(),
             acoustic_soliton_dialog: AcousticSolitonDialog::new(),
             valley_multiplexer_dialog: ValleyMultiplexerDialog::new(),
+            non_hermitian_skin_dialog: NonHermitianSkinDialog::new(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -3040,6 +3045,9 @@ impl PhononApp {
 
         // 35. Interactive Valley-Polarized Topological Acoustic Multiplexer & Beam Splitter Dialog
         self.valley_multiplexer_dialog.ui(ui.ctx());
+
+        // 36. Interactive Non-Hermitian Skin Effect Acoustic Sensor & Directional Funnel Dialog
+        self.non_hermitian_skin_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {
