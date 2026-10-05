@@ -23,7 +23,7 @@ use crate::widgets::{
     ProjectDialogAction, SensitivityDialog, SmithChartDialog, SotiCornerDialog,
     SubcircuitDialogAction, SubcircuitPackageDialog, SymbolEditorDialog, ThermalFloorplanDialog,
     TopFrameAction, TopFrameConfig, TwistedMoireDialog, WeylSemimetalDialog, LuaConsoleDialog,
-    FloquetTimeCrystalDialog, QuantumBraidingLatticeDialog,
+    FloquetTimeCrystalDialog, QuantumBraidingLatticeDialog, OptomechanicalSqueezingDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -196,6 +196,9 @@ pub struct PhononApp {
     /// Interactive Quantum Acoustic Protected Braiding Lattice Studio dialog.
     pub quantum_braiding_lattice_dialog: QuantumBraidingLatticeDialog,
 
+    /// Interactive Cavity Optomechanical Squeezing & Phonon Counting Studio dialog.
+    pub optomechanical_squeezing_dialog: OptomechanicalSqueezingDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -357,6 +360,7 @@ impl Default for PhononApp {
             axion_insulator_dialog: AxionInsulatorDialog::new(),
             floquet_time_crystal_dialog: FloquetTimeCrystalDialog::new(),
             quantum_braiding_lattice_dialog: QuantumBraidingLatticeDialog::new(),
+            optomechanical_squeezing_dialog: OptomechanicalSqueezingDialog::new(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -3011,6 +3015,9 @@ impl PhononApp {
 
         // 31. Interactive Quantum Acoustic Protected Braiding Lattice Studio Dialog
         self.quantum_braiding_lattice_dialog.ui(ui.ctx());
+
+        // 32. Interactive Cavity Optomechanical Squeezing & Phonon Counting Studio Dialog
+        self.optomechanical_squeezing_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {

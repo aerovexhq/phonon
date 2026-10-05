@@ -301,6 +301,7 @@ pub mod jtwpa_simulator;
 pub mod non_abelian_holonomic;
 pub mod twisted_moire_superlattice;
 pub mod protected_braiding_lattice;
+pub mod optomechanical_squeezing;
 
 pub use acoustic::{
     AcousticBenchmarkReport, AcousticBenchmarkRunner, AcousticLinkSimulator, AcousticRealismTier,
@@ -965,8 +966,9 @@ pub use protected_braiding_lattice::{
     MajoranaMode, MajoranaTargetGate, NonAbelianBraidGenerator, ParityReadout, StabilizerCheck,
     StabilizerKind, SurfaceCodeGrid, SyndromeResult, UnitaryMatrix, HBAR_J_S,
 };
-
-
-
-
+pub use optomechanical_squeezing::{
+    FockStateDistribution, NonClassicalityMetrics, OptomechanicalSqueezingParams,
+    PhononCountingResolvedSpectrum, PhononStateKind, QuadratureSqueezingSolver,
+    QuadratureVariance, ResolvedPeak, WignerQuasiProbability, HBAR, SQL_VARIANCE,
+};
 
