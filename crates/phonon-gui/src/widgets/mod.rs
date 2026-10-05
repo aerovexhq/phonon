@@ -40,6 +40,7 @@ pub mod quantum_braiding_lattice_dialog;
 pub mod optomechanical_squeezing_dialog;
 pub mod skyrmion_router_dialog;
 pub mod acoustic_soliton_dialog;
+pub mod valley_multiplexer_dialog;
 
 pub use pill_badge::{
     proportional_zoom_scale, render_dual_telemetry_pill, render_pill_badge, PillBadgeStyle,
@@ -85,5 +86,6 @@ pub use optomechanical_squeezing_dialog::{
 };
 pub use skyrmion_router_dialog::{SkyrmionDialogTab, SkyrmionRouterDialog};
 pub use acoustic_soliton_dialog::{AcousticSolitonDialog, SolitonDialogTab};
+pub use valley_multiplexer_dialog::{ValleyDialogTab, ValleyMultiplexerDialog};
 
 

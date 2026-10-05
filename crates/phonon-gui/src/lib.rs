@@ -93,6 +93,7 @@ pub use widgets::quantum_braiding_lattice_dialog::QuantumBraidingLatticeDialog;
 pub use widgets::optomechanical_squeezing_dialog::OptomechanicalSqueezingDialog;
 pub use widgets::skyrmion_router_dialog::SkyrmionRouterDialog;
 pub use widgets::acoustic_soliton_dialog::AcousticSolitonDialog;
+pub use widgets::valley_multiplexer_dialog::{ValleyDialogTab, ValleyMultiplexerDialog};
 
 #[cfg(not(target_arch = "wasm32"))]
 use phonon_core::PhysicsDynamicsBackend;

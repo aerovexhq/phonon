@@ -7,6 +7,7 @@ pub mod acoustic;
 pub mod acoustic_chern_circulator;
 pub mod acoustic_skyrmion_router;
 pub mod acoustic_domain_wall_soliton;
+pub mod valley_acoustic_multiplexer;
 pub mod acoustic_holonomic_processor;
 pub mod acoustic_metasurface_holography;
 pub mod acoustic_microcomb_soliton;
@@ -983,5 +984,10 @@ pub use acoustic_domain_wall_soliton::{
     DomainWallWaveguideParams, DomainWallWaveguideRouter, SineGordonParams, SineGordonSolver,
     SineGordonState, SolitonKind, WaveguideSParameters,
 };
+pub use valley_acoustic_multiplexer::{
+    MultiplexerJunctionParams, MultiplexerSParameters, ValleyBerryCurvature, ValleyIndex,
+    ValleyLatticeParams, ValleyLatticeSolver, ValleyMultiplexerSolver,
+};
+
 
 

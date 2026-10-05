@@ -24,7 +24,7 @@ use crate::widgets::{
     SubcircuitDialogAction, SubcircuitPackageDialog, SymbolEditorDialog, ThermalFloorplanDialog,
     TopFrameAction, TopFrameConfig, TwistedMoireDialog, WeylSemimetalDialog, LuaConsoleDialog,
     FloquetTimeCrystalDialog, QuantumBraidingLatticeDialog, OptomechanicalSqueezingDialog,
-    SkyrmionRouterDialog, AcousticSolitonDialog,
+    SkyrmionRouterDialog, AcousticSolitonDialog, ValleyMultiplexerDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -206,6 +206,9 @@ pub struct PhononApp {
     /// Interactive Non-Linear Acoustic Domain Wall Kink & Soliton Waveguide Studio dialog.
     pub acoustic_soliton_dialog: AcousticSolitonDialog,
 
+    /// Interactive Valley-Polarized Topological Acoustic Multiplexer & Beam Splitter Studio dialog.
+    pub valley_multiplexer_dialog: ValleyMultiplexerDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -370,6 +373,7 @@ impl Default for PhononApp {
             optomechanical_squeezing_dialog: OptomechanicalSqueezingDialog::new(),
             skyrmion_router_dialog: SkyrmionRouterDialog::new(),
             acoustic_soliton_dialog: AcousticSolitonDialog::new(),
+            valley_multiplexer_dialog: ValleyMultiplexerDialog::new(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -3033,6 +3037,9 @@ impl PhononApp {
 
         // 34. Interactive Non-Linear Acoustic Domain Wall Kink & Soliton Waveguide Dialog
         self.acoustic_soliton_dialog.ui(ui.ctx());
+
+        // 35. Interactive Valley-Polarized Topological Acoustic Multiplexer & Beam Splitter Dialog
+        self.valley_multiplexer_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {
