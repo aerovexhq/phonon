@@ -778,6 +778,12 @@ fn render_top_frame_internal(
                     }
                     ui.close();
                 }
+                if ui.button("Dynamic DVFS & Thermal Throttling...").clicked() {
+                    if let Some(a) = app.as_deref_mut() {
+                        a.electrothermal_throttling_dialog.is_open = true;
+                    }
+                    ui.close();
+                }
             });
         });
         ui.label(RichText::new("|").color(Color32::from_rgb(60, 70, 85)).size(11.0));

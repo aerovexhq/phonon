@@ -30,7 +30,7 @@ use crate::widgets::{
     ValleyHallVortexDialog, SkyrmionDeflectorDialog, FloquetFrequencyDialog,
     CornerLaserDialog, DirectionalRadiationDialog, AtmosphericNeutronDialog,
     ThermalVacuumDialog, SpaceAvionicsBusDialog, RhbdSelfHealingDialog,
-    ProductionEconomicsDialog, ChipletPackagingDialog,
+    ProductionEconomicsDialog, ChipletPackagingDialog, ElectrothermalThrottlingDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -272,6 +272,9 @@ pub struct PhononApp {
     /// Interactive 2.5D/3D Multi-Die & Chiplet Packaging Studio dialog.
     pub chiplet_packaging_dialog: ChipletPackagingDialog,
 
+    /// Interactive Closed-Loop Dynamic Electro-Thermal & Power Throttling Studio dialog.
+    pub electrothermal_throttling_dialog: ElectrothermalThrottlingDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -456,6 +459,7 @@ impl Default for PhononApp {
             rhbd_self_healing_dialog: RhbdSelfHealingDialog::new_fast(),
             production_economics_dialog: ProductionEconomicsDialog::new_fast(),
             chiplet_packaging_dialog: ChipletPackagingDialog::new_fast(),
+            electrothermal_throttling_dialog: ElectrothermalThrottlingDialog::new_fast(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -3179,6 +3183,9 @@ impl PhononApp {
 
         // 54. Interactive 2.5D/3D Multi-Die & Chiplet Packaging Studio Dialog
         self.chiplet_packaging_dialog.ui(ui.ctx());
+
+        // 55. Interactive Closed-Loop Dynamic Electro-Thermal & Power Throttling Studio Dialog
+        self.electrothermal_throttling_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {

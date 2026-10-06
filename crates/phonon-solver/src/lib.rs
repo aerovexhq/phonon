@@ -26,6 +26,7 @@ pub mod space_avionics_bus;
 pub mod rhbd_self_healing;
 pub mod production_economics;
 pub mod chiplet_packaging;
+pub mod electrothermal_throttling;
 pub mod acoustic_holonomic_processor;
 pub mod acoustic_metasurface_holography;
 pub mod acoustic_microcomb_soliton;
@@ -1104,6 +1105,19 @@ pub use chiplet_packaging::{
     SParameterPoint, ThermalCycleParams, TsvGeometry, TsvRlgc, UcieDataRateGbps, UcieEyeMetrics,
     UciePackageType, UciePhyParams, WarpageStressReport,
 };
+pub use electrothermal_throttling::{
+    calculate_dynamic_power, calculate_immersion_performance, calculate_leakage_current,
+    calculate_leakage_power, calculate_leakage_temp_derivative, calculate_microchannel_performance,
+    calculate_rohsenow_heat_flux, calculate_zuber_chf, generate_bifurcation_curve,
+    generate_boiling_curve, run_closed_loop_transient, solve_thermal_equilibrium,
+    BifurcationCurve, BoilingCurvePoint, CoolantFluid, CoolingArchitecture, DvfsControllerConfig,
+    DynamicPowerParams, ElectrothermalCoSimulator, EquilibriumResult, ImmersionCoolingParams,
+    ImmersionFluidKind, ImmersionFluidProperties, ImmersionPerformance, LeakageModelParams,
+    LiquidCoolantProperties, MicrochannelParams, MicrochannelPerformance, PState,
+    ThermalStabilityStatus, ThrottlingTelemetryReport, TimAgingModel, TimAgingPoint,
+    TransientSimulationResult, TransientStepRecord, WorkloadProfile,
+};
+
 
 
 

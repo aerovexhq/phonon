@@ -60,6 +60,7 @@ pub mod space_avionics_bus_dialog;
 pub mod rhbd_self_healing_dialog;
 pub mod production_economics_dialog;
 pub mod chiplet_packaging_dialog;
+pub mod electrothermal_throttling_dialog;
 
 pub use pill_badge::{
     proportional_zoom_scale, render_dual_telemetry_pill, render_pill_badge, PillBadgeStyle,
@@ -125,6 +126,7 @@ pub use space_avionics_bus_dialog::{SpaceAvionicsBusDialog, SpaceAvionicsBusTab}
 pub use rhbd_self_healing_dialog::{RhbdSelfHealingDialog, RhbdTab};
 pub use production_economics_dialog::{EconomicsTab, ProductionEconomicsDialog};
 pub use chiplet_packaging_dialog::{ChipletPackagingDialog, PackagingTab};
+pub use electrothermal_throttling_dialog::{ElectrothermalThrottlingDialog, ThrottlingTab};
 
 
 
