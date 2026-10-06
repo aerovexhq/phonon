@@ -36,7 +36,7 @@ use crate::widgets::{
     DesktopIpcDialog, WebRtcMeshDialog, WebGpuSpiceDialog, WavepacketScatteringDialog,
     SkyrmionReservoirDialog, PhononMagnonDialog, QuadrupoleParametricDialog,
     NonHermitianSensorDialog, CornerDoublerDialog, UniversalBraidingDialog,
-    ChiralCirculatorDialog,
+    ChiralCirculatorDialog, JosephsonParametricDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -337,6 +337,9 @@ pub struct PhononApp {
     /// Interactive Topological Floquet Chiral Magnon-Phonon Polariton Circulator & Cryogenic Isolator dialog.
     pub chiral_circulator_dialog: ChiralCirculatorDialog,
 
+    /// Interactive Superconducting Josephson Parametric Acoustic Waveguide Amplification & Squeezed Vacuum dialog.
+    pub josephson_parametric_dialog: JosephsonParametricDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -541,6 +544,7 @@ impl Default for PhononApp {
             corner_doubler_dialog: CornerDoublerDialog::new_fast(),
             universal_braiding_dialog: UniversalBraidingDialog::new(),
             chiral_circulator_dialog: ChiralCirculatorDialog::new(),
+            josephson_parametric_dialog: JosephsonParametricDialog::new_fast(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -3366,6 +3370,9 @@ impl PhononApp {
 
         // 73. Interactive Topological Floquet Chiral Polariton Circulator Dialog
         self.chiral_circulator_dialog.ui(ui.ctx());
+
+        // 74. Interactive Superconducting Josephson Parametric Acoustic Waveguide Dialog
+        self.josephson_parametric_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {

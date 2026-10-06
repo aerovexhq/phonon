@@ -155,6 +155,7 @@ pub use widgets::corner_doubler_dialog::{
 };
 pub use widgets::universal_braiding_dialog::{UniversalBraidingDialog, UniversalBraidingTab};
 pub use widgets::chiral_circulator_dialog::{ChiralCirculatorDialog, ChiralCirculatorTab};
+pub use widgets::josephson_parametric_dialog::{JosephsonParametricDialog, JosephsonParametricTab};
 
 #[cfg(not(target_arch = "wasm32"))]
 use phonon_core::PhysicsDynamicsBackend;

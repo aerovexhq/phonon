@@ -70,6 +70,7 @@ pub mod chiral_phonon_spin_mechanics;
 pub mod chiral_phonon_magnon_isolator;
 pub mod chiral_polariton;
 pub mod chiral_polariton_circulator;
+pub mod josephson_parametric_amplifier;
 pub mod chiral_quantum_hall_pfaffian;
 pub mod chiral_spin_seebeck;
 pub mod chiral_spintronic_memristor;
@@ -1217,6 +1218,14 @@ pub use chiral_polariton_circulator::{
     PolaritonBranchPoint, SParameters as PolaritonSParameters,
     ThreePortCirculator as ChiralThreePortCirculator,
 };
+pub use josephson_parametric_amplifier::{
+    CvClusterStateParams, CvClusterStateSolver, CvEntanglementMetrics,
+    JpaAuditCriterion, JpaAuditReport, JpaWaveguideParams, JosephsonInductanceModel,
+    JosephsonParametricProcessor, ParametricAmplificationResponse,
+    SqueezedVacuumSolver, SqueezingParams,
+    WignerQuasiProbability as JpaWignerQuasiProbability,
+};
+
 
 
 
