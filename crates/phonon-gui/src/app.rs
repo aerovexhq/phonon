@@ -32,7 +32,7 @@ use crate::widgets::{
     ThermalVacuumDialog, SpaceAvionicsBusDialog, RhbdSelfHealingDialog,
     ProductionEconomicsDialog, ChipletPackagingDialog, ElectrothermalThrottlingDialog,
     PdnDroopDialog, SiliconAgingDialog, WaferYieldDialog, DseOptimizationDialog,
-    SiliconLifecycleDialog, WasmOptimizationDialog,
+    SiliconLifecycleDialog, WasmOptimizationDialog, PwaOfflineDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -295,6 +295,9 @@ pub struct PhononApp {
     /// Interactive Web Studio WASM Binary Size Optimization & Cache Invalidation dialog.
     pub wasm_optimization_dialog: WasmOptimizationDialog,
 
+    /// Interactive Progressive Web App (PWA) Offline ServiceWorker & Asset Cache dialog.
+    pub pwa_dialog: PwaOfflineDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -486,6 +489,7 @@ impl Default for PhononApp {
             dse_dialog: DseOptimizationDialog::new_fast(),
             slm_dialog: SiliconLifecycleDialog::new_fast(),
             wasm_optimization_dialog: WasmOptimizationDialog::new_fast(),
+            pwa_dialog: PwaOfflineDialog::new_fast(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -3230,6 +3234,9 @@ impl PhononApp {
 
         // 61. Interactive Web Studio WASM Binary Size Optimization & Cache Invalidation Dialog
         self.wasm_optimization_dialog.ui(ui.ctx());
+
+        // 62. Interactive Progressive Web App (PWA) Offline ServiceWorker & Asset Cache Dialog
+        self.pwa_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {

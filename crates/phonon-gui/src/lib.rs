@@ -120,6 +120,7 @@ pub use widgets::wafer_yield_dialog::{WaferMapColorMode, WaferYieldDialog, Wafer
 pub use widgets::dse_optimization_dialog::{DseOptimizationDialog, DseTab};
 pub use widgets::silicon_lifecycle_dialog::{SiliconLifecycleDialog, SlmTab};
 pub use widgets::wasm_optimization_dialog::{WasmOptTab, WasmOptimizationDialog};
+pub use widgets::pwa_offline_dialog::{PwaOfflineDialog, PwaTab};
 #[cfg(not(target_arch = "wasm32"))]
 use phonon_core::PhysicsDynamicsBackend;
 

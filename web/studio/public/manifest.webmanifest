@@ -1,0 +1,26 @@
+{
+  "name": "Phonon Studio — Multi-Scale TCAD & Circuit Simulator",
+  "short_name": "Phonon Studio",
+  "description": "Universal multi-scale electro-thermal circuit CAD, quantum acoustics and TCAD semiconductor simulator.",
+  "start_url": "/studio/",
+  "scope": "/studio/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0f172a",
+  "theme_color": "#1e293b",
+  "categories": [
+    "cad",
+    "engineering",
+    "simulation",
+    "education",
+    "productivity"
+  ],
+  "icons": [
+    {
+      "src": "/studio/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
