@@ -10,6 +10,7 @@ pub mod acoustic_domain_wall_soliton;
 pub mod valley_acoustic_multiplexer;
 pub mod quadrupole_shg;
 pub mod synthetic_4d_qhe;
+pub mod pt_symmetric_acoustic;
 pub mod acoustic_holonomic_processor;
 pub mod acoustic_metasurface_holography;
 pub mod acoustic_microcomb_soliton;
@@ -1002,6 +1003,12 @@ pub use synthetic_4d_qhe::{
     BoundaryHyperSurfaceMode, FourDimDispersionPoint, FourDimLatticeSolver, Synthetic4dParams,
     SyntheticHallEngine, SyntheticHallMetrics, SyntheticHallParams, SyntheticHarmonicPoint,
 };
+pub use pt_symmetric_acoustic::{
+    InvisibilityEngine, InvisibilityMetrics, InvisibilityParams, PtAcousticParams, PtEigenvalue,
+    PtHamiltonianSolver, PtModalMetrics, PtPhaseClassification, ScatteringSpectrumPoint,
+    SpatialFieldPoint,
+};
+
 
 
 

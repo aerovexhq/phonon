@@ -25,7 +25,7 @@ use crate::widgets::{
     TopFrameAction, TopFrameConfig, TwistedMoireDialog, WeylSemimetalDialog, LuaConsoleDialog,
     FloquetTimeCrystalDialog, QuantumBraidingLatticeDialog, OptomechanicalSqueezingDialog,
     SkyrmionRouterDialog, AcousticSolitonDialog, ValleyMultiplexerDialog,
-    NonHermitianSkinDialog, QuadrupoleShgDialog, Synthetic4dDialog,
+    NonHermitianSkinDialog, QuadrupoleShgDialog, Synthetic4dDialog, PtSymmetricDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -219,6 +219,9 @@ pub struct PhononApp {
     /// Interactive Topological Acoustic Synthetic Dimension & 4D Quantum Hall Effect Metamaterial Studio dialog.
     pub synthetic_4d_dialog: Synthetic4dDialog,
 
+    /// Interactive Parity-Time (PT) Symmetric Acoustic Metamaterial & Unidirectional Invisibility Studio dialog.
+    pub pt_symmetric_dialog: PtSymmetricDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -387,6 +390,7 @@ impl Default for PhononApp {
             non_hermitian_skin_dialog: NonHermitianSkinDialog::new(),
             quadrupole_shg_dialog: QuadrupoleShgDialog::new(),
             synthetic_4d_dialog: Synthetic4dDialog::new(),
+            pt_symmetric_dialog: PtSymmetricDialog::new(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -3062,6 +3066,9 @@ impl PhononApp {
 
         // 38. Interactive Topological Acoustic Synthetic Dimension & 4D QHE Dialog
         self.synthetic_4d_dialog.ui(ui.ctx());
+
+        // 39. Interactive Parity-Time (PT) Symmetric Acoustic Metamaterial & Unidirectional Invisibility Dialog
+        self.pt_symmetric_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {
