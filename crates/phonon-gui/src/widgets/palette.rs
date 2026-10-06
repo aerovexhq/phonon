@@ -183,7 +183,12 @@ impl ComponentPalette {
                 ui.group(|ui| {
                     ui.horizontal(|ui| {
                         ui.label(
-                            RichText::new(format!("[Project] {}", project_title))
+                            RichText::new("Project:")
+                                .font(FontId::proportional(11.0))
+                                .color(Color32::from_rgb(140, 180, 220)),
+                        );
+                        ui.label(
+                            RichText::new(&project_title)
                                 .strong()
                                 .color(Color32::from_rgb(100, 180, 240)),
                         );
@@ -212,12 +217,17 @@ impl ComponentPalette {
                 .id_salt("hier_sheets")
                 .show(ui, |ui| {
                     ui.horizontal(|ui| {
+                        let (dot_rect, _) = ui.allocate_exact_size(egui::vec2(6.0, 6.0), egui::Sense::hover());
+                        ui.painter().circle_filled(dot_rect.center(), 3.0, Color32::from_rgb(80, 210, 120));
                         ui.label(
-                            RichText::new("Sheet 1: Main Schematic")
-                                .italics()
-                                .color(Color32::from_rgb(180, 230, 180)),
+                            RichText::new("Main")
+                                .color(Color32::from_rgb(200, 230, 200)),
                         );
-                        ui.label(RichText::new("[Active]").font(FontId::monospace(9.0)).color(Color32::from_rgb(80, 200, 120)));
+                        ui.label(
+                            RichText::new("Active")
+                                .font(FontId::proportional(10.0))
+                                .color(Color32::from_rgb(80, 200, 120)),
+                        );
                     });
                 });
 
@@ -415,7 +425,7 @@ impl ComponentPalette {
                             }
                             ui.horizontal(|ui| {
                                 ui.label(
-                                    RichText::new(format!("[{}]", kind.category().display_name()))
+                                    RichText::new(kind.category().display_name())
                                         .font(FontId::proportional(10.0))
                                         .color(Color32::from_rgb(100, 180, 240)),
                                 );
