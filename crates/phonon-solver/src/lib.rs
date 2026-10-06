@@ -88,6 +88,7 @@ pub mod floquet_majorana_braiding_processor;
 pub mod floquet_topological;
 pub mod floquet_metasurface;
 pub mod floquet_time_crystal;
+pub mod floquet_time_crystal_sensor;
 pub mod fqh;
 pub mod fqh_acoustic_interferometer;
 pub mod fqh_interferometer;
@@ -1232,6 +1233,14 @@ pub use optomagnonic_comb::{
     LlePolaritonResult, LlePolaritonSolver, OptomagnonicCombProcessor,
     PolaritonBranch, PureFft, TimingJitterMetrics, TimingJitterSolver,
     TripleResonanceParams, TripleResonanceResult, TripleResonanceSolver,
+};
+pub use floquet_time_crystal_sensor::{
+    DistributedSensorNetwork, FloquetTimeCrystalSensorProcessor,
+    FourierSpectrumData as SensorFourierSpectrumData, LocalizedDipoleResult, MagneticDipoleSource,
+    MagnetometerParams, MagnetometerReadout, RigidityPlateauData as SensorRigidityPlateauData,
+    SensorNetworkParams, SensorNode, StroboscopicResult as SensorStroboscopicResult,
+    SubharmonicMagnetometer, TimeCrystalAuditCriterion, TimeCrystalAuditReport,
+    TimeCrystalComplex, TimeCrystalDynamicsSolver, TimeCrystalParams,
 };
 
 

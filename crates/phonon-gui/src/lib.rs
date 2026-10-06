@@ -157,6 +157,7 @@ pub use widgets::universal_braiding_dialog::{UniversalBraidingDialog, UniversalB
 pub use widgets::chiral_circulator_dialog::{ChiralCirculatorDialog, ChiralCirculatorTab};
 pub use widgets::josephson_parametric_dialog::{JosephsonParametricDialog, JosephsonParametricTab};
 pub use widgets::optomagnonic_comb_dialog::{OptomagnonicCombDialog, OptomagnonicCombTab};
+pub use widgets::floquet_sensor_dialog::{FloquetSensorDialog, FloquetSensorTab};
 
 #[cfg(not(target_arch = "wasm32"))]
 use phonon_core::PhysicsDynamicsBackend;

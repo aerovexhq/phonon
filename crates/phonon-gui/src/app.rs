@@ -37,6 +37,7 @@ use crate::widgets::{
     SkyrmionReservoirDialog, PhononMagnonDialog, QuadrupoleParametricDialog,
     NonHermitianSensorDialog, CornerDoublerDialog, UniversalBraidingDialog,
     ChiralCirculatorDialog, JosephsonParametricDialog, OptomagnonicCombDialog,
+    FloquetSensorDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -343,6 +344,9 @@ pub struct PhononApp {
     /// Interactive Cavity Optomagnonic Polariton Frequency Comb & Dissipative Kerr Soliton dialog.
     pub optomagnonic_comb_dialog: OptomagnonicCombDialog,
 
+    /// Interactive Floquet Discrete Time-Crystal Magnetometer & Subharmonic Sensor Network dialog.
+    pub floquet_sensor_dialog: FloquetSensorDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -549,6 +553,7 @@ impl Default for PhononApp {
             chiral_circulator_dialog: ChiralCirculatorDialog::new(),
             josephson_parametric_dialog: JosephsonParametricDialog::new_fast(),
             optomagnonic_comb_dialog: OptomagnonicCombDialog::new_fast(),
+            floquet_sensor_dialog: FloquetSensorDialog::new_fast(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -3380,6 +3385,9 @@ impl PhononApp {
 
         // 75. Interactive Cavity Optomagnonic Polariton Frequency Comb Dialog
         self.optomagnonic_comb_dialog.ui(ui.ctx());
+
+        // 76. Interactive Floquet Time-Crystal Magnetometer Sensor Dialog
+        self.floquet_sensor_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {
