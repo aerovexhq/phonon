@@ -54,6 +54,7 @@ pub mod cavity_acoustodynamical_spin;
 pub mod cavity_acoustomagnonic;
 pub mod cavity_magnomechanics;
 pub mod cavity_magnon_polariton_comb;
+pub mod optomagnonic_comb;
 pub mod cavity_spintronics;
 pub mod cluster;
 pub mod chiral_acoustic_router;
@@ -1225,6 +1226,14 @@ pub use josephson_parametric_amplifier::{
     SqueezedVacuumSolver, SqueezingParams,
     WignerQuasiProbability as JpaWignerQuasiProbability,
 };
+pub use optomagnonic_comb::{
+    AvoidedCrossingPoint, CombAuditItem, CombAuditReport, CombModeData,
+    Complex as OptomagnonicComplex, JitterAnalysisParams, LlePolaritonParams,
+    LlePolaritonResult, LlePolaritonSolver, OptomagnonicCombProcessor,
+    PolaritonBranch, PureFft, TimingJitterMetrics, TimingJitterSolver,
+    TripleResonanceParams, TripleResonanceResult, TripleResonanceSolver,
+};
+
 
 
 

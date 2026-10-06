@@ -80,6 +80,7 @@ pub mod corner_doubler_dialog;
 pub mod universal_braiding_dialog;
 pub mod chiral_circulator_dialog;
 pub mod josephson_parametric_dialog;
+pub mod optomagnonic_comb_dialog;
 
 pub use pill_badge::{
     proportional_zoom_scale, render_dual_telemetry_pill, render_pill_badge, PillBadgeStyle,
@@ -189,6 +190,7 @@ pub use corner_doubler_dialog::{
 pub use universal_braiding_dialog::{UniversalBraidingDialog, UniversalBraidingTab};
 pub use chiral_circulator_dialog::{ChiralCirculatorDialog, ChiralCirculatorTab};
 pub use josephson_parametric_dialog::{JosephsonParametricDialog, JosephsonParametricTab};
+pub use optomagnonic_comb_dialog::{OptomagnonicCombDialog, OptomagnonicCombTab};
 
 
 
