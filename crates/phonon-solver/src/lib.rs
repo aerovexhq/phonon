@@ -30,6 +30,7 @@ pub mod electrothermal_throttling;
 pub mod pdn_droop;
 pub mod silicon_aging;
 pub mod wafer_yield;
+pub mod dse_optimization;
 pub mod acoustic_holonomic_processor;
 pub mod acoustic_metasurface_holography;
 pub mod acoustic_microcomb_soliton;
@@ -1149,4 +1150,9 @@ pub use wafer_yield::{
     WaferEconomicsParams, WaferEconomicsReport, WaferGeometryParams, WaferYieldCoSimulator,
     WaferYieldTelemetryReport, YieldCurvePoint,
 };
-
+pub use dse_optimization::{
+    assign_crowding_distance, evaluate_genome, evaluate_packaging_ppac, generate_gp_slice,
+    non_dominated_sort, polynomial_mutation, sbx_crossover, BayesianSlicePoint, DesignGenome,
+    DseCoSimulator, DseTelemetryReport, GaussianProcessParams, GaussianProcessRegressor,
+    GeneticRng, Individual, ObjectiveValues, PackagingPpacResult, PackagingTechnology,
+};

@@ -31,7 +31,7 @@ use crate::widgets::{
     CornerLaserDialog, DirectionalRadiationDialog, AtmosphericNeutronDialog,
     ThermalVacuumDialog, SpaceAvionicsBusDialog, RhbdSelfHealingDialog,
     ProductionEconomicsDialog, ChipletPackagingDialog, ElectrothermalThrottlingDialog,
-    PdnDroopDialog, SiliconAgingDialog, WaferYieldDialog,
+    PdnDroopDialog, SiliconAgingDialog, WaferYieldDialog, DseOptimizationDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -285,6 +285,9 @@ pub struct PhononApp {
     /// Interactive Wafer-Scale Yield, DFM & Harvesting Economics Co-Simulator dialog.
     pub wafer_yield_dialog: WaferYieldDialog,
 
+    /// Interactive Automated Multi-Objective PPA-C Design Space Exploration (DSE) dialog.
+    pub dse_dialog: DseOptimizationDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -473,6 +476,7 @@ impl Default for PhononApp {
             pdn_droop_dialog: PdnDroopDialog::new_fast(),
             silicon_aging_dialog: SiliconAgingDialog::new_fast(),
             wafer_yield_dialog: WaferYieldDialog::new_fast(),
+            dse_dialog: DseOptimizationDialog::new_fast(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -3208,6 +3212,9 @@ impl PhononApp {
 
         // 58. Interactive Wafer-Scale Yield, DFM & Harvesting Economics Dialog
         self.wafer_yield_dialog.ui(ui.ctx());
+
+        // 59. Interactive Automated Multi-Objective PPA-C Design Space Exploration (DSE) Dialog
+        self.dse_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {
