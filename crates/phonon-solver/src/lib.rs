@@ -1175,5 +1175,12 @@ pub use skyrmion_reservoir::{
     EffectiveField, LlgsParams, MagneticSkyrmionTexture, PinningSite, SkyrmionGridParams,
     SpinTorqueOscillator, SpintronicReservoir, SpintronicReservoirParams, Vector3 as SkyrmionVector3,
 };
+pub use phonon_magnon_polariton::{
+    MagnetoelasticDriveEngine, MagnetoelasticDriveParams, MagnetoelasticTrackSnapshot,
+    PhononMagnonParams, PolaritonDispersionEngine, PolaritonDispersionPoint,
+    QuantumTransducerSolver, SParameterSample, TransducerCouplingParams,
+    GYROMAGNETIC_RATIO,
+};
+
 
 

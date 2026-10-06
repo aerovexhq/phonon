@@ -73,6 +73,7 @@ pub mod webrtc_mesh_dialog;
 pub mod webgpu_spice_dialog;
 pub mod wavepacket_scattering_dialog;
 pub mod skyrmion_reservoir_dialog;
+pub mod phonon_magnon_dialog;
 
 pub use pill_badge::{
     proportional_zoom_scale, render_dual_telemetry_pill, render_pill_badge, PillBadgeStyle,
@@ -165,3 +166,7 @@ pub use wavepacket_scattering_dialog::{
 pub use skyrmion_reservoir_dialog::{
     SkyrmionReservoirDialog, SkyrmionReservoirTab, SpintronicAuditCriterion,
 };
+pub use phonon_magnon_dialog::{
+    PhononMagnonDialog, PhononMagnonTab, PolaritonAuditCriterion,
+};
+

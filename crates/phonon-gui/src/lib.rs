@@ -139,6 +139,9 @@ pub use widgets::wavepacket_scattering_dialog::{
 pub use widgets::skyrmion_reservoir_dialog::{
     SkyrmionReservoirDialog, SkyrmionReservoirTab, SpintronicAuditCriterion,
 };
+pub use widgets::phonon_magnon_dialog::{
+    PhononMagnonDialog, PhononMagnonTab, PolaritonAuditCriterion,
+};
 #[cfg(not(target_arch = "wasm32"))]
 use phonon_core::PhysicsDynamicsBackend;
 
