@@ -121,6 +121,10 @@ pub use widgets::dse_optimization_dialog::{DseOptimizationDialog, DseTab};
 pub use widgets::silicon_lifecycle_dialog::{SiliconLifecycleDialog, SlmTab};
 pub use widgets::wasm_optimization_dialog::{WasmOptTab, WasmOptimizationDialog};
 pub use widgets::pwa_offline_dialog::{PwaOfflineDialog, PwaTab};
+pub use widgets::desktop_ipc_dialog::{
+    DesktopIpcDialog, DesktopIpcTab, GerberLayer, IpcOpcode, IpcPacketError, IpcPacketHeader,
+    PlatformAuditItem, decode_ipc_packet, encode_ipc_packet, IPC_MAGIC, IPC_VERSION,
+};
 #[cfg(not(target_arch = "wasm32"))]
 use phonon_core::PhysicsDynamicsBackend;
 

@@ -33,6 +33,7 @@ use crate::widgets::{
     ProductionEconomicsDialog, ChipletPackagingDialog, ElectrothermalThrottlingDialog,
     PdnDroopDialog, SiliconAgingDialog, WaferYieldDialog, DseOptimizationDialog,
     SiliconLifecycleDialog, WasmOptimizationDialog, PwaOfflineDialog,
+    DesktopIpcDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -298,6 +299,9 @@ pub struct PhononApp {
     /// Interactive Progressive Web App (PWA) Offline ServiceWorker & Asset Cache dialog.
     pub pwa_dialog: PwaOfflineDialog,
 
+    /// Interactive Native Desktop Studio, Tauri v2 Shell & Zero-Copy Binary IPC Co-Processor dialog.
+    pub desktop_ipc_dialog: DesktopIpcDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -490,6 +494,7 @@ impl Default for PhononApp {
             slm_dialog: SiliconLifecycleDialog::new_fast(),
             wasm_optimization_dialog: WasmOptimizationDialog::new_fast(),
             pwa_dialog: PwaOfflineDialog::new_fast(),
+            desktop_ipc_dialog: DesktopIpcDialog::new_fast(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -3237,6 +3242,9 @@ impl PhononApp {
 
         // 62. Interactive Progressive Web App (PWA) Offline ServiceWorker & Asset Cache Dialog
         self.pwa_dialog.ui(ui.ctx());
+
+        // 63. Interactive Native Desktop Studio, Tauri v2 Shell & Zero-Copy Binary IPC Co-Processor Dialog
+        self.desktop_ipc_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {

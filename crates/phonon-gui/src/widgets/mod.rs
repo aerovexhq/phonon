@@ -68,6 +68,7 @@ pub mod dse_optimization_dialog;
 pub mod silicon_lifecycle_dialog;
 pub mod wasm_optimization_dialog;
 pub mod pwa_offline_dialog;
+pub mod desktop_ipc_dialog;
 
 pub use pill_badge::{
     proportional_zoom_scale, render_dual_telemetry_pill, render_pill_badge, PillBadgeStyle,
@@ -141,3 +142,8 @@ pub use dse_optimization_dialog::{DseOptimizationDialog, DseTab};
 pub use silicon_lifecycle_dialog::{SiliconLifecycleDialog, SlmTab};
 pub use wasm_optimization_dialog::{WasmOptTab, WasmOptimizationDialog};
 pub use pwa_offline_dialog::{PwaOfflineDialog, PwaTab};
+pub use desktop_ipc_dialog::{
+    DesktopIpcDialog, DesktopIpcTab, GerberLayer, IpcOpcode, IpcPacketError, IpcPacketHeader,
+    PlatformAuditItem, compute_adler32, decode_ipc_packet, encode_ipc_packet, IPC_MAGIC,
+    IPC_VERSION,
+};
