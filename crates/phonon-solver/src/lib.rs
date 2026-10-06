@@ -9,6 +9,7 @@ pub mod acoustic_skyrmion_router;
 pub mod acoustic_domain_wall_soliton;
 pub mod valley_acoustic_multiplexer;
 pub mod quadrupole_shg;
+pub mod quadrupole_parametric;
 pub mod synthetic_4d_qhe;
 pub mod pt_symmetric_acoustic;
 pub mod acoustic_bic;
@@ -1181,6 +1182,12 @@ pub use phonon_magnon_polariton::{
     QuantumTransducerSolver, SParameterSample, TransducerCouplingParams,
     GYROMAGNETIC_RATIO,
 };
+pub use quadrupole_parametric::{
+    BbhBandPoint, BoundaryDispersionPoint, ParametricAmplifierMetrics, ParametricDriveParams,
+    ParametricEdgeAmplifier, ParametricGainSample, QuadrupoleWaveguide, QuadrupoleWaveguideParams,
+    ShgParams, ShgPhaseMatchSample, ShgSolver, ShgStepPoint,
+};
+
 
 
 

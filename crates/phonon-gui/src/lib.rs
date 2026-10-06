@@ -142,6 +142,10 @@ pub use widgets::skyrmion_reservoir_dialog::{
 pub use widgets::phonon_magnon_dialog::{
     PhononMagnonDialog, PhononMagnonTab, PolaritonAuditCriterion,
 };
+pub use widgets::quadrupole_parametric_dialog::{
+    CanvasColormap, QuadrupoleAuditCriterion, QuadrupoleParametricDialog,
+    QuadrupoleParametricTab, RealSpaceMode,
+};
 #[cfg(not(target_arch = "wasm32"))]
 use phonon_core::PhysicsDynamicsBackend;
 

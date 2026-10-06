@@ -34,7 +34,7 @@ use crate::widgets::{
     PdnDroopDialog, SiliconAgingDialog, WaferYieldDialog, DseOptimizationDialog,
     SiliconLifecycleDialog, WasmOptimizationDialog, PwaOfflineDialog,
     DesktopIpcDialog, WebRtcMeshDialog, WebGpuSpiceDialog, WavepacketScatteringDialog,
-    SkyrmionReservoirDialog, PhononMagnonDialog,
+    SkyrmionReservoirDialog, PhononMagnonDialog, QuadrupoleParametricDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -320,6 +320,9 @@ pub struct PhononApp {
     /// Interactive Coherent Phonon-Magnon Polariton Transducer & Quantum Microwave-to-Acoustic Interface dialog.
     pub phonon_magnon_dialog: PhononMagnonDialog,
 
+    /// Interactive Topological Higher-Order Acoustic Quadrupole Parametric Waveguide & Second-Harmonic Generation dialog.
+    pub quadrupole_parametric_dialog: QuadrupoleParametricDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -519,6 +522,7 @@ impl Default for PhononApp {
             wavepacket_scattering_dialog: WavepacketScatteringDialog::new_fast(),
             skyrmion_reservoir_dialog: SkyrmionReservoirDialog::new_fast(),
             phonon_magnon_dialog: PhononMagnonDialog::new_fast(),
+            quadrupole_parametric_dialog: QuadrupoleParametricDialog::new_fast(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -3329,6 +3333,9 @@ impl PhononApp {
 
         // 68. Interactive Coherent Phonon-Magnon Polariton Transducer Dialog
         self.phonon_magnon_dialog.ui(ui.ctx());
+
+        // 69. Interactive Topological Higher-Order Acoustic Quadrupole Parametric Waveguide Dialog
+        self.quadrupole_parametric_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {
