@@ -48,6 +48,7 @@ pub mod pt_symmetric_dialog;
 pub mod acoustic_bic_dialog;
 pub mod euler_acoustic_dialog;
 pub mod octupole_insulator_dialog;
+pub mod aah_quasicrystal_dialog;
 
 pub use pill_badge::{
     proportional_zoom_scale, render_dual_telemetry_pill, render_pill_badge, PillBadgeStyle,
@@ -101,5 +102,6 @@ pub use pt_symmetric_dialog::{PtSymmetricDialog, PtSymmetricDialogTab};
 pub use acoustic_bic_dialog::{AcousticBicDialog, AcousticBicDialogTab};
 pub use euler_acoustic_dialog::{EulerAcousticDialog, EulerAcousticDialogTab};
 pub use octupole_insulator_dialog::{OctupoleDialogTab, OctupoleInsulatorDialog};
+pub use aah_quasicrystal_dialog::{AahDialogTab, AahQuasicrystalDialog};
 
 

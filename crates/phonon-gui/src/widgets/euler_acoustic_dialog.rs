@@ -82,7 +82,7 @@ impl Default for EulerAcousticDialog {
             defect_disorder_hz: 0.0,
         };
 
-        let engine = EulerEdgeTransportEngine::new(params);
+        let engine = EulerEdgeTransportEngine::new_fast(params);
 
         Self {
             is_open: false,

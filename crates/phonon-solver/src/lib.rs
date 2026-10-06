@@ -14,6 +14,7 @@ pub mod pt_symmetric_acoustic;
 pub mod acoustic_bic;
 pub mod euler_acoustic;
 pub mod octupole_insulator;
+pub mod aah_quasicrystal;
 pub mod acoustic_holonomic_processor;
 pub mod acoustic_metasurface_holography;
 pub mod acoustic_microcomb_soliton;
@@ -1024,6 +1025,11 @@ pub use octupole_insulator::{
     BandPoint3D, CubicCornerId, DefectRobustnessPoint, HighSymmetryPoint3D, OctupoleCornerState,
     OctupoleCubicLattice, OctupoleHamiltonian, OctupoleLatticeResult, OctupoleParams,
     OctupolePhase,
+};
+pub use aah_quasicrystal::{
+    solve_jacobi as solve_aah_jacobi, solve_symmetric_tridiagonal, AahEigenstate, AahHamiltonian,
+    AahLatticeEngine, AahModelKind, AahParams, AahPhase, AahQuasicrystalMetrics, ButterflyPoint,
+    GOLDEN_RATIO_CONJUGATE,
 };
 
 

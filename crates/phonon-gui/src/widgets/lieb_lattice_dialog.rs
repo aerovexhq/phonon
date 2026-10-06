@@ -146,7 +146,7 @@ impl LiebLatticeDialog {
         let params = LiebParams::default();
         let hamiltonian = LiebHamiltonian::new(params);
         let lattice = LiebLattice::new(4, 4, params);
-        let simulator = AbCagingSimulator::new(lattice.clone());
+        let simulator = AbCagingSimulator::empty(lattice.clone());
 
         let mut dialog = Self {
             is_open: false,

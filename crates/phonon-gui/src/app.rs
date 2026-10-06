@@ -26,7 +26,7 @@ use crate::widgets::{
     FloquetTimeCrystalDialog, QuantumBraidingLatticeDialog, OptomechanicalSqueezingDialog,
     SkyrmionRouterDialog, AcousticSolitonDialog, ValleyMultiplexerDialog,
     NonHermitianSkinDialog, QuadrupoleShgDialog, Synthetic4dDialog, PtSymmetricDialog,
-    AcousticBicDialog, EulerAcousticDialog, OctupoleInsulatorDialog,
+    AcousticBicDialog, EulerAcousticDialog, OctupoleInsulatorDialog, AahQuasicrystalDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -232,6 +232,9 @@ pub struct PhononApp {
     /// Interactive Higher-Order Topological Acoustic Octupole Insulator & 3D Corner State Studio dialog.
     pub octupole_insulator_dialog: OctupoleInsulatorDialog,
 
+    /// Interactive Topological Acoustic Moire Quasicrystal & AAH Mobility Edge Studio dialog.
+    pub aah_quasicrystal_dialog: AahQuasicrystalDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -404,6 +407,7 @@ impl Default for PhononApp {
             acoustic_bic_dialog: AcousticBicDialog::new(),
             euler_acoustic_dialog: EulerAcousticDialog::new(),
             octupole_insulator_dialog: OctupoleInsulatorDialog::new(),
+            aah_quasicrystal_dialog: AahQuasicrystalDialog::new(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -3091,6 +3095,9 @@ impl PhononApp {
 
         // 42. Interactive Higher-Order Topological Acoustic Octupole Insulator Dialog
         self.octupole_insulator_dialog.ui(ui.ctx());
+
+        // 43. Interactive Topological Acoustic Moire Quasicrystal & AAH Mobility Edge Dialog
+        self.aah_quasicrystal_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {

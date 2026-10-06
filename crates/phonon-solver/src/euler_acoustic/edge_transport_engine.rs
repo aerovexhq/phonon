@@ -92,10 +92,11 @@ pub struct EulerEdgeTransportEngine {
 }
 
 impl EulerEdgeTransportEngine {
-    /// Construct a new transport engine and compute initial edge modes.
-    pub fn new(params: RibbonParams) -> Self {
+    /// Construct a fast transport engine with baseline metrics for cold boot optimization.
+    pub fn new_fast(params: RibbonParams) -> Self {
         let solver = EulerLatticeSolver::new(params.lattice_params.clone());
-        let mut engine = Self {
+        let num_y = params.num_cells_y;
+        Self {
             params,
             solver,
             metrics: EulerTransportMetrics {
@@ -112,9 +113,14 @@ impl EulerEdgeTransportEngine {
                 kx: 0.0,
                 frequency_offset_hz: 0.0,
                 edge_localization_ratio: 0.88,
-                spatial_intensity_profile: Vec::new(),
+                spatial_intensity_profile: vec![1.0 / (num_y as f64); num_y],
             },
-        };
+        }
+    }
+
+    /// Construct a new transport engine and compute initial edge modes.
+    pub fn new(params: RibbonParams) -> Self {
+        let mut engine = Self::new_fast(params);
         engine.recompute();
         engine
     }

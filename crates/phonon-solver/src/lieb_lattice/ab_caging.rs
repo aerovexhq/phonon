@@ -377,6 +377,22 @@ impl AbCagingSimulator {
         Self { lattice, solution }
     }
 
+    /// Creates an uncomputed AbCagingSimulator with empty solution for fast startup.
+    pub fn empty(lattice: LiebLattice) -> Self {
+        let dim = lattice.total_sites();
+        let solution = LiebLatticeResult {
+            nx: lattice.nx,
+            ny: lattice.ny,
+            total_sites: dim,
+            all_eigenvalues: vec![0.0; dim],
+            eigenvectors: Vec::new(),
+            num_flat_band_modes: lattice.nx * lattice.ny,
+            cls_states: Vec::new(),
+            combined_cls_intensity: vec![0.0; dim],
+        };
+        Self { lattice, solution }
+    }
+
     /// Updates the simulator with new parameters and recomputes eigensystem.
     pub fn update_params(&mut self, params: LiebParams) {
         self.lattice.params = params;
