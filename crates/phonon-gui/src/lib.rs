@@ -104,6 +104,7 @@ pub use widgets::octupole_insulator_dialog::{OctupoleDialogTab, OctupoleInsulato
 pub use widgets::aah_quasicrystal_dialog::{AahDialogTab, AahQuasicrystalDialog};
 pub use widgets::valley_hall_vortex_dialog::{ValleyHallDialogTab, ValleyHallVortexDialog};
 pub use widgets::skyrmion_deflector_dialog::{SkyrmionDeflectorDialog, SkyrmionDeflectorTab};
+pub use widgets::floquet_frequency_dialog::{FloquetFrequencyDialog, FloquetFrequencyTab};
 
 #[cfg(not(target_arch = "wasm32"))]
 use phonon_core::PhysicsDynamicsBackend;

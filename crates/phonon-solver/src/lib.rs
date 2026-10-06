@@ -17,6 +17,7 @@ pub mod octupole_insulator;
 pub mod aah_quasicrystal;
 pub mod valley_hall_vortex;
 pub mod skyrmion_deflector;
+pub mod floquet_frequency_dimension;
 pub mod acoustic_holonomic_processor;
 pub mod acoustic_metasurface_holography;
 pub mod acoustic_microcomb_soliton;
@@ -1042,6 +1043,12 @@ pub use skyrmion_deflector::{
     AcousticPseudoSpin, DeflectedBeamResult, DeflectorParams, SkyrmionDeflectorEngine,
     SkyrmionDeflectorMetrics, SkyrmionProfileKind, SkyrmionTexture, SkyrmionTextureParams,
     SpinVector,
+};
+pub use floquet_frequency_dimension::{
+    solve_jacobi_symmetric as solve_floquet_jacobi_symmetric, BoundaryModulationParams,
+    Complex as FloquetComplex, FloquetBandPoint, FloquetFrequencyEngine,
+    FrequencyConversionMetrics, FrequencyModeState, FrequencySolitonParams,
+    FrequencyWavepacketProfile, SolitonRegime, SyntheticFrequencyLattice, SyntheticLatticeKind,
 };
 
 

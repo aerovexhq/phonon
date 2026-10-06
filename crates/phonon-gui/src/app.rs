@@ -27,7 +27,7 @@ use crate::widgets::{
     SkyrmionRouterDialog, AcousticSolitonDialog, ValleyMultiplexerDialog,
     NonHermitianSkinDialog, QuadrupoleShgDialog, Synthetic4dDialog, PtSymmetricDialog,
     AcousticBicDialog, EulerAcousticDialog, OctupoleInsulatorDialog, AahQuasicrystalDialog,
-    ValleyHallVortexDialog, SkyrmionDeflectorDialog,
+    ValleyHallVortexDialog, SkyrmionDeflectorDialog, FloquetFrequencyDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -242,6 +242,9 @@ pub struct PhononApp {
     /// Interactive Acoustic Higher-Order Skyrmion Beam Deflector & Chiral Router dialog.
     pub skyrmion_deflector_dialog: SkyrmionDeflectorDialog,
 
+    /// Interactive Floquet Synthetic Frequency Dimension & Frequency Soliton dialog.
+    pub floquet_frequency_dialog: FloquetFrequencyDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -417,6 +420,7 @@ impl Default for PhononApp {
             aah_quasicrystal_dialog: AahQuasicrystalDialog::new(),
             valley_hall_vortex_dialog: ValleyHallVortexDialog::new(),
             skyrmion_deflector_dialog: SkyrmionDeflectorDialog::new(),
+            floquet_frequency_dialog: FloquetFrequencyDialog::new(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -3113,6 +3117,9 @@ impl PhononApp {
 
         // 45. Interactive Acoustic Higher-Order Skyrmion Beam Deflector & Chiral Router Dialog
         self.skyrmion_deflector_dialog.ui(ui.ctx());
+
+        // 46. Interactive Floquet Synthetic Frequency Dimension & Frequency Soliton Dialog
+        self.floquet_frequency_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {
