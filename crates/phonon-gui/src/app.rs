@@ -35,7 +35,7 @@ use crate::widgets::{
     SiliconLifecycleDialog, WasmOptimizationDialog, PwaOfflineDialog,
     DesktopIpcDialog, WebRtcMeshDialog, WebGpuSpiceDialog, WavepacketScatteringDialog,
     SkyrmionReservoirDialog, PhononMagnonDialog, QuadrupoleParametricDialog,
-    NonHermitianSensorDialog,
+    NonHermitianSensorDialog, CornerDoublerDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -327,6 +327,9 @@ pub struct PhononApp {
     /// Interactive Non-Hermitian Floquet Skin-Effect Sensor & Exceptional Point Magnetometer dialog.
     pub non_hermitian_sensor_dialog: NonHermitianSensorDialog,
 
+    /// Interactive Phonon Studio Topological Corner-Induced Acoustic Second-Harmonic Waveguide Interconnect & Nonlinear Frequency Doubler dialog.
+    pub corner_doubler_dialog: CornerDoublerDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -528,6 +531,7 @@ impl Default for PhononApp {
             phonon_magnon_dialog: PhononMagnonDialog::new_fast(),
             quadrupole_parametric_dialog: QuadrupoleParametricDialog::new_fast(),
             non_hermitian_sensor_dialog: NonHermitianSensorDialog::new_fast(),
+            corner_doubler_dialog: CornerDoublerDialog::new_fast(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -3344,6 +3348,9 @@ impl PhononApp {
 
         // 70. Interactive Non-Hermitian Floquet Skin-Effect Sensor & EP Magnetometer Dialog
         self.non_hermitian_sensor_dialog.ui(ui.ctx());
+
+        // 71. Interactive Topological Corner-Induced Second-Harmonic Waveguide Interconnect & Doubler Dialog
+        self.corner_doubler_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {

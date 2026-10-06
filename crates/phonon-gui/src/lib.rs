@@ -149,6 +149,10 @@ pub use widgets::quadrupole_parametric_dialog::{
 pub use widgets::non_hermitian_sensor_dialog::{
     NhSensorAuditCriterion, NonHermitianSensorDialog, NonHermitianSensorTab,
 };
+pub use widgets::corner_doubler_dialog::{
+    CornerDoublerAuditCriterion, CornerDoublerDialog, CornerDoublerTab, DialogColormap,
+    DisplayModeType,
+};
 
 #[cfg(not(target_arch = "wasm32"))]
 use phonon_core::PhysicsDynamicsBackend;

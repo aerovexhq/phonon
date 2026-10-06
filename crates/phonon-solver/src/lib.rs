@@ -10,6 +10,7 @@ pub mod acoustic_domain_wall_soliton;
 pub mod valley_acoustic_multiplexer;
 pub mod quadrupole_shg;
 pub mod quadrupole_parametric;
+pub mod corner_harmonic_doubler;
 pub mod synthetic_4d_qhe;
 pub mod pt_symmetric_acoustic;
 pub mod acoustic_bic;
@@ -1193,6 +1194,14 @@ pub use non_hermitian_sensor::{
     ExceptionalPointOrder, MagnetoacousticParams, MagnetometerTelemetry,
     NonHermitianLatticeParams, SkinEffectSolver,
 };
+pub use corner_harmonic_doubler::{
+    CornerBendAngle, CornerCouplingParams, CornerEigenstate as DoublerCornerEigenstate,
+    CornerId as DoublerCornerId, CornerToEdgeLattice, CornerToEdgeLatticeResult,
+    CornerTopologicalRouter, DoublerParams, DoublerSteadyState, DoublerTransientPoint,
+    EdgeEigenstate, HarmonicSpectrumPoint, NonlinearFrequencyDoubler, PortTelemetry, RouterParams,
+    RouterTargetPort, RoutingWaveField, ScatteringMatrix,
+};
+
 
 
 
