@@ -28,7 +28,8 @@ use crate::widgets::{
     NonHermitianSkinDialog, QuadrupoleShgDialog, Synthetic4dDialog, PtSymmetricDialog,
     AcousticBicDialog, EulerAcousticDialog, OctupoleInsulatorDialog, AahQuasicrystalDialog,
     ValleyHallVortexDialog, SkyrmionDeflectorDialog, FloquetFrequencyDialog,
-    CornerLaserDialog, MetasurfaceHologramDialog, DirectionalRadiationDialog, AtmosphericNeutronDialog,
+    CornerLaserDialog, MetasurfaceHologramDialog, MajoranaSurfaceCodeDialog,
+    DirectionalRadiationDialog, AtmosphericNeutronDialog,
     ThermalVacuumDialog, SpaceAvionicsBusDialog, RhbdSelfHealingDialog,
     ProductionEconomicsDialog, ChipletPackagingDialog, ElectrothermalThrottlingDialog,
     PdnDroopDialog, SiliconAgingDialog, WaferYieldDialog, DseOptimizationDialog,
@@ -262,6 +263,9 @@ pub struct PhononApp {
 
     /// Interactive Multi-Octave Acoustic Metasurface Wavefront Hologram & Ultrasonic Tractor Beam dialog.
     pub metasurface_hologram_dialog: MetasurfaceHologramDialog,
+
+    /// Interactive Quantum Metamaterial Non-Abelian Majorana Braid Interconnect & Surface Code Co-Processor dialog.
+    pub majorana_surface_code_dialog: MajoranaSurfaceCodeDialog,
 
     /// Interactive Directional Cosmic Heavy Ion Radiation Track & 3D Anisotropic Shielding Studio dialog.
     pub directional_radiation_dialog: DirectionalRadiationDialog,
@@ -529,6 +533,7 @@ impl Default for PhononApp {
             floquet_frequency_dialog: FloquetFrequencyDialog::new(),
             corner_laser_dialog: CornerLaserDialog::new_fast(),
             metasurface_hologram_dialog: MetasurfaceHologramDialog::new_fast(),
+            majorana_surface_code_dialog: MajoranaSurfaceCodeDialog::new_fast(),
             directional_radiation_dialog: DirectionalRadiationDialog::new_fast(),
             atmospheric_neutron_dialog: AtmosphericNeutronDialog::new_fast(),
             thermal_vacuum_dialog: ThermalVacuumDialog::new_fast(),
@@ -3308,6 +3313,9 @@ impl PhononApp {
 
         // 47b. Interactive Multi-Octave Acoustic Metasurface Wavefront Hologram & Tractor Beam Dialog
         self.metasurface_hologram_dialog.ui(ui.ctx());
+
+        // 47c. Interactive Quantum Metamaterial Non-Abelian Majorana Braid Interconnect & Surface Code Dialog
+        self.majorana_surface_code_dialog.ui(ui.ctx());
 
         // 48. Interactive Directional Cosmic Heavy Ion Radiation Track & 3D Anisotropic Shielding Dialog
         self.directional_radiation_dialog.ui(ui.ctx());

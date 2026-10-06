@@ -54,6 +54,7 @@ pub mod skyrmion_deflector_dialog;
 pub mod floquet_frequency_dialog;
 pub mod corner_laser_dialog;
 pub mod metasurface_hologram_dialog;
+pub mod majorana_surface_code_dialog;
 pub mod directional_radiation_dialog;
 pub mod atmospheric_neutron_dialog;
 pub mod thermal_vacuum_dialog;
@@ -142,6 +143,7 @@ pub use skyrmion_deflector_dialog::{SkyrmionDeflectorDialog, SkyrmionDeflectorTa
 pub use floquet_frequency_dialog::{FloquetFrequencyDialog, FloquetFrequencyTab};
 pub use corner_laser_dialog::{CornerLaserDialog, CornerLaserTab};
 pub use metasurface_hologram_dialog::{MetasurfaceHologramDialog, MetasurfaceHologramTab};
+pub use majorana_surface_code_dialog::{MajoranaSurfaceCodeDialog, MajoranaSurfaceCodeTab};
 pub use directional_radiation_dialog::{DirectionalRadiationDialog, DirectionalRadiationTab};
 pub use atmospheric_neutron_dialog::{AtmosphericNeutronDialog, AtmosphericNeutronTab};
 pub use thermal_vacuum_dialog::{ThermalVacuumDialog, ThermalVacuumTab};

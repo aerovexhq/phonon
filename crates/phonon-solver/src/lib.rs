@@ -176,6 +176,7 @@ pub mod anyon_condensation;
 pub mod corner_state_memory;
 pub mod axion_polariton_soliton;
 pub mod majorana_surface_memory;
+pub mod majorana_surface_code;
 pub mod metamaterial_circulator_cloak;
 pub mod mixed_signal;
 pub mod mna;
@@ -1253,6 +1254,21 @@ pub use acoustic_metasurface_hologram::{
     MetasurfaceUnitCell as HolographicMetasurfaceUnitCell, TractorBeamEngine, TrapStabilityMetrics,
     TrappedParticle, UnitCellResponse as HolographicUnitCellResponse,
 };
+
+pub use majorana_surface_code::{
+    BraidComplex as MajoranaBraidComplex, BraidTrajectoryStep, CodeDistance,
+    CompiledBraidGate, CrossbarGeometry, DispersiveParityReadoutParams,
+    DistillationMetrics, InterconnectCrossbarMetrics,
+    MagicDistillationEngine, MagicDistillationParams, MajoranaBraidingCrossbar,
+    MajoranaBraidingCrossbarParams, MajoranaSurfaceCodeAuditReport,
+    MajoranaSurfaceCodeCoprocessor, MajoranaSurfaceCodeCriterion,
+    MajoranaZeroMode as CrossbarMajoranaZeroMode,
+    Mat2x2 as MajoranaMat2x2, ParityReadoutResult, ParitySpectrumPoint,
+    PauliOperator, RecoveryResult, SurfaceCodePatch, SurfaceRng,
+    SurfaceStabilizerCheck, SurfaceStabilizerKind, SyndromeExtractionResult,
+    TargetCliffordGate, ThresholdCurvePoint,
+};
+
 
 
 
