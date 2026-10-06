@@ -19,6 +19,7 @@ pub mod valley_hall_vortex;
 pub mod skyrmion_deflector;
 pub mod floquet_frequency_dimension;
 pub mod non_hermitian_corner_laser;
+pub mod directional_radiation;
 pub mod acoustic_holonomic_processor;
 pub mod acoustic_metasurface_holography;
 pub mod acoustic_microcomb_soliton;
@@ -1055,6 +1056,11 @@ pub use non_hermitian_corner_laser::{
     CornerLaserComplex, HotLaserEigenmode, HotLaserModeKind, LaserEmissionMetrics,
     LaserLatticeKind as CornerLaserLatticeKind, LaserLatticeParams as CornerLaserLatticeParams,
     NonHermitianCornerLaserEngine, NonHermitianHotLattice,
+};
+pub use directional_radiation::{
+    DieHitResult, DieLayer3D, DirectionalRadiationCoSimulator, HeavyIonSpecies,
+    IncidentTrajectory, IonTrackProfile, MultiDieMbuEngine, RadiationTelemetryReport,
+    ShieldingComponent, ShieldingMaterial, SpacecraftShieldingModel,
 };
 
 

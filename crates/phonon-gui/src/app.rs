@@ -28,7 +28,7 @@ use crate::widgets::{
     NonHermitianSkinDialog, QuadrupoleShgDialog, Synthetic4dDialog, PtSymmetricDialog,
     AcousticBicDialog, EulerAcousticDialog, OctupoleInsulatorDialog, AahQuasicrystalDialog,
     ValleyHallVortexDialog, SkyrmionDeflectorDialog, FloquetFrequencyDialog,
-    CornerLaserDialog,
+    CornerLaserDialog, DirectionalRadiationDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -249,6 +249,9 @@ pub struct PhononApp {
     /// Interactive Non-Hermitian Higher-Order Topological Corner Laser Studio dialog.
     pub corner_laser_dialog: CornerLaserDialog,
 
+    /// Interactive Directional Cosmic Heavy Ion Radiation Track & 3D Anisotropic Shielding Studio dialog.
+    pub directional_radiation_dialog: DirectionalRadiationDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -426,6 +429,7 @@ impl Default for PhononApp {
             skyrmion_deflector_dialog: SkyrmionDeflectorDialog::new(),
             floquet_frequency_dialog: FloquetFrequencyDialog::new(),
             corner_laser_dialog: CornerLaserDialog::new_fast(),
+            directional_radiation_dialog: DirectionalRadiationDialog::new_fast(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -3128,6 +3132,9 @@ impl PhononApp {
 
         // 47. Interactive Non-Hermitian Higher-Order Topological Corner Laser Dialog
         self.corner_laser_dialog.ui(ui.ctx());
+
+        // 48. Interactive Directional Cosmic Heavy Ion Radiation Track & 3D Anisotropic Shielding Dialog
+        self.directional_radiation_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {

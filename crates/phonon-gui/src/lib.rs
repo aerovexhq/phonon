@@ -106,6 +106,7 @@ pub use widgets::valley_hall_vortex_dialog::{ValleyHallDialogTab, ValleyHallVort
 pub use widgets::skyrmion_deflector_dialog::{SkyrmionDeflectorDialog, SkyrmionDeflectorTab};
 pub use widgets::floquet_frequency_dialog::{FloquetFrequencyDialog, FloquetFrequencyTab};
 pub use widgets::corner_laser_dialog::{CornerLaserDialog, CornerLaserTab};
+pub use widgets::directional_radiation_dialog::{DirectionalRadiationDialog, DirectionalRadiationTab};
 
 #[cfg(not(target_arch = "wasm32"))]
 use phonon_core::PhysicsDynamicsBackend;
