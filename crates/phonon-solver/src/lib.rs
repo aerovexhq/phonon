@@ -334,6 +334,7 @@ pub mod non_abelian_holonomic;
 pub mod twisted_moire_superlattice;
 pub mod protected_braiding_lattice;
 pub mod optomechanical_squeezing;
+pub mod universal_braiding_processor;
 
 pub use acoustic::{
     AcousticBenchmarkReport, AcousticBenchmarkRunner, AcousticLinkSimulator, AcousticRealismTier,
@@ -1200,6 +1201,13 @@ pub use corner_harmonic_doubler::{
     CornerTopologicalRouter, DoublerParams, DoublerSteadyState, DoublerTransientPoint,
     EdgeEigenstate, HarmonicSpectrumPoint, NonlinearFrequencyDoubler, PortTelemetry, RouterParams,
     RouterTargetPort, RoutingWaveField, ScatteringMatrix,
+};
+pub use universal_braiding_processor::{
+    ArbitraryRzRotation, AuditCriterion, BellStateKind, BraidingAuditReport, BraidingParams,
+    CliffordTGateCompiler, CompiledGateResult, CrossbarMatrixRouter, CrossbarParams,
+    DispersiveCavityResponse, ElementaryBraid, EntanglementSynthesizer, FermionParity,
+    InterferometerParams, MajoranaZeroMode, ParitySpectrumData, QndTrajectoryTrace,
+    TargetGate as UniversalTargetGate, UniversalBraidingProcessor,
 };
 
 

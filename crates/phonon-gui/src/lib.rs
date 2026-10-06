@@ -153,6 +153,7 @@ pub use widgets::corner_doubler_dialog::{
     CornerDoublerAuditCriterion, CornerDoublerDialog, CornerDoublerTab, DialogColormap,
     DisplayModeType,
 };
+pub use widgets::universal_braiding_dialog::{UniversalBraidingDialog, UniversalBraidingTab};
 
 #[cfg(not(target_arch = "wasm32"))]
 use phonon_core::PhysicsDynamicsBackend;

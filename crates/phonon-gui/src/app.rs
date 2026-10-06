@@ -35,7 +35,7 @@ use crate::widgets::{
     SiliconLifecycleDialog, WasmOptimizationDialog, PwaOfflineDialog,
     DesktopIpcDialog, WebRtcMeshDialog, WebGpuSpiceDialog, WavepacketScatteringDialog,
     SkyrmionReservoirDialog, PhononMagnonDialog, QuadrupoleParametricDialog,
-    NonHermitianSensorDialog, CornerDoublerDialog,
+    NonHermitianSensorDialog, CornerDoublerDialog, UniversalBraidingDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -330,6 +330,9 @@ pub struct PhononApp {
     /// Interactive Phonon Studio Topological Corner-Induced Acoustic Second-Harmonic Waveguide Interconnect & Nonlinear Frequency Doubler dialog.
     pub corner_doubler_dialog: CornerDoublerDialog,
 
+    /// Interactive Universal Non-Abelian Anyon Braiding & Topological Quantum Acoustic Co-Processor dialog.
+    pub universal_braiding_dialog: UniversalBraidingDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -532,6 +535,7 @@ impl Default for PhononApp {
             quadrupole_parametric_dialog: QuadrupoleParametricDialog::new_fast(),
             non_hermitian_sensor_dialog: NonHermitianSensorDialog::new_fast(),
             corner_doubler_dialog: CornerDoublerDialog::new_fast(),
+            universal_braiding_dialog: UniversalBraidingDialog::new(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -3351,6 +3355,9 @@ impl PhononApp {
 
         // 71. Interactive Topological Corner-Induced Second-Harmonic Waveguide Interconnect & Doubler Dialog
         self.corner_doubler_dialog.ui(ui.ctx());
+
+        // 72. Interactive Universal Non-Abelian Braiding & Topological Co-Processor Dialog
+        self.universal_braiding_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {
