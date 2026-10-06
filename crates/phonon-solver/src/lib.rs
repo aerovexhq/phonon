@@ -15,6 +15,7 @@ pub mod acoustic_bic;
 pub mod euler_acoustic;
 pub mod octupole_insulator;
 pub mod aah_quasicrystal;
+pub mod valley_hall_vortex;
 pub mod acoustic_holonomic_processor;
 pub mod acoustic_metasurface_holography;
 pub mod acoustic_microcomb_soliton;
@@ -1030,6 +1031,11 @@ pub use aah_quasicrystal::{
     solve_jacobi as solve_aah_jacobi, solve_symmetric_tridiagonal, AahEigenstate, AahHamiltonian,
     AahLatticeEngine, AahModelKind, AahParams, AahPhase, AahQuasicrystalMetrics, ButterflyPoint,
     GOLDEN_RATIO_CONJUGATE,
+};
+pub use valley_hall_vortex::{
+    AcousticValley, DomainWallKind, PseudoLandauLevel, PumpingCyclePoint, ValleyDispersionPoint,
+    ValleyHallParams, ValleyHallPhase, ValleyHamiltonian, ValleyRibbonMode, ValleyRibbonParams,
+    ValleyRouterMetrics, VortexPumpingEngine,
 };
 
 

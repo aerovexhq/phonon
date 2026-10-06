@@ -27,6 +27,7 @@ use crate::widgets::{
     SkyrmionRouterDialog, AcousticSolitonDialog, ValleyMultiplexerDialog,
     NonHermitianSkinDialog, QuadrupoleShgDialog, Synthetic4dDialog, PtSymmetricDialog,
     AcousticBicDialog, EulerAcousticDialog, OctupoleInsulatorDialog, AahQuasicrystalDialog,
+    ValleyHallVortexDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -235,6 +236,9 @@ pub struct PhononApp {
     /// Interactive Topological Acoustic Moire Quasicrystal & AAH Mobility Edge Studio dialog.
     pub aah_quasicrystal_dialog: AahQuasicrystalDialog,
 
+    /// Interactive Acoustic Valley-Hall Vortex Pumping & Synthetic Chiral Gauge Field dialog.
+    pub valley_hall_vortex_dialog: ValleyHallVortexDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -408,6 +412,7 @@ impl Default for PhononApp {
             euler_acoustic_dialog: EulerAcousticDialog::new(),
             octupole_insulator_dialog: OctupoleInsulatorDialog::new(),
             aah_quasicrystal_dialog: AahQuasicrystalDialog::new(),
+            valley_hall_vortex_dialog: ValleyHallVortexDialog::new(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -3098,6 +3103,9 @@ impl PhononApp {
 
         // 43. Interactive Topological Acoustic Moire Quasicrystal & AAH Mobility Edge Dialog
         self.aah_quasicrystal_dialog.ui(ui.ctx());
+
+        // 44. Interactive Acoustic Valley-Hall Vortex Pumping & Synthetic Chiral Gauge Field Dialog
+        self.valley_hall_vortex_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {

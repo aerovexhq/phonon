@@ -718,6 +718,12 @@ fn render_top_frame_internal(
                     }
                     ui.close();
                 }
+                if ui.button("Acoustic Valley-Hall Vortex Pumping...").clicked() {
+                    if let Some(a) = app.as_deref_mut() {
+                        a.valley_hall_vortex_dialog.is_open = true;
+                    }
+                    ui.close();
+                }
             });
         });
         ui.label(RichText::new("|").color(Color32::from_rgb(60, 70, 85)).size(11.0));
