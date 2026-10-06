@@ -27,6 +27,7 @@ pub mod rhbd_self_healing;
 pub mod production_economics;
 pub mod chiplet_packaging;
 pub mod electrothermal_throttling;
+pub mod pdn_droop;
 pub mod acoustic_holonomic_processor;
 pub mod acoustic_metasurface_holography;
 pub mod acoustic_microcomb_soliton;
@@ -1117,6 +1118,14 @@ pub use electrothermal_throttling::{
     ThermalStabilityStatus, ThrottlingTelemetryReport, TimAgingModel, TimAgingPoint,
     TransientSimulationResult, TransientStepRecord, WorkloadProfile,
 };
+pub use pdn_droop::{
+    calculate_pdn_impedance_profile, simulate_dynamic_droop, simulate_mitigated_droop,
+    AntiResonancePeak, ClockStretchParams, Complex as PdnComplex, DecouplingCapSpec,
+    DldoControllerParams, DroopStageMetrics, DynamicDroopResult, ImpedanceSpectrumPoint,
+    LoadStepProfile, MitigatedTransientResult, MitigationReport, PdnDroopCoSimulator,
+    PdnImpedanceProfile, PdnNetworkParams, PdnTelemetryReport, VrmModelParams,
+};
+
 
 
 

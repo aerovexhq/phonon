@@ -31,6 +31,7 @@ use crate::widgets::{
     CornerLaserDialog, DirectionalRadiationDialog, AtmosphericNeutronDialog,
     ThermalVacuumDialog, SpaceAvionicsBusDialog, RhbdSelfHealingDialog,
     ProductionEconomicsDialog, ChipletPackagingDialog, ElectrothermalThrottlingDialog,
+    PdnDroopDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -275,6 +276,9 @@ pub struct PhononApp {
     /// Interactive Closed-Loop Dynamic Electro-Thermal & Power Throttling Studio dialog.
     pub electrothermal_throttling_dialog: ElectrothermalThrottlingDialog,
 
+    /// Interactive Power Delivery Network (PDN) & Ultra-High di/dt Dynamic Droop Co-Simulator dialog.
+    pub pdn_droop_dialog: PdnDroopDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -460,6 +464,7 @@ impl Default for PhononApp {
             production_economics_dialog: ProductionEconomicsDialog::new_fast(),
             chiplet_packaging_dialog: ChipletPackagingDialog::new_fast(),
             electrothermal_throttling_dialog: ElectrothermalThrottlingDialog::new_fast(),
+            pdn_droop_dialog: PdnDroopDialog::new_fast(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -3186,6 +3191,9 @@ impl PhononApp {
 
         // 55. Interactive Closed-Loop Dynamic Electro-Thermal & Power Throttling Studio Dialog
         self.electrothermal_throttling_dialog.ui(ui.ctx());
+
+        // 56. Interactive Power Delivery Network (PDN) & Dynamic Droop Co-Simulator Dialog
+        self.pdn_droop_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {

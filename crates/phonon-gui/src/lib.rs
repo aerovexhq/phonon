@@ -114,6 +114,7 @@ pub use widgets::rhbd_self_healing_dialog::{RhbdSelfHealingDialog, RhbdTab};
 pub use widgets::production_economics_dialog::{EconomicsTab, ProductionEconomicsDialog};
 pub use widgets::chiplet_packaging_dialog::{ChipletPackagingDialog, PackagingTab};
 pub use widgets::electrothermal_throttling_dialog::{ElectrothermalThrottlingDialog, ThrottlingTab};
+pub use widgets::pdn_droop_dialog::{PdnDroopDialog, PdnTab};
 
 
 #[cfg(not(target_arch = "wasm32"))]

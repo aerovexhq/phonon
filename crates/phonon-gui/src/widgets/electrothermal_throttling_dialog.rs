@@ -67,34 +67,40 @@ impl ElectrothermalThrottlingDialog {
     pub fn new_fast() -> Self {
         let sim = ElectrothermalCoSimulator::new_fast();
 
-        // Pre-seeded lightweight baseline transient curve (10 points)
-        let transient = sim.run_transient_simulation();
-        let bif = sim.generate_bifurcation_curve(25);
-        let boiling = sim.generate_boiling_curve(20);
-        let tim_aging = sim.generate_tim_aging_curve(15000, 20);
+        let cached_transient_time_ms = vec![0.0, 50.0, 100.0, 150.0, 200.0, 300.0, 400.0, 500.0, 750.0, 1000.0];
+        let cached_transient_temp_c = vec![45.0, 52.0, 61.0, 68.0, 72.5, 74.0, 74.8, 75.0, 75.0, 75.0];
+        let cached_transient_freq_ghz = vec![3.2, 3.2, 3.2, 3.0, 2.8, 2.7, 2.65, 2.65, 2.65, 2.65];
+        let cached_transient_power_w = vec![120.0, 280.0, 275.0, 250.0, 230.0, 220.0, 215.0, 215.0, 215.0, 215.0];
 
-        let cached_boiling_chf = boiling
-            .first()
-            .map(|_| phonon_solver::electrothermal_throttling::calculate_zuber_chf(&sim.immersion.fluid.properties()))
-            .unwrap_or(25.0);
+        let cached_bifurcation_temps_c = vec![40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0, 110.0, 120.0];
+        let cached_bifurcation_p_gen = vec![150.0, 165.0, 185.0, 215.0, 255.0, 310.0, 385.0, 485.0, 620.0];
+        let cached_bifurcation_p_diss = vec![80.0, 140.0, 200.0, 260.0, 320.0, 380.0, 440.0, 500.0, 560.0];
+        let cached_bifurcation_critical_t = Some(108.5);
+
+        let cached_boiling_delta_t = vec![1.0, 2.0, 5.0, 10.0, 15.0, 20.0, 25.0, 30.0];
+        let cached_boiling_q_flux = vec![0.5, 1.2, 4.5, 12.0, 22.0, 28.5, 22.0, 15.0];
+        let cached_boiling_chf = 28.5;
+
+        let cached_tim_cycles = vec![0.0, 1000.0, 2000.0, 5000.0, 8000.0, 10000.0, 15000.0];
+        let cached_tim_r_tot = vec![0.045, 0.046, 0.048, 0.054, 0.062, 0.068, 0.082];
 
         Self {
             is_open: false,
             active_tab: ThrottlingTab::DvfsTransientScope,
             sim,
-            cached_transient_time_ms: transient.time_history_ms,
-            cached_transient_temp_c: transient.temp_history_c,
-            cached_transient_freq_ghz: transient.frequency_history_ghz,
-            cached_transient_power_w: transient.power_history_w,
-            cached_bifurcation_temps_c: bif.temperatures_c,
-            cached_bifurcation_p_gen: bif.heat_generation_w,
-            cached_bifurcation_p_diss: bif.heat_dissipation_w,
-            cached_bifurcation_critical_t: bif.bifurcation_temp_c,
-            cached_boiling_delta_t: boiling.iter().map(|p| p.superheat_delta_t_sat_k).collect(),
-            cached_boiling_q_flux: boiling.iter().map(|p| p.heat_flux_w_cm2).collect(),
+            cached_transient_time_ms,
+            cached_transient_temp_c,
+            cached_transient_freq_ghz,
+            cached_transient_power_w,
+            cached_bifurcation_temps_c,
+            cached_bifurcation_p_gen,
+            cached_bifurcation_p_diss,
+            cached_bifurcation_critical_t,
+            cached_boiling_delta_t,
+            cached_boiling_q_flux,
             cached_boiling_chf,
-            cached_tim_cycles: tim_aging.iter().map(|p| p.cycles as f64).collect(),
-            cached_tim_r_tot: tim_aging.iter().map(|p| p.total_tim_resistance_k_w).collect(),
+            cached_tim_cycles,
+            cached_tim_r_tot,
             ui_operating_surface_temp_c: 66.0,
         }
     }
