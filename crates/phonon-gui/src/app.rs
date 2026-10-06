@@ -26,6 +26,7 @@ use crate::widgets::{
     FloquetTimeCrystalDialog, QuantumBraidingLatticeDialog, OptomechanicalSqueezingDialog,
     SkyrmionRouterDialog, AcousticSolitonDialog, ValleyMultiplexerDialog,
     NonHermitianSkinDialog, QuadrupoleShgDialog, Synthetic4dDialog, PtSymmetricDialog,
+    AcousticBicDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -222,6 +223,9 @@ pub struct PhononApp {
     /// Interactive Parity-Time (PT) Symmetric Acoustic Metamaterial & Unidirectional Invisibility Studio dialog.
     pub pt_symmetric_dialog: PtSymmetricDialog,
 
+    /// Interactive Topological Acoustic Bound States in the Continuum (BIC) & Vortex Cavity Studio dialog.
+    pub acoustic_bic_dialog: AcousticBicDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -391,6 +395,7 @@ impl Default for PhononApp {
             quadrupole_shg_dialog: QuadrupoleShgDialog::new(),
             synthetic_4d_dialog: Synthetic4dDialog::new(),
             pt_symmetric_dialog: PtSymmetricDialog::new(),
+            acoustic_bic_dialog: AcousticBicDialog::new(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -3069,6 +3074,9 @@ impl PhononApp {
 
         // 39. Interactive Parity-Time (PT) Symmetric Acoustic Metamaterial & Unidirectional Invisibility Dialog
         self.pt_symmetric_dialog.ui(ui.ctx());
+
+        // 40. Interactive Topological Acoustic Bound States in the Continuum (BIC) & Vortex Cavity Dialog
+        self.acoustic_bic_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {

@@ -11,6 +11,7 @@ pub mod valley_acoustic_multiplexer;
 pub mod quadrupole_shg;
 pub mod synthetic_4d_qhe;
 pub mod pt_symmetric_acoustic;
+pub mod acoustic_bic;
 pub mod acoustic_holonomic_processor;
 pub mod acoustic_metasurface_holography;
 pub mod acoustic_microcomb_soliton;
@@ -1007,6 +1008,10 @@ pub use pt_symmetric_acoustic::{
     InvisibilityEngine, InvisibilityMetrics, InvisibilityParams, PtAcousticParams, PtEigenvalue,
     PtHamiltonianSolver, PtModalMetrics, PtPhaseClassification, ScatteringSpectrumPoint,
     SpatialFieldPoint,
+};
+pub use acoustic_bic::{
+    AcousticVortexFieldPoint, BicKind, BicLatticeParams, BicLatticeSolver, CavityVortexEngine,
+    CavityVortexMetrics, CavityVortexParams, FanoTransmissionPoint, FarFieldPolarizationVector,
 };
 
 
