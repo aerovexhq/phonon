@@ -736,7 +736,7 @@ fn render_top_frame_internal(
                     }
                     ui.close();
                 }
-                if ui.button("Non-Hermitian Corner Laser...").clicked() {
+                if ui.button("Topological Corner Polariton Laser...").clicked() {
                     if let Some(a) = app.as_deref_mut() {
                         a.corner_laser_dialog.is_open = true;
                     }
