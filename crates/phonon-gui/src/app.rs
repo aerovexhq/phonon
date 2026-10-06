@@ -34,7 +34,7 @@ use crate::widgets::{
     PdnDroopDialog, SiliconAgingDialog, WaferYieldDialog, DseOptimizationDialog,
     SiliconLifecycleDialog, WasmOptimizationDialog, PwaOfflineDialog,
     DesktopIpcDialog, WebRtcMeshDialog, WebGpuSpiceDialog, WavepacketScatteringDialog,
-    SkyrmionReservoirDialog,
+    SkyrmionReservoirDialog, PhononMagnonDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -315,6 +315,9 @@ pub struct PhononApp {
     /// Interactive Quantum Spin-Torque Oscillator & Magnetic Skyrmion Reservoir Computing Co-Processor dialog.
     pub skyrmion_reservoir_dialog: SkyrmionReservoirDialog,
 
+    /// Interactive Coherent Phonon-Magnon Polariton Transducer & Quantum Microwave-to-Acoustic Interface dialog.
+    pub phonon_magnon_dialog: PhononMagnonDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -512,6 +515,7 @@ impl Default for PhononApp {
             webgpu_spice_dialog: WebGpuSpiceDialog::new_fast(),
             wavepacket_scattering_dialog: WavepacketScatteringDialog::new_fast(),
             skyrmion_reservoir_dialog: SkyrmionReservoirDialog::new_fast(),
+            phonon_magnon_dialog: PhononMagnonDialog::new_fast(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -3274,6 +3278,9 @@ impl PhononApp {
 
         // 67. Interactive Quantum Spin-Torque Oscillator & Magnetic Skyrmion Reservoir Computing Dialog
         self.skyrmion_reservoir_dialog.ui(ui.ctx());
+
+        // 68. Interactive Coherent Phonon-Magnon Polariton Transducer Dialog
+        self.phonon_magnon_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {
