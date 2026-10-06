@@ -115,6 +115,7 @@ pub use widgets::production_economics_dialog::{EconomicsTab, ProductionEconomics
 pub use widgets::chiplet_packaging_dialog::{ChipletPackagingDialog, PackagingTab};
 pub use widgets::electrothermal_throttling_dialog::{ElectrothermalThrottlingDialog, ThrottlingTab};
 pub use widgets::pdn_droop_dialog::{PdnDroopDialog, PdnTab};
+pub use widgets::silicon_aging_dialog::{AgingTab, SiliconAgingDialog};
 
 
 #[cfg(not(target_arch = "wasm32"))]

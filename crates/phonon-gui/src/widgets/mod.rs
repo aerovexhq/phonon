@@ -62,6 +62,7 @@ pub mod production_economics_dialog;
 pub mod chiplet_packaging_dialog;
 pub mod electrothermal_throttling_dialog;
 pub mod pdn_droop_dialog;
+pub mod silicon_aging_dialog;
 
 pub use pill_badge::{
     proportional_zoom_scale, render_dual_telemetry_pill, render_pill_badge, PillBadgeStyle,
@@ -129,6 +130,7 @@ pub use production_economics_dialog::{EconomicsTab, ProductionEconomicsDialog};
 pub use chiplet_packaging_dialog::{ChipletPackagingDialog, PackagingTab};
 pub use electrothermal_throttling_dialog::{ElectrothermalThrottlingDialog, ThrottlingTab};
 pub use pdn_droop_dialog::{PdnDroopDialog, PdnTab};
+pub use silicon_aging_dialog::{AgingTab, SiliconAgingDialog};
 
 
 

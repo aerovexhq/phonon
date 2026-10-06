@@ -28,6 +28,7 @@ pub mod production_economics;
 pub mod chiplet_packaging;
 pub mod electrothermal_throttling;
 pub mod pdn_droop;
+pub mod silicon_aging;
 pub mod acoustic_holonomic_processor;
 pub mod acoustic_metasurface_holography;
 pub mod acoustic_microcomb_soliton;
@@ -1124,6 +1125,20 @@ pub use pdn_droop::{
     DldoControllerParams, DroopStageMetrics, DynamicDroopResult, ImpedanceSpectrumPoint,
     LoadStepProfile, MitigatedTransientResult, MitigationReport, PdnDroopCoSimulator,
     PdnImpedanceProfile, PdnNetworkParams, PdnTelemetryReport, VrmModelParams,
+};
+pub use silicon_aging::{
+    build_default_m1_to_m15_stack, calculate_bti_ac_recovery_factor, calculate_bti_dc_vth_shift,
+    calculate_bti_effective_vth_shift, calculate_fit_rate, calculate_hci_gm_degradation,
+    calculate_hci_vth_shift, calculate_max_lateral_field, calculate_mean_free_path_nm,
+    calculate_on_current_degradation, calculate_progressive_gate_leakage_density,
+    calculate_stage_delay_penalty, calculate_substrate_current,
+    calculate_subthreshold_swing_degradation, calculate_t63_eta_sec,
+    calculate_weibull_failure_probability, calculate_weibull_plot_w, evaluate_full_metal_stack,
+    evaluate_metal_layer_em, generate_bti_trajectories, generate_hci_trajectories,
+    generate_weibull_reliability_curve, BlacksEquationParams, BtiParams, HciParams,
+    MetalLayerEmResult, MetalLayerId, MetalLayerProperties, SiliconAgingCoSimulator,
+    SiliconAgingSnapshot, SiliconAgingTelemetryReport, SiliconAgingTimeCurves, TddbParams,
+    TransistorPolarity, HOURS_PER_YEAR, K_BOLTZMANN_EV_PER_K, SECONDS_PER_YEAR,
 };
 
 

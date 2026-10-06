@@ -31,7 +31,7 @@ use crate::widgets::{
     CornerLaserDialog, DirectionalRadiationDialog, AtmosphericNeutronDialog,
     ThermalVacuumDialog, SpaceAvionicsBusDialog, RhbdSelfHealingDialog,
     ProductionEconomicsDialog, ChipletPackagingDialog, ElectrothermalThrottlingDialog,
-    PdnDroopDialog,
+    PdnDroopDialog, SiliconAgingDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -279,6 +279,9 @@ pub struct PhononApp {
     /// Interactive Power Delivery Network (PDN) & Ultra-High di/dt Dynamic Droop Co-Simulator dialog.
     pub pdn_droop_dialog: PdnDroopDialog,
 
+    /// Interactive Physics-Based Silicon Aging, Reliability & Electromigration (EM) Engine dialog.
+    pub silicon_aging_dialog: SiliconAgingDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -465,6 +468,7 @@ impl Default for PhononApp {
             chiplet_packaging_dialog: ChipletPackagingDialog::new_fast(),
             electrothermal_throttling_dialog: ElectrothermalThrottlingDialog::new_fast(),
             pdn_droop_dialog: PdnDroopDialog::new_fast(),
+            silicon_aging_dialog: SiliconAgingDialog::new_fast(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -3194,6 +3198,9 @@ impl PhononApp {
 
         // 56. Interactive Power Delivery Network (PDN) & Dynamic Droop Co-Simulator Dialog
         self.pdn_droop_dialog.ui(ui.ctx());
+
+        // 57. Interactive Physics-Based Silicon Aging, Reliability & Electromigration (EM) Dialog
+        self.silicon_aging_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {
