@@ -13,6 +13,7 @@ pub mod synthetic_4d_qhe;
 pub mod pt_symmetric_acoustic;
 pub mod acoustic_bic;
 pub mod euler_acoustic;
+pub mod octupole_insulator;
 pub mod acoustic_holonomic_processor;
 pub mod acoustic_metasurface_holography;
 pub mod acoustic_microcomb_soliton;
@@ -1018,6 +1019,11 @@ pub use euler_acoustic::{
     solve_real_symmetric_3x3, EulerCurvaturePoint, EulerEdgeTransportEngine, EulerLatticeSolver,
     EulerParams, EulerPhase, EulerRibbonMode, EulerTransportMetrics, RibbonDispersionPoint,
     RibbonParams,
+};
+pub use octupole_insulator::{
+    BandPoint3D, CubicCornerId, DefectRobustnessPoint, HighSymmetryPoint3D, OctupoleCornerState,
+    OctupoleCubicLattice, OctupoleHamiltonian, OctupoleLatticeResult, OctupoleParams,
+    OctupolePhase,
 };
 
 

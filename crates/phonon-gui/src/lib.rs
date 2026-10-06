@@ -98,6 +98,9 @@ pub use widgets::non_hermitian_skin_dialog::{NonHermitianSkinDialog, NonHermitia
 pub use widgets::quadrupole_shg_dialog::{QuadrupoleShgDialog, QuadrupoleShgDialogTab};
 pub use widgets::synthetic_4d_dialog::{Synthetic4dDialog, Synthetic4dDialogTab};
 pub use widgets::pt_symmetric_dialog::{PtSymmetricDialog, PtSymmetricDialogTab};
+pub use widgets::acoustic_bic_dialog::{AcousticBicDialog, AcousticBicDialogTab};
+pub use widgets::euler_acoustic_dialog::{EulerAcousticDialog, EulerAcousticDialogTab};
+pub use widgets::octupole_insulator_dialog::{OctupoleDialogTab, OctupoleInsulatorDialog};
 
 #[cfg(not(target_arch = "wasm32"))]
 use phonon_core::PhysicsDynamicsBackend;
