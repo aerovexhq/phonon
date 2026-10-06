@@ -6,7 +6,7 @@
 use egui::{Pos2, Rect, Vec2};
 use phonon_gui::actions::{fuzzy_match_score, ActionCategory, ActionId, ActionRegistry};
 use phonon_gui::schematic::{
-    ComponentKind, SchematicCanvas, SchematicComponent, SchematicWire, WireSegment,
+    CanvasCommand, ComponentKind, SchematicCanvas, SchematicComponent, SchematicWire, WireSegment,
 };
 use phonon_gui::widgets::command_palette::CommandPalette;
 use phonon_gui::widgets::floating_toolbar::FloatingToolbarState;
@@ -436,4 +436,85 @@ fn test_phonon_app_action_dispatch() {
     assert!(!app.command_palette.is_open);
     app.execute_action(ActionId::OpenCommandPalette);
     assert!(app.command_palette.is_open);
+}
+
+#[test]
+fn test_drag_component_with_attached_wire_undo_redo() {
+    let mut app = PhononApp::default();
+    app.load_voltage_divider_demo();
+
+    // In voltage divider demo:
+    // V1 (comp id 1) is at (200, 300)
+    // w1 (wire id 1) connects (200, 260) to (360, 200)
+    let initial_v1_pos = app.components[0].pos;
+    let initial_w1 = app.wires[0].clone();
+
+    // Select V1
+    app.select_component(1, false);
+    assert!(app.is_component_selected(1));
+
+    // Simulate drag start
+    app.dragging_selection = true;
+    app.drag_start_positions = vec![(1, initial_v1_pos)];
+    app.drag_start_wires = app.wires.clone();
+
+    // Drag by (+40, +40)
+    let delta = Vec2::new(40.0, 40.0);
+    app.translate_selection(delta);
+
+    assert_eq!(app.components[0].pos, initial_v1_pos + delta);
+    // Wire start point must be updated to new pin position
+    assert_ne!(app.wires[0], initial_w1);
+    assert_eq!(app.wires[0].start_point(), initial_w1.start_point() + delta);
+
+    // Simulate drag stopped: compile batch and record
+    let mut batch = Vec::new();
+    for (id, start_pos) in app.drag_start_positions.drain(..) {
+        if let Some(comp) = app.components.iter_mut().find(|c| c.id == id) {
+            comp.pos = app.canvas.snap_to_grid(comp.pos);
+            if comp.pos != start_pos {
+                batch.push(CanvasCommand::MoveComponent {
+                    id,
+                    from: start_pos,
+                    to: comp.pos,
+                });
+            }
+        }
+    }
+    for start_wire in app.drag_start_wires.drain(..) {
+        if let Some(curr_wire) = app.wires.iter().find(|w| w.id == start_wire.id) {
+            if curr_wire.segments != start_wire.segments {
+                batch.push(CanvasCommand::DeleteWire(start_wire));
+                batch.push(CanvasCommand::AddWire(curr_wire.clone()));
+            }
+        }
+    }
+    assert!(!batch.is_empty());
+    app.history.record(CanvasCommand::Batch(batch));
+    app.dragging_selection = false;
+    app.sync_canvas_state();
+
+    // Now call Undo
+    let undo_ok = app.undo();
+    assert!(undo_ok);
+
+    // V1 must be restored to its exact original position
+    assert_eq!(app.components[0].pos, initial_v1_pos);
+    // w1 must be restored to its exact original coordinates and segments!
+    assert_eq!(app.wires[0], initial_w1);
+
+    // Canvas state must also be perfectly in sync
+    assert_eq!(app.canvas.components[0].pos, initial_v1_pos);
+    assert_eq!(app.canvas.wires[0], initial_w1);
+
+    // Now call Redo
+    let redo_ok = app.redo();
+    assert!(redo_ok);
+    assert_eq!(app.components[0].pos, initial_v1_pos + delta);
+    assert_eq!(app.wires[0].start_point(), initial_w1.start_point() + delta);
+
+    // Undo again
+    assert!(app.undo());
+    assert_eq!(app.components[0].pos, initial_v1_pos);
+    assert_eq!(app.wires[0], initial_w1);
 }

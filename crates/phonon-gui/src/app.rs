@@ -101,6 +101,8 @@ pub struct PhononApp {
     pub dragging_selection: bool,
     /// Original positions of components before drag started.
     pub drag_start_positions: Vec<(usize, Pos2)>,
+    /// Pre-drag snapshot of schematic wires for reversible history recording.
+    pub drag_start_wires: Vec<SchematicWire>,
 
     /// Multi-sheet schematic canvas manager.
     pub sheets: MultiSheetManager,
@@ -435,6 +437,7 @@ impl Default for PhononApp {
             action_registry: ActionRegistry::new(),
             dragging_selection: false,
             drag_start_positions: Vec::new(),
+            drag_start_wires: Vec::new(),
             sheets: MultiSheetManager::new("Main"),
             subcircuits: HashMap::new(),
             buses: Vec::new(),
@@ -857,6 +860,7 @@ impl PhononApp {
         self.sim_status.clear();
         self.drag_start_pos = None;
         self.drag_start_positions.clear();
+        self.drag_start_wires.clear();
         self.dragging_selection = false;
         self.editing_comp_value = None;
         self.canvas.clear();
@@ -963,6 +967,10 @@ impl PhononApp {
         if success {
             self.selected_component_id = None;
             self.selected_wire_id = None;
+            self.selected_component_ids.clear();
+            self.selected_wire_ids.clear();
+            self.wires.sort_by_key(|w| w.id);
+            self.sync_canvas_state();
             self.active_wire_start = None;
             self.sim_status = "Undo".to_string();
             let max_c_id = self.components.iter().map(|c| c.id).max().unwrap_or(0);
@@ -984,6 +992,10 @@ impl PhononApp {
         if success {
             self.selected_component_id = None;
             self.selected_wire_id = None;
+            self.selected_component_ids.clear();
+            self.selected_wire_ids.clear();
+            self.wires.sort_by_key(|w| w.id);
+            self.sync_canvas_state();
             self.active_wire_start = None;
             self.sim_status = "Redo".to_string();
             let max_c_id = self.components.iter().map(|c| c.id).max().unwrap_or(0);
@@ -1698,21 +1710,45 @@ impl PhononApp {
                 } else if start_attached {
                     let old_end = wire.end_point();
                     let new_start = wire.start_point() + delta;
-                    *wire = SchematicWire::manhattan_route_hv_with_net(
-                        wire.id,
-                        new_start,
-                        old_end,
-                        wire.net_name.clone(),
-                    );
+                    let was_vh = wire.segments.first().map_or(false, |s| {
+                        (s.start.x - s.end.x).abs() < 1.0 && (s.start.y - s.end.y).abs() > 1.0
+                    });
+                    if was_vh {
+                        *wire = SchematicWire::manhattan_route_vh_with_net(
+                            wire.id,
+                            new_start,
+                            old_end,
+                            wire.net_name.clone(),
+                        );
+                    } else {
+                        *wire = SchematicWire::manhattan_route_hv_with_net(
+                            wire.id,
+                            new_start,
+                            old_end,
+                            wire.net_name.clone(),
+                        );
+                    }
                 } else if end_attached {
                     let old_start = wire.start_point();
                     let new_end = wire.end_point() + delta;
-                    *wire = SchematicWire::manhattan_route_hv_with_net(
-                        wire.id,
-                        old_start,
-                        new_end,
-                        wire.net_name.clone(),
-                    );
+                    let was_vh = wire.segments.last().map_or(false, |s| {
+                        (s.start.x - s.end.x).abs() < 1.0 && (s.start.y - s.end.y).abs() > 1.0
+                    });
+                    if was_vh {
+                        *wire = SchematicWire::manhattan_route_vh_with_net(
+                            wire.id,
+                            old_start,
+                            new_end,
+                            wire.net_name.clone(),
+                        );
+                    } else {
+                        *wire = SchematicWire::manhattan_route_hv_with_net(
+                            wire.id,
+                            old_start,
+                            new_end,
+                            wire.net_name.clone(),
+                        );
+                    }
                 }
             }
         }
@@ -2392,6 +2428,7 @@ impl PhononApp {
                             .filter(|c| self.is_component_selected(c.id))
                             .map(|c| (c.id, c.pos))
                             .collect();
+                        self.drag_start_wires = self.wires.clone();
                     }
                 } else if let Some(wire) = self.wires.iter().rev().find(|w| w.contains(mouse_world, 6.0)) {
                     let wire_id = wire.id;
@@ -2433,6 +2470,17 @@ impl PhononApp {
                             }
                         }
                     }
+
+                    // Compare wire states before and after drag to record wire adjustments in history
+                    for start_wire in self.drag_start_wires.drain(..) {
+                        if let Some(curr_wire) = self.wires.iter().find(|w| w.id == start_wire.id) {
+                            if curr_wire.segments != start_wire.segments {
+                                batch.push(CanvasCommand::DeleteWire(start_wire));
+                                batch.push(CanvasCommand::AddWire(curr_wire.clone()));
+                            }
+                        }
+                    }
+
                     if !batch.is_empty() {
                         if batch.len() == 1 {
                             self.history.record(batch.remove(0));

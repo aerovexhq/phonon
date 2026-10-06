@@ -241,21 +241,45 @@ impl SchematicCanvas {
                 } else if start_attached {
                     let old_end = wire.end_point();
                     let new_start = wire.start_point() + delta;
-                    *wire = SchematicWire::manhattan_route_hv_with_net(
-                        wire.id,
-                        new_start,
-                        old_end,
-                        wire.net_name.clone(),
-                    );
+                    let was_vh = wire.segments.first().map_or(false, |s| {
+                        (s.start.x - s.end.x).abs() < 1.0 && (s.start.y - s.end.y).abs() > 1.0
+                    });
+                    if was_vh {
+                        *wire = SchematicWire::manhattan_route_vh_with_net(
+                            wire.id,
+                            new_start,
+                            old_end,
+                            wire.net_name.clone(),
+                        );
+                    } else {
+                        *wire = SchematicWire::manhattan_route_hv_with_net(
+                            wire.id,
+                            new_start,
+                            old_end,
+                            wire.net_name.clone(),
+                        );
+                    }
                 } else if end_attached {
                     let old_start = wire.start_point();
                     let new_end = wire.end_point() + delta;
-                    *wire = SchematicWire::manhattan_route_hv_with_net(
-                        wire.id,
-                        old_start,
-                        new_end,
-                        wire.net_name.clone(),
-                    );
+                    let was_vh = wire.segments.last().map_or(false, |s| {
+                        (s.start.x - s.end.x).abs() < 1.0 && (s.start.y - s.end.y).abs() > 1.0
+                    });
+                    if was_vh {
+                        *wire = SchematicWire::manhattan_route_vh_with_net(
+                            wire.id,
+                            old_start,
+                            new_end,
+                            wire.net_name.clone(),
+                        );
+                    } else {
+                        *wire = SchematicWire::manhattan_route_hv_with_net(
+                            wire.id,
+                            old_start,
+                            new_end,
+                            wire.net_name.clone(),
+                        );
+                    }
                 }
             }
         }

@@ -188,7 +188,7 @@ impl ComponentPalette {
                                 .color(Color32::from_rgb(140, 180, 220)),
                         );
                         ui.label(
-                            RichText::new(&project_title)
+                            RichText::new(project_title)
                                 .strong()
                                 .color(Color32::from_rgb(100, 180, 240)),
                         );
