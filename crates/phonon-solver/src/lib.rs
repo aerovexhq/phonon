@@ -38,6 +38,7 @@ pub mod wavepacket_scattering;
 pub mod skyrmion_reservoir;
 pub mod acoustic_holonomic_processor;
 pub mod acoustic_metasurface_holography;
+pub mod acoustic_metasurface_hologram;
 pub mod acoustic_microcomb_soliton;
 pub mod acoustically_levitated_nanoparticle;
 pub mod acoustoelectric;
@@ -1243,9 +1244,15 @@ pub use floquet_time_crystal_sensor::{
     TimeCrystalComplex, TimeCrystalDynamicsSolver, TimeCrystalParams,
 };
 
-
-
-
+pub use acoustic_metasurface_hologram::{
+    bessel_j as hologram_bessel_j, AcousticMedium, AcousticMetasurfaceProcessor, AiryBeamParams,
+    BesselAirySolver, BesselBeamParams, BesselBeamResult, GerchbergSaxtonParams, GorkovFieldPoint,
+    HoloComplex as MetasurfaceHoloComplex, HologramIterationPoint, HologramSynthesisResult,
+    HologramSynthesizer, HologramTargetType, MetasurfaceArray, MetasurfaceAuditItem,
+    MetasurfaceAuditReport, MetasurfaceCellGeometry, MetasurfaceCellParams,
+    MetasurfaceUnitCell as HolographicMetasurfaceUnitCell, TractorBeamEngine, TrapStabilityMetrics,
+    TrappedParticle, UnitCellResponse as HolographicUnitCellResponse,
+};
 
 
 

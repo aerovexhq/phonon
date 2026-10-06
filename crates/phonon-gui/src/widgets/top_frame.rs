@@ -742,6 +742,12 @@ fn render_top_frame_internal(
                     }
                     ui.close();
                 }
+                if ui.button("Multi-Octave Metasurface Hologram & Tractor Beam...").clicked() {
+                    if let Some(a) = app.as_deref_mut() {
+                        a.metasurface_hologram_dialog.is_open = true;
+                    }
+                    ui.close();
+                }
                 if ui.button("Directional Heavy Ion Radiation...").clicked() {
                     if let Some(a) = app.as_deref_mut() {
                         a.directional_radiation_dialog.is_open = true;

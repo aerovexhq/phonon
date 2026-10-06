@@ -106,6 +106,7 @@ pub use widgets::valley_hall_vortex_dialog::{ValleyHallDialogTab, ValleyHallVort
 pub use widgets::skyrmion_deflector_dialog::{SkyrmionDeflectorDialog, SkyrmionDeflectorTab};
 pub use widgets::floquet_frequency_dialog::{FloquetFrequencyDialog, FloquetFrequencyTab};
 pub use widgets::corner_laser_dialog::{CornerLaserDialog, CornerLaserTab};
+pub use widgets::metasurface_hologram_dialog::{MetasurfaceHologramDialog, MetasurfaceHologramTab};
 pub use widgets::directional_radiation_dialog::{DirectionalRadiationDialog, DirectionalRadiationTab};
 pub use widgets::atmospheric_neutron_dialog::{AtmosphericNeutronDialog, AtmosphericNeutronTab};
 pub use widgets::thermal_vacuum_dialog::{ThermalVacuumDialog, ThermalVacuumTab};

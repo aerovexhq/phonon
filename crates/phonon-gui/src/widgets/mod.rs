@@ -53,6 +53,7 @@ pub mod valley_hall_vortex_dialog;
 pub mod skyrmion_deflector_dialog;
 pub mod floquet_frequency_dialog;
 pub mod corner_laser_dialog;
+pub mod metasurface_hologram_dialog;
 pub mod directional_radiation_dialog;
 pub mod atmospheric_neutron_dialog;
 pub mod thermal_vacuum_dialog;
@@ -140,6 +141,7 @@ pub use valley_hall_vortex_dialog::{ValleyHallDialogTab, ValleyHallVortexDialog}
 pub use skyrmion_deflector_dialog::{SkyrmionDeflectorDialog, SkyrmionDeflectorTab};
 pub use floquet_frequency_dialog::{FloquetFrequencyDialog, FloquetFrequencyTab};
 pub use corner_laser_dialog::{CornerLaserDialog, CornerLaserTab};
+pub use metasurface_hologram_dialog::{MetasurfaceHologramDialog, MetasurfaceHologramTab};
 pub use directional_radiation_dialog::{DirectionalRadiationDialog, DirectionalRadiationTab};
 pub use atmospheric_neutron_dialog::{AtmosphericNeutronDialog, AtmosphericNeutronTab};
 pub use thermal_vacuum_dialog::{ThermalVacuumDialog, ThermalVacuumTab};
