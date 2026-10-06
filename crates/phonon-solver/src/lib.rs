@@ -25,6 +25,7 @@ pub mod thermal_vacuum;
 pub mod space_avionics_bus;
 pub mod rhbd_self_healing;
 pub mod production_economics;
+pub mod chiplet_packaging;
 pub mod acoustic_holonomic_processor;
 pub mod acoustic_metasurface_holography;
 pub mod acoustic_microcomb_soliton;
@@ -1095,6 +1096,13 @@ pub use rhbd_self_healing::{
 pub use production_economics::{
     BomLineItem, CentralCostRegistry, EconomicsTelemetryReport, HierarchicalBom,
     PriceEntry, ProductionEconomicsCoSimulator, ProductionVolumeModel, VolumeBreakpoint,
+};
+pub use chiplet_packaging::{
+    compute_s_parameters, evaluate_thermo_mechanics, evaluate_ucie_phy, extract_rdl_rlgc,
+    extract_tsv_rlgc, ChipletPackagingCoSimulator, EyeDiagramSample, LayerMaterial,
+    PackageStackGeometry, PackagingArchitecture, PackagingTelemetryReport, RdlGeometry, RdlRlgc,
+    SParameterPoint, ThermalCycleParams, TsvGeometry, TsvRlgc, UcieDataRateGbps, UcieEyeMetrics,
+    UciePackageType, UciePhyParams, WarpageStressReport,
 };
 
 

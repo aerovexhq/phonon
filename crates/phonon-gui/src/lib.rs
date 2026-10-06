@@ -112,6 +112,7 @@ pub use widgets::thermal_vacuum_dialog::{ThermalVacuumDialog, ThermalVacuumTab};
 pub use widgets::space_avionics_bus_dialog::{SpaceAvionicsBusDialog, SpaceAvionicsBusTab};
 pub use widgets::rhbd_self_healing_dialog::{RhbdSelfHealingDialog, RhbdTab};
 pub use widgets::production_economics_dialog::{EconomicsTab, ProductionEconomicsDialog};
+pub use widgets::chiplet_packaging_dialog::{ChipletPackagingDialog, PackagingTab};
 
 
 #[cfg(not(target_arch = "wasm32"))]
