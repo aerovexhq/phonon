@@ -31,7 +31,7 @@ use crate::widgets::{
     CornerLaserDialog, DirectionalRadiationDialog, AtmosphericNeutronDialog,
     ThermalVacuumDialog, SpaceAvionicsBusDialog, RhbdSelfHealingDialog,
     ProductionEconomicsDialog, ChipletPackagingDialog, ElectrothermalThrottlingDialog,
-    PdnDroopDialog, SiliconAgingDialog,
+    PdnDroopDialog, SiliconAgingDialog, WaferYieldDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -282,6 +282,9 @@ pub struct PhononApp {
     /// Interactive Physics-Based Silicon Aging, Reliability & Electromigration (EM) Engine dialog.
     pub silicon_aging_dialog: SiliconAgingDialog,
 
+    /// Interactive Wafer-Scale Yield, DFM & Harvesting Economics Co-Simulator dialog.
+    pub wafer_yield_dialog: WaferYieldDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -469,6 +472,7 @@ impl Default for PhononApp {
             electrothermal_throttling_dialog: ElectrothermalThrottlingDialog::new_fast(),
             pdn_droop_dialog: PdnDroopDialog::new_fast(),
             silicon_aging_dialog: SiliconAgingDialog::new_fast(),
+            wafer_yield_dialog: WaferYieldDialog::new_fast(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -3201,6 +3205,9 @@ impl PhononApp {
 
         // 57. Interactive Physics-Based Silicon Aging, Reliability & Electromigration (EM) Dialog
         self.silicon_aging_dialog.ui(ui.ctx());
+
+        // 58. Interactive Wafer-Scale Yield, DFM & Harvesting Economics Dialog
+        self.wafer_yield_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {

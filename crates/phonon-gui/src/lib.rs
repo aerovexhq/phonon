@@ -116,8 +116,7 @@ pub use widgets::chiplet_packaging_dialog::{ChipletPackagingDialog, PackagingTab
 pub use widgets::electrothermal_throttling_dialog::{ElectrothermalThrottlingDialog, ThrottlingTab};
 pub use widgets::pdn_droop_dialog::{PdnDroopDialog, PdnTab};
 pub use widgets::silicon_aging_dialog::{AgingTab, SiliconAgingDialog};
-
-
+pub use widgets::wafer_yield_dialog::{WaferMapColorMode, WaferYieldDialog, WaferYieldTab};
 #[cfg(not(target_arch = "wasm32"))]
 use phonon_core::PhysicsDynamicsBackend;
 

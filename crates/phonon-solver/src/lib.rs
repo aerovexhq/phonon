@@ -29,6 +29,7 @@ pub mod chiplet_packaging;
 pub mod electrothermal_throttling;
 pub mod pdn_droop;
 pub mod silicon_aging;
+pub mod wafer_yield;
 pub mod acoustic_holonomic_processor;
 pub mod acoustic_metasurface_holography;
 pub mod acoustic_microcomb_soliton;
@@ -1140,13 +1141,12 @@ pub use silicon_aging::{
     SiliconAgingSnapshot, SiliconAgingTelemetryReport, SiliconAgingTimeCurves, TddbParams,
     TransistorPolarity, HOURS_PER_YEAR, K_BOLTZMANN_EV_PER_K, SECONDS_PER_YEAR,
 };
-
-
-
-
-
-
-
-
-
+pub use wafer_yield::{
+    calculate_analytical_gross_dpw, classify_die_harvest, compute_wafer_economics,
+    evaluate_die_process_parameters, generate_die_grid, generate_yield_curves, DefectRng,
+    DefectYieldParams, DieArchitectureParams, DieGridPosition, DieHarvestStatus,
+    DieProcessParameters, HarvestSkuTier, ProcessVariationFieldParams, SimulatedDie,
+    WaferEconomicsParams, WaferEconomicsReport, WaferGeometryParams, WaferYieldCoSimulator,
+    WaferYieldTelemetryReport, YieldCurvePoint,
+};
 
