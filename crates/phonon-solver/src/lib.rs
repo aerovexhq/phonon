@@ -20,6 +20,7 @@ pub mod skyrmion_deflector;
 pub mod floquet_frequency_dimension;
 pub mod non_hermitian_corner_laser;
 pub mod directional_radiation;
+pub mod atmospheric_neutron;
 pub mod acoustic_holonomic_processor;
 pub mod acoustic_metasurface_holography;
 pub mod acoustic_microcomb_soliton;
@@ -1062,6 +1063,13 @@ pub use directional_radiation::{
     IncidentTrajectory, IonTrackProfile, MultiDieMbuEngine, RadiationTelemetryReport,
     ShieldingComponent, ShieldingMaterial, SpacecraftShieldingModel,
 };
+pub use atmospheric_neutron::{
+    AtmosphericNeutronCoSimulator, AtmosphericNeutronModel, AtmosphericTelemetryReport,
+    Do254DalLevel, FlightAltitude, LightningIndirectSimulator, LightningSeverityLevel,
+    LightningTimeSample, LightningWaveformKind, MitigationArchitecture, ProtectionClampDevice,
+    SiliconDeviceParams, SiliconReactionChannel, SiliconSpallationEngine, SolarModulation,
+};
+
 
 
 

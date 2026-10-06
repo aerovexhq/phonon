@@ -107,6 +107,8 @@ pub use widgets::skyrmion_deflector_dialog::{SkyrmionDeflectorDialog, SkyrmionDe
 pub use widgets::floquet_frequency_dialog::{FloquetFrequencyDialog, FloquetFrequencyTab};
 pub use widgets::corner_laser_dialog::{CornerLaserDialog, CornerLaserTab};
 pub use widgets::directional_radiation_dialog::{DirectionalRadiationDialog, DirectionalRadiationTab};
+pub use widgets::atmospheric_neutron_dialog::{AtmosphericNeutronDialog, AtmosphericNeutronTab};
+
 
 #[cfg(not(target_arch = "wasm32"))]
 use phonon_core::PhysicsDynamicsBackend;

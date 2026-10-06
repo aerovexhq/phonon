@@ -54,6 +54,7 @@ pub mod skyrmion_deflector_dialog;
 pub mod floquet_frequency_dialog;
 pub mod corner_laser_dialog;
 pub mod directional_radiation_dialog;
+pub mod atmospheric_neutron_dialog;
 
 pub use pill_badge::{
     proportional_zoom_scale, render_dual_telemetry_pill, render_pill_badge, PillBadgeStyle,
@@ -113,5 +114,7 @@ pub use skyrmion_deflector_dialog::{SkyrmionDeflectorDialog, SkyrmionDeflectorTa
 pub use floquet_frequency_dialog::{FloquetFrequencyDialog, FloquetFrequencyTab};
 pub use corner_laser_dialog::{CornerLaserDialog, CornerLaserTab};
 pub use directional_radiation_dialog::{DirectionalRadiationDialog, DirectionalRadiationTab};
+pub use atmospheric_neutron_dialog::{AtmosphericNeutronDialog, AtmosphericNeutronTab};
+
 
 

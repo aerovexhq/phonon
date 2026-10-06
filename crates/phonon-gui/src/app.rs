@@ -28,7 +28,7 @@ use crate::widgets::{
     NonHermitianSkinDialog, QuadrupoleShgDialog, Synthetic4dDialog, PtSymmetricDialog,
     AcousticBicDialog, EulerAcousticDialog, OctupoleInsulatorDialog, AahQuasicrystalDialog,
     ValleyHallVortexDialog, SkyrmionDeflectorDialog, FloquetFrequencyDialog,
-    CornerLaserDialog, DirectionalRadiationDialog,
+    CornerLaserDialog, DirectionalRadiationDialog, AtmosphericNeutronDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -252,6 +252,9 @@ pub struct PhononApp {
     /// Interactive Directional Cosmic Heavy Ion Radiation Track & 3D Anisotropic Shielding Studio dialog.
     pub directional_radiation_dialog: DirectionalRadiationDialog,
 
+    /// Interactive Atmospheric Secondary Neutron Spallation Cascade & DO-254 DAL-A SER Studio dialog.
+    pub atmospheric_neutron_dialog: AtmosphericNeutronDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -430,6 +433,7 @@ impl Default for PhononApp {
             floquet_frequency_dialog: FloquetFrequencyDialog::new(),
             corner_laser_dialog: CornerLaserDialog::new_fast(),
             directional_radiation_dialog: DirectionalRadiationDialog::new_fast(),
+            atmospheric_neutron_dialog: AtmosphericNeutronDialog::new_fast(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -3135,6 +3139,9 @@ impl PhononApp {
 
         // 48. Interactive Directional Cosmic Heavy Ion Radiation Track & 3D Anisotropic Shielding Dialog
         self.directional_radiation_dialog.ui(ui.ctx());
+
+        // 49. Interactive Atmospheric Secondary Neutron Spallation Cascade & DO-254 DAL-A SER Dialog
+        self.atmospheric_neutron_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {
