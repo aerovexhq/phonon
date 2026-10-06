@@ -125,6 +125,10 @@ pub use widgets::desktop_ipc_dialog::{
     DesktopIpcDialog, DesktopIpcTab, GerberLayer, IpcOpcode, IpcPacketError, IpcPacketHeader,
     PlatformAuditItem, decode_ipc_packet, encode_ipc_packet, IPC_MAGIC, IPC_VERSION,
 };
+pub use widgets::webrtc_mesh_dialog::{
+    CrdtOpKind, CrdtOperation, DistributedSimChunk, LamportTimestamp, MeshAuditCriterion,
+    MeshPeerNode, PeerConnectionState, PeerPresence, WebRtcMeshDialog, WebRtcMeshTab,
+};
 #[cfg(not(target_arch = "wasm32"))]
 use phonon_core::PhysicsDynamicsBackend;
 

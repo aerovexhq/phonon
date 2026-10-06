@@ -33,7 +33,7 @@ use crate::widgets::{
     ProductionEconomicsDialog, ChipletPackagingDialog, ElectrothermalThrottlingDialog,
     PdnDroopDialog, SiliconAgingDialog, WaferYieldDialog, DseOptimizationDialog,
     SiliconLifecycleDialog, WasmOptimizationDialog, PwaOfflineDialog,
-    DesktopIpcDialog,
+    DesktopIpcDialog, WebRtcMeshDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -302,6 +302,9 @@ pub struct PhononApp {
     /// Interactive Native Desktop Studio, Tauri v2 Shell & Zero-Copy Binary IPC Co-Processor dialog.
     pub desktop_ipc_dialog: DesktopIpcDialog,
 
+    /// Interactive Real-Time Collaborative WebRTC Peer-to-Peer Multi-User CAD Mesh dialog.
+    pub webrtc_mesh_dialog: WebRtcMeshDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -495,6 +498,7 @@ impl Default for PhononApp {
             wasm_optimization_dialog: WasmOptimizationDialog::new_fast(),
             pwa_dialog: PwaOfflineDialog::new_fast(),
             desktop_ipc_dialog: DesktopIpcDialog::new_fast(),
+            webrtc_mesh_dialog: WebRtcMeshDialog::new_fast(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -3245,6 +3249,9 @@ impl PhononApp {
 
         // 63. Interactive Native Desktop Studio, Tauri v2 Shell & Zero-Copy Binary IPC Co-Processor Dialog
         self.desktop_ipc_dialog.ui(ui.ctx());
+
+        // 64. Interactive Real-Time Collaborative WebRTC Peer-to-Peer Multi-User CAD Mesh Dialog
+        self.webrtc_mesh_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {
