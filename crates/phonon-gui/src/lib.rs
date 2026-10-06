@@ -136,6 +136,9 @@ pub use widgets::webgpu_spice_dialog::{
 pub use widgets::wavepacket_scattering_dialog::{
     WavepacketAuditCriterion, WavepacketScatteringDialog, WavepacketScatteringTab,
 };
+pub use widgets::skyrmion_reservoir_dialog::{
+    SkyrmionReservoirDialog, SkyrmionReservoirTab, SpintronicAuditCriterion,
+};
 #[cfg(not(target_arch = "wasm32"))]
 use phonon_core::PhysicsDynamicsBackend;
 

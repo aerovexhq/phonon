@@ -34,6 +34,7 @@ use crate::widgets::{
     PdnDroopDialog, SiliconAgingDialog, WaferYieldDialog, DseOptimizationDialog,
     SiliconLifecycleDialog, WasmOptimizationDialog, PwaOfflineDialog,
     DesktopIpcDialog, WebRtcMeshDialog, WebGpuSpiceDialog, WavepacketScatteringDialog,
+    SkyrmionReservoirDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -311,6 +312,9 @@ pub struct PhononApp {
     /// Interactive Microscopic Electron & Phonon Wavepacket Scattering Simulator dialog.
     pub wavepacket_scattering_dialog: WavepacketScatteringDialog,
 
+    /// Interactive Quantum Spin-Torque Oscillator & Magnetic Skyrmion Reservoir Computing Co-Processor dialog.
+    pub skyrmion_reservoir_dialog: SkyrmionReservoirDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -507,6 +511,7 @@ impl Default for PhononApp {
             webrtc_mesh_dialog: WebRtcMeshDialog::new_fast(),
             webgpu_spice_dialog: WebGpuSpiceDialog::new_fast(),
             wavepacket_scattering_dialog: WavepacketScatteringDialog::new_fast(),
+            skyrmion_reservoir_dialog: SkyrmionReservoirDialog::new_fast(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -3266,6 +3271,9 @@ impl PhononApp {
 
         // 66. Interactive Microscopic Electron & Phonon Wavepacket Scattering Simulator Dialog
         self.wavepacket_scattering_dialog.ui(ui.ctx());
+
+        // 67. Interactive Quantum Spin-Torque Oscillator & Magnetic Skyrmion Reservoir Computing Dialog
+        self.skyrmion_reservoir_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {

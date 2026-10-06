@@ -33,6 +33,7 @@ pub mod wafer_yield;
 pub mod dse_optimization;
 pub mod silicon_lifecycle;
 pub mod wavepacket_scattering;
+pub mod skyrmion_reservoir;
 pub mod acoustic_holonomic_processor;
 pub mod acoustic_metasurface_holography;
 pub mod acoustic_microcomb_soliton;
@@ -1170,4 +1171,9 @@ pub use wavepacket_scattering::{
     InelasticScatteringKinematics, PotentialBarrier, SchroedingerStepper, WavepacketDiagnostics,
     WavepacketParams,
 };
+pub use skyrmion_reservoir::{
+    EffectiveField, LlgsParams, MagneticSkyrmionTexture, PinningSite, SkyrmionGridParams,
+    SpinTorqueOscillator, SpintronicReservoir, SpintronicReservoirParams, Vector3 as SkyrmionVector3,
+};
+
 
