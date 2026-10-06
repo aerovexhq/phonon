@@ -46,6 +46,7 @@ pub mod quadrupole_shg_dialog;
 pub mod synthetic_4d_dialog;
 pub mod pt_symmetric_dialog;
 pub mod acoustic_bic_dialog;
+pub mod euler_acoustic_dialog;
 
 pub use pill_badge::{
     proportional_zoom_scale, render_dual_telemetry_pill, render_pill_badge, PillBadgeStyle,
@@ -97,5 +98,6 @@ pub use quadrupole_shg_dialog::{QuadrupoleShgDialog, QuadrupoleShgDialogTab};
 pub use synthetic_4d_dialog::{Synthetic4dDialog, Synthetic4dDialogTab};
 pub use pt_symmetric_dialog::{PtSymmetricDialog, PtSymmetricDialogTab};
 pub use acoustic_bic_dialog::{AcousticBicDialog, AcousticBicDialogTab};
+pub use euler_acoustic_dialog::{EulerAcousticDialog, EulerAcousticDialogTab};
 
 

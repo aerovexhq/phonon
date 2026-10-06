@@ -8,7 +8,7 @@
 //! - 2D spatial acoustic vortex near-field pressure distribution with donut intensity profile.
 //! - Radiated acoustic orbital angular momentum (OAM) with mode purity >= 95%.
 
-use crate::acoustic_bic::bic_lattice::{BicKind, BicLatticeParams, BicLatticeSolver};
+use crate::acoustic_bic::bic_lattice::{BicLatticeParams, BicLatticeSolver};
 use std::f64::consts::PI;
 
 /// Parameters for the acoustic quasi-BIC microcavity vortex engine.
