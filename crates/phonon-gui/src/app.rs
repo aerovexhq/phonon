@@ -29,7 +29,7 @@ use crate::widgets::{
     AcousticBicDialog, EulerAcousticDialog, OctupoleInsulatorDialog, AahQuasicrystalDialog,
     ValleyHallVortexDialog, SkyrmionDeflectorDialog, FloquetFrequencyDialog,
     CornerLaserDialog, DirectionalRadiationDialog, AtmosphericNeutronDialog,
-    ThermalVacuumDialog, SpaceAvionicsBusDialog,
+    ThermalVacuumDialog, SpaceAvionicsBusDialog, RhbdSelfHealingDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -262,6 +262,9 @@ pub struct PhononApp {
     /// Interactive SpaceWire/SpaceFibre & Avionics AFDX Bus Contention Studio dialog.
     pub space_avionics_bus_dialog: SpaceAvionicsBusDialog,
 
+    /// Interactive RHBD DRC, Fast SEL Quenching & Autonomous Self-Healing Studio dialog.
+    pub rhbd_self_healing_dialog: RhbdSelfHealingDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -443,6 +446,7 @@ impl Default for PhononApp {
             atmospheric_neutron_dialog: AtmosphericNeutronDialog::new_fast(),
             thermal_vacuum_dialog: ThermalVacuumDialog::new_fast(),
             space_avionics_bus_dialog: SpaceAvionicsBusDialog::new_fast(),
+            rhbd_self_healing_dialog: RhbdSelfHealingDialog::new_fast(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -3157,6 +3161,9 @@ impl PhononApp {
 
         // 51. Interactive SpaceWire/SpaceFibre & Avionics AFDX Bus Dialog
         self.space_avionics_bus_dialog.ui(ui.ctx());
+
+        // 52. Interactive RHBD DRC & Autonomous Self-Healing Co-Simulator Dialog
+        self.rhbd_self_healing_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {

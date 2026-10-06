@@ -23,6 +23,7 @@ pub mod directional_radiation;
 pub mod atmospheric_neutron;
 pub mod thermal_vacuum;
 pub mod space_avionics_bus;
+pub mod rhbd_self_healing;
 pub mod acoustic_holonomic_processor;
 pub mod acoustic_metasurface_holography;
 pub mod acoustic_microcomb_soliton;
@@ -1083,6 +1084,14 @@ pub use space_avionics_bus::{
     NoCRoutingPolicy, SpFiQoSScheduling, SpFiVirtualChannel, SpWLinkState,
     SpaceAvionicsBusCoSimulator, SpaceFibreMultiLaneLink, SpaceWireLink,
 };
+pub use rhbd_self_healing::{
+    CoreHealthTelemetry, CoreLifecycleState, DrcViolationSeverity, ElectronicCrowbarParams,
+    FlightTask, LayoutComponentKind, MigrationEvent, ParasiticThyristorParams,
+    RhbdDrcRuleType, RhbdDrcViolation, RhbdLayoutComponent, RhbdLayoutGrid,
+    RhbdSelfHealingCoSimulator, RhbdTelemetryReport, SelQuenchingSimulator,
+    SelSimulationResult, SelTransientPoint, SelfHealingCluster, TaskCriticality,
+};
+
 
 
 

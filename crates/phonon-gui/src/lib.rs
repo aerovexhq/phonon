@@ -110,6 +110,7 @@ pub use widgets::directional_radiation_dialog::{DirectionalRadiationDialog, Dire
 pub use widgets::atmospheric_neutron_dialog::{AtmosphericNeutronDialog, AtmosphericNeutronTab};
 pub use widgets::thermal_vacuum_dialog::{ThermalVacuumDialog, ThermalVacuumTab};
 pub use widgets::space_avionics_bus_dialog::{SpaceAvionicsBusDialog, SpaceAvionicsBusTab};
+pub use widgets::rhbd_self_healing_dialog::{RhbdSelfHealingDialog, RhbdTab};
 
 
 #[cfg(not(target_arch = "wasm32"))]
