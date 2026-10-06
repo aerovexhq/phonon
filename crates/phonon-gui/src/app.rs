@@ -29,7 +29,7 @@ use crate::widgets::{
     AcousticBicDialog, EulerAcousticDialog, OctupoleInsulatorDialog, AahQuasicrystalDialog,
     ValleyHallVortexDialog, SkyrmionDeflectorDialog, FloquetFrequencyDialog,
     CornerLaserDialog, DirectionalRadiationDialog, AtmosphericNeutronDialog,
-    ThermalVacuumDialog,
+    ThermalVacuumDialog, SpaceAvionicsBusDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -259,6 +259,9 @@ pub struct PhononApp {
     /// Interactive Aerospace Thermal-Vacuum Radiation Dissipation & Orbital Cycling Studio dialog.
     pub thermal_vacuum_dialog: ThermalVacuumDialog,
 
+    /// Interactive SpaceWire/SpaceFibre & Avionics AFDX Bus Contention Studio dialog.
+    pub space_avionics_bus_dialog: SpaceAvionicsBusDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -439,6 +442,7 @@ impl Default for PhononApp {
             directional_radiation_dialog: DirectionalRadiationDialog::new_fast(),
             atmospheric_neutron_dialog: AtmosphericNeutronDialog::new_fast(),
             thermal_vacuum_dialog: ThermalVacuumDialog::new_fast(),
+            space_avionics_bus_dialog: SpaceAvionicsBusDialog::new_fast(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -3150,6 +3154,9 @@ impl PhononApp {
 
         // 50. Interactive Aerospace Thermal-Vacuum Radiation Dissipation & Orbital Cycling Dialog
         self.thermal_vacuum_dialog.ui(ui.ctx());
+
+        // 51. Interactive SpaceWire/SpaceFibre & Avionics AFDX Bus Dialog
+        self.space_avionics_bus_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {

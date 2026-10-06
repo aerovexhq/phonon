@@ -22,6 +22,7 @@ pub mod non_hermitian_corner_laser;
 pub mod directional_radiation;
 pub mod atmospheric_neutron;
 pub mod thermal_vacuum;
+pub mod space_avionics_bus;
 pub mod acoustic_holonomic_processor;
 pub mod acoustic_metasurface_holography;
 pub mod acoustic_microcomb_soliton;
@@ -1076,6 +1077,11 @@ pub use thermal_vacuum::{
     SurfaceCoatingKind, ThermalVacuumCoSimulator, ThermalVacuumTelemetryReport,
     VacuumRadiationModel, BOLTZMANN_K, DEEP_SPACE_SINK_KELVIN, ELEMENTARY_CHARGE_Q,
     STEFAN_BOLTZMANN,
+};
+pub use space_avionics_bus::{
+    AfdxSwitch, AfdxVirtualLink, BusTelemetryReport, NoCMeshSimulator, NoCRouterTile,
+    NoCRoutingPolicy, SpFiQoSScheduling, SpFiVirtualChannel, SpWLinkState,
+    SpaceAvionicsBusCoSimulator, SpaceFibreMultiLaneLink, SpaceWireLink,
 };
 
 

@@ -109,6 +109,7 @@ pub use widgets::corner_laser_dialog::{CornerLaserDialog, CornerLaserTab};
 pub use widgets::directional_radiation_dialog::{DirectionalRadiationDialog, DirectionalRadiationTab};
 pub use widgets::atmospheric_neutron_dialog::{AtmosphericNeutronDialog, AtmosphericNeutronTab};
 pub use widgets::thermal_vacuum_dialog::{ThermalVacuumDialog, ThermalVacuumTab};
+pub use widgets::space_avionics_bus_dialog::{SpaceAvionicsBusDialog, SpaceAvionicsBusTab};
 
 
 #[cfg(not(target_arch = "wasm32"))]
