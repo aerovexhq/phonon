@@ -71,6 +71,7 @@ pub mod pwa_offline_dialog;
 pub mod desktop_ipc_dialog;
 pub mod webrtc_mesh_dialog;
 pub mod webgpu_spice_dialog;
+pub mod wavepacket_scattering_dialog;
 
 pub use pill_badge::{
     proportional_zoom_scale, render_dual_telemetry_pill, render_pill_badge, PillBadgeStyle,
@@ -156,4 +157,7 @@ pub use webrtc_mesh_dialog::{
 pub use webgpu_spice_dialog::{
     lttb_decimate, CsrMatrix, GpuBackendKind, WebGpuAuditCriterion, WebGpuSpiceDialog,
     WebGpuSpiceTab,
+};
+pub use wavepacket_scattering_dialog::{
+    WavepacketAuditCriterion, WavepacketScatteringDialog, WavepacketScatteringTab,
 };

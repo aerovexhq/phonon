@@ -33,7 +33,7 @@ use crate::widgets::{
     ProductionEconomicsDialog, ChipletPackagingDialog, ElectrothermalThrottlingDialog,
     PdnDroopDialog, SiliconAgingDialog, WaferYieldDialog, DseOptimizationDialog,
     SiliconLifecycleDialog, WasmOptimizationDialog, PwaOfflineDialog,
-    DesktopIpcDialog, WebRtcMeshDialog, WebGpuSpiceDialog,
+    DesktopIpcDialog, WebRtcMeshDialog, WebGpuSpiceDialog, WavepacketScatteringDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -308,6 +308,9 @@ pub struct PhononApp {
     /// Interactive WebGL2 / WebGPU Compute Shader Hardware-Accelerated SPICE Co-Processor dialog.
     pub webgpu_spice_dialog: WebGpuSpiceDialog,
 
+    /// Interactive Microscopic Electron & Phonon Wavepacket Scattering Simulator dialog.
+    pub wavepacket_scattering_dialog: WavepacketScatteringDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -503,6 +506,7 @@ impl Default for PhononApp {
             desktop_ipc_dialog: DesktopIpcDialog::new_fast(),
             webrtc_mesh_dialog: WebRtcMeshDialog::new_fast(),
             webgpu_spice_dialog: WebGpuSpiceDialog::new_fast(),
+            wavepacket_scattering_dialog: WavepacketScatteringDialog::new_fast(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -3259,6 +3263,9 @@ impl PhononApp {
 
         // 65. Interactive WebGL2 / WebGPU Compute Shader Hardware-Accelerated SPICE Co-Processor Dialog
         self.webgpu_spice_dialog.ui(ui.ctx());
+
+        // 66. Interactive Microscopic Electron & Phonon Wavepacket Scattering Simulator Dialog
+        self.wavepacket_scattering_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {

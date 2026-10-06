@@ -32,6 +32,7 @@ pub mod silicon_aging;
 pub mod wafer_yield;
 pub mod dse_optimization;
 pub mod silicon_lifecycle;
+pub mod wavepacket_scattering;
 pub mod acoustic_holonomic_processor;
 pub mod acoustic_metasurface_holography;
 pub mod acoustic_microcomb_soliton;
@@ -1163,5 +1164,10 @@ pub use silicon_lifecycle::{
     SensorKind, SensorMesh, SensorPlacementAdvisor, SensorStatus, SiliconLifecycleCoSimulator,
     SlmTelemetryReport, SpatialFieldEvaluator, SpatialGridPoint, TelemetryBusMetrics,
     TelemetryPacket, TelemetryStreamEngine,
+};
+pub use wavepacket_scattering::{
+    AcousticPhononMode, BarrierShape, BoundaryTransmissionResult, Complex as WavepacketComplex,
+    InelasticScatteringKinematics, PotentialBarrier, SchroedingerStepper, WavepacketDiagnostics,
+    WavepacketParams,
 };
 

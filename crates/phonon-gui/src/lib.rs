@@ -133,6 +133,9 @@ pub use widgets::webgpu_spice_dialog::{
     lttb_decimate, CsrMatrix, GpuBackendKind, WebGpuAuditCriterion, WebGpuSpiceDialog,
     WebGpuSpiceTab,
 };
+pub use widgets::wavepacket_scattering_dialog::{
+    WavepacketAuditCriterion, WavepacketScatteringDialog, WavepacketScatteringTab,
+};
 #[cfg(not(target_arch = "wasm32"))]
 use phonon_core::PhysicsDynamicsBackend;
 
