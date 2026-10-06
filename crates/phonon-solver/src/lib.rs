@@ -21,6 +21,7 @@ pub mod floquet_frequency_dimension;
 pub mod non_hermitian_corner_laser;
 pub mod directional_radiation;
 pub mod atmospheric_neutron;
+pub mod thermal_vacuum;
 pub mod acoustic_holonomic_processor;
 pub mod acoustic_metasurface_holography;
 pub mod acoustic_microcomb_soliton;
@@ -1068,6 +1069,13 @@ pub use atmospheric_neutron::{
     Do254DalLevel, FlightAltitude, LightningIndirectSimulator, LightningSeverityLevel,
     LightningTimeSample, LightningWaveformKind, MitigationArchitecture, ProtectionClampDevice,
     SiliconDeviceParams, SiliconReactionChannel, SiliconSpallationEngine, SolarModulation,
+};
+pub use thermal_vacuum::{
+    CarrierFreezeoutModel, CryogenicDopantKind, CryogenicKinkModel, MicroBumpGeometry,
+    OrbitalCyclingSimulator, OrbitalMissionKind, SolderAlloyKind, SubthresholdSteepeningModel,
+    SurfaceCoatingKind, ThermalVacuumCoSimulator, ThermalVacuumTelemetryReport,
+    VacuumRadiationModel, BOLTZMANN_K, DEEP_SPACE_SINK_KELVIN, ELEMENTARY_CHARGE_Q,
+    STEFAN_BOLTZMANN,
 };
 
 

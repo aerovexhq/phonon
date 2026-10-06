@@ -108,6 +108,7 @@ pub use widgets::floquet_frequency_dialog::{FloquetFrequencyDialog, FloquetFrequ
 pub use widgets::corner_laser_dialog::{CornerLaserDialog, CornerLaserTab};
 pub use widgets::directional_radiation_dialog::{DirectionalRadiationDialog, DirectionalRadiationTab};
 pub use widgets::atmospheric_neutron_dialog::{AtmosphericNeutronDialog, AtmosphericNeutronTab};
+pub use widgets::thermal_vacuum_dialog::{ThermalVacuumDialog, ThermalVacuumTab};
 
 
 #[cfg(not(target_arch = "wasm32"))]
