@@ -154,6 +154,7 @@ pub use widgets::corner_doubler_dialog::{
     DisplayModeType,
 };
 pub use widgets::universal_braiding_dialog::{UniversalBraidingDialog, UniversalBraidingTab};
+pub use widgets::chiral_circulator_dialog::{ChiralCirculatorDialog, ChiralCirculatorTab};
 
 #[cfg(not(target_arch = "wasm32"))]
 use phonon_core::PhysicsDynamicsBackend;

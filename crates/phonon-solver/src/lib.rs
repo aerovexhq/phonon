@@ -69,6 +69,7 @@ pub mod chiral_phonon_sc;
 pub mod chiral_phonon_spin_mechanics;
 pub mod chiral_phonon_magnon_isolator;
 pub mod chiral_polariton;
+pub mod chiral_polariton_circulator;
 pub mod chiral_quantum_hall_pfaffian;
 pub mod chiral_spin_seebeck;
 pub mod chiral_spintronic_memristor;
@@ -1209,6 +1210,14 @@ pub use universal_braiding_processor::{
     InterferometerParams, MajoranaZeroMode, ParitySpectrumData, QndTrajectoryTrace,
     TargetGate as UniversalTargetGate, UniversalBraidingProcessor,
 };
+pub use chiral_polariton_circulator::{
+    ChiralPolaritonCirculator, ChiralPolaritonParams, CirculatorAuditCriterion,
+    CirculatorAuditReport, CirculatorParams, Complex as CirculatorComplex,
+    CryogenicIsolatorMetrics, CryogenicIsolatorParams, FloquetPolaritonDispersion,
+    PolaritonBranchPoint, SParameters as PolaritonSParameters,
+    ThreePortCirculator as ChiralThreePortCirculator,
+};
+
 
 
 

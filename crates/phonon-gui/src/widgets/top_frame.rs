@@ -856,6 +856,12 @@ fn render_top_frame_internal(
                     }
                     ui.close();
                 }
+                if ui.button("Topological Floquet Chiral Polariton Circulator...").clicked() {
+                    if let Some(a) = app.as_deref_mut() {
+                        a.chiral_circulator_dialog.is_open = true;
+                    }
+                    ui.close();
+                }
             });
         });
         ui.label(RichText::new("|").color(Color32::from_rgb(60, 70, 85)).size(11.0));

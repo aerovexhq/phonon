@@ -36,6 +36,7 @@ use crate::widgets::{
     DesktopIpcDialog, WebRtcMeshDialog, WebGpuSpiceDialog, WavepacketScatteringDialog,
     SkyrmionReservoirDialog, PhononMagnonDialog, QuadrupoleParametricDialog,
     NonHermitianSensorDialog, CornerDoublerDialog, UniversalBraidingDialog,
+    ChiralCirculatorDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -333,6 +334,9 @@ pub struct PhononApp {
     /// Interactive Universal Non-Abelian Anyon Braiding & Topological Quantum Acoustic Co-Processor dialog.
     pub universal_braiding_dialog: UniversalBraidingDialog,
 
+    /// Interactive Topological Floquet Chiral Magnon-Phonon Polariton Circulator & Cryogenic Isolator dialog.
+    pub chiral_circulator_dialog: ChiralCirculatorDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -536,6 +540,7 @@ impl Default for PhononApp {
             non_hermitian_sensor_dialog: NonHermitianSensorDialog::new_fast(),
             corner_doubler_dialog: CornerDoublerDialog::new_fast(),
             universal_braiding_dialog: UniversalBraidingDialog::new(),
+            chiral_circulator_dialog: ChiralCirculatorDialog::new(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -3358,6 +3363,9 @@ impl PhononApp {
 
         // 72. Interactive Universal Non-Abelian Braiding & Topological Co-Processor Dialog
         self.universal_braiding_dialog.ui(ui.ctx());
+
+        // 73. Interactive Topological Floquet Chiral Polariton Circulator Dialog
+        self.chiral_circulator_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {
