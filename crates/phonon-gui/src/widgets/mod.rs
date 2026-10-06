@@ -50,6 +50,7 @@ pub mod euler_acoustic_dialog;
 pub mod octupole_insulator_dialog;
 pub mod aah_quasicrystal_dialog;
 pub mod valley_hall_vortex_dialog;
+pub mod skyrmion_deflector_dialog;
 
 pub use pill_badge::{
     proportional_zoom_scale, render_dual_telemetry_pill, render_pill_badge, PillBadgeStyle,
@@ -105,5 +106,6 @@ pub use euler_acoustic_dialog::{EulerAcousticDialog, EulerAcousticDialogTab};
 pub use octupole_insulator_dialog::{OctupoleDialogTab, OctupoleInsulatorDialog};
 pub use aah_quasicrystal_dialog::{AahDialogTab, AahQuasicrystalDialog};
 pub use valley_hall_vortex_dialog::{ValleyHallDialogTab, ValleyHallVortexDialog};
+pub use skyrmion_deflector_dialog::{SkyrmionDeflectorDialog, SkyrmionDeflectorTab};
 
 

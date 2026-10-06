@@ -103,6 +103,7 @@ pub use widgets::euler_acoustic_dialog::{EulerAcousticDialog, EulerAcousticDialo
 pub use widgets::octupole_insulator_dialog::{OctupoleDialogTab, OctupoleInsulatorDialog};
 pub use widgets::aah_quasicrystal_dialog::{AahDialogTab, AahQuasicrystalDialog};
 pub use widgets::valley_hall_vortex_dialog::{ValleyHallDialogTab, ValleyHallVortexDialog};
+pub use widgets::skyrmion_deflector_dialog::{SkyrmionDeflectorDialog, SkyrmionDeflectorTab};
 
 #[cfg(not(target_arch = "wasm32"))]
 use phonon_core::PhysicsDynamicsBackend;

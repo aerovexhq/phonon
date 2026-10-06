@@ -27,7 +27,7 @@ use crate::widgets::{
     SkyrmionRouterDialog, AcousticSolitonDialog, ValleyMultiplexerDialog,
     NonHermitianSkinDialog, QuadrupoleShgDialog, Synthetic4dDialog, PtSymmetricDialog,
     AcousticBicDialog, EulerAcousticDialog, OctupoleInsulatorDialog, AahQuasicrystalDialog,
-    ValleyHallVortexDialog,
+    ValleyHallVortexDialog, SkyrmionDeflectorDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -239,6 +239,9 @@ pub struct PhononApp {
     /// Interactive Acoustic Valley-Hall Vortex Pumping & Synthetic Chiral Gauge Field dialog.
     pub valley_hall_vortex_dialog: ValleyHallVortexDialog,
 
+    /// Interactive Acoustic Higher-Order Skyrmion Beam Deflector & Chiral Router dialog.
+    pub skyrmion_deflector_dialog: SkyrmionDeflectorDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -413,6 +416,7 @@ impl Default for PhononApp {
             octupole_insulator_dialog: OctupoleInsulatorDialog::new(),
             aah_quasicrystal_dialog: AahQuasicrystalDialog::new(),
             valley_hall_vortex_dialog: ValleyHallVortexDialog::new(),
+            skyrmion_deflector_dialog: SkyrmionDeflectorDialog::new(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -3106,6 +3110,9 @@ impl PhononApp {
 
         // 44. Interactive Acoustic Valley-Hall Vortex Pumping & Synthetic Chiral Gauge Field Dialog
         self.valley_hall_vortex_dialog.ui(ui.ctx());
+
+        // 45. Interactive Acoustic Higher-Order Skyrmion Beam Deflector & Chiral Router Dialog
+        self.skyrmion_deflector_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {

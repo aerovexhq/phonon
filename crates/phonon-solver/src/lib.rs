@@ -16,6 +16,7 @@ pub mod euler_acoustic;
 pub mod octupole_insulator;
 pub mod aah_quasicrystal;
 pub mod valley_hall_vortex;
+pub mod skyrmion_deflector;
 pub mod acoustic_holonomic_processor;
 pub mod acoustic_metasurface_holography;
 pub mod acoustic_microcomb_soliton;
@@ -1036,6 +1037,11 @@ pub use valley_hall_vortex::{
     AcousticValley, DomainWallKind, PseudoLandauLevel, PumpingCyclePoint, ValleyDispersionPoint,
     ValleyHallParams, ValleyHallPhase, ValleyHamiltonian, ValleyRibbonMode, ValleyRibbonParams,
     ValleyRouterMetrics, VortexPumpingEngine,
+};
+pub use skyrmion_deflector::{
+    AcousticPseudoSpin, DeflectedBeamResult, DeflectorParams, SkyrmionDeflectorEngine,
+    SkyrmionDeflectorMetrics, SkyrmionProfileKind, SkyrmionTexture, SkyrmionTextureParams,
+    SpinVector,
 };
 
 
