@@ -129,6 +129,10 @@ pub use widgets::webrtc_mesh_dialog::{
     CrdtOpKind, CrdtOperation, DistributedSimChunk, LamportTimestamp, MeshAuditCriterion,
     MeshPeerNode, PeerConnectionState, PeerPresence, WebRtcMeshDialog, WebRtcMeshTab,
 };
+pub use widgets::webgpu_spice_dialog::{
+    lttb_decimate, CsrMatrix, GpuBackendKind, WebGpuAuditCriterion, WebGpuSpiceDialog,
+    WebGpuSpiceTab,
+};
 #[cfg(not(target_arch = "wasm32"))]
 use phonon_core::PhysicsDynamicsBackend;
 

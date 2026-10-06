@@ -70,6 +70,7 @@ pub mod wasm_optimization_dialog;
 pub mod pwa_offline_dialog;
 pub mod desktop_ipc_dialog;
 pub mod webrtc_mesh_dialog;
+pub mod webgpu_spice_dialog;
 
 pub use pill_badge::{
     proportional_zoom_scale, render_dual_telemetry_pill, render_pill_badge, PillBadgeStyle,
@@ -151,4 +152,8 @@ pub use desktop_ipc_dialog::{
 pub use webrtc_mesh_dialog::{
     CrdtOpKind, CrdtOperation, DistributedSimChunk, LamportTimestamp, MeshAuditCriterion,
     MeshPeerNode, PeerConnectionState, PeerPresence, WebRtcMeshDialog, WebRtcMeshTab,
+};
+pub use webgpu_spice_dialog::{
+    lttb_decimate, CsrMatrix, GpuBackendKind, WebGpuAuditCriterion, WebGpuSpiceDialog,
+    WebGpuSpiceTab,
 };
