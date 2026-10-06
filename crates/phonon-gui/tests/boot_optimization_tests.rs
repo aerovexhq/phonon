@@ -15,8 +15,11 @@ use phonon_gui::{
     follow_system_theme, PhononApp,
 };
 
+static ENV_LOCK: std::sync::Mutex<()> = std::sync::Mutex::new(());
+
 #[test]
 fn test_default_native_options_uses_renderer_glow() {
+    let _guard = ENV_LOCK.lock().unwrap();
     // Ensure test environment does not have PHONON_RENDERER set
     std::env::remove_var("PHONON_RENDERER");
 
@@ -37,6 +40,7 @@ fn test_default_native_options_uses_renderer_glow() {
 
 #[test]
 fn test_phonon_renderer_wgpu_override() {
+    let _guard = ENV_LOCK.lock().unwrap();
     // Test uppercase and lowercase wgpu override
     std::env::set_var("PHONON_RENDERER", "wgpu");
     assert_eq!(

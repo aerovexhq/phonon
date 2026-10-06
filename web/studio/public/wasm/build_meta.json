@@ -1,0 +1,12 @@
+{
+  "commit_hash": "88f1a5d",
+  "build_timestamp_iso": "2026-10-06T17:51:45Z",
+  "raw_size_bytes": 13685286,
+  "optimized_size_bytes": 11681442,
+  "reduction_percent": 14.6,
+  "wasm_sha256": "d19bb279bf77ff3b05e10849518d9c05030782f6f643bbd60536f448fb190775",
+  "js_sha256": "8c47bb66cbf20448e3dd601274ffc60cf18ccd979434a97f44c382e432db3178",
+  "cache_query_key": "88f1a5d",
+  "lto_mode": "fat",
+  "opt_level": "-Oz"
+}

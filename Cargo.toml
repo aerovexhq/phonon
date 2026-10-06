@@ -53,8 +53,9 @@ codegen-units = 1
 opt-level = 3
 debug = 0
 strip = "symbols"
-lto = "thin"
+lto = "fat"
 codegen-units = 1
+panic = "abort"
 incremental = false
 
 

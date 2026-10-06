@@ -32,7 +32,7 @@ use crate::widgets::{
     ThermalVacuumDialog, SpaceAvionicsBusDialog, RhbdSelfHealingDialog,
     ProductionEconomicsDialog, ChipletPackagingDialog, ElectrothermalThrottlingDialog,
     PdnDroopDialog, SiliconAgingDialog, WaferYieldDialog, DseOptimizationDialog,
-    SiliconLifecycleDialog,
+    SiliconLifecycleDialog, WasmOptimizationDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -292,6 +292,9 @@ pub struct PhononApp {
     /// Interactive Silicon Lifecycle Management (SLM) & On-Die Telemetry Digital Twin dialog.
     pub slm_dialog: SiliconLifecycleDialog,
 
+    /// Interactive Web Studio WASM Binary Size Optimization & Cache Invalidation dialog.
+    pub wasm_optimization_dialog: WasmOptimizationDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -482,6 +485,7 @@ impl Default for PhononApp {
             wafer_yield_dialog: WaferYieldDialog::new_fast(),
             dse_dialog: DseOptimizationDialog::new_fast(),
             slm_dialog: SiliconLifecycleDialog::new_fast(),
+            wasm_optimization_dialog: WasmOptimizationDialog::new_fast(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -3223,6 +3227,9 @@ impl PhononApp {
 
         // 60. Interactive Silicon Lifecycle Management & On-Die Telemetry Digital Twin Dialog
         self.slm_dialog.ui(ui.ctx());
+
+        // 61. Interactive Web Studio WASM Binary Size Optimization & Cache Invalidation Dialog
+        self.wasm_optimization_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {
