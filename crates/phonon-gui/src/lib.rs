@@ -146,6 +146,10 @@ pub use widgets::quadrupole_parametric_dialog::{
     CanvasColormap, QuadrupoleAuditCriterion, QuadrupoleParametricDialog,
     QuadrupoleParametricTab, RealSpaceMode,
 };
+pub use widgets::non_hermitian_sensor_dialog::{
+    NhSensorAuditCriterion, NonHermitianSensorDialog, NonHermitianSensorTab,
+};
+
 #[cfg(not(target_arch = "wasm32"))]
 use phonon_core::PhysicsDynamicsBackend;
 

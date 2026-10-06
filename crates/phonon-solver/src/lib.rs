@@ -185,6 +185,7 @@ pub mod non_hermitian_chiral_hoti;
 pub mod non_hermitian_ep_gyroscope;
 pub mod non_hermitian_pt_symmetry;
 pub mod non_hermitian_skin;
+pub mod non_hermitian_sensor;
 pub mod non_hermitian_topo;
 pub mod non_reciprocal_phonon_amplifier;
 pub mod optics;
@@ -1187,6 +1188,12 @@ pub use quadrupole_parametric::{
     ParametricEdgeAmplifier, ParametricGainSample, QuadrupoleWaveguide, QuadrupoleWaveguideParams,
     ShgParams, ShgPhaseMatchSample, ShgSolver, ShgStepPoint,
 };
+pub use non_hermitian_sensor::{
+    AcousticMagnonicMagnetometer, Complex as NhComplex, EpSensor, EpSensorParams,
+    ExceptionalPointOrder, MagnetoacousticParams, MagnetometerTelemetry,
+    NonHermitianLatticeParams, SkinEffectSolver,
+};
+
 
 
 

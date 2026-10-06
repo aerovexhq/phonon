@@ -75,6 +75,7 @@ pub mod wavepacket_scattering_dialog;
 pub mod skyrmion_reservoir_dialog;
 pub mod phonon_magnon_dialog;
 pub mod quadrupole_parametric_dialog;
+pub mod non_hermitian_sensor_dialog;
 
 pub use pill_badge::{
     proportional_zoom_scale, render_dual_telemetry_pill, render_pill_badge, PillBadgeStyle,
@@ -174,5 +175,9 @@ pub use quadrupole_parametric_dialog::{
     CanvasColormap, QuadrupoleAuditCriterion, QuadrupoleParametricDialog,
     QuadrupoleParametricTab, RealSpaceMode,
 };
+pub use non_hermitian_sensor_dialog::{
+    NhSensorAuditCriterion, NonHermitianSensorDialog, NonHermitianSensorTab,
+};
+
 
 

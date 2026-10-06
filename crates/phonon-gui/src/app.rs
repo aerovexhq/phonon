@@ -35,6 +35,7 @@ use crate::widgets::{
     SiliconLifecycleDialog, WasmOptimizationDialog, PwaOfflineDialog,
     DesktopIpcDialog, WebRtcMeshDialog, WebGpuSpiceDialog, WavepacketScatteringDialog,
     SkyrmionReservoirDialog, PhononMagnonDialog, QuadrupoleParametricDialog,
+    NonHermitianSensorDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -323,6 +324,9 @@ pub struct PhononApp {
     /// Interactive Topological Higher-Order Acoustic Quadrupole Parametric Waveguide & Second-Harmonic Generation dialog.
     pub quadrupole_parametric_dialog: QuadrupoleParametricDialog,
 
+    /// Interactive Non-Hermitian Floquet Skin-Effect Sensor & Exceptional Point Magnetometer dialog.
+    pub non_hermitian_sensor_dialog: NonHermitianSensorDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -523,6 +527,7 @@ impl Default for PhononApp {
             skyrmion_reservoir_dialog: SkyrmionReservoirDialog::new_fast(),
             phonon_magnon_dialog: PhononMagnonDialog::new_fast(),
             quadrupole_parametric_dialog: QuadrupoleParametricDialog::new_fast(),
+            non_hermitian_sensor_dialog: NonHermitianSensorDialog::new_fast(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -3336,6 +3341,9 @@ impl PhononApp {
 
         // 69. Interactive Topological Higher-Order Acoustic Quadrupole Parametric Waveguide Dialog
         self.quadrupole_parametric_dialog.ui(ui.ctx());
+
+        // 70. Interactive Non-Hermitian Floquet Skin-Effect Sensor & EP Magnetometer Dialog
+        self.non_hermitian_sensor_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {
