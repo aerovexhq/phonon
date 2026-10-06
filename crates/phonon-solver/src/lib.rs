@@ -24,6 +24,7 @@ pub mod atmospheric_neutron;
 pub mod thermal_vacuum;
 pub mod space_avionics_bus;
 pub mod rhbd_self_healing;
+pub mod production_economics;
 pub mod acoustic_holonomic_processor;
 pub mod acoustic_metasurface_holography;
 pub mod acoustic_microcomb_soliton;
@@ -1091,6 +1092,11 @@ pub use rhbd_self_healing::{
     RhbdSelfHealingCoSimulator, RhbdTelemetryReport, SelQuenchingSimulator,
     SelSimulationResult, SelTransientPoint, SelfHealingCluster, TaskCriticality,
 };
+pub use production_economics::{
+    BomLineItem, CentralCostRegistry, EconomicsTelemetryReport, HierarchicalBom,
+    PriceEntry, ProductionEconomicsCoSimulator, ProductionVolumeModel, VolumeBreakpoint,
+};
+
 
 
 

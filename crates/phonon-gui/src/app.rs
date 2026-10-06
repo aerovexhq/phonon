@@ -30,6 +30,7 @@ use crate::widgets::{
     ValleyHallVortexDialog, SkyrmionDeflectorDialog, FloquetFrequencyDialog,
     CornerLaserDialog, DirectionalRadiationDialog, AtmosphericNeutronDialog,
     ThermalVacuumDialog, SpaceAvionicsBusDialog, RhbdSelfHealingDialog,
+    ProductionEconomicsDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -265,6 +266,9 @@ pub struct PhononApp {
     /// Interactive RHBD DRC, Fast SEL Quenching & Autonomous Self-Healing Studio dialog.
     pub rhbd_self_healing_dialog: RhbdSelfHealingDialog,
 
+    /// Interactive Production Economics & Hierarchical BOM Cost Estimator Studio dialog.
+    pub production_economics_dialog: ProductionEconomicsDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -447,6 +451,7 @@ impl Default for PhononApp {
             thermal_vacuum_dialog: ThermalVacuumDialog::new_fast(),
             space_avionics_bus_dialog: SpaceAvionicsBusDialog::new_fast(),
             rhbd_self_healing_dialog: RhbdSelfHealingDialog::new_fast(),
+            production_economics_dialog: ProductionEconomicsDialog::new_fast(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -3164,6 +3169,9 @@ impl PhononApp {
 
         // 52. Interactive RHBD DRC & Autonomous Self-Healing Co-Simulator Dialog
         self.rhbd_self_healing_dialog.ui(ui.ctx());
+
+        // 53. Interactive Production Economics & Hierarchical BOM Cost Estimator Dialog
+        self.production_economics_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {
