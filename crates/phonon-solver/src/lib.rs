@@ -18,6 +18,7 @@ pub mod aah_quasicrystal;
 pub mod valley_hall_vortex;
 pub mod skyrmion_deflector;
 pub mod floquet_frequency_dimension;
+pub mod non_hermitian_corner_laser;
 pub mod acoustic_holonomic_processor;
 pub mod acoustic_metasurface_holography;
 pub mod acoustic_microcomb_soliton;
@@ -1049,6 +1050,11 @@ pub use floquet_frequency_dimension::{
     Complex as FloquetComplex, FloquetBandPoint, FloquetFrequencyEngine,
     FrequencyConversionMetrics, FrequencyModeState, FrequencySolitonParams,
     FrequencyWavepacketProfile, SolitonRegime, SyntheticFrequencyLattice, SyntheticLatticeKind,
+};
+pub use non_hermitian_corner_laser::{
+    CornerLaserComplex, HotLaserEigenmode, HotLaserModeKind, LaserEmissionMetrics,
+    LaserLatticeKind as CornerLaserLatticeKind, LaserLatticeParams as CornerLaserLatticeParams,
+    NonHermitianCornerLaserEngine, NonHermitianHotLattice,
 };
 
 

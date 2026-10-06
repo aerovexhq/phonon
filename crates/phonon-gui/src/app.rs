@@ -28,6 +28,7 @@ use crate::widgets::{
     NonHermitianSkinDialog, QuadrupoleShgDialog, Synthetic4dDialog, PtSymmetricDialog,
     AcousticBicDialog, EulerAcousticDialog, OctupoleInsulatorDialog, AahQuasicrystalDialog,
     ValleyHallVortexDialog, SkyrmionDeflectorDialog, FloquetFrequencyDialog,
+    CornerLaserDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -245,6 +246,9 @@ pub struct PhononApp {
     /// Interactive Floquet Synthetic Frequency Dimension & Frequency Soliton dialog.
     pub floquet_frequency_dialog: FloquetFrequencyDialog,
 
+    /// Interactive Non-Hermitian Higher-Order Topological Corner Laser Studio dialog.
+    pub corner_laser_dialog: CornerLaserDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -421,6 +425,7 @@ impl Default for PhononApp {
             valley_hall_vortex_dialog: ValleyHallVortexDialog::new(),
             skyrmion_deflector_dialog: SkyrmionDeflectorDialog::new(),
             floquet_frequency_dialog: FloquetFrequencyDialog::new(),
+            corner_laser_dialog: CornerLaserDialog::new_fast(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -3120,6 +3125,9 @@ impl PhononApp {
 
         // 46. Interactive Floquet Synthetic Frequency Dimension & Frequency Soliton Dialog
         self.floquet_frequency_dialog.ui(ui.ctx());
+
+        // 47. Interactive Non-Hermitian Higher-Order Topological Corner Laser Dialog
+        self.corner_laser_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {
