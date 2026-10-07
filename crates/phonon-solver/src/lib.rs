@@ -352,6 +352,7 @@ pub mod moire_polariton_comb;
 pub mod holonomic_braiding_coprocessor;
 pub mod valley_chiral_isolator;
 pub mod floquet_spinhall_circulator;
+pub mod octupole_dislocation_router;
 
 pub use acoustic::{
     AcousticBenchmarkReport, AcousticBenchmarkRunner, AcousticLinkSimulator, AcousticRealismTier,
@@ -1358,6 +1359,13 @@ pub use floquet_spinhall_circulator::{
     FloquetCirculator, FloquetCirculatorParams, FloquetSpinHallAuditReport,
     FloquetSpinHallCirculator, FloquetSpinHallParams, SpinHallEdgeMode, SpinHallLattice,
     SpinHallParams, SpinHallPseudoSpin,
+};
+
+pub use octupole_dislocation_router::{
+    ChiralDislocationConduit, CornerStateMode, DislocationMode, DislocationRouterParams,
+    MultiPortDislocationRouter, OctupoleBandPoint, OctupoleDislocationAuditReport,
+    OctupoleDislocationParams, OctupoleDislocationRouter, OctupoleLattice,
+    OctupoleMetamaterialParams, RouterSParameterPoint, ScrewDislocationParams,
 };
 
 

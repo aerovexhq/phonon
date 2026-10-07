@@ -41,7 +41,7 @@ use crate::widgets::{
     FloquetSensorDialog, OptomechanicalTransducerDialog, CornerPolaritonMicrocombDialog,
     GiantAtomDialog, ChiralEmpDialog, PolaritonBecDialog, SyntheticDimensionDialog,
     NonHermitianSkinLaserDialog, MoirePolaritonCombDialog, HolonomicCoprocessorDialog,
-    ValleyChiralIsolatorDialog, FloquetSpinHallCirculatorDialog,
+    ValleyChiralIsolatorDialog, FloquetSpinHallCirculatorDialog, OctupoleDislocationDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -407,6 +407,9 @@ pub struct PhononApp {
     /// Interactive Topological Acoustic Floquet Spin-Hall Insulator & Cryogenic Circulator dialog.
     pub floquet_spinhall_circulator_dialog: FloquetSpinHallCirculatorDialog,
 
+    /// Interactive Topological Acoustic Higher-Order Octupole Vortex Metamaterial & 3D Chiral Dislocation Router dialog.
+    pub octupole_dislocation_dialog: OctupoleDislocationDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -633,6 +636,7 @@ impl Default for PhononApp {
             holonomic_coprocessor_dialog: HolonomicCoprocessorDialog::new_fast(),
             valley_chiral_isolator_dialog: ValleyChiralIsolatorDialog::new_fast(),
             floquet_spinhall_circulator_dialog: FloquetSpinHallCirculatorDialog::new_fast(),
+            octupole_dislocation_dialog: OctupoleDislocationDialog::new_fast(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -3797,6 +3801,9 @@ impl PhononApp {
 
         // 85. Interactive Topological Acoustic Floquet Spin-Hall Insulator & Cryogenic Circulator Dialog
         self.floquet_spinhall_circulator_dialog.ui(ui.ctx());
+
+        // 86. Interactive Topological Acoustic Higher-Order Octupole Vortex Metamaterial & 3D Chiral Dislocation Router Dialog
+        self.octupole_dislocation_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {

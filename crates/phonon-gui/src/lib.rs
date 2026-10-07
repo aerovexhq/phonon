@@ -169,6 +169,13 @@ pub use widgets::synthetic_dimension_dialog::{SyntheticDimensionDialog, Syntheti
 pub use widgets::non_hermitian_skin_laser_dialog::{NonHermitianSkinLaserDialog, SkinLaserTab};
 pub use widgets::moire_polariton_comb_dialog::{MoireCombTab, MoirePolaritonCombDialog};
 pub use widgets::holonomic_coprocessor_dialog::{HolonomicCoprocessorDialog, HolonomicCoprocessorTab};
+pub use widgets::valley_chiral_isolator_dialog::{ValleyChiralIsolatorDialog, ValleyChiralTab};
+pub use widgets::floquet_spinhall_circulator_dialog::{
+    FloquetSpinHallCirculatorDialog, FloquetSpinHallTab,
+};
+pub use widgets::octupole_dislocation_dialog::{
+    OctupoleDislocationDialog, OctupoleDislocationTab,
+};
 
 #[cfg(not(target_arch = "wasm32"))]
 use phonon_core::PhysicsDynamicsBackend;
