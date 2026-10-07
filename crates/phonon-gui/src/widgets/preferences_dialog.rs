@@ -15,7 +15,7 @@ use crate::preferences::AppPreferences;
 use crate::schematic::HistoryStack;
 use crate::thermal::Colormap;
 use crate::theme::{PhononTheme, ThemePreset};
-use egui::{Color32, Context, RichText, ScrollArea, Vec2, Window};
+use egui::{Color32, Context, Frame, RichText, ScrollArea, Stroke, Vec2, Window};
 
 /// Active navigation category tab in the Preferences modal dialog.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -112,11 +112,17 @@ impl PreferencesDialog {
         let mut changed = false;
         let mut open_flag = self.is_open;
 
+        let window_frame = Frame::window(&ctx.global_style())
+            .fill(Color32::from_rgb(20, 26, 36))
+            .stroke(Stroke::new(1.0, Color32::from_rgb(60, 75, 95)));
+
         Window::new("Preferences")
             .open(&mut open_flag)
             .collapsible(false)
             .resizable(true)
+            .fade_in(false)
             .default_size(Vec2::new(720.0, 520.0))
+            .frame(window_frame)
             .show(ctx, |ui| {
                 ui.horizontal(|ui| {
                     // Left Sidebar Navigation
@@ -157,32 +163,37 @@ impl PreferencesDialog {
                     ui.separator();
 
                     // Main Content Panel
-                    let content_height = (ui.available_height() - 40.0).max(10.0);
-                    ScrollArea::vertical()
-                        .max_height(content_height)
-                        .show(ui, |ui| {
-                            ui.add_space(4.0);
-                            match self.active_tab {
-                                PreferencesTab::General => {
-                                    changed |= Self::render_general_tab(ui, preferences);
-                                }
-                                PreferencesTab::CanvasLayout => {
-                                    changed |= Self::render_canvas_tab(ui, preferences);
-                                }
-                                PreferencesTab::ThemeColors => {
-                                    changed |= self.render_theme_tab(ui, preferences);
-                                }
-                                PreferencesTab::Keybindings => {
-                                    changed |= self.render_keybindings_tab(ui, preferences, registry);
-                                }
-                                PreferencesTab::HistoryUndo => {
-                                    changed |= Self::render_history_tab(ui, preferences, history);
-                                }
-                                PreferencesTab::ThermalPhysics => {
-                                    changed |= Self::render_thermal_tab(ui, preferences, thermal_colormap);
-                                }
-                            }
-                        });
+                    ui.vertical(|ui| {
+                        let content_height = (ui.available_height() - 40.0).max(10.0);
+                        ScrollArea::vertical()
+                            .max_height(content_height)
+                            .auto_shrink([false, false])
+                            .show(ui, |ui| {
+                                ui.vertical(|ui| {
+                                    ui.add_space(4.0);
+                                    match self.active_tab {
+                                        PreferencesTab::General => {
+                                            changed |= Self::render_general_tab(ui, preferences);
+                                        }
+                                        PreferencesTab::CanvasLayout => {
+                                            changed |= Self::render_canvas_tab(ui, preferences);
+                                        }
+                                        PreferencesTab::ThemeColors => {
+                                            changed |= self.render_theme_tab(ui, preferences);
+                                        }
+                                        PreferencesTab::Keybindings => {
+                                            changed |= self.render_keybindings_tab(ui, preferences, registry);
+                                        }
+                                        PreferencesTab::HistoryUndo => {
+                                            changed |= Self::render_history_tab(ui, preferences, history);
+                                        }
+                                        PreferencesTab::ThermalPhysics => {
+                                            changed |= Self::render_thermal_tab(ui, preferences, thermal_colormap);
+                                        }
+                                    }
+                                });
+                            });
+                    });
                 });
 
                 ui.separator();

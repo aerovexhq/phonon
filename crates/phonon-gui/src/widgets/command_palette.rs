@@ -73,7 +73,7 @@ impl CommandPalette {
             .input(|i| i.viewport().inner_rect)
             .unwrap_or(Rect::from_min_size(Pos2::ZERO, Vec2::new(1920.0, 1080.0)));
         let painter = ctx.layer_painter(egui::LayerId::new(
-            Order::Foreground,
+            Order::Middle,
             egui::Id::new("command_palette_backdrop"),
         ));
         painter.rect_filled(
@@ -129,6 +129,7 @@ impl CommandPalette {
         egui::Area::new(egui::Id::new("command_palette_area"))
             .order(Order::Foreground)
             .fixed_pos(modal_pos)
+            .fade_in(false)
             .show(ctx, |ui| {
                 let frame = egui::Frame::new()
                     .fill(Color32::from_rgb(20, 26, 38))

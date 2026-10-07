@@ -3,7 +3,9 @@
 //! Synthetic UI action scripting and scenario execution engine for Phonon UI DevTools.
 
 use crate::app::{PhononApp, ToolMode};
-use crate::widgets::confirmation_modal::DemoCircuitKind;
+use crate::widgets::confirmation_modal::{DemoCircuitKind, PendingAction};
+use crate::widgets::preferences_dialog::PreferencesTab;
+use crate::widgets::project_dialog::ProjectDialogMode;
 use egui::{Pos2, Vec2};
 
 /// Individual synthetic UI action step.
@@ -35,8 +37,22 @@ pub enum UiAction {
     RunDc,
     /// Opens the categorized Preferences modal dialog.
     OpenPreferences,
+    /// Switches active Preferences dialog tab.
+    SwitchPreferencesTab(PreferencesTab),
     /// Closes the Preferences modal dialog.
     ClosePreferences,
+    /// Triggers the Unsaved Changes confirmation modal popup.
+    TriggerUnsavedChangesPopup,
+    /// Closes the confirmation modal popup.
+    CloseConfirmationModal,
+    /// Opens the Project Dialog in the given mode.
+    OpenProjectDialog(ProjectDialogMode),
+    /// Closes the Project Dialog.
+    CloseProjectDialog,
+    /// Opens the Spotlight Command Palette modal.
+    OpenCommandPalette,
+    /// Closes the Command Palette.
+    CloseCommandPalette,
     /// Toggles or sets the in-app DevTools panel visibility.
     SetDevtoolsPanelVisible(bool),
     /// Loads a built-in demo circuit.
@@ -141,19 +157,104 @@ impl UiScript {
         )
     }
 
-    /// Scenario 4: Open Preferences modal dialog.
+    /// Scenario 4: Open Preferences modal dialog across tabs.
     pub fn preferences_dialog_scenario() -> Self {
         Self::new(
             "Preferences Modal Dialog Inspection",
-            "Opens the categorized Preferences dialog displaying Themes, Keybinds, and Canvas settings",
+            "Opens the categorized Preferences dialog displaying General, Canvas, Themes, Keybinds, History, and Thermal settings",
             vec![
                 UiAction::OpenPreferences,
+                UiAction::SwitchPreferencesTab(PreferencesTab::General),
                 UiAction::WaitFrames(3),
                 UiAction::TakeScreenshot {
-                    label: "Categorized Preferences Modal Dialog".to_string(),
-                    filename: "08_preferences_dialog.png".to_string(),
+                    label: "Preferences Dialog - General Settings (Vertical Layout)".to_string(),
+                    filename: "08_preferences_general_tab.png".to_string(),
+                },
+                UiAction::SwitchPreferencesTab(PreferencesTab::CanvasLayout),
+                UiAction::WaitFrames(3),
+                UiAction::TakeScreenshot {
+                    label: "Preferences Dialog - Canvas & Layout Settings".to_string(),
+                    filename: "09_preferences_canvas_tab.png".to_string(),
+                },
+                UiAction::SwitchPreferencesTab(PreferencesTab::ThemeColors),
+                UiAction::WaitFrames(3),
+                UiAction::TakeScreenshot {
+                    label: "Preferences Dialog - Theme & Color Swatches".to_string(),
+                    filename: "10_preferences_themes_tab.png".to_string(),
+                },
+                UiAction::SwitchPreferencesTab(PreferencesTab::Keybindings),
+                UiAction::WaitFrames(3),
+                UiAction::TakeScreenshot {
+                    label: "Preferences Dialog - Keybindings Registry".to_string(),
+                    filename: "11_preferences_keybinds_tab.png".to_string(),
+                },
+                UiAction::SwitchPreferencesTab(PreferencesTab::HistoryUndo),
+                UiAction::WaitFrames(3),
+                UiAction::TakeScreenshot {
+                    label: "Preferences Dialog - History & Undo Limits".to_string(),
+                    filename: "12_preferences_history_tab.png".to_string(),
+                },
+                UiAction::SwitchPreferencesTab(PreferencesTab::ThermalPhysics),
+                UiAction::WaitFrames(3),
+                UiAction::TakeScreenshot {
+                    label: "Preferences Dialog - Thermal & Physics Settings".to_string(),
+                    filename: "13_preferences_thermal_tab.png".to_string(),
                 },
                 UiAction::ClosePreferences,
+                UiAction::WaitFrames(2),
+            ],
+        )
+    }
+
+    /// Scenario 5: Unsaved Changes confirmation modal popup.
+    pub fn unsaved_changes_scenario() -> Self {
+        Self::new(
+            "Unsaved Changes Confirmation Modal Inspection",
+            "Triggers the Unsaved Changes modal with backdrop positioned behind the window",
+            vec![
+                UiAction::TriggerUnsavedChangesPopup,
+                UiAction::WaitFrames(6),
+                UiAction::TakeScreenshot {
+                    label: "Unsaved Changes Confirmation Modal - Backdrop Behind Window".to_string(),
+                    filename: "14_unsaved_changes_popup.png".to_string(),
+                },
+                UiAction::CloseConfirmationModal,
+                UiAction::WaitFrames(2),
+            ],
+        )
+    }
+
+    /// Scenario 6: Project Manager modal dialog.
+    pub fn project_dialog_scenario() -> Self {
+        Self::new(
+            "Project Manager Modal Dialog Inspection",
+            "Opens the Save As project manager dialog with live destination preview",
+            vec![
+                UiAction::OpenProjectDialog(ProjectDialogMode::SaveAs),
+                UiAction::WaitFrames(6),
+                UiAction::TakeScreenshot {
+                    label: "Project Manager Save-As Modal Dialog".to_string(),
+                    filename: "15_project_save_as_dialog.png".to_string(),
+                },
+                UiAction::CloseProjectDialog,
+                UiAction::WaitFrames(2),
+            ],
+        )
+    }
+
+    /// Scenario 7: Spotlight Command Palette (Ctrl+K).
+    pub fn command_palette_scenario() -> Self {
+        Self::new(
+            "Spotlight Command Palette Inspection",
+            "Opens the Command Palette overlay with action registry search",
+            vec![
+                UiAction::OpenCommandPalette,
+                UiAction::WaitFrames(6),
+                UiAction::TakeScreenshot {
+                    label: "Spotlight Command Palette Modal (Ctrl+K)".to_string(),
+                    filename: "16_command_palette.png".to_string(),
+                },
+                UiAction::CloseCommandPalette,
                 UiAction::WaitFrames(2),
             ],
         )
@@ -166,12 +267,15 @@ impl UiScript {
         steps.extend(Self::transient_simulation_scenario().steps);
         steps.extend(Self::marquee_selection_scenario().steps);
         steps.extend(Self::preferences_dialog_scenario().steps);
+        steps.extend(Self::unsaved_changes_scenario().steps);
+        steps.extend(Self::project_dialog_scenario().steps);
+        steps.extend(Self::command_palette_scenario().steps);
         steps.extend(vec![
             UiAction::SetDevtoolsPanelVisible(true),
             UiAction::WaitFrames(3),
             UiAction::TakeScreenshot {
                 label: "Phonon UI DevTools In-App Inspector Panel Active".to_string(),
-                filename: "09_devtools_inspector_panel.png".to_string(),
+                filename: "17_devtools_inspector_panel.png".to_string(),
             },
             UiAction::SetDevtoolsPanelVisible(false),
             UiAction::WaitFrames(2),
@@ -282,9 +386,42 @@ impl ScriptRunner {
                 app.preferences_dialog.open(None);
                 self.execution_log.push("Opened Preferences modal dialog".to_string());
             }
+            UiAction::SwitchPreferencesTab(tab) => {
+                app.preferences_dialog.active_tab = tab;
+                self.execution_log.push(format!("Switched Preferences tab to {:?}", tab));
+            }
             UiAction::ClosePreferences => {
                 app.preferences_dialog.close();
                 self.execution_log.push("Closed Preferences modal dialog".to_string());
+            }
+            UiAction::TriggerUnsavedChangesPopup => {
+                app.mark_dirty();
+                app.request_action(PendingAction::NewProject);
+                self.execution_log.push("Triggered Unsaved Changes confirmation popup".to_string());
+            }
+            UiAction::CloseConfirmationModal => {
+                app.pending_confirmation_action = None;
+                self.execution_log.push("Dismissed Unsaved Changes confirmation popup".to_string());
+            }
+            UiAction::OpenProjectDialog(mode) => {
+                match mode {
+                    ProjectDialogMode::Open => app.project_dialog.open_for_open(),
+                    ProjectDialogMode::SaveAs => app.project_dialog.open_for_save_as(&app.project_title),
+                    ProjectDialogMode::Manager => app.project_dialog.open_for_manager(),
+                }
+                self.execution_log.push(format!("Opened Project Dialog in mode {:?}", mode));
+            }
+            UiAction::CloseProjectDialog => {
+                app.project_dialog.close();
+                self.execution_log.push("Closed Project Dialog".to_string());
+            }
+            UiAction::OpenCommandPalette => {
+                app.command_palette.open();
+                self.execution_log.push("Opened Command Palette".to_string());
+            }
+            UiAction::CloseCommandPalette => {
+                app.command_palette.close();
+                self.execution_log.push("Closed Command Palette".to_string());
             }
             UiAction::SetDevtoolsPanelVisible(visible) => {
                 app.devtools_state.visible = visible;

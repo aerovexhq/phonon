@@ -253,6 +253,7 @@ pub fn default_native_options() -> eframe::NativeOptions {
         viewport: egui::ViewportBuilder::default()
             .with_inner_size([1280.0, 850.0])
             .with_min_inner_size([800.0, 600.0])
+            .with_maximized(true)
             .with_decorations(false)
             .with_title("Phonon Studio - Electro-Thermal CAD & Circuit Simulator"),
         renderer,

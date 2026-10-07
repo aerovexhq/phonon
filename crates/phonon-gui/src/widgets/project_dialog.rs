@@ -93,15 +93,15 @@ impl ProjectDialog {
 
         let mut action = ProjectDialogAction::None;
 
-        // Render backdrop
+        // Render backdrop behind window
         let screen_rect = ctx
             .input(|i| i.viewport().inner_rect)
             .unwrap_or(Rect::from_min_size(Pos2::ZERO, vec2(1920.0, 1080.0)));
         let painter = ctx.layer_painter(egui::LayerId::new(
-            egui::Order::Foreground,
+            egui::Order::Middle,
             egui::Id::new("project_dialog_backdrop"),
         ));
-        painter.rect_filled(screen_rect, 0.0, Color32::from_black_alpha(160));
+        painter.rect_filled(screen_rect, 0.0, Color32::from_black_alpha(140));
 
         if ctx.input(|i| i.key_pressed(Key::Escape)) {
             self.close();
@@ -114,18 +114,21 @@ impl ProjectDialog {
             ProjectDialogMode::Manager => "Project Manager",
         };
 
-        egui::Window::new(title)
+        let mut open_flag = true;
+
+        let window_frame = egui::Frame::window(&ctx.global_style())
+            .fill(Color32::from_rgb(20, 26, 36))
+            .stroke(Stroke::new(1.0, Color32::from_rgb(60, 75, 95)));
+
+        egui::Window::new(RichText::new(title).strong())
+            .open(&mut open_flag)
+            .order(egui::Order::Foreground)
             .collapsible(false)
             .resizable(true)
+            .fade_in(false)
             .anchor(Align2::CENTER_CENTER, vec2(0.0, 0.0))
             .default_size(vec2(520.0, 380.0))
-            .frame(
-                egui::Frame::new()
-                    .fill(Color32::from_rgb(18, 22, 30))
-                    .stroke(Stroke::new(1.0, Color32::from_rgb(56, 189, 248)))
-                    .corner_radius(8.0)
-                    .inner_margin(16.0),
-            )
+            .frame(window_frame)
             .show(ctx, |ui| {
                 ui.vertical(|ui| {
                     // Header description
@@ -319,6 +322,11 @@ impl ProjectDialog {
                     });
                 });
             });
+
+        if !open_flag {
+            self.close();
+            action = ProjectDialogAction::Close;
+        }
 
         action
     }

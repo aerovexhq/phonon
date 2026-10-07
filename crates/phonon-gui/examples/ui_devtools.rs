@@ -28,6 +28,7 @@ impl DevtoolsRunnerApp {
     fn new(script: UiScript, out_dir: PathBuf, interactive: bool) -> Self {
         let runner = phonon_gui::devtools::ScriptRunner::new(script);
         let mut app = PhononApp::default();
+        app.pending_start_maximize = false;
         app.load_voltage_divider_demo();
         app.devtools_state.visible = interactive;
         app.devtools_state.screenshots_dir = out_dir.clone();
@@ -131,6 +132,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         "sim" | "transient" => UiScript::transient_simulation_scenario(),
         "marquee" => UiScript::marquee_selection_scenario(),
         "prefs" | "preferences" => UiScript::preferences_dialog_scenario(),
+        "unsaved" => UiScript::unsaved_changes_scenario(),
+        "project" => UiScript::project_dialog_scenario(),
+        "palette" => UiScript::command_palette_scenario(),
         _ => UiScript::full_test_suite(),
     };
 

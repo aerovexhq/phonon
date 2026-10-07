@@ -72,44 +72,41 @@ impl ConfirmationModal {
     ) -> ConfirmationDecision {
         let mut decision = ConfirmationDecision::None;
 
-        // Render full-screen semi-transparent backdrop
+        // Render full-screen semi-transparent backdrop behind the modal window
         let screen_rect = ctx
             .input(|i| i.viewport().inner_rect)
             .unwrap_or(Rect::from_min_size(Pos2::ZERO, vec2(1920.0, 1080.0)));
         let painter = ctx.layer_painter(egui::LayerId::new(
-            egui::Order::Foreground,
+            egui::Order::Middle,
             egui::Id::new("confirmation_modal_backdrop"),
         ));
-        painter.rect_filled(screen_rect, 0.0, Color32::from_black_alpha(180));
+        painter.rect_filled(screen_rect, 0.0, Color32::from_black_alpha(140));
 
         // Keyboard hotkeys: Esc -> Cancel, Enter -> Save & Proceed
         if ctx.input(|i| i.key_pressed(Key::Escape)) {
             return ConfirmationDecision::Cancel;
         }
 
-        // Centered modal card window
-        egui::Window::new("Unsaved Changes")
+        let mut open_flag = true;
+
+        let window_frame = egui::Frame::window(&ctx.global_style())
+            .fill(Color32::from_rgb(20, 26, 36))
+            .stroke(Stroke::new(1.0, Color32::from_rgb(60, 75, 95)));
+
+        egui::Window::new(RichText::new("Unsaved Changes").strong())
+            .open(&mut open_flag)
             .collapsible(false)
             .resizable(false)
+            .fade_in(false)
             .anchor(Align2::CENTER_CENTER, vec2(0.0, 0.0))
-            .fixed_size(vec2(440.0, 180.0))
-            .frame(
-                egui::Frame::new()
-                    .fill(Color32::from_rgb(18, 22, 30))
-                    .stroke(Stroke::new(1.0, Color32::from_rgb(56, 189, 248)))
-                    .corner_radius(8.0)
-                    .inner_margin(18.0),
-            )
+            .default_width(460.0)
+            .order(egui::Order::Foreground)
+            .frame(window_frame)
             .show(ctx, |ui| {
                 ui.vertical(|ui| {
-                    ui.label(
-                        RichText::new("Save changes before proceeding?")
-                            .size(16.0)
-                            .strong()
-                            .color(Color32::from_rgb(240, 246, 252)),
-                    );
-
-                    ui.add_space(8.0);
+                    ui.add_space(4.0);
+                    ui.heading("Save changes before proceeding?");
+                    ui.add_space(6.0);
 
                     let desc = pending_action.action_description();
                     let msg = format!(
@@ -119,28 +116,16 @@ impl ConfirmationModal {
                     ui.label(
                         RichText::new(msg)
                             .size(13.0)
-                            .color(Color32::from_rgb(180, 190, 205)),
+                            .color(Color32::from_rgb(200, 210, 225)),
                     );
 
-                    ui.add_space(18.0);
+                    ui.add_space(16.0);
                     ui.separator();
-                    ui.add_space(12.0);
+                    ui.add_space(8.0);
 
                     ui.horizontal(|ui| {
                         // Cancel button
-                        if ui
-                            .add(
-                                egui::Button::new(
-                                    RichText::new("Cancel")
-                                        .size(12.0)
-                                        .color(Color32::from_rgb(200, 210, 225)),
-                                )
-                                .frame(true)
-                                .fill(Color32::from_rgb(30, 36, 48))
-                                .stroke(Stroke::new(1.0, Color32::from_rgb(60, 72, 92))),
-                            )
-                            .clicked()
-                        {
+                        if ui.button("Cancel").clicked() {
                             decision = ConfirmationDecision::Cancel;
                         }
 
@@ -149,12 +134,10 @@ impl ConfirmationModal {
                             let save_btn = ui.add(
                                 egui::Button::new(
                                     RichText::new("Save & Proceed")
-                                        .size(12.0)
                                         .strong()
                                         .color(Color32::from_rgb(10, 15, 25)),
                                 )
-                                .fill(Color32::from_rgb(56, 189, 248))
-                                .stroke(Stroke::NONE),
+                                .fill(Color32::from_rgb(56, 189, 248)),
                             );
                             if save_btn.clicked()
                                 || ctx.input(|i| i.key_pressed(Key::Enter))
@@ -162,13 +145,12 @@ impl ConfirmationModal {
                                 decision = ConfirmationDecision::SaveAndProceed;
                             }
 
-                            ui.add_space(6.0);
+                            ui.add_space(8.0);
 
                             // Discard Changes button
                             let discard_btn = ui.add(
                                 egui::Button::new(
                                     RichText::new("Discard Changes")
-                                        .size(12.0)
                                         .color(Color32::from_rgb(248, 113, 113)),
                                 )
                                 .fill(Color32::from_rgb(45, 25, 30))
@@ -181,6 +163,10 @@ impl ConfirmationModal {
                     });
                 });
             });
+
+        if !open_flag {
+            decision = ConfirmationDecision::Cancel;
+        }
 
         decision
     }

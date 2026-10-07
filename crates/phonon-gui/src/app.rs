@@ -510,6 +510,9 @@ pub struct PhononApp {
     /// Last recorded interactive canvas viewport rect.
     pub last_canvas_rect: egui::Rect,
 
+    /// Whether the desktop application window should request maximized state on first frame.
+    pub pending_start_maximize: bool,
+
     #[cfg(feature = "devtools")]
     /// Interactive DevTools state and scenario runner.
     pub devtools_state: crate::devtools::DevtoolsState,
@@ -695,6 +698,7 @@ impl Default for PhononApp {
             preferences_dialog: PreferencesDialog::new(),
             should_close: false,
             last_canvas_rect: egui::Rect::from_min_size(egui::Pos2::ZERO, egui::Vec2::new(800.0, 600.0)),
+            pending_start_maximize: true,
             #[cfg(feature = "devtools")]
             devtools_state: crate::devtools::DevtoolsState::default(),
         };
@@ -3385,6 +3389,12 @@ impl PhononApp {
 
     /// Evaluates one frame of the application UI, custom top frame, action toolbar, canvas, and docked panels.
     pub fn update(&mut self, ui: &mut Ui, _frame: &mut Frame) {
+        #[cfg(not(target_arch = "wasm32"))]
+        if self.pending_start_maximize {
+            ui.ctx().send_viewport_cmd(egui::ViewportCommand::Maximized(true));
+            self.pending_start_maximize = false;
+        }
+
         // Global keyboard hotkeys
         self.handle_shortcuts(ui.ctx());
 
