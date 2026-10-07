@@ -353,6 +353,7 @@ pub mod holonomic_braiding_coprocessor;
 pub mod valley_chiral_isolator;
 pub mod floquet_spinhall_circulator;
 pub mod octupole_dislocation_router;
+pub mod chiral_majorana_braiding;
 
 pub use acoustic::{
     AcousticBenchmarkReport, AcousticBenchmarkRunner, AcousticLinkSimulator, AcousticRealismTier,
@@ -1366,6 +1367,14 @@ pub use octupole_dislocation_router::{
     MultiPortDislocationRouter, OctupoleBandPoint, OctupoleDislocationAuditReport,
     OctupoleDislocationParams, OctupoleDislocationRouter, OctupoleLattice,
     OctupoleMetamaterialParams, RouterSParameterPoint, ScrewDislocationParams,
+};
+
+pub use chiral_majorana_braiding::{
+    ChiralBraidGate, ChiralCliffordGateKind, ChiralDecodingResult, ChiralMajoranaAuditReport,
+    ChiralMajoranaBraidingNetwork, ChiralMajoranaBraidingParams, ChiralMajoranaMode,
+    ChiralMajoranaParams, ChiralMajoranaProcessor, ChiralParitySpectrumPoint, ChiralStabilizerKind,
+    ChiralSurfaceDecoder, ChiralSurfaceDecoderParams, ChiralSyndromeDefect,
+    ChiralTransmonParityReadout, ChiralTransmonReadoutParams,
 };
 
 

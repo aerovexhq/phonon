@@ -42,6 +42,7 @@ use crate::widgets::{
     GiantAtomDialog, ChiralEmpDialog, PolaritonBecDialog, SyntheticDimensionDialog,
     NonHermitianSkinLaserDialog, MoirePolaritonCombDialog, HolonomicCoprocessorDialog,
     ValleyChiralIsolatorDialog, FloquetSpinHallCirculatorDialog, OctupoleDislocationDialog,
+    ChiralMajoranaDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -410,6 +411,9 @@ pub struct PhononApp {
     /// Interactive Topological Acoustic Higher-Order Octupole Vortex Metamaterial & 3D Chiral Dislocation Router dialog.
     pub octupole_dislocation_dialog: OctupoleDislocationDialog,
 
+    /// Interactive Quantum Metamaterial Chiral Majorana Braiding Processor & Surface Decoder dialog.
+    pub chiral_majorana_dialog: ChiralMajoranaDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -637,6 +641,7 @@ impl Default for PhononApp {
             valley_chiral_isolator_dialog: ValleyChiralIsolatorDialog::new_fast(),
             floquet_spinhall_circulator_dialog: FloquetSpinHallCirculatorDialog::new_fast(),
             octupole_dislocation_dialog: OctupoleDislocationDialog::new_fast(),
+            chiral_majorana_dialog: ChiralMajoranaDialog::new_fast(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -3804,6 +3809,9 @@ impl PhononApp {
 
         // 86. Interactive Topological Acoustic Higher-Order Octupole Vortex Metamaterial & 3D Chiral Dislocation Router Dialog
         self.octupole_dislocation_dialog.ui(ui.ctx());
+
+        // 87. Interactive Quantum Metamaterial Chiral Majorana Braiding Processor & Surface Decoder Dialog
+        self.chiral_majorana_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {

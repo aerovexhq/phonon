@@ -176,6 +176,9 @@ pub use widgets::floquet_spinhall_circulator_dialog::{
 pub use widgets::octupole_dislocation_dialog::{
     OctupoleDislocationDialog, OctupoleDislocationTab,
 };
+pub use widgets::chiral_majorana_dialog::{
+    ChiralMajoranaDialog, ChiralMajoranaTab,
+};
 
 #[cfg(not(target_arch = "wasm32"))]
 use phonon_core::PhysicsDynamicsBackend;
