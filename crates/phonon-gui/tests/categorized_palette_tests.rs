@@ -18,8 +18,8 @@ fn test_all_categories_coverage() {
     let categories = ComponentCategory::all_categories();
     assert_eq!(
         categories.len(),
-        8,
-        "Hierarchical taxonomy must define exactly 8 distinct categories"
+        11,
+        "Hierarchical taxonomy must define exactly 11 distinct categories"
     );
 
     let mut seen = HashSet::new();
@@ -81,8 +81,8 @@ fn test_component_category_mapping_bijection() {
 
     assert_eq!(
         all_comps.len(),
-        35,
-        "Total categorized primitives must equal 35"
+        58,
+        "Total categorized primitives must equal 58"
     );
 }
 

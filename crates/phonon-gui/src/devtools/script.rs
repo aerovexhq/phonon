@@ -57,6 +57,8 @@ pub enum UiAction {
     SetDevtoolsPanelVisible(bool),
     /// Loads a built-in demo circuit.
     LoadDemo(DemoCircuitKind),
+    /// Expands or collapses a category in the component palette drawer.
+    ExpandCategory(crate::schematic::categories::ComponentCategory),
     /// Requests a named screenshot capture.
     TakeScreenshot {
         label: String,
@@ -270,6 +272,7 @@ impl UiScript {
         steps.extend(Self::unsaved_changes_scenario().steps);
         steps.extend(Self::project_dialog_scenario().steps);
         steps.extend(Self::command_palette_scenario().steps);
+        steps.extend(Self::half_adder_and_logic_gates_scenario().steps);
         steps.extend(vec![
             UiAction::SetDevtoolsPanelVisible(true),
             UiAction::WaitFrames(3),
@@ -285,6 +288,58 @@ impl UiScript {
             "Full Phonon UI DevTools Visual Suite",
             "Executes complete visual automated test suite capturing screenshots across all interaction types",
             steps,
+        )
+    }
+
+    /// Scenario 8: Basic Logic Gates and Half Adder circuit verification and interaction.
+    pub fn half_adder_and_logic_gates_scenario() -> Self {
+        Self::new(
+            "Basic Logic Gates and Half Adder Verification",
+            "Loads the 8-gate basic logic bench and the dual-tier Half Adder circuit, runs transient simulation, and exercises interactive dragging",
+            vec![
+                // Step 1: Load Basic Logic Gates Demo
+                UiAction::LoadDemo(DemoCircuitKind::BasicGates),
+                UiAction::WaitFrames(6),
+                UiAction::TakeScreenshot {
+                    label: "Basic Logic Gates Verification Bench (8 Gate Primitives)".to_string(),
+                    filename: "18_basic_gates_and_half_adder.png".to_string(),
+                },
+
+                // Step 2: Load Half Adder Demo (Discrete XOR/AND + Macro HA block)
+                UiAction::LoadDemo(DemoCircuitKind::HalfAdder),
+                UiAction::WaitFrames(6),
+
+                // Step 3: Run Transient simulation to drive waveforms into oscilloscope
+                UiAction::RunTransient,
+                UiAction::WaitFrames(8),
+                UiAction::TakeScreenshot {
+                    label: "Half Adder Digital Transient Oscilloscope Traces".to_string(),
+                    filename: "19_half_adder_oscilloscope.png".to_string(),
+                },
+
+                // Step 4: Interact with circuit - select XOR gate, drag and reroute
+                UiAction::SelectComponent(4), // UXOR1
+                UiAction::WaitFrames(2),
+                UiAction::StartDrag(4),
+                UiAction::DragDelta(Vec2::new(40.0, 0.0)),
+                UiAction::WaitFrames(2),
+                UiAction::FinishDrag,
+                UiAction::WaitFrames(4),
+                UiAction::TakeScreenshot {
+                    label: "Half Adder Component Dragged & Manhattan Wires Dynamically Rerouted".to_string(),
+                    filename: "20_half_adder_interaction.png".to_string(),
+                },
+
+                // Step 5: Enriched Component Library inspection
+                UiAction::ClearSelection,
+                UiAction::ExpandCategory(crate::schematic::categories::ComponentCategory::LogicGates),
+                UiAction::ExpandCategory(crate::schematic::categories::ComponentCategory::IntegratedCircuits),
+                UiAction::WaitFrames(4),
+                UiAction::TakeScreenshot {
+                    label: "Enriched Multi-Tier Component Library (58 Components across 11 Categories)".to_string(),
+                    filename: "21_enriched_component_library.png".to_string(),
+                },
+            ],
         )
     }
 }
@@ -434,8 +489,14 @@ impl ScriptRunner {
                     DemoCircuitKind::CmosInverter => app.load_cmos_inverter_demo(),
                     DemoCircuitKind::DiodeClipper => app.load_diode_clipper_demo(),
                     DemoCircuitKind::NmosSwitch => app.load_nmos_switch_demo(),
+                    DemoCircuitKind::HalfAdder => app.load_half_adder_demo(),
+                    DemoCircuitKind::BasicGates => app.load_basic_gates_demo(),
                 }
                 self.execution_log.push(format!("Loaded demo circuit {kind:?}"));
+            }
+            UiAction::ExpandCategory(cat) => {
+                app.palette.open_categories.insert(cat, true);
+                self.execution_log.push(format!("Expanded category {:?}", cat));
             }
             UiAction::TakeScreenshot { label, filename } => {
                 self.execution_log.push(format!("Requested screenshot: {filename} ({label})"));

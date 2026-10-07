@@ -41,8 +41,8 @@ fn test_empty_project_serialize_deserialize() {
 }
 
 #[test]
-fn test_round_trip_all_35_component_kinds_with_properties() {
-    let title = "All 35 Components Test Project";
+fn test_round_trip_all_58_component_kinds_with_properties() {
+    let title = "All 58 Components Test Project";
     let mut components = Vec::new();
 
     for (i, &kind) in ComponentKind::ALL_VARIANTS.iter().enumerate() {
@@ -57,14 +57,14 @@ fn test_round_trip_all_35_component_kinds_with_properties() {
         components.push(comp);
     }
 
-    assert_eq!(components.len(), 35, "Must contain all 35 unique ComponentKind variants");
+    assert_eq!(components.len(), 58, "Must contain all 58 unique ComponentKind variants");
     let wires: Vec<SchematicWire> = Vec::new();
 
     let bytes = serialize_project(title, &components, &wires);
-    let result = deserialize_project(&bytes).expect("Deserialization of all 35 components must succeed");
+    let result = deserialize_project(&bytes).expect("Deserialization of all 58 components must succeed");
 
     assert_eq!(result.title, title);
-    assert_eq!(result.components.len(), 35);
+    assert_eq!(result.components.len(), 58);
 
     for (orig, deserialized) in components.iter().zip(result.components.iter()) {
         assert_eq!(deserialized.id, orig.id);

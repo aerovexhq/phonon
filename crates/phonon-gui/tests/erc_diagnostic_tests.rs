@@ -407,5 +407,25 @@ fn test_all_five_built_in_demo_circuits_produce_zero_errors_and_zero_warnings() 
         "NMOS switch demo must produce 0 ERC diagnostics, got: {:?}",
         diag
     );
+
+    println!("--- Testing Half Adder Logic ---");
+    app.load_half_adder_demo();
+    let diag = ErcEngine::evaluate_canvas(&app.canvas);
+    println!("Half Adder diags: {:?}", diag);
+    assert!(
+        diag.is_empty(),
+        "Half Adder demo must produce 0 ERC diagnostics, got: {:?}",
+        diag
+    );
+
+    println!("--- Testing Basic Logic Gates ---");
+    app.load_basic_gates_demo();
+    let diag = ErcEngine::evaluate_canvas(&app.canvas);
+    println!("Basic Gates diags: {:?}", diag);
+    assert!(
+        diag.is_empty(),
+        "Basic Gates demo must produce 0 ERC diagnostics, got: {:?}",
+        diag
+    );
 }
 

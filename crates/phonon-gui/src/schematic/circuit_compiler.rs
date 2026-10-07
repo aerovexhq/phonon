@@ -202,6 +202,41 @@ pub fn compile_schematic(
                 spice_lines.push(format!("L{}_S {} {} 1m", comp.name, s_pos, s_neg));
                 spice_lines.push(format!("K{} L{}_P L{}_S 0.999", comp.name, comp.name, comp.name));
             }
+            ComponentKind::Potentiometer => {
+                let n1 = get_net(&comp.name, "1");
+                let nw = get_net(&comp.name, "WIPER");
+                let n2 = get_net(&comp.name, "2");
+                let total_r = parse_spice_number(&comp.value_str, 1).unwrap_or(10000.0);
+                let half_r = (total_r * 0.5).max(1.0);
+                let r1_name = format!("{}_R1", comp.name);
+                let r2_name = format!("{}_R2", comp.name);
+                graph
+                    .add_resistor(&r1_name, &n1, &nw, half_r)
+                    .map_err(|e| e.to_string())?;
+                graph
+                    .add_resistor(&r2_name, &nw, &n2, half_r)
+                    .map_err(|e| e.to_string())?;
+                spice_lines.push(format!("{} {} {} {}", r1_name, n1, nw, half_r));
+                spice_lines.push(format!("{} {} {} {}", r2_name, nw, n2, half_r));
+            }
+            ComponentKind::SwitchSpst => {
+                let n1 = get_net(&comp.name, "1");
+                let n2 = get_net(&comp.name, "2");
+                let r_val = if comp.value_str.eq_ignore_ascii_case("CLOSED") { 1e-3 } else { 1e7 };
+                graph
+                    .add_resistor(&comp.name, &n1, &n2, r_val)
+                    .map_err(|e| e.to_string())?;
+                spice_lines.push(format!("{} {} {} {}", comp.name, n1, n2, r_val));
+            }
+            ComponentKind::PushButton => {
+                let n1 = get_net(&comp.name, "1");
+                let n2 = get_net(&comp.name, "2");
+                let r_val = if comp.value_str.eq_ignore_ascii_case("PRESSED") { 1e-3 } else { 1e7 };
+                graph
+                    .add_resistor(&comp.name, &n1, &n2, r_val)
+                    .map_err(|e| e.to_string())?;
+                spice_lines.push(format!("{} {} {} {}", comp.name, n1, n2, r_val));
+            }
 
             // Sources & Generators
             ComponentKind::VoltageSource => {
@@ -237,6 +272,22 @@ pub fn compile_schematic(
                     .add_voltage_source(&comp.name, &n1, &n2, 5.0)
                     .map_err(|e| e.to_string())?;
                 spice_lines.push(format!("{} {} {} {}", comp.name, n1, n2, comp.value_str));
+            }
+            ComponentKind::ClockSource => {
+                let n_clk = get_net(&comp.name, "CLK");
+                let n_gnd = get_net(&comp.name, "GND");
+                graph
+                    .add_voltage_source(&comp.name, &n_clk, &n_gnd, 5.0)
+                    .map_err(|e| e.to_string())?;
+                spice_lines.push(format!("{} {} {} {}", comp.name, n_clk, n_gnd, comp.value_str));
+            }
+            ComponentKind::VddRail => {
+                let n_vdd = get_net(&comp.name, "VDD");
+                let val = parse_spice_number(&comp.value_str, 1).unwrap_or(5.0);
+                graph
+                    .add_voltage_source(&comp.name, &n_vdd, "0", val)
+                    .map_err(|e| e.to_string())?;
+                spice_lines.push(format!("{} {} 0 {}", comp.name, n_vdd, val));
             }
 
             // Discrete Semiconductors
@@ -530,6 +581,331 @@ pub fn compile_schematic(
                     comp.name, d0, d1, sel, out_node, comp.value_str
                 ));
             }
+            ComponentKind::BufferGate => {
+                let in_node = get_net(&comp.name, "IN");
+                let out_node = get_net(&comp.name, "OUT");
+                let rin_name = format!("{}_RIN", comp.name);
+                let e_name = format!("{}_E", comp.name);
+                let rout_name = format!("{}_ROUT", comp.name);
+                graph
+                    .add_resistor(&rin_name, &in_node, "0", 1e7)
+                    .map_err(|e| e.to_string())?;
+                graph
+                    .add_vcvs(&e_name, &out_node, "0", &in_node, "0", 1.0)
+                    .map_err(|e| e.to_string())?;
+                graph
+                    .add_resistor(&rout_name, &out_node, "0", 100.0)
+                    .map_err(|e| e.to_string())?;
+                subckts.insert("BUF_CMOS".to_string());
+                spice_lines.push(format!(
+                    "X{} {} {} {}",
+                    comp.name, in_node, out_node, comp.value_str
+                ));
+            }
+            ComponentKind::AndGate => {
+                let a = get_net(&comp.name, "A");
+                let b = get_net(&comp.name, "B");
+                let out_node = get_net(&comp.name, "OUT");
+                let ra_name = format!("{}_RA", comp.name);
+                let rb_name = format!("{}_RB", comp.name);
+                let rout_name = format!("{}_ROUT", comp.name);
+                graph
+                    .add_resistor(&ra_name, &a, "0", 1e7)
+                    .map_err(|e| e.to_string())?;
+                graph
+                    .add_resistor(&rb_name, &b, "0", 1e7)
+                    .map_err(|e| e.to_string())?;
+                graph
+                    .add_resistor(&rout_name, &out_node, "0", 100.0)
+                    .map_err(|e| e.to_string())?;
+                subckts.insert("AND2".to_string());
+                spice_lines.push(format!(
+                    "X{} {} {} {} {}",
+                    comp.name, a, b, out_node, comp.value_str
+                ));
+            }
+            ComponentKind::OrGate => {
+                let a = get_net(&comp.name, "A");
+                let b = get_net(&comp.name, "B");
+                let out_node = get_net(&comp.name, "OUT");
+                let ra_name = format!("{}_RA", comp.name);
+                let rb_name = format!("{}_RB", comp.name);
+                let rout_name = format!("{}_ROUT", comp.name);
+                graph
+                    .add_resistor(&ra_name, &a, "0", 1e7)
+                    .map_err(|e| e.to_string())?;
+                graph
+                    .add_resistor(&rb_name, &b, "0", 1e7)
+                    .map_err(|e| e.to_string())?;
+                graph
+                    .add_resistor(&rout_name, &out_node, "0", 100.0)
+                    .map_err(|e| e.to_string())?;
+                subckts.insert("OR2".to_string());
+                spice_lines.push(format!(
+                    "X{} {} {} {} {}",
+                    comp.name, a, b, out_node, comp.value_str
+                ));
+            }
+            ComponentKind::XorGate => {
+                let a = get_net(&comp.name, "A");
+                let b = get_net(&comp.name, "B");
+                let out_node = get_net(&comp.name, "OUT");
+                let ra_name = format!("{}_RA", comp.name);
+                let rb_name = format!("{}_RB", comp.name);
+                let rout_name = format!("{}_ROUT", comp.name);
+                graph
+                    .add_resistor(&ra_name, &a, "0", 1e7)
+                    .map_err(|e| e.to_string())?;
+                graph
+                    .add_resistor(&rb_name, &b, "0", 1e7)
+                    .map_err(|e| e.to_string())?;
+                graph
+                    .add_resistor(&rout_name, &out_node, "0", 100.0)
+                    .map_err(|e| e.to_string())?;
+                subckts.insert("XOR2".to_string());
+                spice_lines.push(format!(
+                    "X{} {} {} {} {}",
+                    comp.name, a, b, out_node, comp.value_str
+                ));
+            }
+            ComponentKind::XnorGate => {
+                let a = get_net(&comp.name, "A");
+                let b = get_net(&comp.name, "B");
+                let out_node = get_net(&comp.name, "OUT");
+                let ra_name = format!("{}_RA", comp.name);
+                let rb_name = format!("{}_RB", comp.name);
+                let rout_name = format!("{}_ROUT", comp.name);
+                graph
+                    .add_resistor(&ra_name, &a, "0", 1e7)
+                    .map_err(|e| e.to_string())?;
+                graph
+                    .add_resistor(&rb_name, &b, "0", 1e7)
+                    .map_err(|e| e.to_string())?;
+                graph
+                    .add_resistor(&rout_name, &out_node, "0", 100.0)
+                    .map_err(|e| e.to_string())?;
+                subckts.insert("XNOR2".to_string());
+                spice_lines.push(format!(
+                    "X{} {} {} {} {}",
+                    comp.name, a, b, out_node, comp.value_str
+                ));
+            }
+            ComponentKind::HalfAdder => {
+                let a = get_net(&comp.name, "A");
+                let b = get_net(&comp.name, "B");
+                let sum = get_net(&comp.name, "SUM");
+                let cout = get_net(&comp.name, "COUT");
+                let ra_name = format!("{}_RA", comp.name);
+                let rb_name = format!("{}_RB", comp.name);
+                let rsum_name = format!("{}_RSUM", comp.name);
+                let rcout_name = format!("{}_RCOUT", comp.name);
+                graph
+                    .add_resistor(&ra_name, &a, "0", 1e7)
+                    .map_err(|e| e.to_string())?;
+                graph
+                    .add_resistor(&rb_name, &b, "0", 1e7)
+                    .map_err(|e| e.to_string())?;
+                graph
+                    .add_resistor(&rsum_name, &sum, "0", 100.0)
+                    .map_err(|e| e.to_string())?;
+                graph
+                    .add_resistor(&rcout_name, &cout, "0", 100.0)
+                    .map_err(|e| e.to_string())?;
+                subckts.insert("HALF_ADDER".to_string());
+                spice_lines.push(format!(
+                    "X{} {} {} {} {} {}",
+                    comp.name, a, b, sum, cout, comp.value_str
+                ));
+            }
+            ComponentKind::FullAdder => {
+                let a = get_net(&comp.name, "A");
+                let b = get_net(&comp.name, "B");
+                let cin = get_net(&comp.name, "CIN");
+                let sum = get_net(&comp.name, "SUM");
+                let cout = get_net(&comp.name, "COUT");
+                let ra_name = format!("{}_RA", comp.name);
+                let rb_name = format!("{}_RB", comp.name);
+                let rcin_name = format!("{}_RCIN", comp.name);
+                let rsum_name = format!("{}_RSUM", comp.name);
+                let rcout_name = format!("{}_RCOUT", comp.name);
+                graph
+                    .add_resistor(&ra_name, &a, "0", 1e7)
+                    .map_err(|e| e.to_string())?;
+                graph
+                    .add_resistor(&rb_name, &b, "0", 1e7)
+                    .map_err(|e| e.to_string())?;
+                graph
+                    .add_resistor(&rcin_name, &cin, "0", 1e7)
+                    .map_err(|e| e.to_string())?;
+                graph
+                    .add_resistor(&rsum_name, &sum, "0", 100.0)
+                    .map_err(|e| e.to_string())?;
+                graph
+                    .add_resistor(&rcout_name, &cout, "0", 100.0)
+                    .map_err(|e| e.to_string())?;
+                subckts.insert("FULL_ADDER".to_string());
+                spice_lines.push(format!(
+                    "X{} {} {} {} {} {} {}",
+                    comp.name, a, b, cin, sum, cout, comp.value_str
+                ));
+            }
+            ComponentKind::Mux4to1 => {
+                let d0 = get_net(&comp.name, "D0");
+                let d1 = get_net(&comp.name, "D1");
+                let d2 = get_net(&comp.name, "D2");
+                let d3 = get_net(&comp.name, "D3");
+                let s0 = get_net(&comp.name, "S0");
+                let s1 = get_net(&comp.name, "S1");
+                let out_node = get_net(&comp.name, "OUT");
+                let rout_name = format!("{}_ROUT", comp.name);
+                for (pin_name, net) in [("D0", &d0), ("D1", &d1), ("D2", &d2), ("D3", &d3), ("S0", &s0), ("S1", &s1)] {
+                    let r_name = format!("{}_R_{}", comp.name, pin_name);
+                    graph.add_resistor(&r_name, net, "0", 1e7).map_err(|e| e.to_string())?;
+                }
+                graph.add_resistor(&rout_name, &out_node, "0", 100.0).map_err(|e| e.to_string())?;
+                subckts.insert("MUX41".to_string());
+                spice_lines.push(format!(
+                    "X{} {} {} {} {} {} {} {} {}",
+                    comp.name, d0, d1, d2, d3, s0, s1, out_node, comp.value_str
+                ));
+            }
+            ComponentKind::Demux1to2 => {
+                let in_net = get_net(&comp.name, "IN");
+                let sel = get_net(&comp.name, "SEL");
+                let y0 = get_net(&comp.name, "Y0");
+                let y1 = get_net(&comp.name, "Y1");
+                graph.add_resistor(&format!("{}_RIN", comp.name), &in_net, "0", 1e7).map_err(|e| e.to_string())?;
+                graph.add_resistor(&format!("{}_RSEL", comp.name), &sel, "0", 1e7).map_err(|e| e.to_string())?;
+                graph.add_resistor(&format!("{}_RY0", comp.name), &y0, "0", 100.0).map_err(|e| e.to_string())?;
+                graph.add_resistor(&format!("{}_RY1", comp.name), &y1, "0", 100.0).map_err(|e| e.to_string())?;
+                subckts.insert("DEMUX12".to_string());
+                spice_lines.push(format!(
+                    "X{} {} {} {} {} {}",
+                    comp.name, in_net, sel, y0, y1, comp.value_str
+                ));
+            }
+            ComponentKind::DFlipFlop => {
+                let d = get_net(&comp.name, "D");
+                let clk = get_net(&comp.name, "CLK");
+                let q = get_net(&comp.name, "Q");
+                let qn = get_net(&comp.name, "QN");
+                graph.add_resistor(&format!("{}_RD", comp.name), &d, "0", 1e7).map_err(|e| e.to_string())?;
+                graph.add_resistor(&format!("{}_RCLK", comp.name), &clk, "0", 1e7).map_err(|e| e.to_string())?;
+                graph.add_resistor(&format!("{}_RQ", comp.name), &q, "0", 100.0).map_err(|e| e.to_string())?;
+                graph.add_resistor(&format!("{}_RQN", comp.name), &qn, "0", 100.0).map_err(|e| e.to_string())?;
+                subckts.insert("DFF".to_string());
+                spice_lines.push(format!(
+                    "X{} {} {} {} {} {}",
+                    comp.name, d, clk, q, qn, comp.value_str
+                ));
+            }
+            ComponentKind::SrLatch => {
+                let s = get_net(&comp.name, "S");
+                let r = get_net(&comp.name, "R");
+                let q = get_net(&comp.name, "Q");
+                let qn = get_net(&comp.name, "QN");
+                graph.add_resistor(&format!("{}_RS", comp.name), &s, "0", 1e7).map_err(|e| e.to_string())?;
+                graph.add_resistor(&format!("{}_RR", comp.name), &r, "0", 1e7).map_err(|e| e.to_string())?;
+                graph.add_resistor(&format!("{}_RQ", comp.name), &q, "0", 100.0).map_err(|e| e.to_string())?;
+                graph.add_resistor(&format!("{}_RQN", comp.name), &qn, "0", 100.0).map_err(|e| e.to_string())?;
+                subckts.insert("SRLATCH".to_string());
+                spice_lines.push(format!(
+                    "X{} {} {} {} {} {}",
+                    comp.name, s, r, q, qn, comp.value_str
+                ));
+            }
+            ComponentKind::Counter4Bit => {
+                let clk = get_net(&comp.name, "CLK");
+                let rst = get_net(&comp.name, "RST");
+                let q0 = get_net(&comp.name, "Q0");
+                let q1 = get_net(&comp.name, "Q1");
+                let q2 = get_net(&comp.name, "Q2");
+                let q3 = get_net(&comp.name, "Q3");
+                graph.add_resistor(&format!("{}_RCLK", comp.name), &clk, "0", 1e7).map_err(|e| e.to_string())?;
+                graph.add_resistor(&format!("{}_RRST", comp.name), &rst, "0", 1e7).map_err(|e| e.to_string())?;
+                for (name, net) in [("Q0", &q0), ("Q1", &q1), ("Q2", &q2), ("Q3", &q3)] {
+                    graph.add_resistor(&format!("{}_R_{}", comp.name, name), net, "0", 100.0).map_err(|e| e.to_string())?;
+                }
+                subckts.insert("COUNTER4".to_string());
+                spice_lines.push(format!(
+                    "X{} {} {} {} {} {} {} {}",
+                    comp.name, clk, rst, q0, q1, q2, q3, comp.value_str
+                ));
+            }
+            ComponentKind::Comparator => {
+                let inp = get_net(&comp.name, "IN+");
+                let inn = get_net(&comp.name, "IN-");
+                let out_node = get_net(&comp.name, "OUT");
+                let rin_name = format!("{}_RIN", comp.name);
+                let rout_name = format!("{}_ROUT", comp.name);
+                graph.add_resistor(&rin_name, &inp, &inn, 1e7).map_err(|e| e.to_string())?;
+                graph.add_resistor(&rout_name, &out_node, "0", 50.0).map_err(|e| e.to_string())?;
+                subckts.insert("COMPARATOR".to_string());
+                spice_lines.push(format!(
+                    "X{} {} {} {} {}",
+                    comp.name, inp, inn, out_node, comp.value_str
+                ));
+            }
+            ComponentKind::Timer555 => {
+                let gnd = get_net(&comp.name, "GND");
+                let trig = get_net(&comp.name, "TRIG");
+                let out_node = get_net(&comp.name, "OUT");
+                let reset = get_net(&comp.name, "RESET");
+                let ctrl = get_net(&comp.name, "CTRL");
+                let thres = get_net(&comp.name, "THRES");
+                let disch = get_net(&comp.name, "DISCH");
+                let vcc = get_net(&comp.name, "VCC");
+                graph.add_resistor(&format!("{}_RTRIG", comp.name), &trig, &gnd, 1e6).map_err(|e| e.to_string())?;
+                graph.add_resistor(&format!("{}_RTHRES", comp.name), &thres, &gnd, 1e6).map_err(|e| e.to_string())?;
+                graph.add_resistor(&format!("{}_ROUT", comp.name), &out_node, &gnd, 50.0).map_err(|e| e.to_string())?;
+                subckts.insert("LM555".to_string());
+                spice_lines.push(format!(
+                    "X{} {} {} {} {} {} {} {} {} {}",
+                    comp.name, gnd, trig, out_node, reset, ctrl, thres, disch, vcc, comp.value_str
+                ));
+            }
+            ComponentKind::VoltageRegulator => {
+                let vin = get_net(&comp.name, "VIN");
+                let gnd = get_net(&comp.name, "GND");
+                let vout = get_net(&comp.name, "VOUT");
+                graph.add_resistor(&format!("{}_RVIN", comp.name), &vin, &gnd, 1e5).map_err(|e| e.to_string())?;
+                graph.add_voltage_source(&format!("{}_VREG", comp.name), &vout, &gnd, 5.0).map_err(|e| e.to_string())?;
+                subckts.insert("LM7805".to_string());
+                spice_lines.push(format!(
+                    "X{} {} {} {} {}",
+                    comp.name, vin, gnd, vout, comp.value_str
+                ));
+            }
+            ComponentKind::LogicProbe => {
+                let in_net = get_net(&comp.name, "IN");
+                graph.add_resistor(&format!("{}_R", comp.name), &in_net, "0", 1e7).map_err(|e| e.to_string())?;
+                spice_lines.push(format!("* PROBE {} on {}", comp.name, in_net));
+            }
+            ComponentKind::SevenSegment => {
+                let com = get_net(&comp.name, "COM");
+                for seg in ["A", "B", "C", "D", "E", "F", "G"] {
+                    let seg_net = get_net(&comp.name, seg);
+                    graph.add_resistor(&format!("{}_R_{}", comp.name, seg), &seg_net, &com, 220.0).map_err(|e| e.to_string())?;
+                }
+                subckts.insert("7SEG_CC".to_string());
+                let a = get_net(&comp.name, "A");
+                let b = get_net(&comp.name, "B");
+                let c = get_net(&comp.name, "C");
+                let d = get_net(&comp.name, "D");
+                let e = get_net(&comp.name, "E");
+                let f = get_net(&comp.name, "F");
+                let g = get_net(&comp.name, "G");
+                spice_lines.push(format!(
+                    "X{} {} {} {} {} {} {} {} {} {}",
+                    comp.name, a, b, c, d, e, f, g, com, comp.value_str
+                ));
+            }
+            ComponentKind::Buzzer => {
+                let n1 = get_net(&comp.name, "+");
+                let n2 = get_net(&comp.name, "-");
+                graph.add_resistor(&comp.name, &n1, &n2, 100.0).map_err(|e| e.to_string())?;
+                spice_lines.push(format!("{} {} {} 100", comp.name, n1, n2));
+            }
 
             // Sensors & Transducers
             ComponentKind::StrainGauge => {
@@ -786,6 +1162,135 @@ pub fn compile_schematic(
                 spice_lines.push("RS SEL 0 10MEG".to_string());
                 spice_lines.push("ROUT OUT 0 100".to_string());
                 spice_lines.push(".ENDS MUX21".to_string());
+            }
+            "BUF_CMOS" => {
+                spice_lines.push(".SUBCKT BUF_CMOS IN OUT".to_string());
+                spice_lines.push("RIN IN 0 10MEG".to_string());
+                spice_lines.push("E1 OUT 0 IN 0 1.0".to_string());
+                spice_lines.push("ROUT OUT 0 100".to_string());
+                spice_lines.push(".ENDS BUF_CMOS".to_string());
+            }
+            "AND2" => {
+                spice_lines.push(".SUBCKT AND2 A B OUT".to_string());
+                spice_lines.push("RA A 0 10MEG".to_string());
+                spice_lines.push("RB B 0 10MEG".to_string());
+                spice_lines.push("ROUT OUT 0 100".to_string());
+                spice_lines.push(".ENDS AND2".to_string());
+            }
+            "OR2" => {
+                spice_lines.push(".SUBCKT OR2 A B OUT".to_string());
+                spice_lines.push("RA A 0 10MEG".to_string());
+                spice_lines.push("RB B 0 10MEG".to_string());
+                spice_lines.push("ROUT OUT 0 100".to_string());
+                spice_lines.push(".ENDS OR2".to_string());
+            }
+            "XOR2" => {
+                spice_lines.push(".SUBCKT XOR2 A B OUT".to_string());
+                spice_lines.push("RA A 0 10MEG".to_string());
+                spice_lines.push("RB B 0 10MEG".to_string());
+                spice_lines.push("ROUT OUT 0 100".to_string());
+                spice_lines.push(".ENDS XOR2".to_string());
+            }
+            "XNOR2" => {
+                spice_lines.push(".SUBCKT XNOR2 A B OUT".to_string());
+                spice_lines.push("RA A 0 10MEG".to_string());
+                spice_lines.push("RB B 0 10MEG".to_string());
+                spice_lines.push("ROUT OUT 0 100".to_string());
+                spice_lines.push(".ENDS XNOR2".to_string());
+            }
+            "HALF_ADDER" => {
+                spice_lines.push(".SUBCKT HALF_ADDER A B SUM COUT".to_string());
+                spice_lines.push("RA A 0 10MEG".to_string());
+                spice_lines.push("RB B 0 10MEG".to_string());
+                spice_lines.push("RSUM SUM 0 100".to_string());
+                spice_lines.push("RCOUT COUT 0 100".to_string());
+                spice_lines.push(".ENDS HALF_ADDER".to_string());
+            }
+            "FULL_ADDER" => {
+                spice_lines.push(".SUBCKT FULL_ADDER A B CIN SUM COUT".to_string());
+                spice_lines.push("RA A 0 10MEG".to_string());
+                spice_lines.push("RB B 0 10MEG".to_string());
+                spice_lines.push("RCIN CIN 0 10MEG".to_string());
+                spice_lines.push("RSUM SUM 0 100".to_string());
+                spice_lines.push("RCOUT COUT 0 100".to_string());
+                spice_lines.push(".ENDS FULL_ADDER".to_string());
+            }
+            "MUX41" => {
+                spice_lines.push(".SUBCKT MUX41 D0 D1 D2 D3 S0 S1 OUT".to_string());
+                spice_lines.push("R0 D0 0 10MEG".to_string());
+                spice_lines.push("R1 D1 0 10MEG".to_string());
+                spice_lines.push("R2 D2 0 10MEG".to_string());
+                spice_lines.push("R3 D3 0 10MEG".to_string());
+                spice_lines.push("RS0 S0 0 10MEG".to_string());
+                spice_lines.push("RS1 S1 0 10MEG".to_string());
+                spice_lines.push("ROUT OUT 0 100".to_string());
+                spice_lines.push(".ENDS MUX41".to_string());
+            }
+            "DEMUX12" => {
+                spice_lines.push(".SUBCKT DEMUX12 IN SEL Y0 Y1".to_string());
+                spice_lines.push("RIN IN 0 10MEG".to_string());
+                spice_lines.push("RSEL SEL 0 10MEG".to_string());
+                spice_lines.push("RY0 Y0 0 100".to_string());
+                spice_lines.push("RY1 Y1 0 100".to_string());
+                spice_lines.push(".ENDS DEMUX12".to_string());
+            }
+            "DFF" => {
+                spice_lines.push(".SUBCKT DFF D CLK Q QN".to_string());
+                spice_lines.push("RD D 0 10MEG".to_string());
+                spice_lines.push("RCLK CLK 0 10MEG".to_string());
+                spice_lines.push("RQ Q 0 100".to_string());
+                spice_lines.push("RQN QN 0 100".to_string());
+                spice_lines.push(".ENDS DFF".to_string());
+            }
+            "SRLATCH" => {
+                spice_lines.push(".SUBCKT SRLATCH S R Q QN".to_string());
+                spice_lines.push("RS S 0 10MEG".to_string());
+                spice_lines.push("RR R 0 10MEG".to_string());
+                spice_lines.push("RQ Q 0 100".to_string());
+                spice_lines.push("RQN QN 0 100".to_string());
+                spice_lines.push(".ENDS SRLATCH".to_string());
+            }
+            "COUNTER4" => {
+                spice_lines.push(".SUBCKT COUNTER4 CLK RST Q0 Q1 Q2 Q3".to_string());
+                spice_lines.push("RCLK CLK 0 10MEG".to_string());
+                spice_lines.push("RRST RST 0 10MEG".to_string());
+                spice_lines.push("RQ0 Q0 0 100".to_string());
+                spice_lines.push("RQ1 Q1 0 100".to_string());
+                spice_lines.push("RQ2 Q2 0 100".to_string());
+                spice_lines.push("RQ3 Q3 0 100".to_string());
+                spice_lines.push(".ENDS COUNTER4".to_string());
+            }
+            "COMPARATOR" => {
+                spice_lines.push(".SUBCKT COMPARATOR INP INN OUT".to_string());
+                spice_lines.push("RIN INP INN 10MEG".to_string());
+                spice_lines.push("E1 OUT 0 INP INN 10000".to_string());
+                spice_lines.push("ROUT OUT 0 50".to_string());
+                spice_lines.push(".ENDS COMPARATOR".to_string());
+            }
+            "LM555" => {
+                spice_lines.push(".SUBCKT LM555 GND TRIG OUT RESET CTRL THRES DISCH VCC".to_string());
+                spice_lines.push("R1 VCC CTRL 5K".to_string());
+                spice_lines.push("R2 CTRL THRES 5K".to_string());
+                spice_lines.push("R3 THRES GND 5K".to_string());
+                spice_lines.push("ROUT OUT GND 50".to_string());
+                spice_lines.push(".ENDS LM555".to_string());
+            }
+            "LM7805" => {
+                spice_lines.push(".SUBCKT LM7805 VIN GND VOUT".to_string());
+                spice_lines.push("RVIN VIN GND 100K".to_string());
+                spice_lines.push("VOUT_SRC VOUT GND 5.0".to_string());
+                spice_lines.push(".ENDS LM7805".to_string());
+            }
+            "7SEG_CC" => {
+                spice_lines.push(".SUBCKT 7SEG_CC A B C D E F G COM".to_string());
+                spice_lines.push("RA A COM 220".to_string());
+                spice_lines.push("RB B COM 220".to_string());
+                spice_lines.push("RC C COM 220".to_string());
+                spice_lines.push("RD D COM 220".to_string());
+                spice_lines.push("RE E COM 220".to_string());
+                spice_lines.push("RF F COM 220".to_string());
+                spice_lines.push("RG G COM 220".to_string());
+                spice_lines.push(".ENDS 7SEG_CC".to_string());
             }
             "TACTILE_8X8" => {
                 spice_lines.push(".SUBCKT TACTILE_8X8 RP RM CP CM".to_string());

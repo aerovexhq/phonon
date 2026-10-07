@@ -161,7 +161,7 @@ fn test_phonon_app_with_backend_construction() {
         "Phonon Pure Safe Rust Reference RK4 Dynamics Engine"
     );
     assert!(app.backend().is_healthy());
-    assert_eq!(app.components.len(), 4);
+    assert_eq!(app.components.len(), 0);
     assert_eq!(app.canvas.zoom, 1.0);
 
     // Injected custom backend

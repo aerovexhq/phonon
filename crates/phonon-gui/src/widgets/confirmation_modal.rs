@@ -15,6 +15,8 @@ pub enum DemoCircuitKind {
     BjtAmplifier,
     CmosInverter,
     NmosSwitch,
+    HalfAdder,
+    BasicGates,
 }
 
 impl DemoCircuitKind {
@@ -25,6 +27,8 @@ impl DemoCircuitKind {
             Self::BjtAmplifier => "BJT CE Amplifier",
             Self::CmosInverter => "CMOS Inverter",
             Self::NmosSwitch => "NMOS Switch",
+            Self::HalfAdder => "Half Adder Logic",
+            Self::BasicGates => "Basic Logic Gates",
         }
     }
 }

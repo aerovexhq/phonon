@@ -10,6 +10,7 @@ use crate::schematic::{
     CanvasCommand, CompiledCircuit, ComponentKind, ErcDiagnostic, ErcEngine, ErcSeverity,
     HistoryStack, MultiSheetManager, NetlistSyncEngine, SchematicBus, SchematicCanvas,
     SchematicComponent, SchematicWire, SubcircuitDefinition, SubcircuitRegistry, SymbolLibrary,
+    WireSegment,
 };
 use crate::thermal::{Colormap, ThermalOverlay};
 use crate::storage::ProjectStorageManager;
@@ -513,7 +514,7 @@ pub struct PhononApp {
     /// Whether the desktop application window should request maximized state on first frame.
     pub pending_start_maximize: bool,
 
-    #[cfg(feature = "devtools")]
+    #[cfg(any(test, feature = "devtools"))]
     /// Interactive DevTools state and scenario runner.
     pub devtools_state: crate::devtools::DevtoolsState,
 }
@@ -699,7 +700,7 @@ impl Default for PhononApp {
             should_close: false,
             last_canvas_rect: egui::Rect::from_min_size(egui::Pos2::ZERO, egui::Vec2::new(800.0, 600.0)),
             pending_start_maximize: true,
-            #[cfg(feature = "devtools")]
+            #[cfg(any(test, feature = "devtools"))]
             devtools_state: crate::devtools::DevtoolsState::default(),
         };
 
@@ -838,6 +839,8 @@ impl PhononApp {
                 DemoCircuitKind::BjtAmplifier => self.load_bjt_amplifier_demo(),
                 DemoCircuitKind::CmosInverter => self.load_cmos_inverter_demo(),
                 DemoCircuitKind::NmosSwitch => self.load_nmos_switch_demo(),
+                DemoCircuitKind::HalfAdder => self.load_half_adder_demo(),
+                DemoCircuitKind::BasicGates => self.load_basic_gates_demo(),
             },
             PendingAction::ClearCanvas => self.clear_canvas_user(),
             PendingAction::CloseApp => {
@@ -1570,6 +1573,273 @@ impl PhononApp {
         self.sim_status.clear();
         self.pending_auto_center = true;
         self.project_title = "NMOS Switch".to_string();
+        self.current_project_path = None;
+        self.modification_epoch = 0;
+        self.clean_epoch = 0;
+        self.is_modified = false;
+        self.top_frame_config.circuit_name = self.project_title.clone();
+        self.top_frame_config.is_modified = false;
+    }
+
+    /// Loads an interactive Half Adder demo circuit comparing primitive gates and macro IC block.
+    pub fn load_half_adder_demo(&mut self) {
+        self.clear_canvas_state();
+        self.history.clear();
+
+        // 1. Components
+        // VA: Input A pulse (0 to 5V, 20us pulse width, 40us period)
+        let va = SchematicComponent::new(1, ComponentKind::PulseGenerator, Pos2::new(140.0, 200.0), 1)
+            .with_value("PULSE(0 5 0 1n 1n 20u 40u)");
+        // VB: Input B pulse (0 to 5V, 40us pulse width, 80us period)
+        let vb = SchematicComponent::new(2, ComponentKind::PulseGenerator, Pos2::new(140.0, 360.0), 2)
+            .with_value("PULSE(0 5 0 1n 1n 40u 80u)");
+        // GND: Common reference ground
+        let gnd = SchematicComponent::new(3, ComponentKind::Ground, Pos2::new(140.0, 480.0), 1);
+
+        // Gate-Level Half Adder
+        // XOR1: SUM = A XOR B
+        let xor1 = SchematicComponent::new(4, ComponentKind::XorGate, Pos2::new(340.0, 220.0), 1);
+        // AND1: COUT = A AND B
+        let and1 = SchematicComponent::new(5, ComponentKind::AndGate, Pos2::new(340.0, 340.0), 1);
+
+        // Output Logic Probes
+        let probe_sum = SchematicComponent::new(6, ComponentKind::LogicProbe, Pos2::new(460.0, 220.0), 1);
+        let probe_cout = SchematicComponent::new(7, ComponentKind::LogicProbe, Pos2::new(460.0, 340.0), 2);
+
+        // Macro-Level Integrated Circuit Half Adder
+        let ha1 = SchematicComponent::new(8, ComponentKind::HalfAdder, Pos2::new(340.0, 560.0), 1);
+        let probe_ha_sum = SchematicComponent::new(9, ComponentKind::LogicProbe, Pos2::new(460.0, 545.0), 3);
+        let probe_ha_cout = SchematicComponent::new(10, ComponentKind::LogicProbe, Pos2::new(460.0, 575.0), 4);
+
+        self.components = vec![
+            va, vb, gnd,
+            xor1, and1, probe_sum, probe_cout,
+            ha1, probe_ha_sum, probe_ha_cout,
+        ];
+        self.next_comp_id = 11;
+
+        // 2. Wires
+        // Wire 1: Ground trunk at X=80 routing around sources to avoid touching vb(+)
+        let w1 = SchematicWire::new(1, vec![
+            WireSegment::new(Pos2::new(140.0, 240.0), Pos2::new(80.0, 240.0)),
+            WireSegment::new(Pos2::new(80.0, 240.0), Pos2::new(80.0, 400.0)),
+            WireSegment::new(Pos2::new(80.0, 400.0), Pos2::new(80.0, 460.0)),
+            WireSegment::new(Pos2::new(80.0, 460.0), Pos2::new(140.0, 460.0)),
+        ]);
+        // Wire 2: vb(-) tap-off to ground trunk at (80, 400)
+        let w2 = SchematicWire::new(2, vec![
+            WireSegment::new(Pos2::new(140.0, 400.0), Pos2::new(80.0, 400.0)),
+        ]);
+
+        // Wire 3: Input A trunk from va(+) (140, 160) to XOR1 A (310, 205)
+        let w3 = SchematicWire::new(3, vec![
+            WireSegment::new(Pos2::new(140.0, 160.0), Pos2::new(220.0, 160.0)),
+            WireSegment::new(Pos2::new(220.0, 160.0), Pos2::new(220.0, 205.0)),
+            WireSegment::new(Pos2::new(220.0, 205.0), Pos2::new(310.0, 205.0)),
+        ]);
+        // Wire 4: Input A branch from (220, 205) to AND1 A (310, 325)
+        let w4 = SchematicWire::new(4, vec![
+            WireSegment::new(Pos2::new(220.0, 205.0), Pos2::new(220.0, 325.0)),
+            WireSegment::new(Pos2::new(220.0, 325.0), Pos2::new(310.0, 325.0)),
+        ]);
+        // Wire 5: Input A branch from (220, 325) down to HA1 A (300, 545)
+        let w5 = SchematicWire::new(5, vec![
+            WireSegment::new(Pos2::new(220.0, 325.0), Pos2::new(220.0, 545.0)),
+            WireSegment::new(Pos2::new(220.0, 545.0), Pos2::new(300.0, 545.0)),
+        ]);
+
+        // Wire 6: Input B trunk from vb(+) (140, 320) to AND1 B (310, 355)
+        let w6 = SchematicWire::new(6, vec![
+            WireSegment::new(Pos2::new(140.0, 320.0), Pos2::new(260.0, 320.0)),
+            WireSegment::new(Pos2::new(260.0, 320.0), Pos2::new(260.0, 355.0)),
+            WireSegment::new(Pos2::new(260.0, 355.0), Pos2::new(310.0, 355.0)),
+        ]);
+        // Wire 7: Input B branch from (260, 320) to XOR1 B (310, 235)
+        let w7 = SchematicWire::new(7, vec![
+            WireSegment::new(Pos2::new(260.0, 320.0), Pos2::new(260.0, 235.0)),
+            WireSegment::new(Pos2::new(260.0, 235.0), Pos2::new(310.0, 235.0)),
+        ]);
+        // Wire 8: Input B branch from (260, 355) down to HA1 B (300, 575)
+        let w8 = SchematicWire::new(8, vec![
+            WireSegment::new(Pos2::new(260.0, 355.0), Pos2::new(260.0, 575.0)),
+            WireSegment::new(Pos2::new(260.0, 575.0), Pos2::new(300.0, 575.0)),
+        ]);
+
+        // Wire 9: SUM from XOR1 OUT (370, 220) to PROBE_SUM IN (440, 220)
+        let w9 = SchematicWire::new(9, vec![WireSegment::new(Pos2::new(370.0, 220.0), Pos2::new(440.0, 220.0))]);
+        // Wire 10: COUT from AND1 OUT (370, 340) to PROBE_COUT IN (440, 340)
+        let w10 = SchematicWire::new(10, vec![WireSegment::new(Pos2::new(370.0, 340.0), Pos2::new(440.0, 340.0))]);
+        // Wire 11: HA1 SUM (380, 545) to PROBE_HA_SUM IN (440, 545)
+        let w11 = SchematicWire::new(11, vec![WireSegment::new(Pos2::new(380.0, 545.0), Pos2::new(440.0, 545.0))]);
+        // Wire 12: HA1 COUT (380, 575) to PROBE_HA_COUT IN (440, 575)
+        let w12 = SchematicWire::new(12, vec![WireSegment::new(Pos2::new(380.0, 575.0), Pos2::new(440.0, 575.0))]);
+
+        self.wires = vec![w1, w2, w3, w4, w5, w6, w7, w8, w9, w10, w11, w12];
+        self.next_wire_id = 13;
+
+        self.sync_canvas_state();
+        self.run_erc();
+        self.sim_status.clear();
+        self.pending_auto_center = true;
+        self.project_title = "Half Adder Logic".to_string();
+        self.current_project_path = None;
+        self.modification_epoch = 0;
+        self.clean_epoch = 0;
+        self.is_modified = false;
+        self.top_frame_config.circuit_name = self.project_title.clone();
+        self.top_frame_config.is_modified = false;
+    }
+
+    /// Loads an interactive Basic Logic Gates demonstration bench exercising all 8 primitive logic gates.
+    pub fn load_basic_gates_demo(&mut self) {
+        self.clear_canvas_state();
+        self.history.clear();
+
+        // 1. Sources & Reference
+        let va = SchematicComponent::new(1, ComponentKind::PulseGenerator, Pos2::new(120.0, 220.0), 1)
+            .with_value("PULSE(0 5 0 1n 1n 20u 40u)");
+        let vb = SchematicComponent::new(2, ComponentKind::PulseGenerator, Pos2::new(120.0, 380.0), 2)
+            .with_value("PULSE(0 5 0 1n 1n 40u 80u)");
+        let gnd = SchematicComponent::new(3, ComponentKind::Ground, Pos2::new(120.0, 480.0), 1);
+
+        // Column 1 Gates (Buffer, Inverter, AND, OR)
+        let buf1 = SchematicComponent::new(4, ComponentKind::BufferGate, Pos2::new(320.0, 160.0), 1);
+        let not1 = SchematicComponent::new(5, ComponentKind::Inverter, Pos2::new(320.0, 260.0), 1);
+        let and1 = SchematicComponent::new(6, ComponentKind::AndGate, Pos2::new(320.0, 360.0), 1);
+        let or1 = SchematicComponent::new(7, ComponentKind::OrGate, Pos2::new(320.0, 460.0), 1);
+
+        // Column 2 Gates (NAND, NOR, XOR, XNOR)
+        let nand1 = SchematicComponent::new(8, ComponentKind::NandGate, Pos2::new(580.0, 160.0), 1);
+        let nor1 = SchematicComponent::new(9, ComponentKind::NorGate, Pos2::new(580.0, 260.0), 1);
+        let xor1 = SchematicComponent::new(10, ComponentKind::XorGate, Pos2::new(580.0, 360.0), 1);
+        let xnor1 = SchematicComponent::new(11, ComponentKind::XnorGate, Pos2::new(580.0, 460.0), 1);
+
+        // Probes for Column 1 Outputs
+        let p1 = SchematicComponent::new(12, ComponentKind::LogicProbe, Pos2::new(430.0, 160.0), 1);
+        let p2 = SchematicComponent::new(13, ComponentKind::LogicProbe, Pos2::new(430.0, 260.0), 2);
+        let p3 = SchematicComponent::new(14, ComponentKind::LogicProbe, Pos2::new(430.0, 360.0), 3);
+        let p4 = SchematicComponent::new(15, ComponentKind::LogicProbe, Pos2::new(430.0, 460.0), 4);
+
+        // Probes for Column 2 Outputs
+        let p5 = SchematicComponent::new(16, ComponentKind::LogicProbe, Pos2::new(690.0, 160.0), 5);
+        let p6 = SchematicComponent::new(17, ComponentKind::LogicProbe, Pos2::new(690.0, 260.0), 6);
+        let p7 = SchematicComponent::new(18, ComponentKind::LogicProbe, Pos2::new(690.0, 360.0), 7);
+        let p8 = SchematicComponent::new(19, ComponentKind::LogicProbe, Pos2::new(690.0, 460.0), 8);
+
+        self.components = vec![
+            va, vb, gnd,
+            buf1, not1, and1, or1,
+            nand1, nor1, xor1, xnor1,
+            p1, p2, p3, p4, p5, p6, p7, p8,
+        ];
+        self.next_comp_id = 20;
+
+        // 2. Wires
+        let mut wires = Vec::new();
+        let mut wid = 1usize;
+
+        // Ground connections via left trunk at X=60 avoiding vb(+) at (120, 340)
+        wires.push(SchematicWire::new(wid, vec![
+            WireSegment::new(Pos2::new(120.0, 260.0), Pos2::new(60.0, 260.0)),
+            WireSegment::new(Pos2::new(60.0, 260.0), Pos2::new(60.0, 420.0)),
+            WireSegment::new(Pos2::new(60.0, 420.0), Pos2::new(60.0, 460.0)),
+            WireSegment::new(Pos2::new(60.0, 460.0), Pos2::new(120.0, 460.0)),
+        ]));
+        wid += 1;
+        wires.push(SchematicWire::new(wid, vec![
+            WireSegment::new(Pos2::new(120.0, 420.0), Pos2::new(60.0, 420.0)),
+        ]));
+        wid += 1;
+
+        // Output wires to probes
+        wires.push(SchematicWire::new(wid, vec![WireSegment::new(Pos2::new(350.0, 160.0), Pos2::new(410.0, 160.0))])); wid += 1;
+        wires.push(SchematicWire::new(wid, vec![WireSegment::new(Pos2::new(350.0, 260.0), Pos2::new(410.0, 260.0))])); wid += 1;
+        wires.push(SchematicWire::new(wid, vec![WireSegment::new(Pos2::new(350.0, 360.0), Pos2::new(410.0, 360.0))])); wid += 1;
+        wires.push(SchematicWire::new(wid, vec![WireSegment::new(Pos2::new(350.0, 460.0), Pos2::new(410.0, 460.0))])); wid += 1;
+
+        wires.push(SchematicWire::new(wid, vec![WireSegment::new(Pos2::new(610.0, 160.0), Pos2::new(670.0, 160.0))])); wid += 1;
+        wires.push(SchematicWire::new(wid, vec![WireSegment::new(Pos2::new(610.0, 260.0), Pos2::new(670.0, 260.0))])); wid += 1;
+        wires.push(SchematicWire::new(wid, vec![WireSegment::new(Pos2::new(610.0, 360.0), Pos2::new(670.0, 360.0))])); wid += 1;
+        wires.push(SchematicWire::new(wid, vec![WireSegment::new(Pos2::new(610.0, 460.0), Pos2::new(670.0, 460.0))])); wid += 1;
+
+        // Input A network: VA(+) (120, 180) -> Trunk X=200 -> feeds BUF (290, 160), NOT (290, 260), AND A (290, 345), OR A (290, 445)
+        // and bridge to X=490 -> feeds NAND A (550, 145), NOR A (550, 245), XOR A (550, 345), XNOR A (550, 445)
+        wires.push(SchematicWire::new(wid, vec![
+            WireSegment::new(Pos2::new(120.0, 180.0), Pos2::new(200.0, 180.0)),
+            WireSegment::new(Pos2::new(200.0, 180.0), Pos2::new(200.0, 160.0)),
+            WireSegment::new(Pos2::new(200.0, 160.0), Pos2::new(290.0, 160.0)),
+        ])); wid += 1;
+        wires.push(SchematicWire::new(wid, vec![
+            WireSegment::new(Pos2::new(200.0, 180.0), Pos2::new(200.0, 260.0)),
+            WireSegment::new(Pos2::new(200.0, 260.0), Pos2::new(290.0, 260.0)),
+        ])); wid += 1;
+        wires.push(SchematicWire::new(wid, vec![
+            WireSegment::new(Pos2::new(200.0, 260.0), Pos2::new(200.0, 345.0)),
+            WireSegment::new(Pos2::new(200.0, 345.0), Pos2::new(290.0, 345.0)),
+        ])); wid += 1;
+        wires.push(SchematicWire::new(wid, vec![
+            WireSegment::new(Pos2::new(200.0, 345.0), Pos2::new(200.0, 445.0)),
+            WireSegment::new(Pos2::new(200.0, 445.0), Pos2::new(290.0, 445.0)),
+        ])); wid += 1;
+        // Bridge from (200, 160) to (490, 145) via top corridor
+        wires.push(SchematicWire::new(wid, vec![
+            WireSegment::new(Pos2::new(200.0, 160.0), Pos2::new(200.0, 110.0)),
+            WireSegment::new(Pos2::new(200.0, 110.0), Pos2::new(490.0, 110.0)),
+            WireSegment::new(Pos2::new(490.0, 110.0), Pos2::new(490.0, 145.0)),
+            WireSegment::new(Pos2::new(490.0, 145.0), Pos2::new(550.0, 145.0)),
+        ])); wid += 1;
+        wires.push(SchematicWire::new(wid, vec![
+            WireSegment::new(Pos2::new(490.0, 145.0), Pos2::new(490.0, 245.0)),
+            WireSegment::new(Pos2::new(490.0, 245.0), Pos2::new(550.0, 245.0)),
+        ])); wid += 1;
+        wires.push(SchematicWire::new(wid, vec![
+            WireSegment::new(Pos2::new(490.0, 245.0), Pos2::new(490.0, 345.0)),
+            WireSegment::new(Pos2::new(490.0, 345.0), Pos2::new(550.0, 345.0)),
+        ])); wid += 1;
+        wires.push(SchematicWire::new(wid, vec![
+            WireSegment::new(Pos2::new(490.0, 345.0), Pos2::new(490.0, 445.0)),
+            WireSegment::new(Pos2::new(490.0, 445.0), Pos2::new(550.0, 445.0)),
+        ])); wid += 1;
+
+        // Input B network: VB(+) (120, 340) -> Trunk X=240 -> feeds AND B (290, 375), OR B (290, 475)
+        // and bridge to X=520 -> feeds NAND B (550, 175), NOR B (550, 275), XOR B (550, 375), XNOR B (550, 475)
+        wires.push(SchematicWire::new(wid, vec![
+            WireSegment::new(Pos2::new(120.0, 340.0), Pos2::new(240.0, 340.0)),
+            WireSegment::new(Pos2::new(240.0, 340.0), Pos2::new(240.0, 375.0)),
+            WireSegment::new(Pos2::new(240.0, 375.0), Pos2::new(290.0, 375.0)),
+        ])); wid += 1;
+        wires.push(SchematicWire::new(wid, vec![
+            WireSegment::new(Pos2::new(240.0, 375.0), Pos2::new(240.0, 475.0)),
+            WireSegment::new(Pos2::new(240.0, 475.0), Pos2::new(290.0, 475.0)),
+        ])); wid += 1;
+        // Bridge from (240, 475) to (520, 475) via bottom corridor
+        wires.push(SchematicWire::new(wid, vec![
+            WireSegment::new(Pos2::new(240.0, 475.0), Pos2::new(240.0, 520.0)),
+            WireSegment::new(Pos2::new(240.0, 520.0), Pos2::new(520.0, 520.0)),
+            WireSegment::new(Pos2::new(520.0, 520.0), Pos2::new(520.0, 475.0)),
+            WireSegment::new(Pos2::new(520.0, 475.0), Pos2::new(550.0, 475.0)),
+        ])); wid += 1;
+        wires.push(SchematicWire::new(wid, vec![
+            WireSegment::new(Pos2::new(520.0, 475.0), Pos2::new(520.0, 375.0)),
+            WireSegment::new(Pos2::new(520.0, 375.0), Pos2::new(550.0, 375.0)),
+        ])); wid += 1;
+        wires.push(SchematicWire::new(wid, vec![
+            WireSegment::new(Pos2::new(520.0, 375.0), Pos2::new(520.0, 275.0)),
+            WireSegment::new(Pos2::new(520.0, 275.0), Pos2::new(550.0, 275.0)),
+        ])); wid += 1;
+        wires.push(SchematicWire::new(wid, vec![
+            WireSegment::new(Pos2::new(520.0, 275.0), Pos2::new(520.0, 175.0)),
+            WireSegment::new(Pos2::new(520.0, 175.0), Pos2::new(550.0, 175.0)),
+        ])); wid += 1;
+
+        self.wires = wires;
+        self.next_wire_id = wid;
+
+        self.sync_canvas_state();
+        self.run_erc();
+        self.sim_status.clear();
+        self.pending_auto_center = true;
+        self.project_title = "Basic Logic Gates".to_string();
         self.current_project_path = None;
         self.modification_epoch = 0;
         self.clean_epoch = 0;
@@ -4023,7 +4293,7 @@ impl PhononApp {
         }
 
         // 33. DevTools in-app overlay rendering (gated under devtools feature)
-        #[cfg(feature = "devtools")]
+        #[cfg(any(test, feature = "devtools"))]
         {
             if ui.input(|i| i.key_pressed(egui::Key::F12)) {
                 self.devtools_state.toggle_visibility();

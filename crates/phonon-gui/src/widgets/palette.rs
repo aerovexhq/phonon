@@ -480,14 +480,17 @@ impl ComponentPalette {
 
                     // 2. Standard categories
                     for &cat in ComponentCategory::all_categories() {
-                        let default_open = *self.open_categories.get(&cat).unwrap_or(&false);
-                        let header = egui::CollapsingHeader::new(
+                        let is_open = *self.open_categories.get(&cat).unwrap_or(&false);
+                        let mut header = egui::CollapsingHeader::new(
                             RichText::new(cat.display_name())
                                 .font(FontId::proportional(12.5))
                                 .strong(),
                         )
-                        .default_open(default_open)
+                        .default_open(is_open)
                         .id_salt(cat);
+                        if is_open {
+                            header = header.open(Some(true));
+                        }
 
                         header.show(ui, |ui| {
                             ui.label(

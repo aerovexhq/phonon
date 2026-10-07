@@ -311,6 +311,18 @@ fn render_top_frame_internal(
                     }
                     ui.close();
                 }
+                if ui.button("Half Adder Logic").clicked() {
+                    if let Some(a) = app.as_deref_mut() {
+                        a.request_action(PendingAction::LoadDemo(DemoCircuitKind::HalfAdder));
+                    }
+                    ui.close();
+                }
+                if ui.button("Basic Logic Gates").clicked() {
+                    if let Some(a) = app.as_deref_mut() {
+                        a.request_action(PendingAction::LoadDemo(DemoCircuitKind::BasicGates));
+                    }
+                    ui.close();
+                }
             });
             ui.separator();
             if ui.button("Preferences... (Ctrl+,)").clicked() {

@@ -135,6 +135,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         "unsaved" => UiScript::unsaved_changes_scenario(),
         "project" => UiScript::project_dialog_scenario(),
         "palette" => UiScript::command_palette_scenario(),
+        "logic" | "gates" | "half_adder" => UiScript::half_adder_and_logic_gates_scenario(),
         _ => UiScript::full_test_suite(),
     };
 
