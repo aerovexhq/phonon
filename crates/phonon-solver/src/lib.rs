@@ -178,6 +178,7 @@ pub mod axion_polariton_soliton;
 pub mod majorana_surface_memory;
 pub mod majorana_surface_code;
 pub mod quantum_optomechanical_transducer;
+pub mod corner_polariton_microcomb;
 pub mod metamaterial_circulator_cloak;
 pub mod mixed_signal;
 pub mod mna;
@@ -1275,6 +1276,14 @@ pub use quantum_optomechanical_transducer::{
     SidebandCoolingParams, TransductionEngine, TransductionParams, TransducerAuditItem,
     TransducerAuditReport, TransmonInterfaceEngine, TransmonInterfaceParams,
 };
+
+pub use corner_polariton_microcomb::{
+    AllanDeviationPoint, CornerModeProfile, CornerPolaritonCavityEngine,
+    CornerPolaritonMicrocombSynthesizer, CornerPolaritonParams, FrequencySynthesizerEngine,
+    MicrocombAuditItem, MicrocombAuditReport, PhaseNoisePoint, SolitonCombPoint,
+    SolitonDynamicsEngine, SolitonDynamicsParams, SolitonTemporalPoint, SynthesizerParams,
+};
+
 
 
 

@@ -109,6 +109,7 @@ pub use widgets::corner_laser_dialog::{CornerLaserDialog, CornerLaserTab};
 pub use widgets::metasurface_hologram_dialog::{MetasurfaceHologramDialog, MetasurfaceHologramTab};
 pub use widgets::majorana_surface_code_dialog::{MajoranaSurfaceCodeDialog, MajoranaSurfaceCodeTab};
 pub use widgets::optomechanical_transducer_dialog::{OptomechanicalTransducerDialog, OptomechanicalTransducerTab};
+pub use widgets::corner_polariton_microcomb_dialog::{CornerPolaritonMicrocombDialog, CornerPolaritonMicrocombTab};
 pub use widgets::directional_radiation_dialog::{DirectionalRadiationDialog, DirectionalRadiationTab};
 pub use widgets::atmospheric_neutron_dialog::{AtmosphericNeutronDialog, AtmosphericNeutronTab};
 pub use widgets::thermal_vacuum_dialog::{ThermalVacuumDialog, ThermalVacuumTab};

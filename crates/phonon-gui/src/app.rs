@@ -38,7 +38,7 @@ use crate::widgets::{
     SkyrmionReservoirDialog, PhononMagnonDialog, QuadrupoleParametricDialog,
     NonHermitianSensorDialog, CornerDoublerDialog, UniversalBraidingDialog,
     ChiralCirculatorDialog, JosephsonParametricDialog, OptomagnonicCombDialog,
-    FloquetSensorDialog, OptomechanicalTransducerDialog,
+    FloquetSensorDialog, OptomechanicalTransducerDialog, CornerPolaritonMicrocombDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -269,6 +269,9 @@ pub struct PhononApp {
 
     /// Interactive Cryogenic Quantum Optomechanical Transducer & Microwave-to-Acoustic Interconnect dialog.
     pub optomechanical_transducer_dialog: OptomechanicalTransducerDialog,
+
+    /// Interactive Topological Corner-Polariton Micro-Comb Soliton & Frequency Synthesizer dialog.
+    pub corner_polariton_microcomb_dialog: CornerPolaritonMicrocombDialog,
 
     /// Interactive Directional Cosmic Heavy Ion Radiation Track & 3D Anisotropic Shielding Studio dialog.
     pub directional_radiation_dialog: DirectionalRadiationDialog,
@@ -538,6 +541,7 @@ impl Default for PhononApp {
             metasurface_hologram_dialog: MetasurfaceHologramDialog::new_fast(),
             majorana_surface_code_dialog: MajoranaSurfaceCodeDialog::new_fast(),
             optomechanical_transducer_dialog: OptomechanicalTransducerDialog::new_fast(),
+            corner_polariton_microcomb_dialog: CornerPolaritonMicrocombDialog::new_fast(),
             directional_radiation_dialog: DirectionalRadiationDialog::new_fast(),
             atmospheric_neutron_dialog: AtmosphericNeutronDialog::new_fast(),
             thermal_vacuum_dialog: ThermalVacuumDialog::new_fast(),
@@ -3323,6 +3327,9 @@ impl PhononApp {
 
         // 47d. Interactive Cryogenic Quantum Optomechanical Transducer Dialog
         self.optomechanical_transducer_dialog.ui(ui.ctx());
+
+        // 47e. Interactive Topological Corner-Polariton Micro-Comb Soliton & Frequency Synthesizer Dialog
+        self.corner_polariton_microcomb_dialog.ui(ui.ctx());
 
         // 48. Interactive Directional Cosmic Heavy Ion Radiation Track & 3D Anisotropic Shielding Dialog
         self.directional_radiation_dialog.ui(ui.ctx());

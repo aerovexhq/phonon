@@ -56,6 +56,7 @@ pub mod corner_laser_dialog;
 pub mod metasurface_hologram_dialog;
 pub mod majorana_surface_code_dialog;
 pub mod optomechanical_transducer_dialog;
+pub mod corner_polariton_microcomb_dialog;
 pub mod directional_radiation_dialog;
 pub mod atmospheric_neutron_dialog;
 pub mod thermal_vacuum_dialog;
@@ -147,6 +148,9 @@ pub use metasurface_hologram_dialog::{MetasurfaceHologramDialog, MetasurfaceHolo
 pub use majorana_surface_code_dialog::{MajoranaSurfaceCodeDialog, MajoranaSurfaceCodeTab};
 pub use optomechanical_transducer_dialog::{
     OptomechanicalTransducerDialog, OptomechanicalTransducerTab,
+};
+pub use corner_polariton_microcomb_dialog::{
+    CornerPolaritonMicrocombDialog, CornerPolaritonMicrocombTab,
 };
 pub use directional_radiation_dialog::{DirectionalRadiationDialog, DirectionalRadiationTab};
 pub use atmospheric_neutron_dialog::{AtmosphericNeutronDialog, AtmosphericNeutronTab};

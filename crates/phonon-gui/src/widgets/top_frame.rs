@@ -760,6 +760,12 @@ fn render_top_frame_internal(
                     }
                     ui.close();
                 }
+                if ui.button("Topological Corner-Polariton Micro-Comb Synthesizer...").clicked() {
+                    if let Some(a) = app.as_deref_mut() {
+                        a.corner_polariton_microcomb_dialog.is_open = true;
+                    }
+                    ui.close();
+                }
                 if ui.button("Directional Heavy Ion Radiation...").clicked() {
                     if let Some(a) = app.as_deref_mut() {
                         a.directional_radiation_dialog.is_open = true;
