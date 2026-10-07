@@ -344,6 +344,7 @@ pub mod twisted_moire_superlattice;
 pub mod protected_braiding_lattice;
 pub mod optomechanical_squeezing;
 pub mod universal_braiding_processor;
+pub mod chiral_edge_magnetoplasmon;
 
 pub use acoustic::{
     AcousticBenchmarkReport, AcousticBenchmarkRunner, AcousticLinkSimulator, AcousticRealismTier,
@@ -1290,5 +1291,12 @@ pub use giant_atom_qed::{
     GiantAtomProcessor, GiantAtomTopology, MultiAtomEntanglementResult, MultiAtomSystem,
     NonMarkovianDynamicsResult, NonMarkovianSolver, NonMarkovianTrajectoryPoint, ScatteringPoint,
     WaveguideScatteringSpectrum,
+};
+
+pub use chiral_edge_magnetoplasmon::{
+    ChiralDispersionSolver, ChiralEdgeMagnetoplasmonRouter, ChiralEmpParams, DefectParams,
+    EmpAuditCriterion, EmpAuditReport, EmpCirculator, EmpCirculatorParams, EmpDispersionPoint,
+    EmpSMatrix3x3, EmpSpectrumPoint, QuantumHallRouter, QuantumHallRouterParams, RouterChannel,
+    RouterTransportMetrics,
 };
 

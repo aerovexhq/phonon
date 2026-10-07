@@ -163,6 +163,7 @@ pub use widgets::josephson_parametric_dialog::{JosephsonParametricDialog, Joseph
 pub use widgets::optomagnonic_comb_dialog::{OptomagnonicCombDialog, OptomagnonicCombTab};
 pub use widgets::floquet_sensor_dialog::{FloquetSensorDialog, FloquetSensorTab};
 pub use widgets::giant_atom_dialog::{GiantAtomDialog, GiantAtomDialogTab};
+pub use widgets::chiral_emp_dialog::{ChiralEmpDialog, ChiralEmpDialogTab};
 
 #[cfg(not(target_arch = "wasm32"))]
 use phonon_core::PhysicsDynamicsBackend;
