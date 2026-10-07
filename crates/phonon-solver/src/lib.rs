@@ -177,6 +177,7 @@ pub mod corner_state_memory;
 pub mod axion_polariton_soliton;
 pub mod majorana_surface_memory;
 pub mod majorana_surface_code;
+pub mod quantum_optomechanical_transducer;
 pub mod metamaterial_circulator_cloak;
 pub mod mixed_signal;
 pub mod mna;
@@ -1268,6 +1269,13 @@ pub use majorana_surface_code::{
     SurfaceStabilizerCheck, SurfaceStabilizerKind, SyndromeExtractionResult,
     TargetCliffordGate, ThresholdCurvePoint,
 };
+
+pub use quantum_optomechanical_transducer::{
+    QuantumOptomechanicalTransducer, ScatteringMatrixPoint, SidebandCoolingEngine,
+    SidebandCoolingParams, TransductionEngine, TransductionParams, TransducerAuditItem,
+    TransducerAuditReport, TransmonInterfaceEngine, TransmonInterfaceParams,
+};
+
 
 
 

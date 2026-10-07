@@ -38,7 +38,7 @@ use crate::widgets::{
     SkyrmionReservoirDialog, PhononMagnonDialog, QuadrupoleParametricDialog,
     NonHermitianSensorDialog, CornerDoublerDialog, UniversalBraidingDialog,
     ChiralCirculatorDialog, JosephsonParametricDialog, OptomagnonicCombDialog,
-    FloquetSensorDialog,
+    FloquetSensorDialog, OptomechanicalTransducerDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -266,6 +266,9 @@ pub struct PhononApp {
 
     /// Interactive Quantum Metamaterial Non-Abelian Majorana Braid Interconnect & Surface Code Co-Processor dialog.
     pub majorana_surface_code_dialog: MajoranaSurfaceCodeDialog,
+
+    /// Interactive Cryogenic Quantum Optomechanical Transducer & Microwave-to-Acoustic Interconnect dialog.
+    pub optomechanical_transducer_dialog: OptomechanicalTransducerDialog,
 
     /// Interactive Directional Cosmic Heavy Ion Radiation Track & 3D Anisotropic Shielding Studio dialog.
     pub directional_radiation_dialog: DirectionalRadiationDialog,
@@ -534,6 +537,7 @@ impl Default for PhononApp {
             corner_laser_dialog: CornerLaserDialog::new_fast(),
             metasurface_hologram_dialog: MetasurfaceHologramDialog::new_fast(),
             majorana_surface_code_dialog: MajoranaSurfaceCodeDialog::new_fast(),
+            optomechanical_transducer_dialog: OptomechanicalTransducerDialog::new_fast(),
             directional_radiation_dialog: DirectionalRadiationDialog::new_fast(),
             atmospheric_neutron_dialog: AtmosphericNeutronDialog::new_fast(),
             thermal_vacuum_dialog: ThermalVacuumDialog::new_fast(),
@@ -3316,6 +3320,9 @@ impl PhononApp {
 
         // 47c. Interactive Quantum Metamaterial Non-Abelian Majorana Braid Interconnect & Surface Code Dialog
         self.majorana_surface_code_dialog.ui(ui.ctx());
+
+        // 47d. Interactive Cryogenic Quantum Optomechanical Transducer Dialog
+        self.optomechanical_transducer_dialog.ui(ui.ctx());
 
         // 48. Interactive Directional Cosmic Heavy Ion Radiation Track & 3D Anisotropic Shielding Dialog
         self.directional_radiation_dialog.ui(ui.ctx());
