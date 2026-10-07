@@ -185,6 +185,9 @@ pub use widgets::floquet_corner_laser_dialog::{
 pub use widgets::parafermion_dialog::{
     ParafermionDialog, ParafermionTab,
 };
+pub use widgets::chiral_acoustomagnonic_dialog::{
+    AcoustomagnonicTab, ChiralAcoustomagnonicDialog,
+};
 
 #[cfg(not(target_arch = "wasm32"))]
 use phonon_core::PhysicsDynamicsBackend;

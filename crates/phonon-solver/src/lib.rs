@@ -356,6 +356,7 @@ pub mod octupole_dislocation_router;
 pub mod chiral_majorana_braiding;
 pub mod floquet_corner_laser;
 pub mod parafermion_braiding;
+pub mod chiral_acoustomagnonic_isolator;
 
 pub use acoustic::{
     AcousticBenchmarkReport, AcousticBenchmarkRunner, AcousticLinkSimulator, AcousticRealismTier,
@@ -1392,6 +1393,13 @@ pub use parafermion_braiding::{
     ParafermionBraidGate, ParafermionBraidingParams, ParafermionGateKind,
     ParafermionLatticeParams, ParafermionLatticeSolver, ParafermionMode, ParafermionOrder,
     ParafermionParams, ParafermionProcessor,
+};
+
+pub use chiral_acoustomagnonic_isolator::{
+    AcoustomagnonicAuditReport, AcoustomagnonicDispersionPoint, AcoustomagnonicDispersionSolver,
+    AcoustomagnonicParams, ChiralAcoustomagnonicProcessor, CryogenicCirculatorMetrics,
+    CryogenicCirculatorParams, CryogenicQubitCirculator, NonReciprocalSawIsolator,
+    QubitCirculatorSMatrix, SawFrequencyResponsePoint, SawIsolatorMetrics,
 };
 
 
