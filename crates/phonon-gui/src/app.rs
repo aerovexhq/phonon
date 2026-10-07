@@ -76,6 +76,17 @@ impl ToolMode {
     }
 }
 
+/// Permanent record of a wire attached to a moving component during drag interaction.
+#[derive(Debug, Clone, PartialEq)]
+pub struct DragAttachedWire {
+    pub wire_id: usize,
+    pub is_start: bool,
+    pub comp_id: usize,
+    pub pin_idx: usize,
+    pub other_end: Pos2,
+    pub net_name: Option<String>,
+}
+
 /// The unified Phonon desktop CAD application.
 pub struct PhononApp {
     pub canvas: SchematicCanvas,
@@ -105,10 +116,16 @@ pub struct PhononApp {
     pub action_registry: ActionRegistry,
     /// Active multi-item drag tracking state.
     pub dragging_selection: bool,
+    /// World position of mouse when drag interaction started.
+    pub drag_start_mouse_pos: Option<Pos2>,
     /// Original positions of components before drag started.
     pub drag_start_positions: Vec<(usize, Pos2)>,
     /// Pre-drag snapshot of schematic wires for reversible history recording.
     pub drag_start_wires: Vec<SchematicWire>,
+    /// Permanent wire attachments cached at drag start.
+    pub drag_attached_wires: Vec<DragAttachedWire>,
+    /// Component IDs currently in an unsolvable or collision wiring state (rendered with red pin tips).
+    pub unsolvable_wiring_components: HashSet<usize>,
 
     /// Multi-sheet schematic canvas manager.
     pub sheets: MultiSheetManager,
@@ -502,8 +519,11 @@ impl Default for PhononApp {
             command_palette: CommandPalette::new(),
             action_registry: ActionRegistry::new(),
             dragging_selection: false,
+            drag_start_mouse_pos: None,
             drag_start_positions: Vec::new(),
             drag_start_wires: Vec::new(),
+            drag_attached_wires: Vec::new(),
+            unsolvable_wiring_components: HashSet::new(),
             sheets: MultiSheetManager::new("Main"),
             subcircuits: HashMap::new(),
             buses: Vec::new(),
@@ -1654,6 +1674,9 @@ impl PhononApp {
         self.selected_wire_ids.clear();
         self.selected_component_id = None;
         self.selected_wire_id = None;
+        self.drag_start_mouse_pos = None;
+        self.drag_attached_wires.clear();
+        self.unsolvable_wiring_components.clear();
         self.sync_selection_to_canvas();
     }
 
@@ -1753,11 +1776,14 @@ impl PhononApp {
             return;
         }
 
+        let mut moving_comp_ids = HashSet::new();
         let mut moving_pins = Vec::new();
         for comp in &self.components {
             if self.is_component_selected(comp.id) {
-                for (_, p) in comp.all_pins() {
-                    moving_pins.push(p);
+                moving_comp_ids.insert(comp.id);
+                for (pin_idx, (_, p)) in comp.all_pins().iter().enumerate() {
+                    let normal = comp.pin_normal(pin_idx);
+                    moving_pins.push((comp.id, pin_idx, *p, normal));
                 }
             }
         }
@@ -1772,6 +1798,13 @@ impl PhononApp {
             }
         }
 
+        let obstacles: Vec<Rect> = self
+            .components
+            .iter()
+            .filter(|c| !moving_comp_ids.contains(&c.id))
+            .map(|c| c.bounding_box())
+            .collect();
+
         let sel_wire_ids = self.selected_wire_ids.clone();
         let sel_wire_id = self.selected_wire_id;
         let is_wire_sel = |id: usize| sel_wire_ids.contains(&id) || sel_wire_id == Some(id);
@@ -1783,25 +1816,28 @@ impl PhononApp {
                     seg.end += delta;
                 }
             } else if !moving_pins.is_empty() {
-                let start_attached = wire.segments.first().map_or(false, |s| {
-                    moving_pins.iter().any(|&p| (p - s.start).length() <= 4.0)
-                });
-                let end_attached = wire.segments.last().map_or(false, |s| {
-                    moving_pins.iter().any(|&p| (p - s.end).length() <= 4.0)
-                });
+                let start_attached = moving_pins.iter().find(|(_, _, p, _)| (*p - wire.start_point()).length() <= 8.0);
+                let end_attached = moving_pins.iter().find(|(_, _, p, _)| (*p - wire.end_point()).length() <= 8.0);
 
-                if start_attached && end_attached {
+                if start_attached.is_some() && end_attached.is_some() {
                     for seg in &mut wire.segments {
                         seg.start += delta;
                         seg.end += delta;
                     }
-                } else if start_attached {
+                } else if let Some(&(_cid, _pidx, _p, normal)) = start_attached {
                     let old_end = wire.end_point();
                     let new_start = wire.start_point() + delta;
-                    let was_vh = wire.segments.first().map_or(false, |s| {
-                        (s.start.x - s.end.x).abs() < 1.0 && (s.start.y - s.end.y).abs() > 1.0
-                    });
-                    if was_vh {
+                    if let Some(routed) = SchematicWire::manhattan_route_avoiding_obstacles(
+                        wire.id,
+                        new_start,
+                        normal,
+                        old_end,
+                        None,
+                        &obstacles,
+                        wire.net_name.clone(),
+                    ) {
+                        *wire = routed;
+                    } else if normal.is_vertical() {
                         *wire = SchematicWire::manhattan_route_vh_with_net(
                             wire.id,
                             new_start,
@@ -1816,13 +1852,20 @@ impl PhononApp {
                             wire.net_name.clone(),
                         );
                     }
-                } else if end_attached {
+                } else if let Some(&(_cid, _pidx, _p, normal)) = end_attached {
                     let old_start = wire.start_point();
                     let new_end = wire.end_point() + delta;
-                    let was_vh = wire.segments.last().map_or(false, |s| {
-                        (s.start.x - s.end.x).abs() < 1.0 && (s.start.y - s.end.y).abs() > 1.0
-                    });
-                    if was_vh {
+                    if let Some(routed) = SchematicWire::manhattan_route_avoiding_obstacles(
+                        wire.id,
+                        old_start,
+                        normal.opposite(),
+                        new_end,
+                        Some(normal),
+                        &obstacles,
+                        wire.net_name.clone(),
+                    ) {
+                        *wire = routed;
+                    } else if normal.is_vertical() {
                         *wire = SchematicWire::manhattan_route_vh_with_net(
                             wire.id,
                             old_start,
@@ -2515,6 +2558,7 @@ impl PhononApp {
                             self.select_component(comp_id, false);
                         }
                         self.dragging_selection = true;
+                        self.drag_start_mouse_pos = Some(mouse_world);
                         self.drag_start_positions = self
                             .components
                             .iter()
@@ -2522,6 +2566,44 @@ impl PhononApp {
                             .map(|c| (c.id, c.pos))
                             .collect();
                         self.drag_start_wires = self.wires.clone();
+                        self.unsolvable_wiring_components.clear();
+
+                        // Cache permanent wire attachments to moving component pins
+                        let moving_comp_ids: HashSet<usize> =
+                            self.drag_start_positions.iter().map(|(id, _)| *id).collect();
+                        let mut attached = Vec::new();
+                        for c in &self.components {
+                            if moving_comp_ids.contains(&c.id) {
+                                for (pin_idx, (_, pin_pos)) in c.all_pins().iter().enumerate() {
+                                    for wire in &self.wires {
+                                        let is_start = (wire.start_point() - *pin_pos).length() <= 8.0;
+                                        let is_end = (wire.end_point() - *pin_pos).length() <= 8.0;
+                                        if is_start && is_end {
+                                            // Wire internal to moving component
+                                        } else if is_start {
+                                            attached.push(DragAttachedWire {
+                                                wire_id: wire.id,
+                                                is_start: true,
+                                                comp_id: c.id,
+                                                pin_idx,
+                                                other_end: wire.end_point(),
+                                                net_name: wire.net_name.clone(),
+                                            });
+                                        } else if is_end {
+                                            attached.push(DragAttachedWire {
+                                                wire_id: wire.id,
+                                                is_start: false,
+                                                comp_id: c.id,
+                                                pin_idx,
+                                                other_end: wire.start_point(),
+                                                net_name: wire.net_name.clone(),
+                                            });
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        self.drag_attached_wires = attached;
                     }
                 } else if let Some(wire) = self.wires.iter().rev().find(|w| w.contains(mouse_world, 6.0)) {
                     let wire_id = wire.id;
@@ -2541,9 +2623,107 @@ impl PhononApp {
 
             if response.dragged_by(PointerButton::Primary) && self.selected_tool == ToolMode::Select {
                 if self.dragging_selection {
-                    let delta = response.drag_delta() / self.canvas.zoom;
-                    self.translate_selection(delta);
-                    ui.ctx().request_repaint();
+                    if let Some(start_mouse) = self.drag_start_mouse_pos {
+                        let total_drag = mouse_world - start_mouse;
+                        let snapped_dx = (total_drag.x / 20.0).round() * 20.0;
+                        let snapped_dy = (total_drag.y / 20.0).round() * 20.0;
+                        let grid_delta = Vec2::new(snapped_dx, snapped_dy);
+
+                        let moving_comp_ids: HashSet<usize> =
+                            self.drag_start_positions.iter().map(|(id, _)| *id).collect();
+
+                        for (cid, start_pos) in &self.drag_start_positions {
+                            if let Some(c) = self.components.iter_mut().find(|c| c.id == *cid) {
+                                c.pos = self.canvas.snap_to_grid(*start_pos + grid_delta);
+                            }
+                        }
+
+                        // Collect non-moving component bounding boxes as obstacles
+                        let mut obstacles = Vec::new();
+                        let mut moving_bboxes = Vec::new();
+                        for c in &self.components {
+                            if moving_comp_ids.contains(&c.id) {
+                                moving_bboxes.push((c.id, c.bounding_box()));
+                            } else {
+                                obstacles.push(c.bounding_box());
+                            }
+                        }
+
+                        // Check collision: does any moving component overlap with stationary components?
+                        let mut has_collision = false;
+                        for (_cid, m_bbox) in &moving_bboxes {
+                            for obs in &obstacles {
+                                if m_bbox.shrink(2.0).intersects(*obs) {
+                                    has_collision = true;
+                                    break;
+                                }
+                            }
+                            if has_collision {
+                                break;
+                            }
+                        }
+
+                        if has_collision {
+                            // Collision detected! Keep wires at pre-drag snapshot, mark components as unsolvable
+                            self.wires = self.drag_start_wires.clone();
+                            for id in &moving_comp_ids {
+                                self.unsolvable_wiring_components.insert(*id);
+                            }
+                        } else {
+                            // Try routing all attached wires avoiding obstacles
+                            let mut wire_map: HashMap<usize, SchematicWire> =
+                                self.drag_start_wires.iter().map(|w| (w.id, w.clone())).collect();
+                            let mut routing_success = true;
+
+                            for att in &self.drag_attached_wires {
+                                let comp = match self.components.iter().find(|c| c.id == att.comp_id) {
+                                    Some(c) => c,
+                                    None => continue,
+                                };
+                                let moving_pin_pos = match comp.pin_world_pos(att.pin_idx) {
+                                    Some(p) => p,
+                                    None => continue,
+                                };
+                                let moving_pin_normal = comp.pin_normal(att.pin_idx);
+
+                                let (from, from_normal, to, to_normal) = if att.is_start {
+                                    (moving_pin_pos, moving_pin_normal, att.other_end, None)
+                                } else {
+                                    (att.other_end, moving_pin_normal.opposite(), moving_pin_pos, Some(moving_pin_normal))
+                                };
+
+                                if let Some(routed) = SchematicWire::manhattan_route_avoiding_obstacles(
+                                    att.wire_id,
+                                    from,
+                                    from_normal,
+                                    to,
+                                    to_normal,
+                                    &obstacles,
+                                    att.net_name.clone(),
+                                ) {
+                                    wire_map.insert(att.wire_id, routed);
+                                } else {
+                                    routing_success = false;
+                                    break;
+                                }
+                            }
+
+                            if routing_success {
+                                self.wires = wire_map.into_values().collect();
+                                for id in &moving_comp_ids {
+                                    self.unsolvable_wiring_components.remove(id);
+                                }
+                            } else {
+                                self.wires = self.drag_start_wires.clone();
+                                for id in &moving_comp_ids {
+                                    self.unsolvable_wiring_components.insert(*id);
+                                }
+                            }
+                        }
+
+                        self.sync_selection_to_canvas();
+                        ui.ctx().request_repaint();
+                    }
                 } else if self.marquee_start.is_some() {
                     self.marquee_current = Some(mouse_world);
                     self.sync_selection_to_canvas();
@@ -2553,16 +2733,12 @@ impl PhononApp {
 
             if response.drag_stopped() && self.selected_tool == ToolMode::Select {
                 if self.dragging_selection {
-                    // Snap moved selection to grid cleanly
-                    if let Some(&(first_id, _)) = self.drag_start_positions.first() {
-                        if let Some(comp) = self.components.iter().find(|c| c.id == first_id) {
-                            let snapped_pos = self.canvas.snap_to_grid(comp.pos);
-                            let snap_delta = snapped_pos - comp.pos;
-                            if snap_delta != Vec2::ZERO {
-                                self.translate_selection(snap_delta);
-                            }
-                        }
-                    }
+                    let moving_comp_ids: HashSet<usize> =
+                        self.drag_start_positions.iter().map(|(id, _)| *id).collect();
+
+                    let is_unsolvable = moving_comp_ids
+                        .iter()
+                        .any(|id| self.unsolvable_wiring_components.contains(id));
 
                     let mut batch = Vec::new();
                     for (id, start_pos) in self.drag_start_positions.drain(..) {
@@ -2577,14 +2753,18 @@ impl PhononApp {
                         }
                     }
 
-                    // Compare wire states before and after drag to record wire adjustments in history
-                    for start_wire in self.drag_start_wires.drain(..) {
-                        if let Some(curr_wire) = self.wires.iter().find(|w| w.id == start_wire.id) {
-                            if curr_wire.segments != start_wire.segments {
-                                batch.push(CanvasCommand::DeleteWire(start_wire));
-                                batch.push(CanvasCommand::AddWire(curr_wire.clone()));
+                    if !is_unsolvable {
+                        for start_wire in self.drag_start_wires.drain(..) {
+                            if let Some(curr_wire) = self.wires.iter().find(|w| w.id == start_wire.id) {
+                                if curr_wire.segments != start_wire.segments {
+                                    batch.push(CanvasCommand::DeleteWire(start_wire));
+                                    batch.push(CanvasCommand::AddWire(curr_wire.clone()));
+                                }
                             }
                         }
+                    } else {
+                        // Unsolvable state: keep pre-drag wires (disconnected), component moved, pin tips remain red
+                        self.drag_start_wires.clear();
                     }
 
                     if !batch.is_empty() {
@@ -2595,7 +2775,10 @@ impl PhononApp {
                         }
                         self.mark_dirty();
                     }
+
                     self.dragging_selection = false;
+                    self.drag_start_mouse_pos = None;
+                    self.drag_attached_wires.clear();
                     self.sync_selection_to_canvas();
                     ui.ctx().request_repaint();
                 } else if let (Some(m_start), Some(m_curr)) = (self.marquee_start.take(), self.marquee_current.take()) {
@@ -2698,7 +2881,13 @@ impl PhononApp {
                 }
             }
 
-            comp.render_with_theme(
+            let pin_override = if self.unsolvable_wiring_components.contains(&comp.id) {
+                Some(Color32::from_rgb(255, 60, 60))
+            } else {
+                None
+            };
+
+            comp.render_with_theme_and_override(
                 &painter,
                 &self.canvas,
                 is_sel,
@@ -2708,6 +2897,7 @@ impl PhononApp {
                     Some(&pin_voltages)
                 },
                 &theme,
+                pin_override,
             );
 
             // Thermal badge

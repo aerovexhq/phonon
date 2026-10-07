@@ -24,6 +24,33 @@ impl PinNormal {
     pub fn is_horizontal(&self) -> bool {
         matches!(self, Self::East | Self::West | Self::Horizontal)
     }
+
+    pub fn from_vec(v: egui::Vec2) -> Self {
+        if v.y.abs() >= v.x.abs() {
+            if v.y <= 0.0 {
+                Self::North
+            } else {
+                Self::South
+            }
+        } else {
+            if v.x >= 0.0 {
+                Self::East
+            } else {
+                Self::West
+            }
+        }
+    }
+
+    pub fn opposite(&self) -> Self {
+        match self {
+            Self::North => Self::South,
+            Self::South => Self::North,
+            Self::East => Self::West,
+            Self::West => Self::East,
+            Self::Vertical => Self::Vertical,
+            Self::Horizontal => Self::Horizontal,
+        }
+    }
 }
 
 pub type WirePinOrientation = PinNormal;
@@ -228,6 +255,93 @@ impl SchematicWire {
         w
     }
 
+    /// Checks if this wire intersects any obstacle in the given slice.
+    /// Obstacle rectangles are shrunk by 2.0px to avoid false positives along grid boundary channels.
+    pub fn intersects_obstacles(&self, obstacles: &[Rect]) -> bool {
+        for seg in &self.segments {
+            for obs in obstacles {
+                if obs.width() > 4.0 && obs.height() > 4.0 {
+                    if seg.intersects_rect(&obs.shrink(2.0)) {
+                        return true;
+                    }
+                } else if seg.intersects_rect(obs) {
+                    return true;
+                }
+            }
+        }
+        false
+    }
+
+    /// Creates an obstacle-avoiding Manhattan route between `from` and `to`.
+    /// Respects the departure pin normal `from_normal` and arrival pin normal `to_normal`.
+    /// Tests candidate orthogonal paths against `obstacles`. Returns `Some(wire)` if a clean path
+    /// is found, or `None` if all candidates intersect obstacles.
+    pub fn manhattan_route_avoiding_obstacles(
+        id: usize,
+        from: Pos2,
+        from_normal: PinNormal,
+        to: Pos2,
+        to_normal: Option<PinNormal>,
+        obstacles: &[Rect],
+        net_name: Option<String>,
+    ) -> Option<Self> {
+        let mut candidates = Vec::new();
+
+        // 1. Direct pin-normal aware 2-segment path
+        if from_normal.is_vertical() {
+            candidates.push(vec![from, Pos2::new(from.x, to.y), to]);
+        } else {
+            candidates.push(vec![from, Pos2::new(to.x, from.y), to]);
+        }
+
+        // 2. Direct pin-normal arrival 2-segment path
+        if let Some(tn) = to_normal {
+            if tn.is_vertical() {
+                candidates.push(vec![from, Pos2::new(to.x, from.y), to]);
+            } else {
+                candidates.push(vec![from, Pos2::new(from.x, to.y), to]);
+            }
+        }
+
+        // 3. Alternative 2-segment path
+        if from_normal.is_vertical() {
+            candidates.push(vec![from, Pos2::new(to.x, from.y), to]);
+        } else {
+            candidates.push(vec![from, Pos2::new(from.x, to.y), to]);
+        }
+
+        // 4. Midpoint Z-channels
+        let mid_y = ((from.y + to.y) * 0.5 / 20.0).round() * 20.0;
+        candidates.push(vec![from, Pos2::new(from.x, mid_y), Pos2::new(to.x, mid_y), to]);
+
+        let mid_x = ((from.x + to.x) * 0.5 / 20.0).round() * 20.0;
+        candidates.push(vec![from, Pos2::new(mid_x, from.y), Pos2::new(mid_x, to.y), to]);
+
+        // 5. Clearance channels around obstacles
+        for obs in obstacles {
+            let y_top = (obs.min.y / 20.0).floor() * 20.0 - 20.0;
+            candidates.push(vec![from, Pos2::new(from.x, y_top), Pos2::new(to.x, y_top), to]);
+
+            let y_bot = (obs.max.y / 20.0).ceil() * 20.0 + 20.0;
+            candidates.push(vec![from, Pos2::new(from.x, y_bot), Pos2::new(to.x, y_bot), to]);
+
+            let x_left = (obs.min.x / 20.0).floor() * 20.0 - 20.0;
+            candidates.push(vec![from, Pos2::new(x_left, from.y), Pos2::new(x_left, to.y), to]);
+
+            let x_right = (obs.max.x / 20.0).ceil() * 20.0 + 20.0;
+            candidates.push(vec![from, Pos2::new(x_right, from.y), Pos2::new(x_right, to.y), to]);
+        }
+
+        for cand_pts in candidates {
+            let wire = wire_from_points(id, &cand_pts, net_name.clone());
+            if !wire.intersects_obstacles(obstacles) {
+                return Some(wire);
+            }
+        }
+
+        None
+    }
+
     /// Checks if any segment of this wire intersects or is contained within the given rectangle.
     pub fn intersects_rect(&self, rect: &Rect) -> bool {
         self.segments.iter().any(|seg| seg.intersects_rect(rect))
@@ -372,4 +486,35 @@ pub fn segments_intersect(a: Pos2, b: Pos2, c: Pos2, d: Pos2) -> bool {
 
     false
 }
+
+/// Constructs a `SchematicWire` from a sequence of orthogonal points,
+/// filtering out zero-length segments and merging contiguous collinear segments.
+pub fn wire_from_points(id: usize, points: &[Pos2], net_name: Option<String>) -> SchematicWire {
+    let mut segments: Vec<WireSegment> = Vec::new();
+    for window in points.windows(2) {
+        let p1 = window[0];
+        let p2 = window[1];
+        if (p1.x - p2.x).abs() > 0.1 || (p1.y - p2.y).abs() > 0.1 {
+            if let Some(last) = segments.last_mut() {
+                let collinear_h = (last.start.y - last.end.y).abs() < 0.1
+                    && (p1.y - p2.y).abs() < 0.1
+                    && (last.end.y - p1.y).abs() < 0.1;
+                let collinear_v = (last.start.x - last.end.x).abs() < 0.1
+                    && (p1.x - p2.x).abs() < 0.1
+                    && (last.end.x - p1.x).abs() < 0.1;
+                if collinear_h || collinear_v {
+                    last.end = p2;
+                    continue;
+                }
+            }
+            segments.push(WireSegment::new(p1, p2));
+        }
+    }
+    SchematicWire {
+        id,
+        segments,
+        net_name,
+    }
+}
+
 

@@ -4,7 +4,7 @@
 
 use super::canvas::SchematicCanvas;
 use super::categories::ComponentCategory;
-use egui::{Align2, FontId, Painter, Pos2, Rect, Stroke, StrokeKind, Vec2};
+use egui::{Align2, Color32, FontId, Painter, Pos2, Rect, Stroke, StrokeKind, Vec2};
 
 /// The electrical or physical device type of a visual schematic component.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -1134,9 +1134,55 @@ impl SchematicComponent {
             .collect()
     }
 
+    /// Returns the departure normal of the pin at `pin_idx` in world coordinates.
+    pub fn pin_normal(&self, pin_idx: usize) -> crate::schematic::wire::PinNormal {
+        let pins = self.kind.pin_definitions();
+        let &(_, local_offset) = match pins.get(pin_idx) {
+            Some(p) => p,
+            None => return crate::schematic::wire::PinNormal::North,
+        };
+        let local_norm = if local_offset.y.abs() >= local_offset.x.abs() {
+            if local_offset.y <= 0.0 {
+                Vec2::new(0.0, -1.0)
+            } else {
+                Vec2::new(0.0, 1.0)
+            }
+        } else {
+            if local_offset.x <= 0.0 {
+                Vec2::new(-1.0, 0.0)
+            } else {
+                Vec2::new(1.0, 0.0)
+            }
+        };
+        let rotated_norm = self.transform_vec(local_norm);
+        crate::schematic::wire::PinNormal::from_vec(rotated_norm)
+    }
+
     /// Returns the axis-aligned bounding box of this component in world coordinates.
+    /// Narrowed for voltage sources and two-pin passives by 1 grid unit (20.0 px) on both sides.
     pub fn bounding_box(&self) -> Rect {
-        Rect::from_center_size(self.pos, Vec2::new(70.0, 70.0))
+        let (w, h) = match self.kind {
+            ComponentKind::VoltageSource
+            | ComponentKind::AcVoltageSource
+            | ComponentKind::CurrentSource
+            | ComponentKind::PulseGenerator
+            | ComponentKind::Resistor
+            | ComponentKind::Capacitor
+            | ComponentKind::Inductor
+            | ComponentKind::Diode
+            | ComponentKind::ZenerDiode
+            | ComponentKind::Led
+            | ComponentKind::SchottkyDiode => {
+                if self.rotation % 2 == 0 {
+                    (30.0, 70.0)
+                } else {
+                    (70.0, 30.0)
+                }
+            }
+            ComponentKind::Ground => (30.0, 40.0),
+            _ => (60.0, 60.0),
+        };
+        Rect::from_center_size(self.pos, Vec2::new(w, h))
     }
 
     /// Checks if this component's bounding box intersects with the given rectangle in world coordinates.
@@ -1175,6 +1221,26 @@ impl SchematicComponent {
         node_voltages: Option<&[(&str, f64)]>,
         theme: &crate::theme::PhononTheme,
     ) {
+        self.render_with_theme_and_override(
+            painter,
+            canvas,
+            is_selected,
+            node_voltages,
+            theme,
+            None,
+        );
+    }
+
+    /// Renders the component onto the painter with customizable theme colors and optional pin color override.
+    pub fn render_with_theme_and_override(
+        &self,
+        painter: &Painter,
+        canvas: &SchematicCanvas,
+        is_selected: bool,
+        node_voltages: Option<&[(&str, f64)]>,
+        theme: &crate::theme::PhononTheme,
+        pin_color_override: Option<Color32>,
+    ) {
         let stroke_color = if is_selected {
             theme.component_selected
         } else {
@@ -1192,10 +1258,15 @@ impl SchematicComponent {
         self.kind.draw_symbol(painter, stroke, &to_screen, canvas.zoom);
 
         // Draw pin snap dots
-        let pin_color = theme.pin_normal;
+        let pin_color = pin_color_override.unwrap_or(theme.pin_normal);
+        let pin_radius = if pin_color_override.is_some() {
+            4.5 * canvas.zoom.clamp(0.8, 1.6)
+        } else {
+            3.5 * canvas.zoom.clamp(0.8, 1.4)
+        };
         for (_, p_world) in self.all_pins() {
             let p_screen = canvas.world_to_screen(p_world);
-            painter.circle_filled(p_screen, 3.5 * canvas.zoom.clamp(0.8, 1.4), pin_color);
+            painter.circle_filled(p_screen, pin_radius, pin_color);
         }
 
         // Draw labels (Name and Value)
