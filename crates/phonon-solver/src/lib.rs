@@ -345,6 +345,7 @@ pub mod protected_braiding_lattice;
 pub mod optomechanical_squeezing;
 pub mod universal_braiding_processor;
 pub mod chiral_edge_magnetoplasmon;
+pub mod polariton_bec_vortices;
 
 pub use acoustic::{
     AcousticBenchmarkReport, AcousticBenchmarkRunner, AcousticLinkSimulator, AcousticRealismTier,
@@ -1298,5 +1299,13 @@ pub use chiral_edge_magnetoplasmon::{
     EmpAuditCriterion, EmpAuditReport, EmpCirculator, EmpCirculatorParams, EmpDispersionPoint,
     EmpSMatrix3x3, EmpSpectrumPoint, QuantumHallRouter, QuantumHallRouterParams, RouterChannel,
     RouterTransportMetrics,
+};
+
+pub use polariton_bec_vortices::{
+    BecCondensationMetrics, CondensateSpatialPoint, FringePatternPoint, GrossPitaevskiiSolver,
+    JosephsonInterferometerParams, JosephsonInterferometerSolver, JosephsonSensorMetrics,
+    JosephsonTrajectoryPoint, PolaritonBecAuditCriterion, PolaritonBecAuditReport,
+    PolaritonBecInterferometer, PolaritonBecParams, QuantizedVortexSolver, VortexCharge,
+    VortexGridPoint, VortexLatticeMetrics, VortexSuperfluidParams,
 };
 

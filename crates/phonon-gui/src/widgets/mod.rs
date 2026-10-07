@@ -88,6 +88,7 @@ pub mod optomagnonic_comb_dialog;
 pub mod floquet_sensor_dialog;
 pub mod giant_atom_dialog;
 pub mod chiral_emp_dialog;
+pub mod polariton_bec_dialog;
 
 pub use pill_badge::{
     proportional_zoom_scale, render_dual_telemetry_pill, render_pill_badge, PillBadgeStyle,
@@ -209,3 +210,4 @@ pub use optomagnonic_comb_dialog::{OptomagnonicCombDialog, OptomagnonicCombTab};
 pub use floquet_sensor_dialog::{FloquetSensorDialog, FloquetSensorTab};
 pub use giant_atom_dialog::{GiantAtomDialog, GiantAtomDialogTab};
 pub use chiral_emp_dialog::{ChiralEmpDialog, ChiralEmpDialogTab};
+pub use polariton_bec_dialog::{PolaritonBecDialog, PolaritonBecTab};

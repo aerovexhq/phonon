@@ -39,7 +39,7 @@ use crate::widgets::{
     NonHermitianSensorDialog, CornerDoublerDialog, UniversalBraidingDialog,
     ChiralCirculatorDialog, JosephsonParametricDialog, OptomagnonicCombDialog,
     FloquetSensorDialog, OptomechanicalTransducerDialog, CornerPolaritonMicrocombDialog,
-    GiantAtomDialog, ChiralEmpDialog,
+    GiantAtomDialog, ChiralEmpDialog, PolaritonBecDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -367,6 +367,9 @@ pub struct PhononApp {
     /// Interactive Topological Chiral Acoustic Edge-Magnetoplasmon Circulator & Router dialog.
     pub chiral_emp_dialog: ChiralEmpDialog,
 
+    /// Interactive Dissipative Polariton BEC Vortices, Non-Equilibrium Superfluidity & Josephson Acoustic Interferometer dialog.
+    pub polariton_bec_dialog: PolaritonBecDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -583,6 +586,7 @@ impl Default for PhononApp {
             floquet_sensor_dialog: FloquetSensorDialog::new_fast(),
             giant_atom_dialog: GiantAtomDialog::new_fast(),
             chiral_emp_dialog: ChiralEmpDialog::new_fast(),
+            polariton_bec_dialog: PolaritonBecDialog::new_fast(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -3556,6 +3560,9 @@ impl PhononApp {
 
         // 78. Interactive Topological Chiral Acoustic EMP Circulator & Router Dialog
         self.chiral_emp_dialog.ui(ui.ctx());
+
+        // 79. Interactive Dissipative Polariton BEC Vortices & Josephson Interferometer Dialog
+        self.polariton_bec_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {
