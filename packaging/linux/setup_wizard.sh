@@ -60,12 +60,25 @@ run_gui_wizard() {
         --width=560 --height=220)
 
     if [[ "$INSTALL_SCOPE" == *"System-Wide"* ]]; then
-        TARGET_BIN="/usr/local/bin"
-        TARGET_DESKTOP="/usr/share/applications"
-        TARGET_ICON="/usr/share/icons/hicolor/scalable/apps"
-        TARGET_BASH="/usr/share/bash-completion/completions"
-        TARGET_ZSH="/usr/share/zsh/site-functions"
-        SUDO_CMD="sudo"
+        if [[ $EUID -ne 0 ]] && ! (command -v sudo >/dev/null 2>&1 && sudo -n true 2>/dev/null); then
+            zenity --warning \
+                --title="${APP_TITLE} - Elevation Notice" \
+                --width=450 \
+                --text="System-wide installation requires administrative privileges, but sudo is unavailable or requires a password.\n\nPhonon does not require sudo. Falling back to User Space ($HOME/.local/bin)." || true
+            TARGET_BIN="$HOME/.local/bin"
+            TARGET_DESKTOP="$HOME/.local/share/applications"
+            TARGET_ICON="$HOME/.local/share/icons/hicolor/scalable/apps"
+            TARGET_BASH="$HOME/.local/share/bash-completion/completions"
+            TARGET_ZSH="$HOME/.local/share/zsh/site-functions"
+            SUDO_CMD=""
+        else
+            TARGET_BIN="/usr/local/bin"
+            TARGET_DESKTOP="/usr/share/applications"
+            TARGET_ICON="/usr/share/icons/hicolor/scalable/apps"
+            TARGET_BASH="/usr/share/bash-completion/completions"
+            TARGET_ZSH="/usr/share/zsh/site-functions"
+            SUDO_CMD="sudo"
+        fi
     else
         TARGET_BIN="$HOME/.local/bin"
         TARGET_DESKTOP="$HOME/.local/share/applications"
@@ -145,10 +158,19 @@ run_tui_wizard() {
                             "2" "System Wide (/usr/local/bin) [Requires sudo]" 3>&1 1>&2 2>&3)
 
     if [[ "$SCOPE_CHOICE" == "2" ]]; then
-        TARGET_BIN="/usr/local/bin"
-        TARGET_DESKTOP="/usr/share/applications"
-        TARGET_ICON="/usr/share/icons/hicolor/scalable/apps"
-        SUDO_CMD="sudo"
+        if [[ $EUID -ne 0 ]] && ! (command -v sudo >/dev/null 2>&1 && sudo -n true 2>/dev/null); then
+            $TUI_BIN --title "${APP_TITLE} - Elevation Notice" \
+                     --msgbox "System-wide installation requires administrative privileges, but sudo requires a password or is unavailable.\n\nPhonon does not require sudo. Falling back to User Space (~/.local/bin)." 12 65
+            TARGET_BIN="$HOME/.local/bin"
+            TARGET_DESKTOP="$HOME/.local/share/applications"
+            TARGET_ICON="$HOME/.local/share/icons/hicolor/scalable/apps"
+            SUDO_CMD=""
+        else
+            TARGET_BIN="/usr/local/bin"
+            TARGET_DESKTOP="/usr/share/applications"
+            TARGET_ICON="/usr/share/icons/hicolor/scalable/apps"
+            SUDO_CMD="sudo"
+        fi
     else
         TARGET_BIN="$HOME/.local/bin"
         TARGET_DESKTOP="$HOME/.local/share/applications"
@@ -184,10 +206,19 @@ run_cli_fallback() {
     echo "2) System Wide (/usr/local/bin)"
     read -rp "Select installation scope [1/2, default 1]: " choice
     if [[ "$choice" == "2" ]]; then
-        TARGET_BIN="/usr/local/bin"
-        TARGET_DESKTOP="/usr/share/applications"
-        TARGET_ICON="/usr/share/icons/hicolor/scalable/apps"
-        SUDO_CMD="sudo"
+        if [[ $EUID -ne 0 ]] && ! (command -v sudo >/dev/null 2>&1 && sudo -n true 2>/dev/null); then
+            echo "[WARN] System-wide installation requires administrative privileges, but sudo requires a password or is unavailable."
+            echo "[INFO] Phonon does not require sudo. Falling back to User Space (~/.local/bin)..."
+            TARGET_BIN="$HOME/.local/bin"
+            TARGET_DESKTOP="$HOME/.local/share/applications"
+            TARGET_ICON="$HOME/.local/share/icons/hicolor/scalable/apps"
+            SUDO_CMD=""
+        else
+            TARGET_BIN="/usr/local/bin"
+            TARGET_DESKTOP="/usr/share/applications"
+            TARGET_ICON="/usr/share/icons/hicolor/scalable/apps"
+            SUDO_CMD="sudo"
+        fi
     else
         TARGET_BIN="$HOME/.local/bin"
         TARGET_DESKTOP="$HOME/.local/share/applications"

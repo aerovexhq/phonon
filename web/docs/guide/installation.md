@@ -2,53 +2,49 @@
 
 Phonon provides multiple streamlined distribution packages designed for rapid setup, automated deployment, and seamless replacement on all major Linux distributions.
 
-## Method 1: Single Debian Package (.deb)
+## Method 1: Universal User-Space Installer (Recommended)
 
-Recommended for Debian, Ubuntu, Linux Mint, Pop!_OS, Zorin OS, and Elementary OS:
+Phonon is a desktop EDA CAD suite that runs purely in user-space and does not require superuser (`sudo`) privileges:
 
 ```bash
-# Download latest v0.1.0 release package
-wget https://github.com/aerovexhq/phonon/releases/download/v0.1.0/phonon_0.1.0_amd64.deb
+# User-space installation to ~/.local/bin (no sudo required):
+curl -fsSL https://phonon.aerovex.net/install.sh | bash
 
-# Install or replace existing installation
-sudo dpkg -i phonon_0.1.0_amd64.deb
+# Or install rootlessly from a downloaded .deb package without sudo:
+./install.sh phonon_0.1.0_amd64.deb
 
-# Verify installation
+# Verify installation:
 phonon
 ```
 
 ### What gets installed:
-- `/usr/bin/phonon` (Unified executable CLI + GUI launcher)
-- `/usr/share/applications/phonon.desktop` (Application menu launcher)
-- `/usr/share/icons/hicolor/scalable/apps/phonon.svg` (Scalable vector icon)
-- `/usr/share/bash-completion/completions/phonon` (Bash autocompletion)
-- `/usr/share/zsh/site-functions/_phonon` (Zsh autocompletion)
+- `~/.local/bin/phonon` (Unified executable CLI + GUI launcher)
+- `~/.local/share/applications/phonon.desktop` (Application menu launcher)
+- `~/.local/share/icons/hicolor/scalable/apps/phonon.svg` (Scalable vector icon)
+- `~/.local/share/bash-completion/completions/phonon` (Bash autocompletion)
+- `~/.local/share/zsh/site-functions/_phonon` (Zsh autocompletion)
 
-To uninstall or purge:
+To uninstall:
 ```bash
-sudo dpkg -r phonon
-# or to purge configuration:
-sudo dpkg -P phonon
+./install.sh --uninstall
 ```
 
 ---
 
-## Method 2: Universal Single-Command Installer
+## Method 2: System-Wide Debian Package (.deb)
 
-Supports all popular distributions (Debian, Ubuntu, Fedora, Arch, RHEL, openSUSE, Alpine, Void, NixOS):
+For system administrators configuring a multi-user machine or root environment:
 
 ```bash
-# System-wide installation (requires sudo)
-curl -fsSL https://phonon.aerovex.net/install.sh | bash
+# Download release package
+wget https://github.com/aerovexhq/phonon/releases/download/v0.1.0/phonon_0.1.0_amd64.deb
 
-# Non-root user-local installation (installs to ~/.local/bin)
-curl -fsSL https://phonon.aerovex.net/install.sh | bash -s -- --rootless
+# System-wide installation
+sudo dpkg -i phonon_0.1.0_amd64.deb
 
-# Custom installation prefix
-curl -fsSL https://phonon.aerovex.net/install.sh | bash -s -- --prefix /opt/phonon
+# Or with custom system prefix:
+sudo bash install.sh --system --prefix /opt/phonon
 ```
-
-The installer script automatically detects your distribution family, downloads the optimized release package, performs cryptographic SHA-256 validation against `SHA256SUMS`, and sets up desktop shortcuts and shell completions.
 
 ---
 
