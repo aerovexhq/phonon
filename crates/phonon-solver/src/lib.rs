@@ -350,6 +350,7 @@ pub mod synthetic_dimension_router;
 pub mod non_hermitian_skin_laser;
 pub mod moire_polariton_comb;
 pub mod holonomic_braiding_coprocessor;
+pub mod valley_chiral_isolator;
 
 pub use acoustic::{
     AcousticBenchmarkReport, AcousticBenchmarkRunner, AcousticLinkSimulator, AcousticRealismTier,
@@ -1344,5 +1345,12 @@ pub use holonomic_braiding_coprocessor::{
     HolonomicGateKind, HolonomicGateMetrics, HolonomicGateParams, HolonomicGateSolver,
     HolonomicTrajectoryPoint,
 };
+
+pub use valley_chiral_isolator::{
+    ChiralIsolatorParams, ChiralIsolatorSolver, ChiralSParameterPoint, MicrowavePhononTransducer,
+    TransducerParams, TransducerResponsePoint, ValleyChiralAuditReport, ValleyChiralIsolator,
+    ValleyChiralParams, ValleyEdgeMode, ValleyEdgeParams, ValleyHallLattice, ValleyPolarity,
+};
+
 
 

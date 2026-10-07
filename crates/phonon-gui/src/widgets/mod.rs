@@ -93,6 +93,7 @@ pub mod synthetic_dimension_dialog;
 pub mod non_hermitian_skin_laser_dialog;
 pub mod moire_polariton_comb_dialog;
 pub mod holonomic_coprocessor_dialog;
+pub mod valley_chiral_isolator_dialog;
 
 pub use pill_badge::{
     proportional_zoom_scale, render_dual_telemetry_pill, render_pill_badge, PillBadgeStyle,
@@ -219,3 +220,4 @@ pub use synthetic_dimension_dialog::{SyntheticDimensionDialog, SyntheticDimensio
 pub use non_hermitian_skin_laser_dialog::{NonHermitianSkinLaserDialog, SkinLaserTab};
 pub use moire_polariton_comb_dialog::{MoireCombTab, MoirePolaritonCombDialog};
 pub use holonomic_coprocessor_dialog::{HolonomicCoprocessorDialog, HolonomicCoprocessorTab};
+pub use valley_chiral_isolator_dialog::{ValleyChiralIsolatorDialog, ValleyChiralTab};
