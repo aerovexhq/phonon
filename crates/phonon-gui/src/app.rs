@@ -40,7 +40,7 @@ use crate::widgets::{
     ChiralCirculatorDialog, JosephsonParametricDialog, OptomagnonicCombDialog,
     FloquetSensorDialog, OptomechanicalTransducerDialog, CornerPolaritonMicrocombDialog,
     GiantAtomDialog, ChiralEmpDialog, PolaritonBecDialog, SyntheticDimensionDialog,
-    NonHermitianSkinLaserDialog, MoirePolaritonCombDialog,
+    NonHermitianSkinLaserDialog, MoirePolaritonCombDialog, HolonomicCoprocessorDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -380,6 +380,9 @@ pub struct PhononApp {
     /// Interactive Topological Acoustic Moiré Flat-Band Polariton Soliton & Higher-Order Corner Comb dialog.
     pub moire_polariton_comb_dialog: MoirePolaritonCombDialog,
 
+    /// Interactive Quantum Metamaterial Non-Abelian Holonomic Braiding & CMOS-MEMS Co-Processor dialog.
+    pub holonomic_coprocessor_dialog: HolonomicCoprocessorDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -600,6 +603,7 @@ impl Default for PhononApp {
             synthetic_dimension_dialog: SyntheticDimensionDialog::new_fast(),
             non_hermitian_skin_laser_dialog: NonHermitianSkinLaserDialog::new_fast(),
             moire_polariton_comb_dialog: MoirePolaritonCombDialog::new_fast(),
+            holonomic_coprocessor_dialog: HolonomicCoprocessorDialog::new_fast(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -3585,6 +3589,9 @@ impl PhononApp {
 
         // 82. Interactive Topological Acoustic Moiré Flat-Band Polariton Soliton & Higher-Order Corner Comb Dialog
         self.moire_polariton_comb_dialog.ui(ui.ctx());
+
+        // 83. Interactive Quantum Metamaterial Non-Abelian Holonomic Braiding & CMOS-MEMS Co-Processor Dialog
+        self.holonomic_coprocessor_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {

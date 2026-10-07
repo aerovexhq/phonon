@@ -349,6 +349,7 @@ pub mod polariton_bec_vortices;
 pub mod synthetic_dimension_router;
 pub mod non_hermitian_skin_laser;
 pub mod moire_polariton_comb;
+pub mod holonomic_braiding_coprocessor;
 
 pub use acoustic::{
     AcousticBenchmarkReport, AcousticBenchmarkRunner, AcousticLinkSimulator, AcousticRealismTier,
@@ -1333,6 +1334,15 @@ pub use moire_polariton_comb::{
     MoireFlatBandMetrics, MoireFlatBandParams, MoireFlatBandSolver, MoirePolaritonComb,
     MoireSpatialPoint, PolaritonSolitonMetrics, PolaritonSolitonParams, PolaritonSolitonSolver,
     SolitonProfilePoint,
+};
+
+pub use holonomic_braiding_coprocessor::{
+    ActuatorPulsePoint, BraidTrajectoryPoint, ChannelCrossbarStatus, CmosMemsMetrics,
+    CmosMemsParams, CmosMemsSolver, HoloBraidingMetrics, HoloBraidingParams, HoloBraidingSolver,
+    HoloComplex, HoloMajoranaMode, HoloMatrix2x2, HoloParitySpectrumPoint,
+    HolonomicAuditCriterion, HolonomicAuditReport, HolonomicBraidStep, HolonomicBraidingCoprocessor,
+    HolonomicGateKind, HolonomicGateMetrics, HolonomicGateParams, HolonomicGateSolver,
+    HolonomicTrajectoryPoint,
 };
 
 
