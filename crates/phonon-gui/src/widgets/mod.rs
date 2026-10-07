@@ -100,6 +100,7 @@ pub mod chiral_majorana_dialog;
 pub mod floquet_corner_laser_dialog;
 pub mod parafermion_dialog;
 pub mod chiral_acoustomagnonic_dialog;
+pub mod floquet_corner_transducer_dialog;
 
 pub use pill_badge::{
     proportional_zoom_scale, render_dual_telemetry_pill, render_pill_badge, PillBadgeStyle,
@@ -244,4 +245,7 @@ pub use parafermion_dialog::{
 };
 pub use chiral_acoustomagnonic_dialog::{
     AcoustomagnonicTab, ChiralAcoustomagnonicDialog,
+};
+pub use floquet_corner_transducer_dialog::{
+    CornerTransducerTab, FloquetCornerTransducerDialog,
 };

@@ -357,6 +357,7 @@ pub mod chiral_majorana_braiding;
 pub mod floquet_corner_laser;
 pub mod parafermion_braiding;
 pub mod chiral_acoustomagnonic_isolator;
+pub mod floquet_corner_transducer;
 
 pub use acoustic::{
     AcousticBenchmarkReport, AcousticBenchmarkRunner, AcousticLinkSimulator, AcousticRealismTier,
@@ -1400,6 +1401,14 @@ pub use chiral_acoustomagnonic_isolator::{
     AcoustomagnonicParams, ChiralAcoustomagnonicProcessor, CryogenicCirculatorMetrics,
     CryogenicCirculatorParams, CryogenicQubitCirculator, NonReciprocalSawIsolator,
     QubitCirculatorSMatrix, SawFrequencyResponsePoint, SawIsolatorMetrics,
+};
+
+pub use floquet_corner_transducer::{
+    CornerModeProperties, CornerRoutingMetrics, CornerStateTransducer,
+    CornerTransducerAuditReport, CornerTransducerParams, CornerTransductionMetrics,
+    EntanglementRouterParams, EntanglementVerificationReport,
+    FloquetCornerTransducerProcessor, NonReciprocalEntanglementRouter,
+    TargetEntangledState, TransductionTrajectoryPoint,
 };
 
 

@@ -43,7 +43,7 @@ use crate::widgets::{
     NonHermitianSkinLaserDialog, MoirePolaritonCombDialog, HolonomicCoprocessorDialog,
     ValleyChiralIsolatorDialog, FloquetSpinHallCirculatorDialog, OctupoleDislocationDialog,
     ChiralMajoranaDialog, FloquetCornerLaserDialog, ParafermionDialog,
-    ChiralAcoustomagnonicDialog,
+    ChiralAcoustomagnonicDialog, FloquetCornerTransducerDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -424,6 +424,9 @@ pub struct PhononApp {
     /// Interactive Quantum Metamaterial Chiral Acoustomagnonic Isolator & Cryogenic Circulator dialog.
     pub acoustomagnonic_dialog: ChiralAcoustomagnonicDialog,
 
+    /// Interactive Topological Acoustic Floquet Corner-State Transducer & Entanglement Router dialog.
+    pub floquet_corner_transducer_dialog: FloquetCornerTransducerDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -655,6 +658,7 @@ impl Default for PhononApp {
             floquet_corner_laser_dialog: FloquetCornerLaserDialog::new_fast(),
             parafermion_dialog: ParafermionDialog::new_fast(),
             acoustomagnonic_dialog: ChiralAcoustomagnonicDialog::new_fast(),
+            floquet_corner_transducer_dialog: FloquetCornerTransducerDialog::new_fast(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -3834,6 +3838,9 @@ impl PhononApp {
 
         // 90. Interactive Quantum Metamaterial Chiral Acoustomagnonic Isolator & Cryogenic Circulator Dialog
         self.acoustomagnonic_dialog.ui(ui.ctx());
+
+        // 91. Interactive Topological Acoustic Floquet Corner-State Transducer & Entanglement Router Dialog
+        self.floquet_corner_transducer_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {
