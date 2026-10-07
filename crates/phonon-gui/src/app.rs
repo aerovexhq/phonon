@@ -40,6 +40,7 @@ use crate::widgets::{
     ChiralCirculatorDialog, JosephsonParametricDialog, OptomagnonicCombDialog,
     FloquetSensorDialog, OptomechanicalTransducerDialog, CornerPolaritonMicrocombDialog,
     GiantAtomDialog, ChiralEmpDialog, PolaritonBecDialog, SyntheticDimensionDialog,
+    NonHermitianSkinLaserDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -373,6 +374,9 @@ pub struct PhononApp {
     /// Interactive Topological Acoustic Synthetic Dimension Chern Insulator & High-Dimensional Multiplexed Router dialog.
     pub synthetic_dimension_dialog: SyntheticDimensionDialog,
 
+    /// Interactive Non-Hermitian Higher-Order Topological Quadrupole Skin Laser & Emitter dialog.
+    pub non_hermitian_skin_laser_dialog: NonHermitianSkinLaserDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -591,6 +595,7 @@ impl Default for PhononApp {
             chiral_emp_dialog: ChiralEmpDialog::new_fast(),
             polariton_bec_dialog: PolaritonBecDialog::new_fast(),
             synthetic_dimension_dialog: SyntheticDimensionDialog::new_fast(),
+            non_hermitian_skin_laser_dialog: NonHermitianSkinLaserDialog::new_fast(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -3570,6 +3575,9 @@ impl PhononApp {
 
         // 80. Interactive Topological Acoustic Synthetic Dimension & Multiplexed Router Dialog
         self.synthetic_dimension_dialog.ui(ui.ctx());
+
+        // 81. Interactive Non-Hermitian Higher-Order Topological Quadrupole Skin Laser & Emitter Dialog
+        self.non_hermitian_skin_laser_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {

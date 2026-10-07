@@ -347,6 +347,7 @@ pub mod universal_braiding_processor;
 pub mod chiral_edge_magnetoplasmon;
 pub mod polariton_bec_vortices;
 pub mod synthetic_dimension_router;
+pub mod non_hermitian_skin_laser;
 
 pub use acoustic::{
     AcousticBenchmarkReport, AcousticBenchmarkRunner, AcousticLinkSimulator, AcousticRealismTier,
@@ -1316,6 +1317,13 @@ pub use synthetic_dimension_router::{
     SyntheticLatticeParams, SyntheticLatticePoint, SyntheticLatticeSolver,
     SyntheticMultiplexedRouter, SyntheticRouterMetrics, SyntheticRouterParams, WeylArcPoint,
     WeylSyntheticParams, WeylTransportMetrics, WeylTransportSolver, WeylWavepacketPoint,
+};
+
+pub use non_hermitian_skin_laser::{
+    ChiralEmitterMetrics, ChiralEmitterParams, ChiralEmitterSolver, ComplexEigenPoint,
+    LaserCurvePoint, NonHermitianSkinLaser, QuadrupoleSkinMetrics, QuadrupoleSkinParams,
+    QuadrupoleSkinPoint, QuadrupoleSkinSolver, RadiationPatternPoint, SkinLaserAuditCriterion,
+    SkinLaserAuditReport, TopologicalLaserMetrics, TopologicalLaserParams, TopologicalLaserSolver,
 };
 
 
