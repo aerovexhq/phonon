@@ -39,7 +39,7 @@ use crate::widgets::{
     NonHermitianSensorDialog, CornerDoublerDialog, UniversalBraidingDialog,
     ChiralCirculatorDialog, JosephsonParametricDialog, OptomagnonicCombDialog,
     FloquetSensorDialog, OptomechanicalTransducerDialog, CornerPolaritonMicrocombDialog,
-    GiantAtomDialog, ChiralEmpDialog, PolaritonBecDialog,
+    GiantAtomDialog, ChiralEmpDialog, PolaritonBecDialog, SyntheticDimensionDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -370,6 +370,9 @@ pub struct PhononApp {
     /// Interactive Dissipative Polariton BEC Vortices, Non-Equilibrium Superfluidity & Josephson Acoustic Interferometer dialog.
     pub polariton_bec_dialog: PolaritonBecDialog,
 
+    /// Interactive Topological Acoustic Synthetic Dimension Chern Insulator & High-Dimensional Multiplexed Router dialog.
+    pub synthetic_dimension_dialog: SyntheticDimensionDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -587,6 +590,7 @@ impl Default for PhononApp {
             giant_atom_dialog: GiantAtomDialog::new_fast(),
             chiral_emp_dialog: ChiralEmpDialog::new_fast(),
             polariton_bec_dialog: PolaritonBecDialog::new_fast(),
+            synthetic_dimension_dialog: SyntheticDimensionDialog::new_fast(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -3563,6 +3567,9 @@ impl PhononApp {
 
         // 79. Interactive Dissipative Polariton BEC Vortices & Josephson Interferometer Dialog
         self.polariton_bec_dialog.ui(ui.ctx());
+
+        // 80. Interactive Topological Acoustic Synthetic Dimension & Multiplexed Router Dialog
+        self.synthetic_dimension_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {
