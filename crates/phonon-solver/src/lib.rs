@@ -354,6 +354,7 @@ pub mod valley_chiral_isolator;
 pub mod floquet_spinhall_circulator;
 pub mod octupole_dislocation_router;
 pub mod chiral_majorana_braiding;
+pub mod floquet_corner_laser;
 
 pub use acoustic::{
     AcousticBenchmarkReport, AcousticBenchmarkRunner, AcousticLinkSimulator, AcousticRealismTier,
@@ -1375,6 +1376,13 @@ pub use chiral_majorana_braiding::{
     ChiralMajoranaParams, ChiralMajoranaProcessor, ChiralParitySpectrumPoint, ChiralStabilizerKind,
     ChiralSurfaceDecoder, ChiralSurfaceDecoderParams, ChiralSyndromeDefect,
     ChiralTransmonParityReadout, ChiralTransmonReadoutParams,
+};
+
+pub use floquet_corner_laser::{
+    CornerLaserParams, CornerLaserSolver, CornerLasingMode, FloquetCornerLaserParams,
+    FloquetCornerLaserProcessor, FloquetLaserAuditReport, LaserSpectralPoint,
+    VortexAmplifierParams, VortexAmplifierPoint, VortexAmplifierSolver, VortexOamCharge,
+    VortexSpatialPoint,
 };
 
 
