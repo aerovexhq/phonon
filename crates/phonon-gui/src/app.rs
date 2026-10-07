@@ -509,6 +509,10 @@ pub struct PhononApp {
 
     /// Last recorded interactive canvas viewport rect.
     pub last_canvas_rect: egui::Rect,
+
+    #[cfg(feature = "devtools")]
+    /// Interactive DevTools state and scenario runner.
+    pub devtools_state: crate::devtools::DevtoolsState,
 }
 
 impl std::fmt::Debug for PhononApp {
@@ -691,6 +695,8 @@ impl Default for PhononApp {
             preferences_dialog: PreferencesDialog::new(),
             should_close: false,
             last_canvas_rect: egui::Rect::from_min_size(egui::Pos2::ZERO, egui::Vec2::new(800.0, 600.0)),
+            #[cfg(feature = "devtools")]
+            devtools_state: crate::devtools::DevtoolsState::default(),
         };
 
         // Load saved preferences
@@ -3950,11 +3956,282 @@ impl PhononApp {
         if self.should_close {
             ui.ctx().send_viewport_cmd(egui::ViewportCommand::Close);
         }
+
+        // 33. DevTools in-app overlay rendering (gated under devtools feature)
+        #[cfg(feature = "devtools")]
+        {
+            if ui.input(|i| i.key_pressed(egui::Key::F12)) {
+                self.devtools_state.toggle_visibility();
+            }
+            let mut devtools = self.devtools_state.clone();
+            devtools.render(ui.ctx(), self);
+            self.devtools_state = devtools;
+        }
     }
 }
 
 impl App for PhononApp {
     fn ui(&mut self, ui: &mut Ui, frame: &mut Frame) {
         self.update(ui, frame);
+    }
+}
+
+#[cfg(any(test, feature = "devtools"))]
+impl PhononApp {
+    /// Devtools helper: Initiates a drag interaction on the specified component.
+    pub fn devtools_start_drag(&mut self, comp_id: usize) {
+        if !self.is_component_selected(comp_id) {
+            self.select_component(comp_id, false);
+        }
+        let comp_pos = self
+            .components
+            .iter()
+            .find(|c| c.id == comp_id)
+            .map(|c| c.pos)
+            .unwrap_or(Pos2::ZERO);
+        self.dragging_selection = true;
+        self.drag_start_mouse_pos = Some(comp_pos);
+        self.drag_start_positions = self
+            .components
+            .iter()
+            .filter(|c| self.is_component_selected(c.id))
+            .map(|c| (c.id, c.pos))
+            .collect();
+        self.drag_start_wires = self.wires.clone();
+        self.unsolvable_wiring_components.clear();
+
+        let moving_comp_ids: HashSet<usize> =
+            self.drag_start_positions.iter().map(|(id, _)| *id).collect();
+        let mut attached = Vec::new();
+        for c in &self.components {
+            if moving_comp_ids.contains(&c.id) {
+                for (pin_idx, (_, pin_pos)) in c.all_pins().iter().enumerate() {
+                    for wire in &self.wires {
+                        let is_start = (wire.start_point() - *pin_pos).length() <= 8.0;
+                        let is_end = (wire.end_point() - *pin_pos).length() <= 8.0;
+                        if is_start && is_end {
+                        } else if is_start {
+                            attached.push(DragAttachedWire {
+                                wire_id: wire.id,
+                                is_start: true,
+                                comp_id: c.id,
+                                pin_idx,
+                                other_end: wire.end_point(),
+                                net_name: wire.net_name.clone(),
+                            });
+                        } else if is_end {
+                            attached.push(DragAttachedWire {
+                                wire_id: wire.id,
+                                is_start: false,
+                                comp_id: c.id,
+                                pin_idx,
+                                other_end: wire.start_point(),
+                                net_name: wire.net_name.clone(),
+                            });
+                        }
+                    }
+                }
+            }
+        }
+        self.drag_attached_wires = attached;
+        self.sync_selection_to_canvas();
+    }
+
+    /// Devtools helper: Updates the drag position by a relative delta.
+    pub fn devtools_drag_delta(&mut self, delta: Vec2) {
+        if !self.dragging_selection {
+            return;
+        }
+        let start_mouse = match self.drag_start_mouse_pos {
+            Some(p) => p,
+            None => return,
+        };
+        let new_pos = start_mouse + delta;
+        self.devtools_drag_to(new_pos);
+    }
+
+    /// Devtools helper: Updates the drag position to an absolute target world coordinate.
+    pub fn devtools_drag_to(&mut self, mouse_world: Pos2) {
+        if !self.dragging_selection {
+            return;
+        }
+        let start_mouse = match self.drag_start_mouse_pos {
+            Some(p) => p,
+            None => return,
+        };
+        let total_drag = mouse_world - start_mouse;
+        let snapped_dx = (total_drag.x / 20.0).round() * 20.0;
+        let snapped_dy = (total_drag.y / 20.0).round() * 20.0;
+        let grid_delta = Vec2::new(snapped_dx, snapped_dy);
+
+        let moving_comp_ids: HashSet<usize> =
+            self.drag_start_positions.iter().map(|(id, _)| *id).collect();
+
+        for (cid, start_pos) in &self.drag_start_positions {
+            if let Some(c) = self.components.iter_mut().find(|c| c.id == *cid) {
+                c.pos = self.canvas.snap_to_grid(*start_pos + grid_delta);
+            }
+        }
+
+        let mut obstacles = Vec::new();
+        let mut moving_bboxes = Vec::new();
+        for c in &self.components {
+            if moving_comp_ids.contains(&c.id) {
+                moving_bboxes.push((c.id, c.bounding_box()));
+            } else {
+                obstacles.push(c.bounding_box());
+            }
+        }
+
+        let mut has_collision = false;
+        for (_cid, m_bbox) in &moving_bboxes {
+            for obs in &obstacles {
+                if m_bbox.shrink(2.0).intersects(*obs) {
+                    has_collision = true;
+                    break;
+                }
+            }
+            if has_collision {
+                break;
+            }
+        }
+
+        if has_collision {
+            self.wires = self.drag_start_wires.clone();
+            for id in &moving_comp_ids {
+                self.unsolvable_wiring_components.insert(*id);
+            }
+        } else {
+            let mut wire_map: HashMap<usize, SchematicWire> =
+                self.drag_start_wires.iter().map(|w| (w.id, w.clone())).collect();
+            let mut routing_success = true;
+
+            for att in &self.drag_attached_wires {
+                let comp = match self.components.iter().find(|c| c.id == att.comp_id) {
+                    Some(c) => c,
+                    None => continue,
+                };
+                let moving_pin_pos = match comp.pin_world_pos(att.pin_idx) {
+                    Some(p) => p,
+                    None => continue,
+                };
+                let moving_pin_normal = comp.pin_normal(att.pin_idx);
+
+                let (from, from_normal, to, to_normal) = if att.is_start {
+                    (moving_pin_pos, moving_pin_normal, att.other_end, None)
+                } else {
+                    (att.other_end, moving_pin_normal.opposite(), moving_pin_pos, Some(moving_pin_normal))
+                };
+
+                if let Some(routed) = SchematicWire::manhattan_route_avoiding_obstacles(
+                    att.wire_id,
+                    from,
+                    from_normal,
+                    to,
+                    to_normal,
+                    &obstacles,
+                    att.net_name.clone(),
+                ) {
+                    wire_map.insert(att.wire_id, routed);
+                } else {
+                    routing_success = false;
+                    break;
+                }
+            }
+
+            if routing_success {
+                self.wires = wire_map.into_values().collect();
+                for id in &moving_comp_ids {
+                    self.unsolvable_wiring_components.remove(id);
+                }
+            } else {
+                self.wires = self.drag_start_wires.clone();
+                for id in &moving_comp_ids {
+                    self.unsolvable_wiring_components.insert(*id);
+                }
+            }
+        }
+
+        self.sync_selection_to_canvas();
+    }
+
+    /// Devtools helper: Finishes dragging and records history.
+    pub fn devtools_finish_drag(&mut self) {
+        if !self.dragging_selection {
+            return;
+        }
+        let moving_comp_ids: HashSet<usize> =
+            self.drag_start_positions.iter().map(|(id, _)| *id).collect();
+
+        let is_unsolvable = moving_comp_ids
+            .iter()
+            .any(|id| self.unsolvable_wiring_components.contains(id));
+
+        let mut batch = Vec::new();
+        for (id, start_pos) in self.drag_start_positions.drain(..) {
+            if let Some(comp) = self.components.iter().find(|c| c.id == id) {
+                if comp.pos != start_pos {
+                    batch.push(CanvasCommand::MoveComponent {
+                        id,
+                        from: start_pos,
+                        to: comp.pos,
+                    });
+                }
+            }
+        }
+
+        if !is_unsolvable {
+            for start_wire in self.drag_start_wires.drain(..) {
+                if let Some(curr_wire) = self.wires.iter().find(|w| w.id == start_wire.id) {
+                    if curr_wire.segments != start_wire.segments {
+                        batch.push(CanvasCommand::DeleteWire(start_wire));
+                        batch.push(CanvasCommand::AddWire(curr_wire.clone()));
+                    }
+                }
+            }
+        } else {
+            self.drag_start_wires.clear();
+        }
+
+        if !batch.is_empty() {
+            if batch.len() == 1 {
+                self.history.record(batch.remove(0));
+            } else {
+                self.history.record(CanvasCommand::Batch(batch));
+            }
+            self.mark_dirty();
+        }
+
+        self.dragging_selection = false;
+        self.drag_start_mouse_pos = None;
+        self.drag_attached_wires.clear();
+        self.sync_selection_to_canvas();
+    }
+
+    /// Devtools helper: Starts marquee selection.
+    pub fn devtools_start_marquee(&mut self, start: Pos2) {
+        self.marquee_start = Some(start);
+        self.marquee_current = Some(start);
+        self.canvas.marquee_start = Some(start);
+        self.canvas.marquee_current = Some(start);
+    }
+
+    /// Devtools helper: Updates marquee selection coordinates.
+    pub fn devtools_update_marquee(&mut self, current: Pos2) {
+        self.marquee_current = Some(current);
+        self.canvas.marquee_current = Some(current);
+    }
+
+    /// Devtools helper: Finalizes marquee selection.
+    pub fn devtools_finish_marquee(&mut self) {
+        if let (Some(m_start), Some(m_curr)) = (self.marquee_start.take(), self.marquee_current.take()) {
+            let marquee_rect = Rect::from_two_pos(m_start, m_curr);
+            if marquee_rect.width() > 3.0 || marquee_rect.height() > 3.0 {
+                self.select_in_rect(marquee_rect, false);
+            }
+        }
+        self.canvas.marquee_start = None;
+        self.canvas.marquee_current = None;
+        self.sync_selection_to_canvas();
     }
 }

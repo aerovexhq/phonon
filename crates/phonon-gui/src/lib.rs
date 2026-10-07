@@ -14,6 +14,9 @@ pub mod theme;
 pub mod thermal;
 pub mod widgets;
 
+#[cfg(any(test, feature = "devtools"))]
+pub mod devtools;
+
 pub use scripting::{
     evaluate_expression, generate_trace, parse_expression, AssertionRecord, ExpressionGrapher,
     LuaEngine, LuaFunction, LuaTable, LuaValue, MathAst, MathOp, PermissionKind,
@@ -75,6 +78,12 @@ pub use widgets::thermal_floorplan_dialog::ThermalFloorplanDialog;
 pub use widgets::lua_console_dialog::{LuaConsoleDialog, ScriptPreset};
 pub use widgets::top_frame::{
     self, render_top_frame, render_top_frame_with_app, TopFrameAction, TopFrameConfig,
+};
+
+#[cfg(any(test, feature = "devtools"))]
+pub use devtools::{
+    capture_window_screenshot, find_phonon_window_id, DevtoolsState, ScreenshotInfo,
+    ScriptRunner, UiAction, UiScript,
 };
 pub use widgets::weyl_semimetal_dialog::{SemimetalMode, WeylSemimetalDialog};
 pub use widgets::fqh_braiding_dialog::FqhBraidingDialog;

@@ -31,6 +31,21 @@ wasm-bindgen-futures = "0.4"
 js-sys = "0.3"
 web-sys = { version = "0.3", features = ["Window", "Document", "HtmlCanvasElement", "Storage", "Element", "HtmlAnchorElement", "Blob", "BlobPropertyBag", "Url"] }
 
+[features]
+default = []
+devtools = []
+
 [[bin]]
 name = "phonon-gui"
 path = "src/main.rs"
+
+[[example]]
+name = "ui_devtools"
+path = "examples/ui_devtools.rs"
+required-features = ["devtools"]
+
+[[test]]
+name = "ui_devtools_tests"
+path = "tests/ui_devtools_tests.rs"
+required-features = ["devtools"]
+
