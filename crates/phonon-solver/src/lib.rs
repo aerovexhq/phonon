@@ -355,6 +355,7 @@ pub mod floquet_spinhall_circulator;
 pub mod octupole_dislocation_router;
 pub mod chiral_majorana_braiding;
 pub mod floquet_corner_laser;
+pub mod parafermion_braiding;
 
 pub use acoustic::{
     AcousticBenchmarkReport, AcousticBenchmarkRunner, AcousticLinkSimulator, AcousticRealismTier,
@@ -1383,6 +1384,14 @@ pub use floquet_corner_laser::{
     FloquetCornerLaserProcessor, FloquetLaserAuditReport, LaserSpectralPoint,
     VortexAmplifierParams, VortexAmplifierPoint, VortexAmplifierSolver, VortexOamCharge,
     VortexSpatialPoint,
+};
+
+pub use parafermion_braiding::{
+    FractionalChernNumber, FractionalReadoutParams, FractionalReadoutSolver,
+    FractionalSpectrumPoint, ParafermionAuditReport, ParafermionBraidEngine,
+    ParafermionBraidGate, ParafermionBraidingParams, ParafermionGateKind,
+    ParafermionLatticeParams, ParafermionLatticeSolver, ParafermionMode, ParafermionOrder,
+    ParafermionParams, ParafermionProcessor,
 };
 
 

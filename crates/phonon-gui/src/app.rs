@@ -42,7 +42,7 @@ use crate::widgets::{
     GiantAtomDialog, ChiralEmpDialog, PolaritonBecDialog, SyntheticDimensionDialog,
     NonHermitianSkinLaserDialog, MoirePolaritonCombDialog, HolonomicCoprocessorDialog,
     ValleyChiralIsolatorDialog, FloquetSpinHallCirculatorDialog, OctupoleDislocationDialog,
-    ChiralMajoranaDialog, FloquetCornerLaserDialog,
+    ChiralMajoranaDialog, FloquetCornerLaserDialog, ParafermionDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -417,6 +417,9 @@ pub struct PhononApp {
     /// Interactive Topological Acoustic Floquet Corner Laser & Vortex Amplifier dialog.
     pub floquet_corner_laser_dialog: FloquetCornerLaserDialog,
 
+    /// Interactive Quantum Acoustic Non-Abelian Parafermion Braiding dialog.
+    pub parafermion_dialog: ParafermionDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -646,6 +649,7 @@ impl Default for PhononApp {
             octupole_dislocation_dialog: OctupoleDislocationDialog::new_fast(),
             chiral_majorana_dialog: ChiralMajoranaDialog::new_fast(),
             floquet_corner_laser_dialog: FloquetCornerLaserDialog::new_fast(),
+            parafermion_dialog: ParafermionDialog::new_fast(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -3819,6 +3823,9 @@ impl PhononApp {
 
         // 88. Interactive Topological Acoustic Floquet Corner Laser & Vortex Amplifier Dialog
         self.floquet_corner_laser_dialog.ui(ui.ctx());
+
+        // 89. Interactive Quantum Acoustic Non-Abelian Parafermion Braiding Dialog
+        self.parafermion_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {

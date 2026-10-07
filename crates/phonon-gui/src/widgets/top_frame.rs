@@ -976,6 +976,12 @@ fn render_top_frame_internal(
                     }
                     ui.close();
                 }
+                if ui.button("Quantum Parafermion Braiding & Fractional Interconnect...").clicked() {
+                    if let Some(a) = app.as_deref_mut() {
+                        a.parafermion_dialog.is_open = true;
+                    }
+                    ui.close();
+                }
             });
         });
         ui.label(RichText::new("|").color(Color32::from_rgb(60, 70, 85)).size(11.0));
