@@ -348,6 +348,7 @@ pub mod chiral_edge_magnetoplasmon;
 pub mod polariton_bec_vortices;
 pub mod synthetic_dimension_router;
 pub mod non_hermitian_skin_laser;
+pub mod moire_polariton_comb;
 
 pub use acoustic::{
     AcousticBenchmarkReport, AcousticBenchmarkRunner, AcousticLinkSimulator, AcousticRealismTier,
@@ -1324,6 +1325,14 @@ pub use non_hermitian_skin_laser::{
     LaserCurvePoint, NonHermitianSkinLaser, QuadrupoleSkinMetrics, QuadrupoleSkinParams,
     QuadrupoleSkinPoint, QuadrupoleSkinSolver, RadiationPatternPoint, SkinLaserAuditCriterion,
     SkinLaserAuditReport, TopologicalLaserMetrics, TopologicalLaserParams, TopologicalLaserSolver,
+};
+
+pub use moire_polariton_comb::{
+    CombLinePoint, CornerMicrocombMetrics, CornerMicrocombParams, CornerMicrocombSolver,
+    CornerModePoint, MoireCombAuditCriterion, MoireCombAuditReport, MoireCombBandPoint,
+    MoireFlatBandMetrics, MoireFlatBandParams, MoireFlatBandSolver, MoirePolaritonComb,
+    MoireSpatialPoint, PolaritonSolitonMetrics, PolaritonSolitonParams, PolaritonSolitonSolver,
+    SolitonProfilePoint,
 };
 
 

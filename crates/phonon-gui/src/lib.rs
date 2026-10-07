@@ -167,6 +167,7 @@ pub use widgets::chiral_emp_dialog::{ChiralEmpDialog, ChiralEmpDialogTab};
 pub use widgets::polariton_bec_dialog::{PolaritonBecDialog, PolaritonBecTab};
 pub use widgets::synthetic_dimension_dialog::{SyntheticDimensionDialog, SyntheticDimensionTab};
 pub use widgets::non_hermitian_skin_laser_dialog::{NonHermitianSkinLaserDialog, SkinLaserTab};
+pub use widgets::moire_polariton_comb_dialog::{MoireCombTab, MoirePolaritonCombDialog};
 
 #[cfg(not(target_arch = "wasm32"))]
 use phonon_core::PhysicsDynamicsBackend;
