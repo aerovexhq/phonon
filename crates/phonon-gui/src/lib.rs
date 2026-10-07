@@ -191,6 +191,9 @@ pub use widgets::chiral_acoustomagnonic_dialog::{
 pub use widgets::floquet_corner_transducer_dialog::{
     CornerTransducerTab, FloquetCornerTransducerDialog,
 };
+pub use widgets::chern_simons_interferometer_dialog::{
+    ChernSimonsInterferometerDialog, ChernSimonsTab,
+};
 
 #[cfg(not(target_arch = "wasm32"))]
 use phonon_core::PhysicsDynamicsBackend;

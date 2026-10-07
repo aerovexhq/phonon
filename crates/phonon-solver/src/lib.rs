@@ -358,6 +358,7 @@ pub mod floquet_corner_laser;
 pub mod parafermion_braiding;
 pub mod chiral_acoustomagnonic_isolator;
 pub mod floquet_corner_transducer;
+pub mod chiral_chern_simons_interferometer;
 
 pub use acoustic::{
     AcousticBenchmarkReport, AcousticBenchmarkRunner, AcousticLinkSimulator, AcousticRealismTier,
@@ -1409,6 +1410,13 @@ pub use floquet_corner_transducer::{
     EntanglementRouterParams, EntanglementVerificationReport,
     FloquetCornerTransducerProcessor, NonReciprocalEntanglementRouter,
     TargetEntangledState, TransductionTrajectoryPoint,
+};
+
+pub use chiral_chern_simons_interferometer::{
+    AnyonicMemoryParams, ChernSimonsInterferometerParams, ChernSimonsMemoryAuditReport,
+    ChernSimonsMemoryProcessor, ChiralChernSimonsInterferometer, FractionalAnyonKind,
+    FractionalInterferenceMetrics, InterferometerTransmissionPoint,
+    MemoryCoherenceDecayPoint, TopologicalAnyonicQuantumMemory, TopologicalMemoryStateReport,
 };
 
 

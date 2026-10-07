@@ -101,6 +101,7 @@ pub mod floquet_corner_laser_dialog;
 pub mod parafermion_dialog;
 pub mod chiral_acoustomagnonic_dialog;
 pub mod floquet_corner_transducer_dialog;
+pub mod chern_simons_interferometer_dialog;
 
 pub use pill_badge::{
     proportional_zoom_scale, render_dual_telemetry_pill, render_pill_badge, PillBadgeStyle,
@@ -248,4 +249,7 @@ pub use chiral_acoustomagnonic_dialog::{
 };
 pub use floquet_corner_transducer_dialog::{
     CornerTransducerTab, FloquetCornerTransducerDialog,
+};
+pub use chern_simons_interferometer_dialog::{
+    ChernSimonsInterferometerDialog, ChernSimonsTab,
 };
