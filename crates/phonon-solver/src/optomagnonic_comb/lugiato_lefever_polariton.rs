@@ -288,7 +288,7 @@ impl LlePolaritonSolver {
 
         // Split-step temporal integration
         let dt = 0.001;
-        let steps = params.roundtrips.clamp(60, 300);
+        let steps = if params.roundtrips == 0 { 0 } else { params.roundtrips.clamp(60, 300) };
 
         // Precompute linear dispersion phase shifts in Fourier domain:
         // L(mu) = -(1 + i*alpha) - i * (d2_eff / 2) * mu^2  (anomalous dispersion)

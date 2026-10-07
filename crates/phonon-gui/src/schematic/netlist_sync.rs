@@ -65,6 +65,7 @@ impl NetlistSyncEngine {
             comp.pos.x.to_bits().hash(&mut hasher);
             comp.pos.y.to_bits().hash(&mut hasher);
             comp.rotation.hash(&mut hasher);
+            comp.mirrored.hash(&mut hasher);
             comp.value_str.hash(&mut hasher);
             comp.properties.hash(&mut hasher);
         }

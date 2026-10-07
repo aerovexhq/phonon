@@ -41,6 +41,7 @@ pub enum ActionId {
     SelectAll,
     ClearSelection,
     RotateClockwise,
+    MirrorComponent,
     ToggleFloatingToolbar,
     ToggleGrid,
     ZoomFit,
@@ -238,6 +239,13 @@ impl ActionRegistry {
             "Rotate selected or active component clockwise by 90 degrees",
             ActionCategory::Edit,
             Some("R"),
+        );
+        registry.register(
+            ActionId::MirrorComponent,
+            "Mirror Component",
+            "Toggle horizontal mirroring of selected or active component",
+            ActionCategory::Edit,
+            Some("M"),
         );
 
         // View

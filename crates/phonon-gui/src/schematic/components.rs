@@ -996,6 +996,8 @@ pub struct SchematicComponent {
     pub pos: Pos2,
     /// Rotation in increments of 90 degrees (0 = 0 deg, 1 = 90 deg, 2 = 180 deg, 3 = 270 deg).
     pub rotation: u8,
+    /// Mirror state (false = normal, true = mirrored horizontally before rotation).
+    pub mirrored: bool,
     pub value_str: String,
     pub model_name: Option<String>,
     pub properties: Vec<(String, String)>,
@@ -1011,6 +1013,7 @@ impl SchematicComponent {
             kind,
             pos,
             rotation: 0,
+            mirrored: false,
             value_str,
             model_name: None,
             properties: Vec::new(),
@@ -1087,27 +1090,39 @@ impl SchematicComponent {
         self.rotation = (self.rotation + 1) % 4;
     }
 
+    /// Toggles the horizontal mirror state of the component (flipping across the local vertical axis).
+    pub fn mirror_horizontal(&mut self) {
+        self.mirrored = !self.mirrored;
+    }
+
     /// Returns the current rotation angle in degrees (0, 90, 180, or 270).
     pub fn rotation_degrees(&self) -> u32 {
         (self.rotation % 4) as u32 * 90
     }
 
-    /// Transforms a local vector according to the component's rotation.
-    fn rotate_vec(&self, v: Vec2) -> Vec2 {
+    /// Transforms a local vector according to the component's mirror state and rotation.
+    pub fn transform_vec(&self, v: Vec2) -> Vec2 {
+        let mx = if self.mirrored { -v.x } else { v.x };
+        let my = v.y;
         match self.rotation % 4 {
-            0 => v,
-            1 => Vec2::new(-v.y, v.x),  // 90 deg CW
-            2 => Vec2::new(-v.x, -v.y), // 180 deg
-            3 => Vec2::new(v.y, -v.x),  // 270 deg
-            _ => v,
+            0 => Vec2::new(mx, my),
+            1 => Vec2::new(-my, mx),  // 90 deg CW
+            2 => Vec2::new(-mx, -my), // 180 deg
+            3 => Vec2::new(my, -mx),  // 270 deg
+            _ => Vec2::new(mx, my),
         }
+    }
+
+    /// Transforms a local vector according to the component's orientation (alias for backwards compatibility).
+    pub fn rotate_vec(&self, v: Vec2) -> Vec2 {
+        self.transform_vec(v)
     }
 
     /// Returns the world position of pin at `pin_idx`.
     pub fn pin_world_pos(&self, pin_idx: usize) -> Option<Pos2> {
         let pins = self.kind.pin_definitions();
         let &(_, local_offset) = pins.get(pin_idx)?;
-        let rotated = self.rotate_vec(local_offset);
+        let rotated = self.transform_vec(local_offset);
         Some(self.pos + rotated)
     }
 
@@ -1115,7 +1130,7 @@ impl SchematicComponent {
     pub fn all_pins(&self) -> Vec<(&'static str, Pos2)> {
         let pins = self.kind.pin_definitions();
         pins.iter()
-            .map(|&(name, offset)| (name, self.pos + self.rotate_vec(offset)))
+            .map(|&(name, offset)| (name, self.pos + self.transform_vec(offset)))
             .collect()
     }
 
@@ -1169,7 +1184,7 @@ impl SchematicComponent {
 
         // Helper to transform local component coords to screen
         let to_screen = |lx: f32, ly: f32| -> Pos2 {
-            let rotated = self.rotate_vec(Vec2::new(lx, ly));
+            let rotated = self.transform_vec(Vec2::new(lx, ly));
             canvas.world_to_screen(self.pos + rotated)
         };
 

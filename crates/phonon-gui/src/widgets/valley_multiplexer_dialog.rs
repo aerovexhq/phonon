@@ -18,8 +18,8 @@ use egui::{
 };
 use egui_plot::{HLine, Legend, Line, Plot, PlotPoints};
 use phonon_solver::valley_acoustic_multiplexer::{
-    MultiplexerJunctionParams, ValleyBerryCurvature, ValleyIndex, ValleyLatticeParams,
-    ValleyLatticeSolver, ValleyMultiplexerSolver,
+    MultiplexerJunctionParams, MultiplexerSParameters, ValleyBerryCurvature, ValleyIndex,
+    ValleyLatticeParams, ValleyLatticeSolver, ValleyMultiplexerSolver,
 };
 use std::f64::consts::PI;
 
@@ -111,6 +111,55 @@ impl ValleyMultiplexerDialog {
         Self::default()
     }
 
+    /// Fast cold-boot constructor that defers heavy 2D pressure field synthesis
+    /// until the dialog is opened.
+    pub fn new_fast() -> Self {
+        let lattice_params = ValleyLatticeParams::default();
+        let lattice_solver = ValleyLatticeSolver::new(lattice_params.clone());
+        let berry_metrics = lattice_solver.compute_berry_metrics();
+
+        let mux_params = MultiplexerJunctionParams {
+            lattice: lattice_params,
+            valley_polarization: 1.0,
+            splitting_bias: 0.0,
+            has_corner_bend: false,
+            corner_bend_angle_deg: 60.0,
+            operating_frequency_hz: 4800.0,
+            nx: 80,
+            ny: 60,
+            domain_width_m: 0.06,
+            domain_height_m: 0.045,
+        };
+
+        let mux_solver = ValleyMultiplexerSolver {
+            params: mux_params,
+            pressure_field: Vec::new(),
+            intensity_field: Vec::new(),
+            s_parameters: MultiplexerSParameters {
+                s21_db: -0.35,
+                s31_db: -35.0,
+                s11_db: -28.0,
+                valley_isolation_db: 34.65,
+                valley_contrast_ratio: 0.98,
+                corner_immunity_ratio: 0.96,
+                splitting_ratio: 0.98,
+            },
+        };
+
+        Self {
+            is_open: false,
+            active_tab: ValleyDialogTab::JunctionFieldCanvas,
+            lattice_solver,
+            mux_solver,
+            valley_polarization: 1.0,
+            asymmetry_delta: 0.22,
+            splitting_bias: 0.0,
+            has_corner_bend: false,
+            operating_frequency_khz: 4.8,
+            berry_metrics,
+        }
+    }
+
     /// Primary modal UI entry point.
     pub fn ui(&mut self, ctx: &egui::Context) {
         self.show(ctx);
@@ -136,6 +185,10 @@ impl ValleyMultiplexerDialog {
             return;
         }
 
+        if self.mux_solver.pressure_field.is_empty() {
+            self.recompute();
+        }
+
         let mut is_open = self.is_open;
         egui::Window::new(
             RichText::new("Valley-Polarized Topological Acoustic Multiplexer & Beam Splitter")
@@ -154,6 +207,10 @@ impl ValleyMultiplexerDialog {
 
     /// Render inner dialog content.
     pub fn render_content(&mut self, ui: &mut Ui) {
+        if self.mux_solver.pressure_field.is_empty() {
+            self.recompute();
+        }
+
         ui.horizontal(|ui| {
             ui.selectable_value(
                 &mut self.active_tab,

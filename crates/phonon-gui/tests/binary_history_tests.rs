@@ -31,14 +31,15 @@ fn test_action_opcode_mapping_and_errors() {
     assert_eq!(ActionOpcode::from_u8(0x07).unwrap(), ActionOpcode::DeleteWire);
     assert_eq!(ActionOpcode::from_u8(0x08).unwrap(), ActionOpcode::ClearAll);
     assert_eq!(ActionOpcode::from_u8(0x09).unwrap(), ActionOpcode::Batch);
+    assert_eq!(ActionOpcode::from_u8(0x0A).unwrap(), ActionOpcode::MirrorComponent);
 
     assert_eq!(
         ActionOpcode::from_u8(0x00),
         Err(BinaryHistoryError::UnknownOpcode(0x00))
     );
     assert_eq!(
-        ActionOpcode::from_u8(0x0A),
-        Err(BinaryHistoryError::UnknownOpcode(0x0A))
+        ActionOpcode::from_u8(0x0B),
+        Err(BinaryHistoryError::UnknownOpcode(0x0B))
     );
     assert_eq!(
         ActionOpcode::from_u8(0xFF),
@@ -122,6 +123,27 @@ fn test_opcode_roundtrip_rotate_component() {
 
     let mut cursor = 0;
     let read_cmd = read_command(&bytes, &mut cursor).expect("Failed to read RotateComponent");
+    assert_eq!(cursor, bytes.len());
+    assert_eq!(cmd, read_cmd);
+}
+
+#[test]
+fn test_opcode_roundtrip_mirror_component() {
+    let cmd = CanvasCommand::MirrorComponent {
+        id: 88,
+        from_mirrored: false,
+        to_mirrored: true,
+    };
+
+    let mut bytes = Vec::new();
+    write_command(&cmd, &mut bytes);
+
+    assert_eq!(bytes[0], ActionOpcode::MirrorComponent as u8);
+    // 1 opcode + 8 id + 1 from_mirrored + 1 to_mirrored = 11 bytes
+    assert_eq!(bytes.len(), 11);
+
+    let mut cursor = 0;
+    let read_cmd = read_command(&bytes, &mut cursor).expect("Failed to read MirrorComponent");
     assert_eq!(cursor, bytes.len());
     assert_eq!(cmd, read_cmd);
 }

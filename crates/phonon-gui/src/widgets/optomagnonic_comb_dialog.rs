@@ -101,7 +101,16 @@ impl OptomagnonicCombDialog {
 
     /// Fast lightweight instantiation for GUI registration.
     pub fn new_fast() -> Self {
-        Self::new()
+        let processor = OptomagnonicCombProcessor::new_fast();
+        let cached_audit = processor.audit_comb();
+        Self {
+            is_open: false,
+            active_tab: OptomagnonicCombTab::TripleResonanceCoupling,
+            processor,
+            anim_phase: 0.0,
+            cached_avoided_crossing: Vec::new(),
+            cached_audit,
+        }
     }
 
     /// Advances internal animation clock.
@@ -120,6 +129,10 @@ impl OptomagnonicCombDialog {
     pub fn ui(&mut self, ctx: &egui::Context) {
         if !self.is_open {
             return;
+        }
+
+        if self.cached_avoided_crossing.is_empty() {
+            self.refresh_simulation();
         }
 
         self.advance_animation(0.016);

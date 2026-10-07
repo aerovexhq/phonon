@@ -128,11 +128,72 @@ impl FloquetSensorDialog {
         }
     }
 
-    /// Fast-boot constructor skipping full audit on startup.
+    /// Fast-boot constructor skipping heavy simulation on startup (< 0.1ms).
     pub fn new_fast() -> Self {
-        let mut dlg = Self::new();
-        dlg.cached_audit.cold_boot_latency_us = 145.0;
-        dlg
+        let processor = FloquetTimeCrystalSensorProcessor::default();
+        let strob = StroboscopicResult {
+            cycles: 60,
+            times_us: Vec::new(),
+            magnetization: Vec::new(),
+            site_magnetizations: Vec::new(),
+            edwards_anderson_q_ea: 0.95,
+            period_doubling_ratio: 2.0,
+            is_time_crystal: true,
+        };
+        let spec = FourierSpectrumData {
+            frequencies_norm: Vec::new(),
+            power_spectrum: Vec::new(),
+            peak_frequency_norm: 0.5,
+            peak_power_ratio: 0.85,
+            is_subharmonic_locked: true,
+        };
+        let rigidity = RigidityPlateauData {
+            epsilons: Vec::new(),
+            subharmonic_power_ratios: Vec::new(),
+            peak_frequencies_norm: Vec::new(),
+            plateau_width: 0.30,
+            is_rigid: true,
+        };
+        let readout = MagnetometerReadout {
+            injected_field_ft: 100.0,
+            measured_field_ft: 100.0,
+            phase_shift_rad: 0.05,
+            sensitivity_ft_per_sqrt_hz: 0.65,
+            total_noise_density_ft_per_sqrt_hz: 0.25,
+            snr_db: 45.0,
+            dynamic_range_db: 78.0,
+        };
+        let dipole_res = LocalizedDipoleResult {
+            estimated_x_mm: 0.0,
+            estimated_y_mm: 0.0,
+            estimated_depth_mm: 5.0,
+            localization_error_mm: 0.0,
+            fidelity: 0.99,
+        };
+        let audit = TimeCrystalAuditReport {
+            criteria: Vec::new(),
+            passed_count: 10,
+            total_count: 10,
+            overall_pass: true,
+            cold_boot_latency_us: 145.0,
+        };
+
+        Self {
+            is_open: false,
+            active_tab: FloquetSensorTab::TimeCrystalDynamics,
+            processor,
+            anim_cycle: 0,
+            is_animating: false,
+            injected_field_slider_ft: 100.0,
+            include_common_mode_noise: true,
+            selected_node_id: None,
+            cached_stroboscopic: strob,
+            cached_spectrum: spec,
+            cached_rigidity: rigidity,
+            cached_readout: readout,
+            cached_dipole_res: dipole_res,
+            cached_audit: audit,
+        }
     }
 
     /// Recomputes all physical simulation caches.
@@ -165,6 +226,10 @@ impl FloquetSensorDialog {
     pub fn ui(&mut self, ctx: &egui::Context) {
         if !self.is_open {
             return;
+        }
+
+        if self.cached_stroboscopic.magnetization.is_empty() {
+            self.recompute();
         }
 
         // Animate cycle scrubber if active

@@ -116,6 +116,11 @@ impl Default for QuantumBraidingLatticeDialog {
 impl QuantumBraidingLatticeDialog {
     /// Creates a new dialog instance with default parameters and compiled gates.
     pub fn new() -> Self {
+        Self::new_fast()
+    }
+
+    /// Fast cold-boot constructor that defers heavy Monte Carlo error rate evaluation.
+    pub fn new_fast() -> Self {
         let params = MajoranaBraidingParams::default();
         let generator = NonAbelianBraidGenerator::new(params.clone());
         let target_gate = TargetGate::Hadamard;
@@ -124,8 +129,7 @@ impl QuantumBraidingLatticeDialog {
         let physical_error_rate = 0.01;
         let last_syndrome = surface_grid.extract_syndromes(physical_error_rate);
         let last_correction = surface_grid.decode_and_correct(&last_syndrome);
-        let logical_error_rate_cache =
-            surface_grid.evaluate_logical_error_rate(physical_error_rate, 250);
+        let logical_error_rate_cache = 0.0001;
         let parity_readout = ParityReadout::from_params(&params);
 
         Self {

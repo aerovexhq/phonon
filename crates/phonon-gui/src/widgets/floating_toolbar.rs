@@ -13,6 +13,7 @@ use egui::{
 pub enum FloatingToolbarAction {
     SelectTool(ToolMode),
     Rotate,
+    Mirror,
     Delete,
     Clear,
 }
@@ -229,6 +230,11 @@ impl FloatingToolbarState {
                             // Rotate (R)
                             if render_tool_button(ui, "R", false, "Rotate [R] - Rotate Selection Clockwise (90 deg)") {
                                 triggered_action = Some(FloatingToolbarAction::Rotate);
+                            }
+
+                            // Mirror (M)
+                            if render_tool_button(ui, "M", false, "Mirror [M] - Toggle Horizontal Mirroring (Flip Left/Right)") {
+                                triggered_action = Some(FloatingToolbarAction::Mirror);
                             }
 
                             // Delete (Del)

@@ -200,7 +200,8 @@ pub fn write_component(comp: &SchematicComponent, buf: &mut Vec<u8>) {
     buf.push(cat_disc);
     buf.extend_from_slice(&comp.pos.x.to_le_bytes());
     buf.extend_from_slice(&comp.pos.y.to_le_bytes());
-    buf.push(comp.rotation);
+    let rot_byte = (comp.rotation & 0x7F) | if comp.mirrored { 0x80 } else { 0 };
+    buf.push(rot_byte);
     let val_bytes = comp.value_str.as_bytes();
     let val_len = val_bytes.len().min(u16::MAX as usize) as u16;
     buf.extend_from_slice(&val_len.to_le_bytes());
@@ -273,8 +274,10 @@ pub fn read_component(
         bytes[*cursor + 3],
     ]);
     *cursor += 4;
-    let rotation = bytes[*cursor];
+    let rot_byte = bytes[*cursor];
     *cursor += 1;
+    let rotation = rot_byte & 0x7F;
+    let mut mirrored = (rot_byte & 0x80) != 0;
     let val_len = u16::from_le_bytes([bytes[*cursor], bytes[*cursor + 1]]) as usize;
     *cursor += 2;
     if *cursor + val_len > bytes.len() {
@@ -349,12 +352,17 @@ pub fn read_component(
         s
     });
 
+    if properties.iter().any(|(k, v)| k == "mirrored" && v == "true") {
+        mirrored = true;
+    }
+
     Ok(SchematicComponent {
         id,
         name,
         kind,
         pos: Pos2::new(pos_x, pos_y),
         rotation,
+        mirrored,
         value_str,
         model_name,
         properties,

@@ -308,9 +308,25 @@ impl SchematicCanvas {
     }
 
     /// Renders illuminated selection halos around all selected components and wires.
-    pub fn render_selection_halos(&self, painter: &Painter) {
+    pub fn render_selection_halos(
+        &self,
+        painter: &Painter,
+        components: &[SchematicComponent],
+        wires: &[SchematicWire],
+    ) {
+        let active_components = if components.is_empty() {
+            &self.components[..]
+        } else {
+            components
+        };
+        let active_wires = if wires.is_empty() {
+            &self.wires[..]
+        } else {
+            wires
+        };
+
         // Halos for selected components
-        for comp in &self.components {
+        for comp in active_components {
             if self.is_component_selected(comp.id) {
                 let bbox_world = comp.bounding_box();
                 let min_screen = self.world_to_screen(bbox_world.min);
@@ -334,7 +350,7 @@ impl SchematicCanvas {
         }
 
         // Halos for selected wires
-        for wire in &self.wires {
+        for wire in active_wires {
             if self.is_wire_selected(wire.id) {
                 let halo_stroke = Stroke::new(
                     6.0 * self.zoom.clamp(0.8, 2.0),

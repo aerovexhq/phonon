@@ -31,6 +31,7 @@ pub enum ActionOpcode {
     DeleteWire = 0x07,
     ClearAll = 0x08,
     Batch = 0x09,
+    MirrorComponent = 0x0A,
 }
 
 impl ActionOpcode {
@@ -45,6 +46,7 @@ impl ActionOpcode {
             0x07 => Ok(Self::DeleteWire),
             0x08 => Ok(Self::ClearAll),
             0x09 => Ok(Self::Batch),
+            0x0A => Ok(Self::MirrorComponent),
             other => Err(BinaryHistoryError::UnknownOpcode(other)),
         }
     }
@@ -129,6 +131,16 @@ pub fn write_command(cmd: &CanvasCommand, out: &mut Vec<u8>) {
             out.extend_from_slice(&(*id as u64).to_le_bytes());
             out.push(*from_rot);
             out.push(*to_rot);
+        }
+        CanvasCommand::MirrorComponent {
+            id,
+            from_mirrored,
+            to_mirrored,
+        } => {
+            out.push(ActionOpcode::MirrorComponent as u8);
+            out.extend_from_slice(&(*id as u64).to_le_bytes());
+            out.push(if *from_mirrored { 1 } else { 0 });
+            out.push(if *to_mirrored { 1 } else { 0 });
         }
         CanvasCommand::ModifyComponentValue {
             id,
@@ -226,6 +238,22 @@ pub fn read_command(data: &[u8], cursor: &mut usize) -> Result<CanvasCommand, Bi
                 id,
                 from_rot,
                 to_rot,
+            })
+        }
+        ActionOpcode::MirrorComponent => {
+            if *cursor + 10 > data.len() {
+                return Err(BinaryHistoryError::TruncatedData);
+            }
+            let id = u64::from_le_bytes(data[*cursor..*cursor + 8].try_into().unwrap()) as usize;
+            *cursor += 8;
+            let from_mirrored = data[*cursor] != 0;
+            *cursor += 1;
+            let to_mirrored = data[*cursor] != 0;
+            *cursor += 1;
+            Ok(CanvasCommand::MirrorComponent {
+                id,
+                from_mirrored,
+                to_mirrored,
             })
         }
         ActionOpcode::ModifyComponentValue => {

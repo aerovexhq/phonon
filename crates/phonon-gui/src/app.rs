@@ -382,6 +382,9 @@ pub struct PhononApp {
     /// Active rotation angle index for components being placed (0 = 0 deg, 1 = 90 deg, 2 = 180 deg, 3 = 270 deg).
     pub placement_rotation: u8,
 
+    /// Active horizontal mirror state for components being placed.
+    pub placement_mirrored: bool,
+
     /// Configuration for the custom window top frame.
     pub top_frame_config: TopFrameConfig,
 
@@ -521,11 +524,11 @@ impl Default for PhononApp {
             lieb_lattice_dialog: LiebLatticeDialog::new(),
             axion_insulator_dialog: AxionInsulatorDialog::new(),
             floquet_time_crystal_dialog: FloquetTimeCrystalDialog::new(),
-            quantum_braiding_lattice_dialog: QuantumBraidingLatticeDialog::new(),
+            quantum_braiding_lattice_dialog: QuantumBraidingLatticeDialog::new_fast(),
             optomechanical_squeezing_dialog: OptomechanicalSqueezingDialog::new(),
-            skyrmion_router_dialog: SkyrmionRouterDialog::new(),
+            skyrmion_router_dialog: SkyrmionRouterDialog::new_fast(),
             acoustic_soliton_dialog: AcousticSolitonDialog::new(),
-            valley_multiplexer_dialog: ValleyMultiplexerDialog::new(),
+            valley_multiplexer_dialog: ValleyMultiplexerDialog::new_fast(),
             non_hermitian_skin_dialog: NonHermitianSkinDialog::new(),
             quadrupole_shg_dialog: QuadrupoleShgDialog::new(),
             synthetic_4d_dialog: Synthetic4dDialog::new(),
@@ -566,8 +569,8 @@ impl Default for PhononApp {
             quadrupole_parametric_dialog: QuadrupoleParametricDialog::new_fast(),
             non_hermitian_sensor_dialog: NonHermitianSensorDialog::new_fast(),
             corner_doubler_dialog: CornerDoublerDialog::new_fast(),
-            universal_braiding_dialog: UniversalBraidingDialog::new(),
-            chiral_circulator_dialog: ChiralCirculatorDialog::new(),
+            universal_braiding_dialog: UniversalBraidingDialog::new_fast(),
+            chiral_circulator_dialog: ChiralCirculatorDialog::new_fast(),
             josephson_parametric_dialog: JosephsonParametricDialog::new_fast(),
             optomagnonic_comb_dialog: OptomagnonicCombDialog::new_fast(),
             floquet_sensor_dialog: FloquetSensorDialog::new_fast(),
@@ -579,6 +582,7 @@ impl Default for PhononApp {
             history: HistoryStack::with_capacity(500, 64),
             editing_comp_value: None,
             placement_rotation: 0,
+            placement_mirrored: false,
             top_frame_config: TopFrameConfig::default(),
             dynamics_backend: Box::new(AutoSelectingDynamicsBackend::new()),
             palette: ComponentPalette::new(),
@@ -1623,8 +1627,10 @@ impl PhononApp {
         self.sync_selection_to_canvas();
     }
 
-    /// Synchronizes selection state from PhononApp to SchematicCanvas.
+    /// Synchronizes selection state and components from PhononApp to SchematicCanvas.
     pub fn sync_selection_to_canvas(&mut self) {
+        self.canvas.components = self.components.clone();
+        self.canvas.wires = self.wires.clone();
         self.canvas.selected_component_ids = self.selected_component_ids.clone();
         self.canvas.selected_wire_ids = self.selected_wire_ids.clone();
         self.canvas.selected_component_id = self.selected_component_id;
@@ -2021,6 +2027,52 @@ impl PhononApp {
         self.rotate_active();
     }
 
+    /// Toggles horizontal mirroring for all selected components or active placement kind.
+    pub fn mirror_active(&mut self) {
+        let mut target_comp_ids = self.selected_component_ids.clone();
+        if let Some(cid) = self.selected_component_id {
+            target_comp_ids.insert(cid);
+        }
+
+        if !target_comp_ids.is_empty() {
+            let mut batch = Vec::new();
+            for comp in &mut self.components {
+                if target_comp_ids.contains(&comp.id) {
+                    let from_mirrored = comp.mirrored;
+                    comp.mirror_horizontal();
+                    let to_mirrored = comp.mirrored;
+                    batch.push(CanvasCommand::MirrorComponent {
+                        id: comp.id,
+                        from_mirrored,
+                        to_mirrored,
+                    });
+                }
+            }
+
+            if !batch.is_empty() {
+                if batch.len() == 1 {
+                    self.history.record(batch.remove(0));
+                } else {
+                    self.history.record(CanvasCommand::Batch(batch));
+                }
+                self.mark_dirty();
+            }
+            self.sync_selection_to_canvas();
+            self.sim_status.clear();
+            return;
+        }
+
+        if self.selected_tool.is_place() {
+            self.placement_mirrored = !self.placement_mirrored;
+            self.sim_status.clear();
+        }
+    }
+
+    /// Toggles horizontal mirroring for all selected components.
+    pub fn mirror_selected(&mut self) {
+        self.mirror_active();
+    }
+
     /// Executes a registered CAD action by identifier.
     pub fn execute_action(&mut self, action_id: ActionId) {
         match action_id {
@@ -2047,6 +2099,7 @@ impl PhononApp {
             ActionId::SelectAll => self.select_all(),
             ActionId::ClearSelection => self.clear_selection(),
             ActionId::RotateClockwise => self.rotate_active(),
+            ActionId::MirrorComponent => self.mirror_active(),
             ActionId::ToggleFloatingToolbar => {
                 self.show_floating_toolbar = !self.show_floating_toolbar;
                 self.floating_toolbar_state.is_visible = self.show_floating_toolbar;
@@ -2147,6 +2200,7 @@ impl PhononApp {
                 self.selected_tool = ToolMode::Select;
                 self.clear_selection();
                 self.placement_rotation = 0;
+                self.placement_mirrored = false;
             }
             return;
         }
@@ -2188,6 +2242,12 @@ impl PhononApp {
             return;
         }
 
+        // Mirror: M
+        if !ctrl && ctx.input(|i| i.key_pressed(Key::M)) {
+            self.mirror_active();
+            return;
+        }
+
         // Toggle Floating CAD Toolbar: H
         if !ctrl && ctx.input(|i| i.key_pressed(Key::H)) {
             self.show_floating_toolbar = !self.show_floating_toolbar;
@@ -2212,6 +2272,7 @@ impl PhononApp {
             self.selected_tool = ToolMode::Select;
             self.active_wire_start = None;
             self.placement_rotation = 0;
+            self.placement_mirrored = false;
             return;
         }
 
@@ -2220,6 +2281,7 @@ impl PhononApp {
             self.selected_tool = ToolMode::Wire;
             self.active_wire_start = None;
             self.placement_rotation = 0;
+            self.placement_mirrored = false;
             return;
         }
 
@@ -2228,6 +2290,7 @@ impl PhononApp {
             self.selected_tool = ToolMode::Bus;
             self.active_wire_start = None;
             self.placement_rotation = 0;
+            self.placement_mirrored = false;
             return;
         }
 
@@ -2236,6 +2299,7 @@ impl PhononApp {
             self.selected_tool = ToolMode::Probe;
             self.active_wire_start = None;
             self.placement_rotation = 0;
+            self.placement_mirrored = false;
             return;
         }
     }
@@ -2304,7 +2368,7 @@ impl PhononApp {
         }
 
         // 4b. Render illuminated selection halos
-        self.canvas.render_selection_halos(&painter);
+        self.canvas.render_selection_halos(&painter, &self.components, &self.wires);
 
         // 4c. Render rubberband marquee drag box
         self.canvas.render_marquee(&painter);
@@ -2379,6 +2443,7 @@ impl PhononApp {
                             count,
                         );
                         new_comp.rotation = self.placement_rotation;
+                        new_comp.mirrored = self.placement_mirrored;
                         self.components.push(new_comp.clone());
                         self.next_comp_id += 1;
                         self.sim_status = format!("Placed {}", kind.prefix());
@@ -2568,6 +2633,7 @@ impl PhononApp {
             if let Some(kind) = self.selected_tool.place_kind() {
                 let mut ghost = SchematicComponent::new(0, kind.clone(), snapped_world, 0);
                 ghost.rotation = self.placement_rotation;
+                ghost.mirrored = self.placement_mirrored;
                 ghost.render_with_theme(&painter, &self.canvas, true, None, &theme);
             }
         }
@@ -2657,6 +2723,7 @@ impl PhononApp {
                     self.active_wire_start = None;
                 }
                 FloatingToolbarAction::Rotate => self.rotate_active(),
+                FloatingToolbarAction::Mirror => self.mirror_active(),
                 FloatingToolbarAction::Delete => self.delete_selected(),
                 FloatingToolbarAction::Clear => {
                     self.active_wire_start = None;
@@ -2692,6 +2759,7 @@ impl PhononApp {
                 PaletteAction::SelectKind(kind) => {
                     self.selected_tool = ToolMode::PlaceComponent(kind);
                     self.placement_rotation = 0;
+                    self.placement_mirrored = false;
                     self.active_wire_start = None;
                     self.clear_selection();
                 }
@@ -2748,6 +2816,7 @@ impl PhononApp {
 
         if let Some(cid) = self.selected_component_id {
             let mut do_rotate = false;
+            let mut do_mirror = false;
             let mut do_delete = false;
             let mut record_cmd = None;
             let mut comp_name_for_telemetry = String::new();
@@ -2797,13 +2866,26 @@ impl PhononApp {
                         }
                     }
                 });
-                ui.label(format!("Rotation: {} deg", (comp.rotation % 4) * 90));
+                let rot_deg = (comp.rotation % 4) * 90;
+                ui.label(format!(
+                    "Orientation: {} deg{}",
+                    rot_deg,
+                    if comp.mirrored { " (Mirrored)" } else { "" }
+                ));
 
                 ui.horizontal(|ui| {
-                    if ui.button("Rotate 90 deg (R)").clicked() {
+                    if ui.button("Rotate CW (R)").clicked() {
                         do_rotate = true;
                     }
+                    if ui.button("Mirror (M)").clicked() {
+                        do_mirror = true;
+                    }
                 });
+
+                let mut is_mirrored = comp.mirrored;
+                if ui.checkbox(&mut is_mirrored, "Mirror on/off switch").changed() {
+                    do_mirror = true;
+                }
 
                 // 3. Label Position Controls (Presets to prevent collision with shapes)
                 ui.separator();
@@ -2876,6 +2958,9 @@ impl PhononApp {
             if do_rotate {
                 self.rotate_active();
             }
+            if do_mirror {
+                self.mirror_active();
+            }
             if do_delete {
                 self.delete_selected();
             }
@@ -2918,15 +3003,30 @@ impl PhononApp {
         } else if let Some(prefix) = self.selected_tool.place_kind().map(|k| k.prefix()) {
             let rot_deg = (self.placement_rotation % 4) * 90;
             let mut do_rotate = false;
+            let mut do_mirror = false;
             ui.label(format!("Placing: {}", prefix));
-            ui.label(format!("Rotation: {} deg", rot_deg));
+            ui.label(format!(
+                "Orientation: {} deg{}",
+                rot_deg,
+                if self.placement_mirrored { " (Mirrored)" } else { "" }
+            ));
             ui.horizontal(|ui| {
-                if ui.button("Rotate 90 deg (R)").clicked() {
+                if ui.button("Rotate CW (R)").clicked() {
                     do_rotate = true;
                 }
+                if ui.button("Mirror (M)").clicked() {
+                    do_mirror = true;
+                }
             });
+            let mut is_mirrored = self.placement_mirrored;
+            if ui.checkbox(&mut is_mirrored, "Mirror on/off switch").changed() {
+                do_mirror = true;
+            }
             if do_rotate {
                 self.rotate_active();
+            }
+            if do_mirror {
+                self.mirror_active();
             }
         } else {
             ui.label("No component or wire selected.");

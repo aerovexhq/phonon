@@ -17,6 +17,8 @@ pub enum CanvasCommand {
     MoveComponent { id: usize, from: Pos2, to: Pos2 },
     /// Rotated a component from an initial orientation to a target orientation (0..4).
     RotateComponent { id: usize, from_rot: u8, to_rot: u8 },
+    /// Toggled mirror state of a component.
+    MirrorComponent { id: usize, from_mirrored: bool, to_mirrored: bool },
     /// Modified component value string (e.g. resistance, capacitance, model name).
     ModifyComponentValue { id: usize, old_val: String, new_val: String },
     /// Routed and committed a new wire on the canvas.
@@ -56,6 +58,11 @@ impl CanvasCommand {
             Self::RotateComponent { id, to_rot, .. } => {
                 if let Some(comp) = components.iter_mut().find(|c| c.id == *id) {
                     comp.rotation = *to_rot;
+                }
+            }
+            Self::MirrorComponent { id, to_mirrored, .. } => {
+                if let Some(comp) = components.iter_mut().find(|c| c.id == *id) {
+                    comp.mirrored = *to_mirrored;
                 }
             }
             Self::ModifyComponentValue { id, new_val, .. } => {
@@ -106,6 +113,11 @@ impl CanvasCommand {
             Self::RotateComponent { id, from_rot, .. } => {
                 if let Some(comp) = components.iter_mut().find(|c| c.id == *id) {
                     comp.rotation = *from_rot;
+                }
+            }
+            Self::MirrorComponent { id, from_mirrored, .. } => {
+                if let Some(comp) = components.iter_mut().find(|c| c.id == *id) {
+                    comp.mirrored = *from_mirrored;
                 }
             }
             Self::ModifyComponentValue { id, old_val, .. } => {

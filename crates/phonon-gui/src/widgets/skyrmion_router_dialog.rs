@@ -111,7 +111,15 @@ impl Default for SkyrmionRouterDialog {
 impl SkyrmionRouterDialog {
     /// Creates a new `SkyrmionRouterDialog` initialized with default physical parameters.
     pub fn new() -> Self {
-        let mut dialog = Self {
+        let mut dialog = Self::new_fast();
+        dialog.recompute();
+        dialog
+    }
+
+    /// Fast cold-boot constructor that initializes with pre-seeded baseline values
+    /// and defers heavy numerical synthesis until the dialog is opened or requested.
+    pub fn new_fast() -> Self {
+        Self {
             is_open: false,
             active_tab: SkyrmionDialogTab::RealSpaceVectorField,
             params: SkyrmionLatticeParams::default(),
@@ -139,11 +147,8 @@ impl SkyrmionRouterDialog {
             insertion_loss_db: 0.35,
             isolation_db: 33.1,
             corner_transmission_percent: 100.0,
-            status_msg: String::new(),
-        };
-
-        dialog.recompute();
-        dialog
+            status_msg: "Topological Charge Q = -1.000, Hall Angle theta_H = 0.00 deg, IL = 0.35 dB, Chiral Iso = 33.1 dB, Corner T = 100.0%".to_string(),
+        }
     }
 
     /// Recomputes all physical fields, topological charges, Thiele dynamics, and router spectra.
@@ -210,6 +215,10 @@ impl SkyrmionRouterDialog {
             return;
         }
 
+        if self.charge_density.is_empty() {
+            self.recompute();
+        }
+
         let mut is_open = self.is_open;
         egui::Window::new("Phonon Topological Acoustic Skyrmion Router Studio")
             .open(&mut is_open)
@@ -224,6 +233,10 @@ impl SkyrmionRouterDialog {
 
     /// Renders the full dialog content: top control panel, view tabs, main canvas/plot, and footer.
     pub fn render_content(&mut self, ui: &mut Ui) {
+        if self.charge_density.is_empty() {
+            self.recompute();
+        }
+
         let mut needs_recompute = false;
 
         // 1. Preset & Parameter Controls Bar

@@ -98,6 +98,27 @@ impl OptomagnonicCombProcessor {
         }
     }
 
+    /// Fast sub-millisecond constructor skipping heavy split-step roundtrips on cold startup.
+    pub fn new_fast() -> Self {
+        let mut lle_params = LlePolaritonParams::default();
+        lle_params.roundtrips = 0;
+        let resonance_params = TripleResonanceParams::default();
+        let jitter_params = JitterAnalysisParams::default();
+
+        let triple_result = TripleResonanceSolver::solve(&resonance_params);
+        let lle_result = LlePolaritonSolver::solve(&lle_params);
+        let jitter_metrics = TimingJitterSolver::solve(&jitter_params, &lle_params);
+
+        Self {
+            resonance_params,
+            lle_params,
+            jitter_params,
+            triple_result,
+            lle_result,
+            jitter_metrics,
+        }
+    }
+
     /// Re-evaluates all triple-resonance, LLE pseudospectral, and timing jitter physics.
     pub fn refresh_all(&mut self) {
         self.triple_result = TripleResonanceSolver::solve(&self.resonance_params);
