@@ -39,6 +39,7 @@ use crate::widgets::{
     NonHermitianSensorDialog, CornerDoublerDialog, UniversalBraidingDialog,
     ChiralCirculatorDialog, JosephsonParametricDialog, OptomagnonicCombDialog,
     FloquetSensorDialog, OptomechanicalTransducerDialog, CornerPolaritonMicrocombDialog,
+    GiantAtomDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -360,6 +361,9 @@ pub struct PhononApp {
     /// Interactive Floquet Discrete Time-Crystal Magnetometer & Subharmonic Sensor Network dialog.
     pub floquet_sensor_dialog: FloquetSensorDialog,
 
+    /// Interactive Quantum Acoustic Giant Atom Waveguide QED & Non-Markovian Processor dialog.
+    pub giant_atom_dialog: GiantAtomDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -574,6 +578,7 @@ impl Default for PhononApp {
             josephson_parametric_dialog: JosephsonParametricDialog::new_fast(),
             optomagnonic_comb_dialog: OptomagnonicCombDialog::new_fast(),
             floquet_sensor_dialog: FloquetSensorDialog::new_fast(),
+            giant_atom_dialog: GiantAtomDialog::new_fast(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -2324,79 +2329,23 @@ impl PhononApp {
         // 2. Render background grid
         self.canvas.render_grid_themed(&painter, viewport, &theme);
 
-        // Collect all pin positions for snapping and junction rendering
-        let mut all_pin_positions = Vec::new();
-        for comp in &self.components {
-            for (_, p) in comp.all_pins() {
-                all_pin_positions.push(p);
-            }
-        }
+        // 3. Process mouse interactions on canvas FIRST so all state mutations
+        // (moving components, snapping to grid, selection changes) take effect in the current frame
+        // before any scene elements or selection halos are rendered.
+        let mut hovered_wire_telemetry: Option<(egui::Pos2, f64, f64)> = None;
 
-        self.sync_selection_to_canvas();
-
-        // 3. Render wires
-        for wire in &self.wires {
-            let is_sel = self.is_wire_selected(wire.id);
-            wire.render_with_theme(&painter, &self.canvas, is_sel, &theme);
-        }
-
-        // 3b. Render buses
-        for bus in &self.buses {
-            bus.render(&painter, &self.canvas, false);
-        }
-
-        // 3c. Render subcircuit instances
-        for inst in &self.canvas.subcircuit_instances {
-            inst.render(&painter, &self.canvas, self.subcircuits.get(&inst.def_name), false);
-        }
-
-        // 4. Render junction dots
-        let junctions = compute_junction_dots(&self.wires, &all_pin_positions);
-        let junction_stroke = Stroke::new(1.0, Color32::from_rgb(180, 255, 180));
-        for j_world in &junctions {
-            let j_screen = self.canvas.world_to_screen(*j_world);
-            painter.circle_filled(
-                j_screen,
-                4.0 * self.canvas.zoom.clamp(0.8, 1.6),
-                Color32::from_rgb(60, 200, 80),
-            );
-            painter.circle_stroke(
-                j_screen,
-                4.0 * self.canvas.zoom.clamp(0.8, 1.6),
-                junction_stroke,
-            );
-        }
-
-        // 4b. Render illuminated selection halos
-        self.canvas.render_selection_halos(&painter, &self.components, &self.wires);
-
-        // 4c. Render rubberband marquee drag box
-        self.canvas.render_marquee(&painter);
-
-        // 5. Mouse interactions on canvas
         let mouse_pos = ui.input(|i| i.pointer.hover_pos());
         if let Some(mouse_screen) = mouse_pos {
             let mouse_world = self.canvas.screen_to_world(mouse_screen);
             let snapped_world = self.canvas.snap_to_grid(mouse_world);
 
-            // Wire hover telemetry badge (V and I readouts)
+            // Wire hover telemetry badge lookup (V and I readouts)
             if self.selected_tool == ToolMode::Select || self.selected_tool == ToolMode::Probe {
                 let hover_tol = 8.0 / self.canvas.zoom;
                 if let Some(hovered_wire) = self.wires.iter().find(|w| w.contains(mouse_world, hover_tol)) {
                     let v = self.wire_voltages.get(&hovered_wire.id).copied().unwrap_or(0.0);
                     let i = self.wire_currents.get(&hovered_wire.id).copied().unwrap_or(0.0);
-                    let v_str = crate::oscilloscope::format_voltage_si(v);
-                    let i_str = crate::oscilloscope::format_current_si(i);
-                    crate::widgets::render_dual_telemetry_pill(
-                        &painter,
-                        mouse_screen + Vec2::new(20.0, -20.0),
-                        "V",
-                        &v_str,
-                        "I",
-                        &i_str,
-                        &crate::widgets::PillBadgeStyle::wire_telemetry(),
-                        self.canvas.zoom,
-                    );
+                    hovered_wire_telemetry = Some((mouse_screen + Vec2::new(20.0, -20.0), v, i));
                 }
             }
 
@@ -2467,10 +2416,12 @@ impl PhononApp {
                             }
                         } else {
                             // Find nearest pin to snap start
-                            let nearest_pin = all_pin_positions
+                            let nearest_pin = self
+                                .components
                                 .iter()
-                                .find(|&&p| (p - mouse_world).length() <= 12.0)
-                                .copied();
+                                .flat_map(|c| c.all_pins())
+                                .map(|(_, p)| p)
+                                .find(|&p| (p - mouse_world).length() <= 12.0);
                             self.active_wire_start = Some(nearest_pin.unwrap_or(snapped_world));
                         }
                     }
@@ -2560,24 +2511,37 @@ impl PhononApp {
                     self.marquee_current = Some(mouse_world);
                     self.sync_selection_to_canvas();
                 }
+                ui.ctx().request_repaint();
             }
 
             if response.dragged_by(PointerButton::Primary) && self.selected_tool == ToolMode::Select {
                 if self.dragging_selection {
                     let delta = response.drag_delta() / self.canvas.zoom;
                     self.translate_selection(delta);
+                    ui.ctx().request_repaint();
                 } else if self.marquee_start.is_some() {
                     self.marquee_current = Some(mouse_world);
                     self.sync_selection_to_canvas();
+                    ui.ctx().request_repaint();
                 }
             }
 
             if response.drag_stopped() && self.selected_tool == ToolMode::Select {
                 if self.dragging_selection {
+                    // Snap moved selection to grid cleanly
+                    if let Some(&(first_id, _)) = self.drag_start_positions.first() {
+                        if let Some(comp) = self.components.iter().find(|c| c.id == first_id) {
+                            let snapped_pos = self.canvas.snap_to_grid(comp.pos);
+                            let snap_delta = snapped_pos - comp.pos;
+                            if snap_delta != Vec2::ZERO {
+                                self.translate_selection(snap_delta);
+                            }
+                        }
+                    }
+
                     let mut batch = Vec::new();
                     for (id, start_pos) in self.drag_start_positions.drain(..) {
-                        if let Some(comp) = self.components.iter_mut().find(|c| c.id == id) {
-                            comp.pos = self.canvas.snap_to_grid(comp.pos);
+                        if let Some(comp) = self.components.iter().find(|c| c.id == id) {
                             if comp.pos != start_pos {
                                 batch.push(CanvasCommand::MoveComponent {
                                     id,
@@ -2608,6 +2572,7 @@ impl PhononApp {
                     }
                     self.dragging_selection = false;
                     self.sync_selection_to_canvas();
+                    ui.ctx().request_repaint();
                 } else if let (Some(m_start), Some(m_curr)) = (self.marquee_start.take(), self.marquee_current.take()) {
                     let marquee_rect = Rect::from_two_pos(m_start, m_curr);
                     if marquee_rect.width() > 3.0 || marquee_rect.height() > 3.0 {
@@ -2615,6 +2580,7 @@ impl PhononApp {
                         self.select_in_rect(marquee_rect, shift);
                     }
                     self.sync_selection_to_canvas();
+                    ui.ctx().request_repaint();
                 }
             }
 
@@ -2637,6 +2603,56 @@ impl PhononApp {
                 ghost.render_with_theme(&painter, &self.canvas, true, None, &theme);
             }
         }
+
+        // 4. State synchronization after interaction
+        self.sync_selection_to_canvas();
+
+        // Collect all pin positions for snapping and junction rendering (up-to-date)
+        let mut all_pin_positions = Vec::new();
+        for comp in &self.components {
+            for (_, p) in comp.all_pins() {
+                all_pin_positions.push(p);
+            }
+        }
+
+        // 5. Render wires
+        for wire in &self.wires {
+            let is_sel = self.is_wire_selected(wire.id);
+            wire.render_with_theme(&painter, &self.canvas, is_sel, &theme);
+        }
+
+        // 5b. Render buses
+        for bus in &self.buses {
+            bus.render(&painter, &self.canvas, false);
+        }
+
+        // 5c. Render subcircuit instances
+        for inst in &self.canvas.subcircuit_instances {
+            inst.render(&painter, &self.canvas, self.subcircuits.get(&inst.def_name), false);
+        }
+
+        // 5d. Render junction dots
+        let junctions = compute_junction_dots(&self.wires, &all_pin_positions);
+        let junction_stroke = Stroke::new(1.0, Color32::from_rgb(180, 255, 180));
+        for j_world in &junctions {
+            let j_screen = self.canvas.world_to_screen(*j_world);
+            painter.circle_filled(
+                j_screen,
+                4.0 * self.canvas.zoom.clamp(0.8, 1.6),
+                Color32::from_rgb(60, 200, 80),
+            );
+            painter.circle_stroke(
+                j_screen,
+                4.0 * self.canvas.zoom.clamp(0.8, 1.6),
+                junction_stroke,
+            );
+        }
+
+        // 5e. Render illuminated selection halos (drawn around current component positions)
+        self.canvas.render_selection_halos(&painter, &self.components, &self.wires);
+
+        // 5f. Render rubberband marquee drag box
+        self.canvas.render_marquee(&painter);
 
         // 6. Render components and thermal overlay
         for comp in &self.components {
@@ -2700,6 +2716,22 @@ impl PhononApp {
                     }
                 }
             }
+        }
+
+        // 6b. Wire hover telemetry badge (rendered on top of wires and components)
+        if let Some((badge_screen, v, i)) = hovered_wire_telemetry {
+            let v_str = crate::oscilloscope::format_voltage_si(v);
+            let i_str = crate::oscilloscope::format_current_si(i);
+            crate::widgets::render_dual_telemetry_pill(
+                &painter,
+                badge_screen,
+                "V",
+                &v_str,
+                "I",
+                &i_str,
+                &crate::widgets::PillBadgeStyle::wire_telemetry(),
+                self.canvas.zoom,
+            );
         }
 
         // 7. Visual ERC Diagnostic Overlay
@@ -2867,25 +2899,23 @@ impl PhononApp {
                     }
                 });
                 let rot_deg = (comp.rotation % 4) * 90;
+                let combo_idx = (comp.rotation % 4) + (if comp.mirrored { 4 } else { 0 }) + 1;
                 ui.label(format!(
-                    "Orientation: {} deg{}",
+                    "Orientation: {} deg{} [Combo {}/8]",
                     rot_deg,
-                    if comp.mirrored { " (Mirrored)" } else { "" }
+                    if comp.mirrored { " (Mirrored)" } else { "" },
+                    combo_idx
                 ));
 
                 ui.horizontal(|ui| {
                     if ui.button("Rotate CW (R)").clicked() {
                         do_rotate = true;
                     }
-                    if ui.button("Mirror (M)").clicked() {
+                    let mut is_mirrored = comp.mirrored;
+                    if ui.checkbox(&mut is_mirrored, "Mirror (M)").changed() {
                         do_mirror = true;
                     }
                 });
-
-                let mut is_mirrored = comp.mirrored;
-                if ui.checkbox(&mut is_mirrored, "Mirror on/off switch").changed() {
-                    do_mirror = true;
-                }
 
                 // 3. Label Position Controls (Presets to prevent collision with shapes)
                 ui.separator();
@@ -3002,26 +3032,25 @@ impl PhononApp {
             }
         } else if let Some(prefix) = self.selected_tool.place_kind().map(|k| k.prefix()) {
             let rot_deg = (self.placement_rotation % 4) * 90;
+            let combo_idx = (self.placement_rotation % 4) + (if self.placement_mirrored { 4 } else { 0 }) + 1;
             let mut do_rotate = false;
             let mut do_mirror = false;
             ui.label(format!("Placing: {}", prefix));
             ui.label(format!(
-                "Orientation: {} deg{}",
+                "Orientation: {} deg{} [Combo {}/8]",
                 rot_deg,
-                if self.placement_mirrored { " (Mirrored)" } else { "" }
+                if self.placement_mirrored { " (Mirrored)" } else { "" },
+                combo_idx
             ));
             ui.horizontal(|ui| {
                 if ui.button("Rotate CW (R)").clicked() {
                     do_rotate = true;
                 }
-                if ui.button("Mirror (M)").clicked() {
+                let mut is_mirrored = self.placement_mirrored;
+                if ui.checkbox(&mut is_mirrored, "Mirror (M)").changed() {
                     do_mirror = true;
                 }
             });
-            let mut is_mirrored = self.placement_mirrored;
-            if ui.checkbox(&mut is_mirrored, "Mirror on/off switch").changed() {
-                do_mirror = true;
-            }
             if do_rotate {
                 self.rotate_active();
             }
@@ -3517,6 +3546,9 @@ impl PhononApp {
 
         // 76. Interactive Floquet Time-Crystal Magnetometer Sensor Dialog
         self.floquet_sensor_dialog.ui(ui.ctx());
+
+        // 77. Interactive Quantum Acoustic Giant Atom Waveguide QED Processor Dialog
+        self.giant_atom_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {

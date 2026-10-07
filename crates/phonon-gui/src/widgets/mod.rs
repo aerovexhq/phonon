@@ -86,6 +86,7 @@ pub mod chiral_circulator_dialog;
 pub mod josephson_parametric_dialog;
 pub mod optomagnonic_comb_dialog;
 pub mod floquet_sensor_dialog;
+pub mod giant_atom_dialog;
 
 pub use pill_badge::{
     proportional_zoom_scale, render_dual_telemetry_pill, render_pill_badge, PillBadgeStyle,
@@ -205,7 +206,4 @@ pub use chiral_circulator_dialog::{ChiralCirculatorDialog, ChiralCirculatorTab};
 pub use josephson_parametric_dialog::{JosephsonParametricDialog, JosephsonParametricTab};
 pub use optomagnonic_comb_dialog::{OptomagnonicCombDialog, OptomagnonicCombTab};
 pub use floquet_sensor_dialog::{FloquetSensorDialog, FloquetSensorTab};
-
-
-
-
+pub use giant_atom_dialog::{GiantAtomDialog, GiantAtomDialogTab};

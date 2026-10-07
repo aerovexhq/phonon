@@ -179,6 +179,7 @@ pub mod majorana_surface_memory;
 pub mod majorana_surface_code;
 pub mod quantum_optomechanical_transducer;
 pub mod corner_polariton_microcomb;
+pub mod giant_atom_qed;
 pub mod metamaterial_circulator_cloak;
 pub mod mixed_signal;
 pub mod mna;
@@ -1284,10 +1285,10 @@ pub use corner_polariton_microcomb::{
     SolitonDynamicsEngine, SolitonDynamicsParams, SolitonTemporalPoint, SynthesizerParams,
 };
 
-
-
-
-
-
-
+pub use giant_atom_qed::{
+    CollectiveCouplingMatrix, EntanglementTrajectoryPoint, GiantAtomAuditReport, GiantAtomParams,
+    GiantAtomProcessor, GiantAtomTopology, MultiAtomEntanglementResult, MultiAtomSystem,
+    NonMarkovianDynamicsResult, NonMarkovianSolver, NonMarkovianTrajectoryPoint, ScatteringPoint,
+    WaveguideScatteringSpectrum,
+};
 
