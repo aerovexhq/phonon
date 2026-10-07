@@ -351,6 +351,7 @@ pub mod non_hermitian_skin_laser;
 pub mod moire_polariton_comb;
 pub mod holonomic_braiding_coprocessor;
 pub mod valley_chiral_isolator;
+pub mod floquet_spinhall_circulator;
 
 pub use acoustic::{
     AcousticBenchmarkReport, AcousticBenchmarkRunner, AcousticLinkSimulator, AcousticRealismTier,
@@ -1350,6 +1351,13 @@ pub use valley_chiral_isolator::{
     ChiralIsolatorParams, ChiralIsolatorSolver, ChiralSParameterPoint, MicrowavePhononTransducer,
     TransducerParams, TransducerResponsePoint, ValleyChiralAuditReport, ValleyChiralIsolator,
     ValleyChiralParams, ValleyEdgeMode, ValleyEdgeParams, ValleyHallLattice, ValleyPolarity,
+};
+
+pub use floquet_spinhall_circulator::{
+    CirculatorSMatrix, CryogenicReadoutEngine, CryogenicReadoutParams, CryogenicReadoutPoint,
+    FloquetCirculator, FloquetCirculatorParams, FloquetSpinHallAuditReport,
+    FloquetSpinHallCirculator, FloquetSpinHallParams, SpinHallEdgeMode, SpinHallLattice,
+    SpinHallParams, SpinHallPseudoSpin,
 };
 
 

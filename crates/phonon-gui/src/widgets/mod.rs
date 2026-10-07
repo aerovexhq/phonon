@@ -94,6 +94,7 @@ pub mod non_hermitian_skin_laser_dialog;
 pub mod moire_polariton_comb_dialog;
 pub mod holonomic_coprocessor_dialog;
 pub mod valley_chiral_isolator_dialog;
+pub mod floquet_spinhall_circulator_dialog;
 
 pub use pill_badge::{
     proportional_zoom_scale, render_dual_telemetry_pill, render_pill_badge, PillBadgeStyle,
@@ -221,3 +222,6 @@ pub use non_hermitian_skin_laser_dialog::{NonHermitianSkinLaserDialog, SkinLaser
 pub use moire_polariton_comb_dialog::{MoireCombTab, MoirePolaritonCombDialog};
 pub use holonomic_coprocessor_dialog::{HolonomicCoprocessorDialog, HolonomicCoprocessorTab};
 pub use valley_chiral_isolator_dialog::{ValleyChiralIsolatorDialog, ValleyChiralTab};
+pub use floquet_spinhall_circulator_dialog::{
+    FloquetSpinHallCirculatorDialog, FloquetSpinHallTab,
+};

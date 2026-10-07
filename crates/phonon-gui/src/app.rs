@@ -41,7 +41,7 @@ use crate::widgets::{
     FloquetSensorDialog, OptomechanicalTransducerDialog, CornerPolaritonMicrocombDialog,
     GiantAtomDialog, ChiralEmpDialog, PolaritonBecDialog, SyntheticDimensionDialog,
     NonHermitianSkinLaserDialog, MoirePolaritonCombDialog, HolonomicCoprocessorDialog,
-    ValleyChiralIsolatorDialog,
+    ValleyChiralIsolatorDialog, FloquetSpinHallCirculatorDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -404,6 +404,9 @@ pub struct PhononApp {
     /// Interactive Topological Acoustic Valley-Hall Chiral Edge Filter & Microwave Isolator dialog.
     pub valley_chiral_isolator_dialog: ValleyChiralIsolatorDialog,
 
+    /// Interactive Topological Acoustic Floquet Spin-Hall Insulator & Cryogenic Circulator dialog.
+    pub floquet_spinhall_circulator_dialog: FloquetSpinHallCirculatorDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -629,6 +632,7 @@ impl Default for PhononApp {
             moire_polariton_comb_dialog: MoirePolaritonCombDialog::new_fast(),
             holonomic_coprocessor_dialog: HolonomicCoprocessorDialog::new_fast(),
             valley_chiral_isolator_dialog: ValleyChiralIsolatorDialog::new_fast(),
+            floquet_spinhall_circulator_dialog: FloquetSpinHallCirculatorDialog::new_fast(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -3790,6 +3794,9 @@ impl PhononApp {
 
         // 84. Interactive Topological Acoustic Valley-Hall Chiral Edge Filter & Microwave Isolator Dialog
         self.valley_chiral_isolator_dialog.ui(ui.ctx());
+
+        // 85. Interactive Topological Acoustic Floquet Spin-Hall Insulator & Cryogenic Circulator Dialog
+        self.floquet_spinhall_circulator_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {
