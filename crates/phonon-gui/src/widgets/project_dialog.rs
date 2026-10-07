@@ -145,9 +145,22 @@ impl ProjectDialog {
                     // Name input row for SaveAs mode
                     if self.mode == ProjectDialogMode::SaveAs {
                         ui.horizontal(|ui| {
-                            ui.label("Project Name:");
+                            ui.label("Project Name / Path:");
                             ui.text_edit_singleline(&mut self.project_name_buffer);
                         });
+                        ui.add_space(4.0);
+                        let target_display = if self.project_name_buffer.trim().is_empty() {
+                            "Untitled.phn".to_string()
+                        } else if self.project_name_buffer.ends_with(".phn") {
+                            self.project_name_buffer.trim().to_string()
+                        } else {
+                            format!("{}.phn", self.project_name_buffer.trim())
+                        };
+                        ui.label(
+                            RichText::new(format!("Destination: {}", target_display))
+                                .size(11.0)
+                                .color(Color32::from_rgb(148, 163, 184)),
+                        );
                         ui.add_space(8.0);
                     }
 

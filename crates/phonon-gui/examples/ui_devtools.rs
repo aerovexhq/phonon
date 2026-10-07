@@ -28,6 +28,7 @@ impl DevtoolsRunnerApp {
     fn new(script: UiScript, out_dir: PathBuf, interactive: bool) -> Self {
         let runner = phonon_gui::devtools::ScriptRunner::new(script);
         let mut app = PhononApp::default();
+        app.load_voltage_divider_demo();
         app.devtools_state.visible = interactive;
         app.devtools_state.screenshots_dir = out_dir.clone();
 

@@ -416,10 +416,10 @@ fn test_top_frame_rendering_throughput() {
 #[test]
 fn test_top_frame_project_title_and_modified_indicator() {
     let mut config = TopFrameConfig::default();
-    assert_eq!(config.formatted_title(), "Untitled1");
+    assert_eq!(config.formatted_title(), "Untitled");
 
     config = config.with_modified(true);
-    assert_eq!(config.formatted_title(), "Untitled1*");
+    assert_eq!(config.formatted_title(), "Untitled*");
 
     config.circuit_name = "RF_Mixer_Stage".to_string();
     assert_eq!(config.formatted_title(), "RF_Mixer_Stage*");
@@ -431,7 +431,7 @@ fn test_top_frame_project_title_and_modified_indicator() {
 #[test]
 fn test_project_title_renaming_and_auto_centering() {
     let mut app = PhononApp::default();
-    assert_eq!(app.project_title, "Untitled1");
+    assert_eq!(app.project_title, "Untitled");
     assert!(!app.is_modified);
     assert!(app.pending_auto_center);
 
@@ -439,7 +439,8 @@ fn test_project_title_renaming_and_auto_centering() {
     assert_eq!(app.project_title, "AudioFilter");
     assert_eq!(app.top_frame_config.circuit_name, "AudioFilter");
 
-    // Bounding box on loaded circuit
+    // Load demo to test bounding box on circuit
+    app.load_voltage_divider_demo();
     let bb = app.bounding_box();
     assert!(bb.is_some(), "Canvas with components must have bounding box");
     let bb_rect = bb.unwrap();

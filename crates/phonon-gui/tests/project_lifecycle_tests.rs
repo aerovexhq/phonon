@@ -188,3 +188,65 @@ fn test_project_dialog_modes_and_flow() {
     dialog.close();
     assert!(!dialog.is_open);
 }
+
+#[test]
+fn test_startup_with_untitled_unsaved_empty_project() {
+    let app = PhononApp::default();
+    assert_eq!(app.project_title, "Untitled");
+    assert!(app.current_project_path.is_none(), "Must have no project path on startup");
+    assert!(app.components.is_empty(), "Must have no components on startup");
+    assert!(app.wires.is_empty(), "Must have no wires on startup");
+    assert!(!app.is_dirty(), "Startup project must be clean");
+    assert_eq!(app.top_frame_config.formatted_title(), "Untitled");
+}
+
+#[test]
+fn test_unsaved_project_save_prompts_save_as_dialog() {
+    let mut app = PhononApp::default();
+    assert!(app.current_project_path.is_none());
+
+    // User edits canvas
+    app.mark_dirty();
+    assert!(app.is_dirty());
+    assert_eq!(app.top_frame_config.formatted_title(), "Untitled*");
+
+    // User triggers Save (Ctrl+S / Save Project)
+    assert!(!app.project_dialog.is_open);
+    let res = app.save_project();
+    assert!(res.is_ok());
+
+    // Because no destination was picked, Save As dialog opens and project remains unsaved/dirty
+    assert!(app.project_dialog.is_open, "Save As dialog must open when saving untitled project");
+    assert_eq!(app.project_dialog.mode, ProjectDialogMode::SaveAs);
+    assert!(app.current_project_path.is_none(), "Path must remain unset until picked");
+    assert!(app.is_dirty(), "Project must remain dirty until user confirms save location");
+}
+
+#[test]
+fn test_save_as_picks_location_and_marks_clean() {
+    let mut app = PhononApp::default();
+    app.mark_dirty();
+    assert!(app.is_dirty());
+
+    let temp_dir = std::env::temp_dir().join(format!("phonon_test_save_as_{}", std::process::id()));
+    let _ = std::fs::create_dir_all(&temp_dir);
+    let target_file = temp_dir.join("TestAmplifier.phn");
+
+    // User saves project as a specific path
+    let res = app.save_project_as(&target_file.to_string_lossy());
+    assert!(res.is_ok());
+
+    assert!(app.current_project_path.is_some(), "Project must now have a resolved path");
+    assert_eq!(app.project_title, "TestAmplifier");
+    assert!(!app.is_dirty(), "Project must be marked clean after picking location");
+    assert_eq!(app.top_frame_config.formatted_title(), "TestAmplifier");
+
+    // Subsequent Save writes directly to the established path without prompting
+    app.project_dialog.close();
+    let res2 = app.save_project();
+    assert!(res2.is_ok());
+    assert!(!app.project_dialog.is_open, "Subsequent Save must not prompt Save As");
+
+    let _ = std::fs::remove_dir_all(&temp_dir);
+}
+

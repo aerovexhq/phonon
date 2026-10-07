@@ -11,6 +11,7 @@ use phonon_gui::PhononApp;
 #[test]
 fn test_ui_script_component_drag_state() {
     let mut app = PhononApp::default();
+    app.load_voltage_divider_demo();
     assert_eq!(app.components.len(), 4, "Initial circuit must have 4 components");
     assert_eq!(app.wires.len(), 4, "Initial circuit must have 4 wires");
 
@@ -86,6 +87,7 @@ fn test_ui_script_transient_simulation() {
 #[test]
 fn test_ui_script_marquee_selection() {
     let mut app = PhononApp::default();
+    app.load_voltage_divider_demo();
     app.clear_selection();
     assert_eq!(app.canvas.selected_component_ids.len(), 0);
 
@@ -121,6 +123,7 @@ fn test_ui_script_preferences_dialog() {
 #[test]
 fn test_script_runner_execution() {
     let mut app = PhononApp::default();
+    app.load_voltage_divider_demo();
     let script = UiScript::component_drag_scenario();
     let mut runner = ScriptRunner::new(script);
 

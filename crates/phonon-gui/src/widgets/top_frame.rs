@@ -41,7 +41,7 @@ impl Default for TopFrameConfig {
             is_web: cfg!(target_arch = "wasm32"),
             title: "Phonon Studio".to_string(),
             app_version: env!("CARGO_PKG_VERSION").to_string(),
-            circuit_name: "Untitled1".to_string(),
+            circuit_name: "Untitled".to_string(),
             is_modified: false,
         }
     }
@@ -73,7 +73,7 @@ impl TopFrameConfig {
     /// Returns the formatted circuit display title: `{project_title}{*}`.
     pub fn formatted_title(&self) -> String {
         let name = if self.circuit_name.is_empty() {
-            "Untitled1"
+            "Untitled"
         } else {
             &self.circuit_name
         };
@@ -237,7 +237,7 @@ fn render_top_frame_internal(
             }
             if ui.button("Rename Project...").clicked() {
                 let cur = if config.circuit_name.is_empty() {
-                    "Untitled1".to_string()
+                    "Untitled".to_string()
                 } else {
                     config.circuit_name.clone()
                 };
@@ -1103,7 +1103,7 @@ fn render_top_frame_internal(
             ui.data_mut(|d| {
                 d.insert_temp(edit_id, true);
                 let cur = if config.circuit_name.is_empty() {
-                    "Untitled1".to_string()
+                    "Untitled".to_string()
                 } else {
                     config.circuit_name.clone()
                 };
@@ -1115,7 +1115,7 @@ fn render_top_frame_internal(
             let mut buf: String = ui.data(|d| {
                 d.get_temp(edit_buf_id).unwrap_or_else(|| {
                     if config.circuit_name.is_empty() {
-                        "Untitled1".to_string()
+                        "Untitled".to_string()
                     } else {
                         config.circuit_name.clone()
                     }

@@ -683,7 +683,7 @@ impl Default for PhononApp {
             show_palette: true,
             boot_theme_config: crate::default_boot_theme_config(),
             pending_auto_center: true,
-            project_title: "Untitled1".to_string(),
+            project_title: "Untitled".to_string(),
             is_modified: false,
             modification_epoch: 0,
             clean_epoch: 0,
@@ -712,12 +712,14 @@ impl Default for PhononApp {
         app.history.max_depth = loaded_prefs.in_memory_history_limit;
         app.preferences = loaded_prefs;
 
-        // If a saved project from last time exists, continue from there. Otherwise load default Voltage Divider demo.
-        if !app.try_restore_last_project() {
-            app.load_voltage_divider_demo();
-            app.project_title = "Untitled1".to_string();
-            app.top_frame_config.circuit_name = "Untitled1".to_string();
-        }
+        // The program starts with an unsaved "Untitled" project with nothing loaded in.
+        // It is not saved until the user chooses a location and saves.
+        app.project_title = "Untitled".to_string();
+        app.top_frame_config.circuit_name = "Untitled".to_string();
+        app.current_project_path = None;
+        app.clear_canvas_state();
+        app.components.clear();
+        app.wires.clear();
         app.history.clear();
         app.modification_epoch = 0;
         app.clean_epoch = 0;
@@ -840,11 +842,13 @@ impl PhononApp {
         }
     }
 
-    /// Initializes a fresh untitled project.
+    /// Initializes a fresh untitled project with nothing loaded in.
     pub fn new_project(&mut self) {
         self.clear_canvas_state();
+        self.components.clear();
+        self.wires.clear();
         self.history.clear();
-        self.project_title = "Untitled1".to_string();
+        self.project_title = "Untitled".to_string();
         self.current_project_path = None;
         self.modification_epoch = 0;
         self.clean_epoch = 0;
@@ -852,7 +856,7 @@ impl PhononApp {
         self.top_frame_config.circuit_name = self.project_title.clone();
         self.top_frame_config.is_modified = false;
         self.pending_auto_center = true;
-        self.sim_status = "New Project".to_string();
+        self.sim_status = "New Untitled Project".to_string();
     }
 
     /// Clears canvas by explicit user request and marks project as modified.
@@ -873,24 +877,75 @@ impl PhononApp {
     }
 
     /// Saves the current project state to storage and filesystem.
+    /// If no file destination has been picked yet, prompts the user via Save As.
     pub fn save_project(&mut self) -> Result<(), String> {
-        let title = self.project_title.clone();
-        self.storage_manager
-            .save_project(&title, &self.components, &self.wires)?;
+        let path = match &self.current_project_path {
+            Some(p) => p.clone(),
+            None => {
+                // Not saved yet: user must pick a location and name
+                self.open_save_as_dialog();
+                return Ok(());
+            }
+        };
 
-        if let Some(path) = &self.current_project_path {
-            let _ = save_project_to_file(path, &title, &self.components, &self.wires);
+        let title = self.project_title.clone();
+        #[cfg(not(target_arch = "wasm32"))]
+        {
+            save_project_to_file(&path, &title, &self.components, &self.wires)
+                .map_err(|e| format!("Failed to save project to {}: {}", path.display(), e))?;
         }
 
+        let _ = self.storage_manager
+            .save_project(&title, &self.components, &self.wires);
+
         self.mark_clean();
-        self.sim_status = format!("Project '{}' saved", title);
+        self.sim_status = format!("Project '{}' saved to {}", title, path.display());
         Ok(())
     }
 
-    /// Saves the current project state under a new title.
-    pub fn save_project_as(&mut self, new_name: &str) -> Result<(), String> {
-        self.rename_project(new_name);
-        self.save_project()
+    /// Saves the current project state under a newly selected path or name.
+    pub fn save_project_as(&mut self, new_name_or_path: &str) -> Result<(), String> {
+        let trimmed = new_name_or_path.trim();
+        if trimmed.is_empty() {
+            return Err("Project name cannot be empty".to_string());
+        }
+
+        let p = std::path::Path::new(trimmed);
+        let (resolved_path, name) = if p.is_absolute() || p.components().count() > 1 {
+            let stem = p
+                .file_stem()
+                .and_then(|s| s.to_str())
+                .unwrap_or("Untitled")
+                .to_string();
+            let target_path = if p.extension().is_none() {
+                p.with_extension("phn")
+            } else {
+                p.to_path_buf()
+            };
+            (target_path, stem)
+        } else {
+            let stem = trimmed.trim_end_matches(".phn").to_string();
+            let base_dir = std::env::current_dir().unwrap_or_else(|_| std::path::PathBuf::from("."));
+            let filename = format!("{}.phn", stem);
+            (base_dir.join(filename), stem)
+        };
+
+        self.rename_project(&name);
+        self.current_project_path = Some(resolved_path.clone());
+
+        let title = self.project_title.clone();
+        #[cfg(not(target_arch = "wasm32"))]
+        {
+            save_project_to_file(&resolved_path, &title, &self.components, &self.wires)
+                .map_err(|e| format!("Failed to save to {}: {}", resolved_path.display(), e))?;
+        }
+
+        let _ = self.storage_manager
+            .save_project(&title, &self.components, &self.wires);
+
+        self.mark_clean();
+        self.sim_status = format!("Project saved to {}", resolved_path.display());
+        Ok(())
     }
 
     /// Loads a project by name from the virtual project file system.

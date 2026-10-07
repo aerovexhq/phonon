@@ -226,7 +226,8 @@ fn test_file_io_save_and_load() {
 #[test]
 fn test_app_in_memory_persistence() {
     let mut app = PhononApp::default();
-    assert!(!app.components.is_empty(), "App starts with default demo components");
+    app.load_voltage_divider_demo();
+    assert!(!app.components.is_empty(), "App has demo components");
     let original_comp_count = app.components.len();
     let original_wire_count = app.wires.len();
 

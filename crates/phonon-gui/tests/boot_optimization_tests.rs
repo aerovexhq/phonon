@@ -118,8 +118,8 @@ fn test_phonon_app_cold_initialization_latency_benchmark() {
         let elapsed = start.elapsed();
         total_duration += elapsed;
 
-        assert!(!app.components.is_empty());
-        assert!(!app.wires.is_empty());
+        assert!(app.components.is_empty(), "App starts with nothing loaded in");
+        assert!(app.wires.is_empty(), "App starts with nothing loaded in");
         assert_eq!(app.history.undo_depth(), 0);
     }
 

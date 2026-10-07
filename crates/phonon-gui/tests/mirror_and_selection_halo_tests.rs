@@ -15,7 +15,8 @@ use phonon_gui::PhononApp;
 #[test]
 fn test_ghost_selection_halo_eliminated_on_move() {
     let mut app = PhononApp::default();
-    assert!(!app.components.is_empty(), "App starts with demo components");
+    app.load_voltage_divider_demo();
+    assert!(!app.components.is_empty(), "App has demo components");
 
     let comp_id = app.components[0].id;
     let initial_pos = app.components[0].pos;
@@ -135,6 +136,7 @@ fn test_pin_positions_with_mirroring() {
 #[test]
 fn test_mirror_history_undo_redo() {
     let mut app = PhononApp::default();
+    app.load_voltage_divider_demo();
     let cid = app.components[0].id;
     app.select_component(cid, false);
 
