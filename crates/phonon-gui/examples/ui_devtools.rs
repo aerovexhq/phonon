@@ -139,6 +139,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         "quantum" | "metamaterial" | "heat_transistor" => UiScript::quantum_metamaterial_and_heat_transistor_scenario(),
         "comb" | "microcomb" | "corner_comb" | "soliton" => UiScript::corner_kerr_microcomb_scenario(),
         "snspd" | "nanowire" | "single_phonon" => UiScript::acoustic_snspd_scenario(),
+        "qkd" | "cv_qkd" | "polariton_router" => UiScript::floquet_cv_qkd_scenario(),
         _ => UiScript::full_test_suite(),
     };
 

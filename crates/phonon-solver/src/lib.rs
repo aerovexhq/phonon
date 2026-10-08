@@ -362,6 +362,7 @@ pub mod chiral_chern_simons_interferometer;
 pub mod chiral_heat_transistor;
 pub mod corner_kerr_microcomb;
 pub mod acoustic_snspd;
+pub mod floquet_cv_qkd;
 
 pub use acoustic::{
     AcousticBenchmarkReport, AcousticBenchmarkRunner, AcousticLinkSimulator, AcousticRealismTier,
@@ -1440,6 +1441,14 @@ pub use acoustic_snspd::{
     AcousticSnspdProcessor, FockDiscriminationPoint, JitterHistogramPoint,
     NanowireHotspotSolver, NanowireParams, PulsePoint, QuantumTransceiverEngine,
     QuantumTransceiverParams, SnspdAuditReport, SnspdTelemetry, TransceiverMetrics,
+};
+
+pub use floquet_cv_qkd::{
+    AuditCheckItem as CvQkdAuditCheckItem,
+    ChiralPolaritonRouter, CvQkdAuditReport, CvQkdCovarianceMatrix, CvQkdEngine,
+    CvQkdParams, CvQkdTelemetry, FloquetCvQkdProcessor, FloquetRouterParams,
+    KeyRateDistancePoint, PolaritonRouterTelemetry, PolaritonSpectrumPoint,
+    WignerSlicePoint,
 };
 
 

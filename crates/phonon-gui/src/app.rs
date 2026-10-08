@@ -46,7 +46,7 @@ use crate::widgets::{
     ChiralMajoranaDialog, FloquetCornerLaserDialog, ParafermionDialog,
     ChiralAcoustomagnonicDialog, FloquetCornerTransducerDialog,
     ChernSimonsInterferometerDialog, ChiralHeatTransistorDialog,
-    CornerKerrMicrocombDialog, AcousticSnspdDialog,
+    CornerKerrMicrocombDialog, AcousticSnspdDialog, FloquetCvQkdDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -442,6 +442,9 @@ pub struct PhononApp {
     /// Interactive Topological Acoustic Superconducting Nanowire Single-Phonon Detector (SNSPD) & Quantum Transceiver dialog.
     pub acoustic_snspd_dialog: AcousticSnspdDialog,
 
+    /// Interactive Topological Acoustic Floquet Chiral Magnon-Phonon Entanglement Router & CV-QKD dialog.
+    pub floquet_cv_qkd_dialog: FloquetCvQkdDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -685,6 +688,7 @@ impl Default for PhononApp {
             chiral_heat_transistor_dialog: ChiralHeatTransistorDialog::new_fast(),
             corner_kerr_microcomb_dialog: CornerKerrMicrocombDialog::new_fast(),
             acoustic_snspd_dialog: AcousticSnspdDialog::new_fast(),
+            floquet_cv_qkd_dialog: FloquetCvQkdDialog::new_fast(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -4341,6 +4345,9 @@ impl PhononApp {
 
         // 95. Interactive Topological Acoustic Superconducting Nanowire Single-Phonon Detector (SNSPD) & Quantum Transceiver Dialog
         self.acoustic_snspd_dialog.ui(ui.ctx());
+
+        // 96. Interactive Topological Acoustic Floquet Chiral Magnon-Phonon Entanglement Router & CV-QKD Dialog
+        self.floquet_cv_qkd_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {

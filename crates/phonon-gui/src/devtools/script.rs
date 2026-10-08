@@ -67,6 +67,10 @@ pub enum UiAction {
     OpenAcousticSnspdDialog,
     /// Closes the Topological Acoustic Superconducting Nanowire Single-Phonon Detector (SNSPD) & Quantum Transceiver CAD dialog.
     CloseAcousticSnspdDialog,
+    /// Opens the Floquet Chiral Magnon-Phonon Entanglement Router & CV-QKD CAD dialog.
+    OpenFloquetCvQkdDialog,
+    /// Closes the Floquet Chiral Magnon-Phonon Entanglement Router & CV-QKD CAD dialog.
+    CloseFloquetCvQkdDialog,
     /// Loads a built-in demo circuit.
     LoadDemo(DemoCircuitKind),
     /// Expands or collapses a category in the component palette drawer.
@@ -288,6 +292,7 @@ impl UiScript {
         steps.extend(Self::quantum_metamaterial_and_heat_transistor_scenario().steps);
         steps.extend(Self::corner_kerr_microcomb_scenario().steps);
         steps.extend(Self::acoustic_snspd_scenario().steps);
+        steps.extend(Self::floquet_cv_qkd_scenario().steps);
         steps.extend(vec![
             UiAction::SetDevtoolsPanelVisible(true),
             UiAction::WaitFrames(3),
@@ -418,6 +423,24 @@ impl UiScript {
                     filename: "25_acoustic_snspd_dialog.png".to_string(),
                 },
                 UiAction::CloseAcousticSnspdDialog,
+                UiAction::WaitFrames(2),
+            ],
+        )
+    }
+
+    /// Scenario 12: Topological Acoustic Floquet Chiral Magnon-Phonon Entanglement Router & CV-QKD Dialog.
+    pub fn floquet_cv_qkd_scenario() -> Self {
+        Self::new(
+            "Topological Acoustic Floquet Chiral Polariton Router & CV-QKD Verification",
+            "Opens the Floquet Chiral Polariton Router & CV-QKD CAD dialog and verifies all 5 tabs and physics metrics",
+            vec![
+                UiAction::OpenFloquetCvQkdDialog,
+                UiAction::WaitFrames(6),
+                UiAction::TakeScreenshot {
+                    label: "Topological Acoustic Floquet Chiral Polariton Router & CV-QKD Dialog".to_string(),
+                    filename: "26_floquet_cv_qkd_dialog.png".to_string(),
+                },
+                UiAction::CloseFloquetCvQkdDialog,
                 UiAction::WaitFrames(2),
             ],
         )
@@ -585,6 +608,14 @@ impl ScriptRunner {
             UiAction::CloseAcousticSnspdDialog => {
                 app.acoustic_snspd_dialog.is_open = false;
                 self.execution_log.push("Closed Acoustic SNSPD modal dialog".to_string());
+            }
+            UiAction::OpenFloquetCvQkdDialog => {
+                app.floquet_cv_qkd_dialog.is_open = true;
+                self.execution_log.push("Opened Floquet CV-QKD modal dialog".to_string());
+            }
+            UiAction::CloseFloquetCvQkdDialog => {
+                app.floquet_cv_qkd_dialog.is_open = false;
+                self.execution_log.push("Closed Floquet CV-QKD modal dialog".to_string());
             }
             UiAction::LoadDemo(kind) => {
                 match kind {
