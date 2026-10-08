@@ -1118,6 +1118,15 @@ impl PhononApp {
         self.netlist_sync.invalidate();
     }
 
+    /// Checks whether the active schematic canvas has zero placed items (components, wires, and buses).
+    #[inline]
+    pub fn is_canvas_empty(&self) -> bool {
+        self.components.is_empty()
+            && self.wires.is_empty()
+            && self.buses.is_empty()
+            && self.canvas.subcircuit_instances.is_empty()
+    }
+
     /// Synchronizes app components, wires, and buses into the active canvas object and active sheet.
     pub fn sync_canvas_state(&mut self) {
         self.canvas.components = self.components.clone();
@@ -3517,7 +3526,7 @@ impl PhononApp {
     }
 
     /// Interactive canvas response and rendering.
-    fn render_canvas(&mut self, ui: &mut egui::Ui) {
+    pub fn render_canvas(&mut self, ui: &mut egui::Ui) {
         let (response, painter) =
             ui.allocate_painter(ui.available_size_before_wrap(), Sense::click_and_drag());
         let viewport = response.rect;
@@ -3592,10 +3601,20 @@ impl PhononApp {
                     }
                     ToolMode::Place(kind) | ToolMode::PlaceComponent(kind) => {
                         let count = self.components.iter().filter(|c| c.kind == *kind).count() + 1;
+                        let is_empty = self.is_canvas_empty();
+                        let place_pos = if is_empty {
+                            let target_screen = self.canvas.world_to_screen(snapped_world);
+                            self.canvas.reset_origin_at_screen(target_screen);
+                            self.sheets.active_sheet_mut().camera_offset = self.canvas.pan;
+                            egui::Pos2::ZERO
+                        } else {
+                            snapped_world
+                        };
+
                         let mut new_comp = SchematicComponent::new(
                             self.next_comp_id,
                             kind.clone(),
-                            snapped_world,
+                            place_pos,
                             count,
                         );
                         new_comp.rotation = self.placement_rotation;
@@ -3622,14 +3641,22 @@ impl PhononApp {
                                 self.active_wire_start = Some(snapped_world); // Continue routing from current point
                             }
                         } else {
-                            // Find nearest pin to snap start
-                            let nearest_pin = self
-                                .components
-                                .iter()
-                                .flat_map(|c| c.all_pins())
-                                .map(|(_, p)| p)
-                                .find(|&p| (p - mouse_world).length() <= 12.0);
-                            self.active_wire_start = Some(nearest_pin.unwrap_or(snapped_world));
+                            let is_empty = self.is_canvas_empty();
+                            if is_empty {
+                                let target_screen = self.canvas.world_to_screen(snapped_world);
+                                self.canvas.reset_origin_at_screen(target_screen);
+                                self.sheets.active_sheet_mut().camera_offset = self.canvas.pan;
+                                self.active_wire_start = Some(egui::Pos2::ZERO);
+                            } else {
+                                // Find nearest pin to snap start
+                                let nearest_pin = self
+                                    .components
+                                    .iter()
+                                    .flat_map(|c| c.all_pins())
+                                    .map(|(_, p)| p)
+                                    .find(|&p| (p - mouse_world).length() <= 12.0);
+                                self.active_wire_start = Some(nearest_pin.unwrap_or(snapped_world));
+                            }
                         }
                     }
                     ToolMode::Bus => {
@@ -3646,7 +3673,15 @@ impl PhononApp {
                                 self.active_wire_start = Some(snapped_world);
                             }
                         } else {
-                            self.active_wire_start = Some(snapped_world);
+                            let is_empty = self.is_canvas_empty();
+                            if is_empty {
+                                let target_screen = self.canvas.world_to_screen(snapped_world);
+                                self.canvas.reset_origin_at_screen(target_screen);
+                                self.sheets.active_sheet_mut().camera_offset = self.canvas.pan;
+                                self.active_wire_start = Some(egui::Pos2::ZERO);
+                            } else {
+                                self.active_wire_start = Some(snapped_world);
+                            }
                         }
                     }
                     ToolMode::Probe => {

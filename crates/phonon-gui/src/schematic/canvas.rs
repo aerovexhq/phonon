@@ -62,6 +62,21 @@ impl SchematicCanvas {
         Self::default()
     }
 
+    /// Checks whether the canvas has no components, wires, subcircuit instances, or buses.
+    #[inline]
+    pub fn is_empty(&self) -> bool {
+        self.components.is_empty()
+            && self.wires.is_empty()
+            && self.subcircuit_instances.is_empty()
+            && self.buses.is_empty()
+    }
+
+    /// Resets the canvas coordinate origin to align with the specified screen position,
+    /// ensuring that world coordinate (0.0, 0.0) lands exactly at `target_screen`.
+    pub fn reset_origin_at_screen(&mut self, target_screen: Pos2) {
+        self.pan = target_screen.to_vec2();
+    }
+
     /// Adds a schematic component to the canvas.
     pub fn add_component(&mut self, comp: SchematicComponent) {
         self.components.push(comp);
