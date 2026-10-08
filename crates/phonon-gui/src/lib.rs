@@ -278,6 +278,9 @@ pub use widgets::topological_josephson_memory_dialog::{
 pub use widgets::genus2_parafermion_dialog::{
     Genus2ParafermionDialog, Genus2ParafermionTab,
 };
+pub use widgets::floquet_corner_isolator_dialog::{
+    FloquetCornerIsolatorDialog, FloquetCornerIsolatorTab,
+};
 
 #[cfg(not(target_arch = "wasm32"))]
 use phonon_core::PhysicsDynamicsBackend;
