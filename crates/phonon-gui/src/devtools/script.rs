@@ -59,6 +59,10 @@ pub enum UiAction {
     OpenChiralHeatTransistorDialog,
     /// Closes the Chiral Heat Transistor & Thermal Diode CAD dialog.
     CloseChiralHeatTransistorDialog,
+    /// Opens the Topological Corner Kerr Microcomb & Dissipative Soliton CAD dialog.
+    OpenCornerKerrMicrocombDialog,
+    /// Closes the Topological Corner Kerr Microcomb & Dissipative Soliton CAD dialog.
+    CloseCornerKerrMicrocombDialog,
     /// Loads a built-in demo circuit.
     LoadDemo(DemoCircuitKind),
     /// Expands or collapses a category in the component palette drawer.
@@ -278,6 +282,7 @@ impl UiScript {
         steps.extend(Self::command_palette_scenario().steps);
         steps.extend(Self::half_adder_and_logic_gates_scenario().steps);
         steps.extend(Self::quantum_metamaterial_and_heat_transistor_scenario().steps);
+        steps.extend(Self::corner_kerr_microcomb_scenario().steps);
         steps.extend(vec![
             UiAction::SetDevtoolsPanelVisible(true),
             UiAction::WaitFrames(3),
@@ -372,6 +377,24 @@ impl UiScript {
 
                 // Step 3: Close Dialog
                 UiAction::CloseChiralHeatTransistorDialog,
+                UiAction::WaitFrames(2),
+            ],
+        )
+    }
+
+    /// Scenario 10: Topological Corner Kerr Microcomb & Dissipative Soliton Dialog.
+    pub fn corner_kerr_microcomb_scenario() -> Self {
+        Self::new(
+            "Topological Corner Kerr Microcomb & Soliton Verification",
+            "Opens the Topological Corner Kerr Microcomb & Dissipative Soliton CAD dialog and verifies all 5 tabs and physics metrics",
+            vec![
+                UiAction::OpenCornerKerrMicrocombDialog,
+                UiAction::WaitFrames(6),
+                UiAction::TakeScreenshot {
+                    label: "Topological Corner Kerr Microcomb & Dissipative Soliton Dialog".to_string(),
+                    filename: "24_corner_kerr_microcomb_dialog.png".to_string(),
+                },
+                UiAction::CloseCornerKerrMicrocombDialog,
                 UiAction::WaitFrames(2),
             ],
         )
@@ -523,6 +546,14 @@ impl ScriptRunner {
             UiAction::CloseChiralHeatTransistorDialog => {
                 app.chiral_heat_transistor_dialog.is_open = false;
                 self.execution_log.push("Closed Chiral Heat Transistor modal dialog".to_string());
+            }
+            UiAction::OpenCornerKerrMicrocombDialog => {
+                app.corner_kerr_microcomb_dialog.is_open = true;
+                self.execution_log.push("Opened Corner Kerr Microcomb modal dialog".to_string());
+            }
+            UiAction::CloseCornerKerrMicrocombDialog => {
+                app.corner_kerr_microcomb_dialog.is_open = false;
+                self.execution_log.push("Closed Corner Kerr Microcomb modal dialog".to_string());
             }
             UiAction::LoadDemo(kind) => {
                 match kind {

@@ -360,6 +360,7 @@ pub mod chiral_acoustomagnonic_isolator;
 pub mod floquet_corner_transducer;
 pub mod chiral_chern_simons_interferometer;
 pub mod chiral_heat_transistor;
+pub mod corner_kerr_microcomb;
 
 pub use acoustic::{
     AcousticBenchmarkReport, AcousticBenchmarkRunner, AcousticLinkSimulator, AcousticRealismTier,
@@ -1425,6 +1426,13 @@ pub use chiral_heat_transistor::{
     HeatTransistorAuditReport, HeatTransistorMetrics, HeatTransistorParams,
     HeatTransistorTransferPoint, PolaritonQuasiEnergyPoint, ThermalDiodeParams,
     ThermalFluxPoint, ThermalRectificationMetrics,
+};
+
+pub use corner_kerr_microcomb::{
+    CombModePoint, CornerCombTransductionMetrics, CornerKerrMicrocombProcessor,
+    CornerMicrocombAuditReport, CornerSolitonParams, CornerSolitonProfilePoint,
+    CornerSolitonSolver, CornerTopologyMetrics, DissipativeSolitonMetrics,
+    MicrocombGenerator, MicrocombMetrics,
 };
 
 

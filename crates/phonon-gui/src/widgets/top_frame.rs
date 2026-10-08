@@ -1024,6 +1024,12 @@ fn render_top_frame_internal(
                     }
                     ui.close();
                 }
+                if ui.button("Topological Corner Kerr Microcomb & Soliton...").clicked() {
+                    if let Some(a) = app.as_deref_mut() {
+                        a.corner_kerr_microcomb_dialog.is_open = true;
+                    }
+                    ui.close();
+                }
             });
         });
         ui.label(RichText::new("|").color(Color32::from_rgb(60, 70, 85)).size(11.0));

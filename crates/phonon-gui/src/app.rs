@@ -46,6 +46,7 @@ use crate::widgets::{
     ChiralMajoranaDialog, FloquetCornerLaserDialog, ParafermionDialog,
     ChiralAcoustomagnonicDialog, FloquetCornerTransducerDialog,
     ChernSimonsInterferometerDialog, ChiralHeatTransistorDialog,
+    CornerKerrMicrocombDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -435,6 +436,9 @@ pub struct PhononApp {
     /// Interactive Quantum Metamaterial Non-Hermitian Floquet Chiral Heat Transistor & Thermal Diode dialog.
     pub chiral_heat_transistor_dialog: ChiralHeatTransistorDialog,
 
+    /// Interactive Topological Acoustic Higher-Order Corner-State Quantum Metamaterial Frequency Comb & Dissipative Kerr Soliton Generator dialog.
+    pub corner_kerr_microcomb_dialog: CornerKerrMicrocombDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -676,6 +680,7 @@ impl Default for PhononApp {
             floquet_corner_transducer_dialog: FloquetCornerTransducerDialog::new_fast(),
             chern_simons_interferometer_dialog: ChernSimonsInterferometerDialog::new_fast(),
             chiral_heat_transistor_dialog: ChiralHeatTransistorDialog::new_fast(),
+            corner_kerr_microcomb_dialog: CornerKerrMicrocombDialog::new_fast(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -4326,6 +4331,9 @@ impl PhononApp {
 
         // 93. Interactive Quantum Metamaterial Non-Hermitian Floquet Chiral Heat Transistor & Thermal Diode Dialog
         self.chiral_heat_transistor_dialog.ui(ui.ctx());
+
+        // 94. Interactive Topological Acoustic Higher-Order Corner-State Quantum Metamaterial Frequency Comb & Dissipative Kerr Soliton Generator Dialog
+        self.corner_kerr_microcomb_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {

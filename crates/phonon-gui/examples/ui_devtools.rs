@@ -137,6 +137,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         "palette" => UiScript::command_palette_scenario(),
         "logic" | "gates" | "half_adder" => UiScript::half_adder_and_logic_gates_scenario(),
         "quantum" | "metamaterial" | "heat_transistor" => UiScript::quantum_metamaterial_and_heat_transistor_scenario(),
+        "comb" | "microcomb" | "corner_comb" | "soliton" => UiScript::corner_kerr_microcomb_scenario(),
         _ => UiScript::full_test_suite(),
     };
 
