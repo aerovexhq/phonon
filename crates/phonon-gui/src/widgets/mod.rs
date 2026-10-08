@@ -124,6 +124,7 @@ pub mod topological_josephson_memory_dialog;
 pub mod genus2_parafermion_dialog;
 pub mod floquet_corner_isolator_dialog;
 pub mod skin_polariton_laser_dialog;
+pub mod valley_majorana_router_dialog;
 
 pub use pill_badge::{
     proportional_zoom_scale, render_dual_telemetry_pill, render_pill_badge, PillBadgeStyle,
@@ -339,5 +340,9 @@ pub use floquet_corner_isolator_dialog::{
 pub use skin_polariton_laser_dialog::{
     SkinPolaritonLaserDialog, SkinPolaritonLaserTab,
 };
+pub use valley_majorana_router_dialog::{
+    ValleyMajoranaRouterDialog, ValleyMajoranaRouterTab,
+};
+
 
 

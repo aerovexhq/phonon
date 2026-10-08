@@ -56,7 +56,7 @@ use crate::widgets::{
     TopologicalSkinAxionDialog, ReadRezayiFibonacciDialog,
     MoirePolaritonDialog, TopologicalJosephsonMemoryDialog,
     Genus2ParafermionDialog, FloquetCornerIsolatorDialog,
-    SkinPolaritonLaserDialog,
+    SkinPolaritonLaserDialog, ValleyMajoranaRouterDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -515,6 +515,9 @@ pub struct PhononApp {
     /// Interactive Dissipative Topological Polariton Skin Laser & Non-Hermitian Chiral Acoustic Gyroscope Array dialog.
     pub skin_polariton_laser_dialog: SkinPolaritonLaserDialog,
 
+    /// Interactive Quantum Metamaterial Valley-Locked Majorana Zero Mode Acoustic Interconnect & Chiral Majorana Transmon Router dialog.
+    pub valley_majorana_router_dialog: ValleyMajoranaRouterDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -788,6 +791,7 @@ impl Default for PhononApp {
             genus2_parafermion_dialog: Genus2ParafermionDialog::new_fast(),
             floquet_corner_isolator_dialog: FloquetCornerIsolatorDialog::new_fast(),
             skin_polariton_laser_dialog: SkinPolaritonLaserDialog::new_fast(),
+            valley_majorana_router_dialog: ValleyMajoranaRouterDialog::new_fast(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -5808,6 +5812,9 @@ impl PhononApp {
 
         // 113. Interactive Dissipative Topological Polariton Skin Laser & Non-Hermitian Chiral Acoustic Gyroscope Array Dialog
         self.skin_polariton_laser_dialog.ui(ui.ctx());
+
+        // 114. Interactive Quantum Metamaterial Valley-Locked Majorana Router Dialog
+        self.valley_majorana_router_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {

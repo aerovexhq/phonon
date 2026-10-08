@@ -284,6 +284,9 @@ pub use widgets::floquet_corner_isolator_dialog::{
 pub use widgets::skin_polariton_laser_dialog::{
     SkinPolaritonLaserDialog, SkinPolaritonLaserTab,
 };
+pub use widgets::valley_majorana_router_dialog::{
+    ValleyMajoranaRouterDialog, ValleyMajoranaRouterTab,
+};
 
 #[cfg(not(target_arch = "wasm32"))]
 use phonon_core::PhysicsDynamicsBackend;

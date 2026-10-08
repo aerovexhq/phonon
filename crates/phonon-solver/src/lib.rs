@@ -380,6 +380,7 @@ pub mod topological_josephson_memory;
 pub mod genus2_parafermion_surface;
 pub mod floquet_corner_isolator;
 pub mod skin_polariton_laser;
+pub mod valley_majorana_router;
 
 pub use acoustic::{
     AcousticBenchmarkReport, AcousticBenchmarkRunner, AcousticLinkSimulator, AcousticRealismTier,
@@ -1630,6 +1631,18 @@ pub use skin_polariton_laser::{
     SkinEffectLasingMetrics, SkinEffectLasingParams, SkinEffectLasingSolver,
     SkinModeSpatialPoint, SkinPolaritonLaserAuditReport, SkinPolaritonLaserProcessor,
 };
+
+pub use valley_majorana_router::{
+    BeamSplitterSMatrixPoint, ChiralBeamSplitterMetrics, ChiralBeamSplitterParams,
+    ChiralBeamSplitterSolver, FaultTolerantInterconnectSolver, InterconnectBusMetrics,
+    InterconnectBusParams, InterconnectThermalPoint, MajoranaTransmonCouplingSolver,
+    MajoranaTransmonMetrics, MajoranaTransmonParams, TransmonRabiSpectrumPoint,
+    ValleyMajoranaDispersionPoint, ValleyMajoranaEdgeSpatialPoint,
+    ValleyMajoranaLatticeMetrics, ValleyMajoranaLatticeParams,
+    ValleyMajoranaAuditReport, ValleyMajoranaLatticeSolver,
+    ValleyMajoranaRouterProcessor,
+};
+
 
 
 
