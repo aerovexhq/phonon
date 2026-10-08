@@ -266,6 +266,9 @@ pub use widgets::fractional_parafermion_dialog::{
 pub use widgets::topological_skin_axion_dialog::{
     SkinAxionDialogTab, TopologicalSkinAxionDialog,
 };
+pub use widgets::read_rezayi_fibonacci_dialog::{
+    ReadRezayiDialogTab, ReadRezayiFibonacciDialog,
+};
 
 #[cfg(not(target_arch = "wasm32"))]
 use phonon_core::PhysicsDynamicsBackend;

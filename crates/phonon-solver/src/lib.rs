@@ -374,6 +374,7 @@ pub mod chiral_spintorque_memory;
 pub mod valley_quantum_router;
 pub mod fractional_parafermion_surface;
 pub mod topological_skin_axion;
+pub mod read_rezayi_fibonacci;
 
 pub use acoustic::{
     AcousticBenchmarkReport, AcousticBenchmarkRunner, AcousticLinkSimulator, AcousticRealismTier,
@@ -1563,6 +1564,17 @@ pub use topological_skin_axion::{
     CryogenicReadoutCrossbarSolver, GainBandwidthPoint, GbzPoint, SkinAmplifierMetrics,
     SkinAmplifierParams, SkinAxionAuditReport, SkinMicrowaveAmplifierSolver,
     SkinSpatialProfilePoint, TopologicalSkinAxionProcessor,
+};
+
+pub use read_rezayi_fibonacci::{
+    BusFidelityDistancePoint, BusWaveformPoint, Complex2x2, EnclosedTopologicalCharge,
+    FibonacciBraidTrajectoryPoint, FibonacciBraidingMetrics, FibonacciBraidingParams,
+    FibonacciBraidingSolver, FibonacciTargetGate, InterferometerFluxPoint,
+    QuantumAcousticBusMetrics, QuantumAcousticBusParams, QuantumAcousticBusSolver,
+    ReadRezayiAuditReport, ReadRezayiCorrelationPoint, ReadRezayiDispersionPoint,
+    ReadRezayiFibonacciProcessor, ReadRezayiFilling, ReadRezayiMetrics,
+    ReadRezayiStateParams, ReadRezayiStateSolver, SawAcousticTransmissionPoint,
+    SawInterferometerMetrics, SawInterferometerParams, SawInterferometerSolver,
 };
 
 

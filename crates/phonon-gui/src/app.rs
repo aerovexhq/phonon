@@ -53,7 +53,7 @@ use crate::widgets::{
     FractionalChernInterconnectDialog, ChiralLasingMetasurfaceDialog,
     SyntheticGaugeHolonomyDialog, ChiralSpinTorqueMemoryDialog,
     ValleyQuantumRouterDialog, FractionalParafermionDialog,
-    TopologicalSkinAxionDialog,
+    TopologicalSkinAxionDialog, ReadRezayiFibonacciDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -494,6 +494,9 @@ pub struct PhononApp {
     /// Interactive Topological Non-Hermitian Skin Microwave Amplifier & Axion Transducer dialog.
     pub topological_skin_axion_dialog: TopologicalSkinAxionDialog,
 
+    /// Interactive Read-Rezayi Fibonacci Anyon Acoustic Interferometer & Universal Quantum Bus dialog.
+    pub read_rezayi_fibonacci_dialog: ReadRezayiFibonacciDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -761,6 +764,7 @@ impl Default for PhononApp {
             valley_quantum_router_dialog: ValleyQuantumRouterDialog::new_fast(),
             fractional_parafermion_dialog: FractionalParafermionDialog::new_fast(),
             topological_skin_axion_dialog: TopologicalSkinAxionDialog::new_fast(),
+            read_rezayi_fibonacci_dialog: ReadRezayiFibonacciDialog::new_fast(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -5763,6 +5767,9 @@ impl PhononApp {
 
         // 107. Interactive Topological Skin Microwave Amplifier & Axion Transducer Dialog
         self.topological_skin_axion_dialog.ui(ui.ctx());
+
+        // 108. Interactive Read-Rezayi Fibonacci Anyon Acoustic Interferometer & Universal Quantum Bus Dialog
+        self.read_rezayi_fibonacci_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {
