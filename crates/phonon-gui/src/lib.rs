@@ -293,6 +293,9 @@ pub use widgets::chiral_graphene_braiding_dialog::{
 pub use widgets::floquet_magnon_memory_dialog::{
     FloquetMagnonMemoryDialog, FloquetMagnonMemoryTab,
 };
+pub use widgets::anyon_interferometer_qudit_dialog::{
+    AnyonInterferometerQuditDialog, AnyonInterferometerQuditTab,
+};
 
 #[cfg(not(target_arch = "wasm32"))]
 use phonon_core::PhysicsDynamicsBackend;

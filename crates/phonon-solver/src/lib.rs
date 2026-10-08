@@ -383,6 +383,7 @@ pub mod skin_polariton_laser;
 pub mod valley_majorana_router;
 pub mod chiral_graphene_braiding;
 pub mod floquet_magnon_memory;
+pub mod anyon_interferometer_qudit;
 
 pub use acoustic::{
     AcousticBenchmarkReport, AcousticBenchmarkRunner, AcousticLinkSimulator, AcousticRealismTier,
@@ -1667,6 +1668,18 @@ pub use floquet_magnon_memory::{
     FourTerminalSMatrixPoint, SyntheticGaugeBraidMetrics,
     SyntheticGaugeBraidParams, SyntheticGaugeBraidSolver,
     SyntheticGaugeTrajectoryPoint,
+};
+
+pub use anyon_interferometer_qudit::{
+    AnyonInterferometerQuditAuditReport, AnyonInterferometerQuditProcessor,
+    CryogenicBusTransmissionPoint, CryogenicQuditBusMetrics, CryogenicQuditBusParams,
+    CryogenicQuditBusSolver, InterferometerFluxSweepPoint,
+    MonodromyEigenvalue, MultiTerminalInterferometerMetrics,
+    MultiTerminalInterferometerParams, MultiTerminalInterferometerSolver,
+    PhasePerturbationSweepPoint, ProtectedQuditCrossbarSolver,
+    ProtectedQuditMetrics, ProtectedQuditParams, QuditDensityMatrixEntry,
+    QuditGateType, TopologicalPhaseShiftMetrics, TopologicalPhaseShiftParams,
+    TopologicalPhaseShiftSolver,
 };
 
 
