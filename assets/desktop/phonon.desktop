@@ -2,7 +2,7 @@
 Name=Phonon Studio
 GenericName=Circuit Simulator & CAD Studio
 Comment=Universal Multi-Scale Visual CAD Studio & Semiconductor Solver
-Exec=phonon gui %F
+Exec=/home/usr/.local/bin/phonon gui %F
 Icon=/home/usr/Projects/aerovex/modules/phonon/assets/icons/phonon.png
 Terminal=false
 Type=Application
