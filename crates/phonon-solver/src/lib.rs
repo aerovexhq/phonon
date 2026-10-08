@@ -379,6 +379,7 @@ pub mod moire_polariton_laser;
 pub mod topological_josephson_memory;
 pub mod genus2_parafermion_surface;
 pub mod floquet_corner_isolator;
+pub mod skin_polariton_laser;
 
 pub use acoustic::{
     AcousticBenchmarkReport, AcousticBenchmarkRunner, AcousticLinkSimulator, AcousticRealismTier,
@@ -1620,6 +1621,16 @@ pub use floquet_corner_isolator::{
     MagnetoPhononDispersionPoint, MagnetoPhononMetrics, MagnetoPhononParams,
     MagnetoPhononSolver, MicrowaveAcousticTransducerSolver, TransducerPowerLinePoint,
 };
+
+pub use skin_polariton_laser::{
+    ChiralSagnacGyroscopeSolver, GyroscopePerformancePoint, GyroscopeSagnacMetrics,
+    GyroscopeSagnacParams, PolaritonGainMediumSolver, PolaritonGainMetrics,
+    PolaritonGainParams, PolaritonPowerCurvePoint, RiemannEnergyPoint,
+    RiemannEnergyWindingSolver, RiemannWindingMetrics, RiemannWindingParams,
+    SkinEffectLasingMetrics, SkinEffectLasingParams, SkinEffectLasingSolver,
+    SkinModeSpatialPoint, SkinPolaritonLaserAuditReport, SkinPolaritonLaserProcessor,
+};
+
 
 
 

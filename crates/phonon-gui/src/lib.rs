@@ -281,6 +281,9 @@ pub use widgets::genus2_parafermion_dialog::{
 pub use widgets::floquet_corner_isolator_dialog::{
     FloquetCornerIsolatorDialog, FloquetCornerIsolatorTab,
 };
+pub use widgets::skin_polariton_laser_dialog::{
+    SkinPolaritonLaserDialog, SkinPolaritonLaserTab,
+};
 
 #[cfg(not(target_arch = "wasm32"))]
 use phonon_core::PhysicsDynamicsBackend;

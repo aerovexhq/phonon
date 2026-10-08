@@ -123,6 +123,7 @@ pub mod moire_polariton_dialog;
 pub mod topological_josephson_memory_dialog;
 pub mod genus2_parafermion_dialog;
 pub mod floquet_corner_isolator_dialog;
+pub mod skin_polariton_laser_dialog;
 
 pub use pill_badge::{
     proportional_zoom_scale, render_dual_telemetry_pill, render_pill_badge, PillBadgeStyle,
@@ -335,4 +336,8 @@ pub use genus2_parafermion_dialog::{
 pub use floquet_corner_isolator_dialog::{
     FloquetCornerIsolatorDialog, FloquetCornerIsolatorTab,
 };
+pub use skin_polariton_laser_dialog::{
+    SkinPolaritonLaserDialog, SkinPolaritonLaserTab,
+};
+
 

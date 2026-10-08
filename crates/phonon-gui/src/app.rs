@@ -56,6 +56,7 @@ use crate::widgets::{
     TopologicalSkinAxionDialog, ReadRezayiFibonacciDialog,
     MoirePolaritonDialog, TopologicalJosephsonMemoryDialog,
     Genus2ParafermionDialog, FloquetCornerIsolatorDialog,
+    SkinPolaritonLaserDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -511,6 +512,9 @@ pub struct PhononApp {
     /// Interactive Topological Acoustic Floquet Higher-Order Corner Magneto-Phonon Isolator & Non-Reciprocal Circulator Array dialog.
     pub floquet_corner_isolator_dialog: FloquetCornerIsolatorDialog,
 
+    /// Interactive Dissipative Topological Polariton Skin Laser & Non-Hermitian Chiral Acoustic Gyroscope Array dialog.
+    pub skin_polariton_laser_dialog: SkinPolaritonLaserDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -783,6 +787,7 @@ impl Default for PhononApp {
             topological_josephson_memory_dialog: TopologicalJosephsonMemoryDialog::new_fast(),
             genus2_parafermion_dialog: Genus2ParafermionDialog::new_fast(),
             floquet_corner_isolator_dialog: FloquetCornerIsolatorDialog::new_fast(),
+            skin_polariton_laser_dialog: SkinPolaritonLaserDialog::new_fast(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -5800,6 +5805,9 @@ impl PhononApp {
 
         // 112. Interactive Topological Acoustic Floquet Higher-Order Corner Magneto-Phonon Isolator & Circulator Array Dialog
         self.floquet_corner_isolator_dialog.ui(ui.ctx());
+
+        // 113. Interactive Dissipative Topological Polariton Skin Laser & Non-Hermitian Chiral Acoustic Gyroscope Array Dialog
+        self.skin_polariton_laser_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {
