@@ -57,6 +57,7 @@ use crate::widgets::{
     MoirePolaritonDialog, TopologicalJosephsonMemoryDialog,
     Genus2ParafermionDialog, FloquetCornerIsolatorDialog,
     SkinPolaritonLaserDialog, ValleyMajoranaRouterDialog,
+    ChiralGrapheneBraidingDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -518,6 +519,9 @@ pub struct PhononApp {
     /// Interactive Quantum Metamaterial Valley-Locked Majorana Zero Mode Acoustic Interconnect & Chiral Majorana Transmon Router dialog.
     pub valley_majorana_router_dialog: ValleyMajoranaRouterDialog,
 
+    /// Interactive Non-Abelian Anyon Braiding & Topological Qubit Crossbar Array in Chiral Phononic Graphene dialog.
+    pub chiral_graphene_braiding_dialog: ChiralGrapheneBraidingDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -792,6 +796,7 @@ impl Default for PhononApp {
             floquet_corner_isolator_dialog: FloquetCornerIsolatorDialog::new_fast(),
             skin_polariton_laser_dialog: SkinPolaritonLaserDialog::new_fast(),
             valley_majorana_router_dialog: ValleyMajoranaRouterDialog::new_fast(),
+            chiral_graphene_braiding_dialog: ChiralGrapheneBraidingDialog::new_fast(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -5815,6 +5820,9 @@ impl PhononApp {
 
         // 114. Interactive Quantum Metamaterial Valley-Locked Majorana Router Dialog
         self.valley_majorana_router_dialog.ui(ui.ctx());
+
+        // 115. Interactive Chiral Phononic Graphene Anyon Braiding & Qubit Crossbar Dialog
+        self.chiral_graphene_braiding_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {

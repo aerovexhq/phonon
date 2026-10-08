@@ -381,6 +381,7 @@ pub mod genus2_parafermion_surface;
 pub mod floquet_corner_isolator;
 pub mod skin_polariton_laser;
 pub mod valley_majorana_router;
+pub mod chiral_graphene_braiding;
 
 pub use acoustic::{
     AcousticBenchmarkReport, AcousticBenchmarkRunner, AcousticLinkSimulator, AcousticRealismTier,
@@ -1641,6 +1642,18 @@ pub use valley_majorana_router::{
     ValleyMajoranaLatticeMetrics, ValleyMajoranaLatticeParams,
     ValleyMajoranaAuditReport, ValleyMajoranaLatticeSolver,
     ValleyMajoranaRouterProcessor,
+};
+
+pub use chiral_graphene_braiding::{
+    ChiralGrapheneAnyonSpatialPoint, ChiralGrapheneBraidingAuditReport,
+    ChiralGrapheneBraidingProcessor, ChiralGrapheneDispersionPoint,
+    ChiralGrapheneLatticeMetrics, ChiralGrapheneLatticeParams,
+    ChiralGrapheneLatticeSolver, GrapheneAnyonBraidMetrics,
+    GrapheneAnyonBraidParams, GrapheneAnyonBraidSolver, GrapheneBraidStepPoint,
+    GrapheneCrossbarMetrics, GrapheneCrossbarParams,
+    GrapheneCrossbarReadoutPoint, GrapheneCrossbarSolver,
+    GrapheneGateProcessPoint, GrapheneQubitGateMetrics,
+    GrapheneQubitGateParams, GrapheneQubitGateSolver, GrapheneTargetGate,
 };
 
 

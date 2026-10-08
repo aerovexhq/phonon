@@ -287,6 +287,9 @@ pub use widgets::skin_polariton_laser_dialog::{
 pub use widgets::valley_majorana_router_dialog::{
     ValleyMajoranaRouterDialog, ValleyMajoranaRouterTab,
 };
+pub use widgets::chiral_graphene_braiding_dialog::{
+    ChiralGrapheneBraidingDialog, ChiralGrapheneBraidingTab,
+};
 
 #[cfg(not(target_arch = "wasm32"))]
 use phonon_core::PhysicsDynamicsBackend;
