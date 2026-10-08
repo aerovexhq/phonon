@@ -54,7 +54,7 @@ use crate::widgets::{
     SyntheticGaugeHolonomyDialog, ChiralSpinTorqueMemoryDialog,
     ValleyQuantumRouterDialog, FractionalParafermionDialog,
     TopologicalSkinAxionDialog, ReadRezayiFibonacciDialog,
-    MoirePolaritonDialog,
+    MoirePolaritonDialog, TopologicalJosephsonMemoryDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -501,6 +501,9 @@ pub struct PhononApp {
     /// Interactive Moiré Exciton-Polariton Valley Hall Chiral Lasing Metasurface & Opto-Acoustic Synthesizer dialog.
     pub moire_polariton_dialog: MoirePolaritonDialog,
 
+    /// Interactive Topological Josephson phi_0 Memory & Quantum Phase-Slip Crossbar dialog.
+    pub topological_josephson_memory_dialog: TopologicalJosephsonMemoryDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -770,6 +773,7 @@ impl Default for PhononApp {
             topological_skin_axion_dialog: TopologicalSkinAxionDialog::new_fast(),
             read_rezayi_fibonacci_dialog: ReadRezayiFibonacciDialog::new_fast(),
             moire_polariton_dialog: MoirePolaritonDialog::new_fast(),
+            topological_josephson_memory_dialog: TopologicalJosephsonMemoryDialog::new_fast(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -5778,6 +5782,9 @@ impl PhononApp {
 
         // 109. Interactive Moiré Exciton-Polariton Valley Hall Chiral Lasing Metasurface & Opto-Acoustic Synthesizer Dialog
         self.moire_polariton_dialog.ui(ui.ctx());
+
+        // 110. Interactive Topological Josephson phi_0 Memory & Quantum Phase-Slip Crossbar Dialog
+        self.topological_josephson_memory_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {

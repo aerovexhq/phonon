@@ -272,6 +272,9 @@ pub use widgets::read_rezayi_fibonacci_dialog::{
 pub use widgets::moire_polariton_dialog::{
     MoirePolaritonDialog, MoirePolaritonDialogTab,
 };
+pub use widgets::topological_josephson_memory_dialog::{
+    TopologicalJosephsonMemoryDialog, TopologicalJosephsonTab,
+};
 
 #[cfg(not(target_arch = "wasm32"))]
 use phonon_core::PhysicsDynamicsBackend;

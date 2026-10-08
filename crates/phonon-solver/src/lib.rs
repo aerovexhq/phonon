@@ -376,6 +376,7 @@ pub mod fractional_parafermion_surface;
 pub mod topological_skin_axion;
 pub mod read_rezayi_fibonacci;
 pub mod moire_polariton_laser;
+pub mod topological_josephson_memory;
 
 pub use acoustic::{
     AcousticBenchmarkReport, AcousticBenchmarkRunner, AcousticLinkSimulator, AcousticRealismTier,
@@ -1586,6 +1587,16 @@ pub use moire_polariton_laser::{
     OptoAcousticMetrics, OptoAcousticPhaseNoisePoint, OptoAcousticSynthesizerParams,
     OptoAcousticSynthesizerSolver, TemporalCoherencePoint, ValleyHallEdgeMetrics,
     ValleyHallEdgeParams, ValleyHallEdgeSolver, WaveguideTransmissionPoint,
+};
+
+pub use topological_josephson_memory::{
+    ChiralSotMetrics, ChiralSotParams, ChiralSotSolver, CprCurvePoint, CrossbarCellState,
+    CrossbarReadoutSpectrumPoint, JosephsonCprMetrics, QpsIvCurvePoint, QpsRabiPoint,
+    QuantumPhaseSlipMetrics, QuantumPhaseSlipParams, QuantumPhaseSlipSolver,
+    SotTrajectoryPoint, SuperconductingCrossbarMetrics, SuperconductingCrossbarParams,
+    SuperconductingCrossbarSolver, TopologicalJosephsonAuditReport,
+    TopologicalJosephsonMemoryProcessor, TopologicalJosephsonParams,
+    TopologicalJosephsonSolver, CROSSBAR_DIMENSION, TOTAL_MEMORY_CELLS,
 };
 
 
