@@ -225,6 +225,9 @@ pub use widgets::floquet_cv_qkd_dialog::{
 pub use widgets::polaritonic_soliton_comb_dialog::{
     PolaritonicCombTab, PolaritonicSolitonCombDialog,
 };
+pub use widgets::circuit_qed_transducer_dialog::{
+    CircuitQedTab, CircuitQedTransducerDialog,
+};
 
 #[cfg(not(target_arch = "wasm32"))]
 use phonon_core::PhysicsDynamicsBackend;

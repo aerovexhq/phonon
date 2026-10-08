@@ -48,7 +48,7 @@ use crate::widgets::{
     ChiralAcoustomagnonicDialog, FloquetCornerTransducerDialog,
     ChernSimonsInterferometerDialog, ChiralHeatTransistorDialog,
     CornerKerrMicrocombDialog, AcousticSnspdDialog, FloquetCvQkdDialog,
-    PolaritonicSolitonCombDialog,
+    PolaritonicSolitonCombDialog, CircuitQedTransducerDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -459,6 +459,9 @@ pub struct PhononApp {
     /// Interactive Quantum Metamaterial Polaritonic Soliton Frequency Comb & Dissipative Kerr Squeezed State Generator dialog.
     pub polaritonic_soliton_comb_dialog: PolaritonicSolitonCombDialog,
 
+    /// Interactive Topological Higher-Order Acoustic Superconducting Circuit QED Quantum Transducer & Multi-Qubit Crossbar dialog.
+    pub circuit_qed_transducer_dialog: CircuitQedTransducerDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -710,6 +713,7 @@ impl Default for PhononApp {
             acoustic_snspd_dialog: AcousticSnspdDialog::new_fast(),
             floquet_cv_qkd_dialog: FloquetCvQkdDialog::new_fast(),
             polaritonic_soliton_comb_dialog: PolaritonicSolitonCombDialog::new_fast(),
+            circuit_qed_transducer_dialog: CircuitQedTransducerDialog::new_fast(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -5310,6 +5314,9 @@ impl PhononApp {
 
         // 97. Interactive Quantum Metamaterial Polaritonic Soliton Frequency Comb & Dissipative Kerr Squeezed State Generator Dialog
         self.polaritonic_soliton_comb_dialog.ui(ui.ctx());
+
+        // 98. Interactive Topological Acoustic Superconducting Circuit QED Quantum Transducer & Multi-Qubit Crossbar Dialog
+        self.circuit_qed_transducer_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {

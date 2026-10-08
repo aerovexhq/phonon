@@ -364,6 +364,7 @@ pub mod corner_kerr_microcomb;
 pub mod acoustic_snspd;
 pub mod floquet_cv_qkd;
 pub mod polaritonic_soliton_comb;
+pub mod circuit_qed_transducer;
 
 pub use acoustic::{
     AcousticBenchmarkReport, AcousticBenchmarkRunner, AcousticLinkSimulator, AcousticRealismTier,
@@ -1465,6 +1466,10 @@ pub use polaritonic_soliton_comb::{
     WignerGrid,
 };
 
-
-
-
+pub use circuit_qed_transducer::{
+    AcousticCornerParams, AcousticCornerSolver, CircuitQedAuditReport,
+    CircuitQedMetrics, CircuitQedTransducerProcessor, CornerModeMetrics,
+    CornerSpatialPoint, CircuitQedCrossbarMetrics, CircuitQedCrossbarParams,
+    MultiQubitCrossbarSolver, RabiOscillationPoint, RoutingMatrixElement,
+    TransmonCircuitQedSolver, TransmonParams, TwoQubitGateDynamics,
+};

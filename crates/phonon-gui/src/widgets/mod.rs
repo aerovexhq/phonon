@@ -107,6 +107,7 @@ pub mod corner_kerr_microcomb_dialog;
 pub mod acoustic_snspd_dialog;
 pub mod floquet_cv_qkd_dialog;
 pub mod polaritonic_soliton_comb_dialog;
+pub mod circuit_qed_transducer_dialog;
 
 pub use pill_badge::{
     proportional_zoom_scale, render_dual_telemetry_pill, render_pill_badge, PillBadgeStyle,
@@ -272,4 +273,7 @@ pub use floquet_cv_qkd_dialog::{
 };
 pub use polaritonic_soliton_comb_dialog::{
     PolaritonicCombTab, PolaritonicSolitonCombDialog,
+};
+pub use circuit_qed_transducer_dialog::{
+    CircuitQedTab, CircuitQedTransducerDialog,
 };
