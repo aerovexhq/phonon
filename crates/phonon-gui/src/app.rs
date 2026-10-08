@@ -55,6 +55,7 @@ use crate::widgets::{
     ValleyQuantumRouterDialog, FractionalParafermionDialog,
     TopologicalSkinAxionDialog, ReadRezayiFibonacciDialog,
     MoirePolaritonDialog, TopologicalJosephsonMemoryDialog,
+    Genus2ParafermionDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -504,6 +505,9 @@ pub struct PhononApp {
     /// Interactive Topological Josephson phi_0 Memory & Quantum Phase-Slip Crossbar dialog.
     pub topological_josephson_memory_dialog: TopologicalJosephsonMemoryDialog,
 
+    /// Interactive Quantum Metamaterial Non-Abelian Genus-2 Parafermion Surface Code & Universal Processor dialog.
+    pub genus2_parafermion_dialog: Genus2ParafermionDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -774,6 +778,7 @@ impl Default for PhononApp {
             read_rezayi_fibonacci_dialog: ReadRezayiFibonacciDialog::new_fast(),
             moire_polariton_dialog: MoirePolaritonDialog::new_fast(),
             topological_josephson_memory_dialog: TopologicalJosephsonMemoryDialog::new_fast(),
+            genus2_parafermion_dialog: Genus2ParafermionDialog::new_fast(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -5785,6 +5790,9 @@ impl PhononApp {
 
         // 110. Interactive Topological Josephson phi_0 Memory & Quantum Phase-Slip Crossbar Dialog
         self.topological_josephson_memory_dialog.ui(ui.ctx());
+
+        // 111. Interactive Quantum Metamaterial Non-Abelian Genus-2 Parafermion Surface Code & Universal Processor Dialog
+        self.genus2_parafermion_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {

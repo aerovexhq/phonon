@@ -275,6 +275,9 @@ pub use widgets::moire_polariton_dialog::{
 pub use widgets::topological_josephson_memory_dialog::{
     TopologicalJosephsonMemoryDialog, TopologicalJosephsonTab,
 };
+pub use widgets::genus2_parafermion_dialog::{
+    Genus2ParafermionDialog, Genus2ParafermionTab,
+};
 
 #[cfg(not(target_arch = "wasm32"))]
 use phonon_core::PhysicsDynamicsBackend;

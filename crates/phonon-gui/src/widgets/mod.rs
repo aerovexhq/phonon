@@ -121,6 +121,7 @@ pub mod topological_skin_axion_dialog;
 pub mod read_rezayi_fibonacci_dialog;
 pub mod moire_polariton_dialog;
 pub mod topological_josephson_memory_dialog;
+pub mod genus2_parafermion_dialog;
 
 pub use pill_badge::{
     proportional_zoom_scale, render_dual_telemetry_pill, render_pill_badge, PillBadgeStyle,
@@ -326,5 +327,8 @@ pub use moire_polariton_dialog::{
 };
 pub use topological_josephson_memory_dialog::{
     TopologicalJosephsonMemoryDialog, TopologicalJosephsonTab,
+};
+pub use genus2_parafermion_dialog::{
+    Genus2ParafermionDialog, Genus2ParafermionTab,
 };
 

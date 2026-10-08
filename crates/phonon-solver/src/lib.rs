@@ -377,6 +377,7 @@ pub mod topological_skin_axion;
 pub mod read_rezayi_fibonacci;
 pub mod moire_polariton_laser;
 pub mod topological_josephson_memory;
+pub mod genus2_parafermion_surface;
 
 pub use acoustic::{
     AcousticBenchmarkReport, AcousticBenchmarkRunner, AcousticLinkSimulator, AcousticRealismTier,
@@ -1598,6 +1599,18 @@ pub use topological_josephson_memory::{
     TopologicalJosephsonMemoryProcessor, TopologicalJosephsonParams,
     TopologicalJosephsonSolver, CROSSBAR_DIMENSION, TOTAL_MEMORY_CELLS,
 };
+
+pub use genus2_parafermion_surface::{
+    AnyonicDefect, CavityTransmissionPoint, CorrectionSegment, CrossbarReadoutMetrics,
+    CryogenicCrossbarSolver, DehnTwistTrajectoryPoint, EntangledQuditState,
+    FaultTolerantLogicParams, Genus2CrossbarCellState, Genus2DispersionPoint,
+    Genus2LogicSolver, Genus2ParafermionAuditReport, Genus2ParafermionProcessor,
+    Genus2StabilizerParams, Genus2StabilizerSolver, Genus2SurfaceMetrics, Genus2SurfaceParams,
+    Genus2SurfaceSolver, Genus2ThresholdCurvePoint, LogicalGateKind, LogicalGateMetrics,
+    PoincareDiskPoint, QuantumCrossbarParams, StabilizerSyndromeResult,
+    GENUS2_CROSSBAR_DIMENSION, TOTAL_GENUS2_CROSSBAR_CELLS,
+};
+
 
 
 
