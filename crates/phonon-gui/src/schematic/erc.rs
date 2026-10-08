@@ -212,7 +212,26 @@ impl ErcEngine {
             dsu_union(&mut parent, seg.start_idx, seg.end_idx);
         }
 
-        // 3b. Union pins that touch wire segments
+        // 3b. Union wire endpoints that touch other wire segments (T-junctions)
+        for wire in wires {
+            for seg in &wire.segments {
+                for other_wire in wires {
+                    for other_seg in &other_wire.segments {
+                        for &pt in &[other_seg.start, other_seg.end] {
+                            if seg.contains_point(pt, 4.0) {
+                                let pt_idx = get_pt_idx(quantize(pt), &mut point_map);
+                                let s_idx = get_pt_idx(quantize(seg.start), &mut point_map);
+                                let e_idx = get_pt_idx(quantize(seg.end), &mut point_map);
+                                dsu_union(&mut parent, pt_idx, s_idx);
+                                dsu_union(&mut parent, pt_idx, e_idx);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // 3c. Union pins that touch wire segments
         for pin in &pin_entries {
             for wire in wires {
                 for seg in &wire.segments {

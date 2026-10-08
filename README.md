@@ -30,6 +30,55 @@ Phonon ships as a **dual-platform system**:
 
 ---
 
+## Real-World Multi-Scale Showcase
+
+Phonon spans an unprecedented multi-scale simulation range: from high-level digital VLSI processor architectures down to microscopic RF multi-physics, coupled electro-thermal TCAD, and topological quantum acoustics. Below are three real contraptions designed and verified in Phonon Studio:
+
+### 1. High-Level Digital VLSI Architecture: 4-Bit Arithmetic Logic Unit & Processor Slice
+
+A complete 4-bit processor execution slice demonstrating high-level digital logic capture, timing, and sequential storage:
+- **Ripple-Carry Arithmetic Core**: 4 cascaded `FullAdder` ICs computing multi-bit sums with low-latency carry propagation.
+- **Bitwise Logic Core**: 4 parallel `XorGate` slices performing bitwise operations.
+- **Data Multiplexing**: 4 `Mux2to1` slices dynamically routing arithmetic (ADD) vs. logic (XOR) onto the internal data bus.
+- **Sequential Output Registers**: 4 edge-triggered `DFlipFlop` registers capturing results synchronously on the 50 MHz system clock.
+- **Integrated Oscilloscope**: Real-time multi-trace digital waveforms tracking `CLK`, `ALU_OP`, `DATA_A`, `DATA_B`, `REG_Q[3:0]`, and `FLAG_COUT`.
+
+<div align="center">
+  <img src="artifacts/screenshots/27_contraption_4bit_alu.png" alt="4-Bit ALU Processor Slice in Phonon Studio" width="100%" />
+</div>
+
+---
+
+### 2. Low-Level Microscopic & RF Multi-Physics: Heterodyne Transceiver Front-End & Dynamic Thermal Network
+
+An integrated microwave-acoustic transceiver front-end demonstrating high-frequency analog TCAD, discrete non-linear semiconductors, and coupled thermal-electrical co-simulation:
+- **RF Input & Matching**: 2.4 GHz RF source feeding an LC resonant impedance matching network (`C_MATCH` and `L_MATCH`).
+- **Discrete BJT LNA Stage**: High-frequency NPN BJT cascode amplifier (`BFP420`) with emitter degeneration and collector bias network.
+- **Dynamic Cauer Thermal Ladder**: Discrete thermal resistance and capacitance ladder (`R_TH` / `C_TH`) directly coupled to the transistor collector node, capturing transient Joule heating and junction temperature elevation ($25^\circ\text{C} \to 78.4^\circ\text{C}$).
+- **Heterodyne Diode Mixer**: Schottky diode (`SMS7630`) driven by a 2.3 GHz local oscillator downconverting the RF carrier into a 100 MHz intermediate frequency (IF).
+- **SAW Acoustic Bandpass Filter**: Piezoelectric Surface Acoustic Wave filter (`XSAW1`) rejecting out-of-band spurious harmonics.
+
+<div align="center">
+  <img src="artifacts/screenshots/28_contraption_rf_transceiver.png" alt="RF Microwave Heterodyne Transceiver in Phonon Studio" width="100%" />
+</div>
+
+---
+
+### 3. Topological Quantum Metamaterials: Coherent Quantum Acoustic Metamaterial Processor
+
+A cutting-edge topological quantum acoustic circuit demonstrating non-Abelian anyonic braiding, chiral phonon routing, and superconducting single-quantum detection:
+- **Microwave-to-Phonon Transduction**: High-efficiency piezoelectric SAW interdigital transducer (`SawIdt`) converting 3.5 GHz microwave photons into coherent surface acoustic wave packets.
+- **Topological Phase Memory**: Fractionalized parafermionic cavity (`ParafermionicCavity`) providing topological protection against local thermal fluctuations.
+- **Chiral Skyrmion Router**: Magnetic skyrmion acoustic router (`SkyrmionRouter`) with synthetic gate bias steering chiral phonon channels with $> 32\text{ dB}$ non-reciprocal isolation.
+- **Non-Abelian Majorana Braiding Crossbar**: Dual T-junction braiding generators (`MajoranaJunction`) executing non-Abelian operations ($\sigma_1 \sigma_2 \sigma_1$) with geometric $\pi/2$ Berry holonomy.
+- **Superconducting Nanowire Single-Phonon Readout (SNSPD)**: Cryogenic kinetic-inductance nanowire hotspot detector capturing single acoustic quanta with 100 ps reset transients.
+
+<div align="center">
+  <img src="artifacts/screenshots/29_contraption_topological_quantum_processor.png" alt="Topological Quantum Acoustic Processor in Phonon Studio" width="100%" />
+</div>
+
+---
+
 ## Capabilities Across 6 Realism Tiers
 
 ```

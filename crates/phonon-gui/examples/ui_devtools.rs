@@ -28,7 +28,7 @@ impl DevtoolsRunnerApp {
     fn new(script: UiScript, out_dir: PathBuf, interactive: bool) -> Self {
         let runner = phonon_gui::devtools::ScriptRunner::new(script);
         let mut app = PhononApp::default();
-        app.pending_start_maximize = false;
+        app.pending_start_maximize = true;
         app.load_voltage_divider_demo();
         app.devtools_state.visible = interactive;
         app.devtools_state.screenshots_dir = out_dir.clone();
@@ -140,6 +140,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         "comb" | "microcomb" | "corner_comb" | "soliton" => UiScript::corner_kerr_microcomb_scenario(),
         "snspd" | "nanowire" | "single_phonon" => UiScript::acoustic_snspd_scenario(),
         "qkd" | "cv_qkd" | "polariton_router" => UiScript::floquet_cv_qkd_scenario(),
+        "contraptions" | "showcase" | "readme" => UiScript::contraptions_showcase_scenario(),
         _ => UiScript::full_test_suite(),
     };
 
@@ -156,7 +157,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         viewport: egui::ViewportBuilder::default()
             .with_title("Phonon Studio - DevTools")
             .with_inner_size([1280.0, 850.0])
-            .with_min_inner_size([800.0, 600.0]),
+            .with_min_inner_size([800.0, 600.0])
+            .with_maximized(true)
+            .with_decorations(false),
         ..Default::default()
     };
 

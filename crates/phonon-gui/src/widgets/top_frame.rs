@@ -329,6 +329,25 @@ fn render_top_frame_internal(
                     }
                     ui.close();
                 }
+                ui.separator();
+                if ui.button("4-Bit ALU Processor Slice").clicked() {
+                    if let Some(a) = app.as_deref_mut() {
+                        a.request_action(PendingAction::LoadDemo(DemoCircuitKind::Alu4Bit));
+                    }
+                    ui.close();
+                }
+                if ui.button("RF Microwave Transceiver Front-End").clicked() {
+                    if let Some(a) = app.as_deref_mut() {
+                        a.request_action(PendingAction::LoadDemo(DemoCircuitKind::RfTransceiver));
+                    }
+                    ui.close();
+                }
+                if ui.button("Topological Quantum Metamaterial Processor").clicked() {
+                    if let Some(a) = app.as_deref_mut() {
+                        a.request_action(PendingAction::LoadDemo(DemoCircuitKind::TopologicalQuantumProcessor));
+                    }
+                    ui.close();
+                }
             });
             ui.separator();
             if ui.button("Preferences... (Ctrl+,)").clicked() {

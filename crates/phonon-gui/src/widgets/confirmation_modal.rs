@@ -18,6 +18,9 @@ pub enum DemoCircuitKind {
     HalfAdder,
     BasicGates,
     QuantumMetamaterial,
+    Alu4Bit,
+    RfTransceiver,
+    TopologicalQuantumProcessor,
 }
 
 impl DemoCircuitKind {
@@ -31,6 +34,9 @@ impl DemoCircuitKind {
             Self::HalfAdder => "Half Adder Logic",
             Self::BasicGates => "Basic Logic Gates",
             Self::QuantumMetamaterial => "Topological Quantum Metamaterials",
+            Self::Alu4Bit => "4-Bit ALU Processor Slice",
+            Self::RfTransceiver => "RF Microwave Heterodyne Transceiver Front-End",
+            Self::TopologicalQuantumProcessor => "Topological Quantum Acoustic Metamaterial Processor",
         }
     }
 }

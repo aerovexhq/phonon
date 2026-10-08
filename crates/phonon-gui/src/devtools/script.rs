@@ -445,6 +445,39 @@ impl UiScript {
             ],
         )
     }
+
+    /// Scenario 13: High-Level & Low-Level Contraptions Showcase for Documentation & README.
+    pub fn contraptions_showcase_scenario() -> Self {
+        Self::new(
+            "High & Low Level Contraptions Showcase",
+            "Loads the 4-Bit ALU Processor Slice, RF Microwave Transceiver, and Topological Quantum Acoustic Processor contraptions, taking high-res screenshots for documentation",
+            vec![
+                // 1. 4-Bit Arithmetic Logic Unit & Processor Slice
+                UiAction::LoadDemo(DemoCircuitKind::Alu4Bit),
+                UiAction::WaitFrames(8),
+                UiAction::TakeScreenshot {
+                    label: "4-Bit ALU & Digital Processor Slice (Ripple Adders, MUXes, Registers)".to_string(),
+                    filename: "27_contraption_4bit_alu.png".to_string(),
+                },
+
+                // 2. RF Microwave Heterodyne Transceiver Front-End
+                UiAction::LoadDemo(DemoCircuitKind::RfTransceiver),
+                UiAction::WaitFrames(8),
+                UiAction::TakeScreenshot {
+                    label: "RF Microwave Heterodyne Transceiver (BJT LNA, Mixer, SAW Filter, Cauer Thermal Ladder)".to_string(),
+                    filename: "28_contraption_rf_transceiver.png".to_string(),
+                },
+
+                // 3. Topological Quantum Acoustic Metamaterial Processor
+                UiAction::LoadDemo(DemoCircuitKind::TopologicalQuantumProcessor),
+                UiAction::WaitFrames(8),
+                UiAction::TakeScreenshot {
+                    label: "Topological Quantum Acoustic Processor (SAW IDT, Majorana Braiding, Skyrmion Router, SNSPD)".to_string(),
+                    filename: "29_contraption_topological_quantum_processor.png".to_string(),
+                },
+            ],
+        )
+    }
 }
 
 /// Runtime executor for a `UiScript` driving `PhononApp`.
@@ -627,6 +660,9 @@ impl ScriptRunner {
                     DemoCircuitKind::HalfAdder => app.load_half_adder_demo(),
                     DemoCircuitKind::BasicGates => app.load_basic_gates_demo(),
                     DemoCircuitKind::QuantumMetamaterial => app.load_quantum_metamaterial_demo(),
+                    DemoCircuitKind::Alu4Bit => app.load_4bit_alu_demo(),
+                    DemoCircuitKind::RfTransceiver => app.load_rf_transceiver_demo(),
+                    DemoCircuitKind::TopologicalQuantumProcessor => app.load_topological_quantum_processor_demo(),
                 }
                 self.execution_log.push(format!("Loaded demo circuit {kind:?}"));
             }

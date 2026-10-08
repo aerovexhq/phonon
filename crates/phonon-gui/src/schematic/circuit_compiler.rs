@@ -82,6 +82,22 @@ pub fn compile_schematic(
         }
     }
 
+    // 1b. Union wire endpoints that touch other wire segments (T-junctions)
+    for wire in wires {
+        for seg in &wire.segments {
+            for other_wire in wires {
+                for other_seg in &other_wire.segments {
+                    for &pt in &[other_seg.start, other_seg.end] {
+                        if seg.contains_point(pt, 4.0) {
+                            dsu.union(quantize(pt), quantize(seg.start));
+                            dsu.union(quantize(pt), quantize(seg.end));
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     // 2. Union pins that touch wire segments
     for comp in components {
         for (_, pin_pos) in comp.all_pins() {
