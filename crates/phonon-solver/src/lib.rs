@@ -375,6 +375,7 @@ pub mod valley_quantum_router;
 pub mod fractional_parafermion_surface;
 pub mod topological_skin_axion;
 pub mod read_rezayi_fibonacci;
+pub mod moire_polariton_laser;
 
 pub use acoustic::{
     AcousticBenchmarkReport, AcousticBenchmarkRunner, AcousticLinkSimulator, AcousticRealismTier,
@@ -1575,6 +1576,16 @@ pub use read_rezayi_fibonacci::{
     ReadRezayiFibonacciProcessor, ReadRezayiFilling, ReadRezayiMetrics,
     ReadRezayiStateParams, ReadRezayiStateSolver, SawAcousticTransmissionPoint,
     SawInterferometerMetrics, SawInterferometerParams, SawInterferometerSolver,
+};
+
+pub use moire_polariton_laser::{
+    ChiralLasingMetrics, ChiralLasingParams, ChiralLasingSolver, CircularPolarization,
+    FrequencyCombLine, InputOutputCurvePoint, MoireDispersionPoint,
+    MoireEdgeDispersionPoint, MoireLatticeMetrics, MoirePolaritonAuditReport,
+    MoirePolaritonLaserProcessor, MoirePolaritonLatticeSolver, MoirePolaritonParams,
+    OptoAcousticMetrics, OptoAcousticPhaseNoisePoint, OptoAcousticSynthesizerParams,
+    OptoAcousticSynthesizerSolver, TemporalCoherencePoint, ValleyHallEdgeMetrics,
+    ValleyHallEdgeParams, ValleyHallEdgeSolver, WaveguideTransmissionPoint,
 };
 
 

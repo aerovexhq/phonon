@@ -269,6 +269,9 @@ pub use widgets::topological_skin_axion_dialog::{
 pub use widgets::read_rezayi_fibonacci_dialog::{
     ReadRezayiDialogTab, ReadRezayiFibonacciDialog,
 };
+pub use widgets::moire_polariton_dialog::{
+    MoirePolaritonDialog, MoirePolaritonDialogTab,
+};
 
 #[cfg(not(target_arch = "wasm32"))]
 use phonon_core::PhysicsDynamicsBackend;

@@ -54,6 +54,7 @@ use crate::widgets::{
     SyntheticGaugeHolonomyDialog, ChiralSpinTorqueMemoryDialog,
     ValleyQuantumRouterDialog, FractionalParafermionDialog,
     TopologicalSkinAxionDialog, ReadRezayiFibonacciDialog,
+    MoirePolaritonDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -497,6 +498,9 @@ pub struct PhononApp {
     /// Interactive Read-Rezayi Fibonacci Anyon Acoustic Interferometer & Universal Quantum Bus dialog.
     pub read_rezayi_fibonacci_dialog: ReadRezayiFibonacciDialog,
 
+    /// Interactive Moiré Exciton-Polariton Valley Hall Chiral Lasing Metasurface & Opto-Acoustic Synthesizer dialog.
+    pub moire_polariton_dialog: MoirePolaritonDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -765,6 +769,7 @@ impl Default for PhononApp {
             fractional_parafermion_dialog: FractionalParafermionDialog::new_fast(),
             topological_skin_axion_dialog: TopologicalSkinAxionDialog::new_fast(),
             read_rezayi_fibonacci_dialog: ReadRezayiFibonacciDialog::new_fast(),
+            moire_polariton_dialog: MoirePolaritonDialog::new_fast(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -5770,6 +5775,9 @@ impl PhononApp {
 
         // 108. Interactive Read-Rezayi Fibonacci Anyon Acoustic Interferometer & Universal Quantum Bus Dialog
         self.read_rezayi_fibonacci_dialog.ui(ui.ctx());
+
+        // 109. Interactive Moiré Exciton-Polariton Valley Hall Chiral Lasing Metasurface & Opto-Acoustic Synthesizer Dialog
+        self.moire_polariton_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {

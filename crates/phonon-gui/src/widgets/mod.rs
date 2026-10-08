@@ -119,6 +119,7 @@ pub mod valley_quantum_router_dialog;
 pub mod fractional_parafermion_dialog;
 pub mod topological_skin_axion_dialog;
 pub mod read_rezayi_fibonacci_dialog;
+pub mod moire_polariton_dialog;
 
 pub use pill_badge::{
     proportional_zoom_scale, render_dual_telemetry_pill, render_pill_badge, PillBadgeStyle,
@@ -318,5 +319,8 @@ pub use topological_skin_axion_dialog::{
 };
 pub use read_rezayi_fibonacci_dialog::{
     ReadRezayiDialogTab, ReadRezayiFibonacciDialog,
+};
+pub use moire_polariton_dialog::{
+    MoirePolaritonDialog, MoirePolaritonDialogTab,
 };
 
