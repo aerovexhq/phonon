@@ -290,6 +290,9 @@ pub use widgets::valley_majorana_router_dialog::{
 pub use widgets::chiral_graphene_braiding_dialog::{
     ChiralGrapheneBraidingDialog, ChiralGrapheneBraidingTab,
 };
+pub use widgets::floquet_magnon_memory_dialog::{
+    FloquetMagnonMemoryDialog, FloquetMagnonMemoryTab,
+};
 
 #[cfg(not(target_arch = "wasm32"))]
 use phonon_core::PhysicsDynamicsBackend;

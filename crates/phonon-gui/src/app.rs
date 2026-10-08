@@ -57,7 +57,7 @@ use crate::widgets::{
     MoirePolaritonDialog, TopologicalJosephsonMemoryDialog,
     Genus2ParafermionDialog, FloquetCornerIsolatorDialog,
     SkinPolaritonLaserDialog, ValleyMajoranaRouterDialog,
-    ChiralGrapheneBraidingDialog,
+    ChiralGrapheneBraidingDialog, FloquetMagnonMemoryDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -522,6 +522,9 @@ pub struct PhononApp {
     /// Interactive Non-Abelian Anyon Braiding & Topological Qubit Crossbar Array in Chiral Phononic Graphene dialog.
     pub chiral_graphene_braiding_dialog: ChiralGrapheneBraidingDialog,
 
+    /// Interactive Floquet Chiral Magnon-Phonon Polariton Router & Dissipative Quantum Memory dialog.
+    pub floquet_magnon_memory_dialog: FloquetMagnonMemoryDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -797,6 +800,7 @@ impl Default for PhononApp {
             skin_polariton_laser_dialog: SkinPolaritonLaserDialog::new_fast(),
             valley_majorana_router_dialog: ValleyMajoranaRouterDialog::new_fast(),
             chiral_graphene_braiding_dialog: ChiralGrapheneBraidingDialog::new_fast(),
+            floquet_magnon_memory_dialog: FloquetMagnonMemoryDialog::new_fast(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -5823,6 +5827,9 @@ impl PhononApp {
 
         // 115. Interactive Chiral Phononic Graphene Anyon Braiding & Qubit Crossbar Dialog
         self.chiral_graphene_braiding_dialog.ui(ui.ctx());
+
+        // 116. Interactive Floquet Chiral Magnon-Phonon Polariton Router & Quantum Memory Dialog
+        self.floquet_magnon_memory_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {

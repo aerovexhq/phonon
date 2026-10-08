@@ -126,6 +126,7 @@ pub mod floquet_corner_isolator_dialog;
 pub mod skin_polariton_laser_dialog;
 pub mod valley_majorana_router_dialog;
 pub mod chiral_graphene_braiding_dialog;
+pub mod floquet_magnon_memory_dialog;
 
 pub use pill_badge::{
     proportional_zoom_scale, render_dual_telemetry_pill, render_pill_badge, PillBadgeStyle,
@@ -346,6 +347,9 @@ pub use valley_majorana_router_dialog::{
 };
 pub use chiral_graphene_braiding_dialog::{
     ChiralGrapheneBraidingDialog, ChiralGrapheneBraidingTab,
+};
+pub use floquet_magnon_memory_dialog::{
+    FloquetMagnonMemoryDialog, FloquetMagnonMemoryTab,
 };
 
 

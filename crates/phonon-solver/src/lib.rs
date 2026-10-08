@@ -382,6 +382,7 @@ pub mod floquet_corner_isolator;
 pub mod skin_polariton_laser;
 pub mod valley_majorana_router;
 pub mod chiral_graphene_braiding;
+pub mod floquet_magnon_memory;
 
 pub use acoustic::{
     AcousticBenchmarkReport, AcousticBenchmarkRunner, AcousticLinkSimulator, AcousticRealismTier,
@@ -1654,6 +1655,18 @@ pub use chiral_graphene_braiding::{
     GrapheneCrossbarReadoutPoint, GrapheneCrossbarSolver,
     GrapheneGateProcessPoint, GrapheneQubitGateMetrics,
     GrapheneQubitGateParams, GrapheneQubitGateSolver, GrapheneTargetGate,
+};
+
+pub use floquet_magnon_memory::{
+    DissipativeMemoryMetrics, DissipativeMemoryParams, DissipativeMemorySolver,
+    DissipativeRetentionCurvePoint, FloquetMagnonMemoryAuditReport,
+    FloquetMagnonMemoryProcessor, FloquetPolaritonDispersionParams,
+    FloquetPolaritonDispersionPoint, FloquetPolaritonDispersionSolver,
+    FloquetPolaritonMetrics, FourTerminalCirculatorMetrics,
+    FourTerminalCirculatorParams, FourTerminalCirculatorSolver,
+    FourTerminalSMatrixPoint, SyntheticGaugeBraidMetrics,
+    SyntheticGaugeBraidParams, SyntheticGaugeBraidSolver,
+    SyntheticGaugeTrajectoryPoint,
 };
 
 
