@@ -55,6 +55,10 @@ pub enum UiAction {
     CloseCommandPalette,
     /// Toggles or sets the in-app DevTools panel visibility.
     SetDevtoolsPanelVisible(bool),
+    /// Opens the Chiral Heat Transistor & Thermal Diode CAD dialog.
+    OpenChiralHeatTransistorDialog,
+    /// Closes the Chiral Heat Transistor & Thermal Diode CAD dialog.
+    CloseChiralHeatTransistorDialog,
     /// Loads a built-in demo circuit.
     LoadDemo(DemoCircuitKind),
     /// Expands or collapses a category in the component palette drawer.
@@ -273,6 +277,7 @@ impl UiScript {
         steps.extend(Self::project_dialog_scenario().steps);
         steps.extend(Self::command_palette_scenario().steps);
         steps.extend(Self::half_adder_and_logic_gates_scenario().steps);
+        steps.extend(Self::quantum_metamaterial_and_heat_transistor_scenario().steps);
         steps.extend(vec![
             UiAction::SetDevtoolsPanelVisible(true),
             UiAction::WaitFrames(3),
@@ -339,6 +344,35 @@ impl UiScript {
                     label: "Enriched Multi-Tier Component Library (58 Components across 11 Categories)".to_string(),
                     filename: "21_enriched_component_library.png".to_string(),
                 },
+            ],
+        )
+    }
+
+    /// Scenario 9: Topological Quantum Metamaterials Demo & Chiral Magnon-Phonon Heat Transistor Dialog.
+    pub fn quantum_metamaterial_and_heat_transistor_scenario() -> Self {
+        Self::new(
+            "Topological Quantum Metamaterials & Chiral Heat Transistor Verification",
+            "Loads the Topological Quantum Metamaterials circuit (SAW IDT, Parafermionic Cavity, Skyrmion Router, Majorana Junction), runs transient simulation, and opens the Chiral Heat Transistor CAD dialog",
+            vec![
+                // Step 1: Load Quantum Metamaterial Demo
+                UiAction::LoadDemo(DemoCircuitKind::QuantumMetamaterial),
+                UiAction::WaitFrames(6),
+                UiAction::TakeScreenshot {
+                    label: "Topological Quantum Metamaterials Schematic Canvas".to_string(),
+                    filename: "22_quantum_metamaterial_schematic.png".to_string(),
+                },
+
+                // Step 2: Open Chiral Heat Transistor Dialog
+                UiAction::OpenChiralHeatTransistorDialog,
+                UiAction::WaitFrames(6),
+                UiAction::TakeScreenshot {
+                    label: "Chiral Magnon-Phonon Heat Transistor & Thermal Diode Dialog".to_string(),
+                    filename: "23_chiral_heat_transistor_dialog.png".to_string(),
+                },
+
+                // Step 3: Close Dialog
+                UiAction::CloseChiralHeatTransistorDialog,
+                UiAction::WaitFrames(2),
             ],
         )
     }
@@ -482,6 +516,14 @@ impl ScriptRunner {
                 app.devtools_state.visible = visible;
                 self.execution_log.push(format!("Set DevTools panel visibility to {visible}"));
             }
+            UiAction::OpenChiralHeatTransistorDialog => {
+                app.chiral_heat_transistor_dialog.is_open = true;
+                self.execution_log.push("Opened Chiral Heat Transistor modal dialog".to_string());
+            }
+            UiAction::CloseChiralHeatTransistorDialog => {
+                app.chiral_heat_transistor_dialog.is_open = false;
+                self.execution_log.push("Closed Chiral Heat Transistor modal dialog".to_string());
+            }
             UiAction::LoadDemo(kind) => {
                 match kind {
                     DemoCircuitKind::VoltageDivider => app.load_voltage_divider_demo(),
@@ -491,6 +533,7 @@ impl ScriptRunner {
                     DemoCircuitKind::NmosSwitch => app.load_nmos_switch_demo(),
                     DemoCircuitKind::HalfAdder => app.load_half_adder_demo(),
                     DemoCircuitKind::BasicGates => app.load_basic_gates_demo(),
+                    DemoCircuitKind::QuantumMetamaterial => app.load_quantum_metamaterial_demo(),
                 }
                 self.execution_log.push(format!("Loaded demo circuit {kind:?}"));
             }

@@ -1753,6 +1753,12 @@ impl SchematicComponent {
         self
     }
 
+    /// Builder method setting the component reference designator name.
+    pub fn with_name(mut self, name: impl Into<String>) -> Self {
+        self.name = name.into();
+        self
+    }
+
     /// Looks up a custom property value by key.
     pub fn get_property(&self, key: &str) -> Option<&str> {
         self.properties

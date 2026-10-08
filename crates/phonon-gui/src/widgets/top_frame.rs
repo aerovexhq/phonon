@@ -323,6 +323,12 @@ fn render_top_frame_internal(
                     }
                     ui.close();
                 }
+                if ui.button("Topological Quantum Metamaterials").clicked() {
+                    if let Some(a) = app.as_deref_mut() {
+                        a.request_action(PendingAction::LoadDemo(DemoCircuitKind::QuantumMetamaterial));
+                    }
+                    ui.close();
+                }
             });
             ui.separator();
             if ui.button("Preferences... (Ctrl+,)").clicked() {
@@ -1009,6 +1015,12 @@ fn render_top_frame_internal(
                 if ui.button("Chern-Simons Anyon Interferometer & Quantum Memory...").clicked() {
                     if let Some(a) = app.as_deref_mut() {
                         a.chern_simons_interferometer_dialog.is_open = true;
+                    }
+                    ui.close();
+                }
+                if ui.button("Chiral Magnon-Phonon Heat Transistor & Diode...").clicked() {
+                    if let Some(a) = app.as_deref_mut() {
+                        a.chiral_heat_transistor_dialog.is_open = true;
                     }
                     ui.close();
                 }

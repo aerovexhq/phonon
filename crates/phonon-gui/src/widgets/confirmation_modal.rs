@@ -17,6 +17,7 @@ pub enum DemoCircuitKind {
     NmosSwitch,
     HalfAdder,
     BasicGates,
+    QuantumMetamaterial,
 }
 
 impl DemoCircuitKind {
@@ -29,6 +30,7 @@ impl DemoCircuitKind {
             Self::NmosSwitch => "NMOS Switch",
             Self::HalfAdder => "Half Adder Logic",
             Self::BasicGates => "Basic Logic Gates",
+            Self::QuantumMetamaterial => "Topological Quantum Metamaterials",
         }
     }
 }

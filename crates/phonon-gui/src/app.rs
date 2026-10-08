@@ -45,7 +45,7 @@ use crate::widgets::{
     ValleyChiralIsolatorDialog, FloquetSpinHallCirculatorDialog, OctupoleDislocationDialog,
     ChiralMajoranaDialog, FloquetCornerLaserDialog, ParafermionDialog,
     ChiralAcoustomagnonicDialog, FloquetCornerTransducerDialog,
-    ChernSimonsInterferometerDialog,
+    ChernSimonsInterferometerDialog, ChiralHeatTransistorDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -432,6 +432,9 @@ pub struct PhononApp {
     /// Interactive Topological Chiral Acoustic Chern-Simons Fractional Anyon Interferometer & Quantum Memory dialog.
     pub chern_simons_interferometer_dialog: ChernSimonsInterferometerDialog,
 
+    /// Interactive Quantum Metamaterial Non-Hermitian Floquet Chiral Heat Transistor & Thermal Diode dialog.
+    pub chiral_heat_transistor_dialog: ChiralHeatTransistorDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -672,6 +675,7 @@ impl Default for PhononApp {
             acoustomagnonic_dialog: ChiralAcoustomagnonicDialog::new_fast(),
             floquet_corner_transducer_dialog: FloquetCornerTransducerDialog::new_fast(),
             chern_simons_interferometer_dialog: ChernSimonsInterferometerDialog::new_fast(),
+            chiral_heat_transistor_dialog: ChiralHeatTransistorDialog::new_fast(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -841,6 +845,7 @@ impl PhononApp {
                 DemoCircuitKind::NmosSwitch => self.load_nmos_switch_demo(),
                 DemoCircuitKind::HalfAdder => self.load_half_adder_demo(),
                 DemoCircuitKind::BasicGates => self.load_basic_gates_demo(),
+                DemoCircuitKind::QuantumMetamaterial => self.load_quantum_metamaterial_demo(),
             },
             PendingAction::ClearCanvas => self.clear_canvas_user(),
             PendingAction::CloseApp => {
@@ -1840,6 +1845,134 @@ impl PhononApp {
         self.sim_status.clear();
         self.pending_auto_center = true;
         self.project_title = "Basic Logic Gates".to_string();
+        self.current_project_path = None;
+        self.modification_epoch = 0;
+        self.clean_epoch = 0;
+        self.is_modified = false;
+        self.top_frame_config.circuit_name = self.project_title.clone();
+        self.top_frame_config.is_modified = false;
+    }
+
+    /// Loads an interactive Topological Quantum Metamaterials demonstration bench exercising
+    /// surface acoustic wave (SAW) interdigital transducers, fractionalized parafermionic cavities,
+    /// chiral magnetic skyrmion routing, and non-Abelian Majorana braiding junctions.
+    pub fn load_quantum_metamaterial_demo(&mut self) {
+        self.clear_canvas_state();
+        self.history.clear();
+
+        // 1. Components
+        // Excitation Pulse Generator V1
+        let v1 = SchematicComponent::new(1, ComponentKind::PulseGenerator, Pos2::new(100.0, 260.0), 1)
+            .with_value("PULSE(0 1.0 0 10p 10p 500p 1n)");
+
+        // Ground Reference GND1
+        let gnd = SchematicComponent::new(2, ComponentKind::Ground, Pos2::new(100.0, 420.0), 1);
+
+        // SAW IDT Acoustic Filter XSAW1
+        let xsaw = SchematicComponent::new(3, ComponentKind::SawIdt, Pos2::new(240.0, 240.0), 1)
+            .with_value("SAW_1GHZ");
+
+        // Fractionalized Parafermionic Cavity XPC1
+        let xpc = SchematicComponent::new(4, ComponentKind::ParafermionicCavity, Pos2::new(370.0, 220.0), 1)
+            .with_value("PARAFERM_RES");
+
+        // Gate Bias Control VG1
+        let vg = SchematicComponent::new(5, ComponentKind::VoltageSource, Pos2::new(450.0, 100.0), 1)
+            .with_value("DC 1.5V");
+
+        // Chiral Skyrmion Acoustic Router XSR1
+        let xsr = SchematicComponent::new(6, ComponentKind::SkyrmionRouter, Pos2::new(510.0, 220.0), 1)
+            .with_value("SKYRMION_RT");
+
+        // Non-Abelian Majorana Braiding Junction XMJ1
+        let xmj = SchematicComponent::new(7, ComponentKind::MajoranaJunction, Pos2::new(670.0, 220.0), 1)
+            .with_value("TOPOMAJ_1");
+
+        // Output Termination Resistor R1
+        let rload = SchematicComponent::new(8, ComponentKind::Resistor, Pos2::new(780.0, 260.0), 1)
+            .with_value("50");
+
+        // Visual Quantum/Logic State Probe UPRB1
+        let probe = SchematicComponent::new(9, ComponentKind::LogicProbe, Pos2::new(860.0, 220.0), 1);
+
+        self.components = vec![v1, gnd, xsaw, xpc, vg, xsr, xmj, rload, probe];
+        self.next_comp_id = 10;
+
+        // 2. Wires
+        let mut wires = Vec::new();
+        let mut wid = 1usize;
+
+        // Ground Rail along Y=400.0: connects GND1(100, 400), V1(-)(100, 300), XSAW IN-(210, 260),
+        // XSAW OUT-(270, 260), VG(-)(450, 140), and R1(2)(780, 300).
+        wires.push(SchematicWire::new(wid, vec![
+            WireSegment::new(Pos2::new(100.0, 300.0), Pos2::new(100.0, 400.0)),
+            WireSegment::new(Pos2::new(100.0, 400.0), Pos2::new(210.0, 400.0)),
+        ])); wid += 1;
+
+        wires.push(SchematicWire::new(wid, vec![
+            WireSegment::new(Pos2::new(210.0, 260.0), Pos2::new(210.0, 400.0)),
+            WireSegment::new(Pos2::new(210.0, 400.0), Pos2::new(270.0, 400.0)),
+        ])); wid += 1;
+
+        wires.push(SchematicWire::new(wid, vec![
+            WireSegment::new(Pos2::new(270.0, 260.0), Pos2::new(270.0, 400.0)),
+            WireSegment::new(Pos2::new(270.0, 400.0), Pos2::new(450.0, 400.0)),
+        ])); wid += 1;
+
+        wires.push(SchematicWire::new(wid, vec![
+            WireSegment::new(Pos2::new(450.0, 140.0), Pos2::new(450.0, 400.0)),
+            WireSegment::new(Pos2::new(450.0, 400.0), Pos2::new(780.0, 400.0)),
+        ])); wid += 1;
+
+        wires.push(SchematicWire::new(wid, vec![
+            WireSegment::new(Pos2::new(780.0, 300.0), Pos2::new(780.0, 400.0)),
+        ])); wid += 1;
+
+        // Input Wire: V1(+) (100, 220) -> XSAW IN+ (210, 220)
+        wires.push(SchematicWire::new(wid, vec![
+            WireSegment::new(Pos2::new(100.0, 220.0), Pos2::new(210.0, 220.0)),
+        ])); wid += 1;
+
+        // SAW to Parafermionic Cavity: XSAW OUT+ (270, 220) -> XPC PORT1 (340, 220)
+        wires.push(SchematicWire::new(wid, vec![
+            WireSegment::new(Pos2::new(270.0, 220.0), Pos2::new(340.0, 220.0)),
+        ])); wid += 1;
+
+        // Parafermionic Cavity to Skyrmion Router: XPC PORT2 (400, 220) -> XSR IN (480, 220)
+        wires.push(SchematicWire::new(wid, vec![
+            WireSegment::new(Pos2::new(400.0, 220.0), Pos2::new(480.0, 220.0)),
+        ])); wid += 1;
+
+        // Skyrmion Gate Bias Wire: VG(+) (450, 60) -> (510, 60) -> XSR GATE (510, 190)
+        wires.push(SchematicWire::new(wid, vec![
+            WireSegment::new(Pos2::new(450.0, 60.0), Pos2::new(510.0, 60.0)),
+            WireSegment::new(Pos2::new(510.0, 60.0), Pos2::new(510.0, 190.0)),
+        ])); wid += 1;
+
+        // Skyrmion Channel 0 to Majorana J1: XSR CH0 (540, 200) -> XMJ J1 (640, 200)
+        wires.push(SchematicWire::new(wid, vec![
+            WireSegment::new(Pos2::new(540.0, 200.0), Pos2::new(640.0, 200.0)),
+        ])); wid += 1;
+
+        // Skyrmion Channel 1 to Majorana J2: XSR CH1 (540, 240) -> XMJ J2 (640, 240)
+        wires.push(SchematicWire::new(wid, vec![
+            WireSegment::new(Pos2::new(540.0, 240.0), Pos2::new(640.0, 240.0)),
+        ])); wid += 1;
+
+        // Majorana J3 to Output Load and Probe: XMJ J3 (700, 220) -> R1 (780, 220) -> UPRB1 IN (840, 220)
+        wires.push(SchematicWire::new(wid, vec![
+            WireSegment::new(Pos2::new(700.0, 220.0), Pos2::new(780.0, 220.0)),
+            WireSegment::new(Pos2::new(780.0, 220.0), Pos2::new(840.0, 220.0)),
+        ])); wid += 1;
+
+        self.wires = wires;
+        self.next_wire_id = wid;
+
+        self.sync_canvas_state();
+        self.run_erc();
+        self.sim_status.clear();
+        self.pending_auto_center = true;
+        self.project_title = "Topological Quantum Metamaterials".to_string();
         self.current_project_path = None;
         self.modification_epoch = 0;
         self.clean_epoch = 0;
@@ -4190,6 +4323,9 @@ impl PhononApp {
 
         // 92. Interactive Topological Chiral Acoustic Chern-Simons Fractional Anyon Interferometer & Quantum Memory Dialog
         self.chern_simons_interferometer_dialog.ui(ui.ctx());
+
+        // 93. Interactive Quantum Metamaterial Non-Hermitian Floquet Chiral Heat Transistor & Thermal Diode Dialog
+        self.chiral_heat_transistor_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {
