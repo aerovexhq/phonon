@@ -265,6 +265,20 @@ pub fn determine_boot_renderer() -> eframe::Renderer {
 }
 
 #[cfg(not(target_arch = "wasm32"))]
+/// Raw RGBA 64x64 icon data embedded directly into the binary.
+pub const PHONON_ICON_64_RGBA: &[u8] = include_bytes!("../../../assets/icons/phonon_64.rgba");
+
+#[cfg(not(target_arch = "wasm32"))]
+/// Generates default `egui::IconData` for native window manager integration.
+pub fn default_icon_data() -> egui::IconData {
+    egui::IconData {
+        rgba: PHONON_ICON_64_RGBA.to_vec(),
+        width: 64,
+        height: 64,
+    }
+}
+
+#[cfg(not(target_arch = "wasm32"))]
 /// Generates optimized `eframe::NativeOptions` for sub-200ms cold startup.
 pub fn default_native_options() -> eframe::NativeOptions {
     let renderer = determine_boot_renderer();
@@ -274,6 +288,7 @@ pub fn default_native_options() -> eframe::NativeOptions {
             .with_min_inner_size([800.0, 600.0])
             .with_maximized(true)
             .with_decorations(false)
+            .with_icon(default_icon_data())
             .with_title("Phonon Studio - Electro-Thermal CAD & Circuit Simulator"),
         renderer,
         ..Default::default()

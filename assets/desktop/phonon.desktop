@@ -1,13 +1,13 @@
 [Desktop Entry]
-Name=Phonon CAD Studio
+Name=Phonon Studio
 GenericName=Circuit Simulator & CAD Studio
 Comment=Universal Multi-Scale Visual CAD Studio & Semiconductor Solver
 Exec=phonon gui %F
-Icon=phonon
+Icon=/home/usr/Projects/aerovex/modules/phonon/assets/icons/phonon.png
 Terminal=false
 Type=Application
 Categories=Development;Engineering;Science;Electronics;
 MimeType=application/x-spice;text/x-spice;
 StartupNotify=true
-StartupWMClass=Phonon CAD
+StartupWMClass=Phonon Studio
 Keywords=spice;cad;circuit;simulator;tcad;semiconductor;quantum;phonon;

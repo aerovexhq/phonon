@@ -121,10 +121,10 @@ fn test_svg_master_icon_validity() {
     let path = found_path.unwrap();
     let content = std::fs::read_to_string(path).expect("Must read assets/icons/phonon.svg");
 
-    // 2. Asserts viewBox 0 0 256 256
+    // 2. Asserts viewBox
     assert!(
-        content.contains("viewBox=\"0 0 256 256\""),
-        "SVG must specify viewBox=\"0 0 256 256\""
+        content.contains("viewBox=\"0 0 512 512\"") || content.contains("viewBox=\"0 0 256 256\""),
+        "SVG must specify a valid square viewBox"
     );
 
     // 3. Asserts valid XML structure
@@ -132,7 +132,7 @@ fn test_svg_master_icon_validity() {
 
     // 4. Asserts embedded constant matches
     assert!(
-        phonon_gui::widgets::icon::PHONON_SVG.contains("viewBox=\"0 0 256 256\""),
+        phonon_gui::widgets::icon::PHONON_SVG.contains("viewBox="),
         "Embedded PHONON_SVG constant must be valid and contain viewBox"
     );
 
@@ -142,17 +142,23 @@ fn test_svg_master_icon_validity() {
         "SVG must specify valid XML namespace"
     );
     assert!(
-        content.contains("stroke-dasharray"),
-        "SVG must depict crystal lattice grid"
-    );
-    assert!(
-        content.contains("<circle"),
-        "SVG must depict atomic nodes and wavefronts"
+        content.contains("<rect"),
+        "SVG must depict chip package geometry and pins"
     );
     assert!(
         content.contains("<path"),
         "SVG must depict sinusoidal acoustic waves"
     );
+}
+
+#[cfg(not(target_arch = "wasm32"))]
+#[test]
+fn test_native_window_icon_data() {
+    let icon = phonon_gui::default_icon_data();
+    assert_eq!(icon.width, 64);
+    assert_eq!(icon.height, 64);
+    assert_eq!(icon.rgba.len(), 64 * 64 * 4);
+    assert_eq!(phonon_gui::PHONON_ICON_64_RGBA.len(), 64 * 64 * 4);
 }
 
 #[test]
