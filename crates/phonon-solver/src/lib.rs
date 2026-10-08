@@ -363,6 +363,7 @@ pub mod chiral_heat_transistor;
 pub mod corner_kerr_microcomb;
 pub mod acoustic_snspd;
 pub mod floquet_cv_qkd;
+pub mod polaritonic_soliton_comb;
 
 pub use acoustic::{
     AcousticBenchmarkReport, AcousticBenchmarkRunner, AcousticLinkSimulator, AcousticRealismTier,
@@ -1450,6 +1451,20 @@ pub use floquet_cv_qkd::{
     KeyRateDistancePoint, PolaritonRouterTelemetry, PolaritonSpectrumPoint,
     WignerSlicePoint,
 };
+
+pub use polaritonic_soliton_comb::{
+    CombModePoint as PolaritonicCombModePoint,
+    DissipativeSolitonMetrics as PolaritonicSolitonMetrics,
+    KagomeBandPoint, KagomeBandStructure, KagomePolaritonParams, KagomePolaritonSolver,
+    LugiatoLefeverSoliton, LugiatoLefeverSolitonSolver, PolaritonicSolitonCombProcessor,
+    QuadratureScanPoint, QuantumNoiseQuadratures, QuantumNoiseQuadraturesSolver,
+    SolitonCombAuditReport, SolitonCombParams,
+    SolitonProfilePoint as PolaritonicSolitonProfilePoint,
+    SqueezingMetrics as PolaritonicSqueezingMetrics,
+    SqueezingParams as PolaritonicSqueezingParams,
+    WignerGrid,
+};
+
 
 
 

@@ -222,6 +222,9 @@ pub use widgets::acoustic_snspd_dialog::{
 pub use widgets::floquet_cv_qkd_dialog::{
     CvQkdTab, FloquetCvQkdDialog,
 };
+pub use widgets::polaritonic_soliton_comb_dialog::{
+    PolaritonicCombTab, PolaritonicSolitonCombDialog,
+};
 
 #[cfg(not(target_arch = "wasm32"))]
 use phonon_core::PhysicsDynamicsBackend;
