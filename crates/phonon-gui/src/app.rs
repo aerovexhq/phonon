@@ -46,7 +46,7 @@ use crate::widgets::{
     ChiralMajoranaDialog, FloquetCornerLaserDialog, ParafermionDialog,
     ChiralAcoustomagnonicDialog, FloquetCornerTransducerDialog,
     ChernSimonsInterferometerDialog, ChiralHeatTransistorDialog,
-    CornerKerrMicrocombDialog,
+    CornerKerrMicrocombDialog, AcousticSnspdDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -439,6 +439,9 @@ pub struct PhononApp {
     /// Interactive Topological Acoustic Higher-Order Corner-State Quantum Metamaterial Frequency Comb & Dissipative Kerr Soliton Generator dialog.
     pub corner_kerr_microcomb_dialog: CornerKerrMicrocombDialog,
 
+    /// Interactive Topological Acoustic Superconducting Nanowire Single-Phonon Detector (SNSPD) & Quantum Transceiver dialog.
+    pub acoustic_snspd_dialog: AcousticSnspdDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -681,6 +684,7 @@ impl Default for PhononApp {
             chern_simons_interferometer_dialog: ChernSimonsInterferometerDialog::new_fast(),
             chiral_heat_transistor_dialog: ChiralHeatTransistorDialog::new_fast(),
             corner_kerr_microcomb_dialog: CornerKerrMicrocombDialog::new_fast(),
+            acoustic_snspd_dialog: AcousticSnspdDialog::new_fast(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -4334,6 +4338,9 @@ impl PhononApp {
 
         // 94. Interactive Topological Acoustic Higher-Order Corner-State Quantum Metamaterial Frequency Comb & Dissipative Kerr Soliton Generator Dialog
         self.corner_kerr_microcomb_dialog.ui(ui.ctx());
+
+        // 95. Interactive Topological Acoustic Superconducting Nanowire Single-Phonon Detector (SNSPD) & Quantum Transceiver Dialog
+        self.acoustic_snspd_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {

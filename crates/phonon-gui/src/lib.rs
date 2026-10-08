@@ -209,6 +209,9 @@ pub use widgets::chiral_heat_transistor_dialog::{
 pub use widgets::corner_kerr_microcomb_dialog::{
     CornerCombTab, CornerKerrMicrocombDialog,
 };
+pub use widgets::acoustic_snspd_dialog::{
+    AcousticSnspdDialog, SnspdTab,
+};
 
 #[cfg(not(target_arch = "wasm32"))]
 use phonon_core::PhysicsDynamicsBackend;

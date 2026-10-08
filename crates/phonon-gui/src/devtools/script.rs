@@ -63,6 +63,10 @@ pub enum UiAction {
     OpenCornerKerrMicrocombDialog,
     /// Closes the Topological Corner Kerr Microcomb & Dissipative Soliton CAD dialog.
     CloseCornerKerrMicrocombDialog,
+    /// Opens the Topological Acoustic Superconducting Nanowire Single-Phonon Detector (SNSPD) & Quantum Transceiver CAD dialog.
+    OpenAcousticSnspdDialog,
+    /// Closes the Topological Acoustic Superconducting Nanowire Single-Phonon Detector (SNSPD) & Quantum Transceiver CAD dialog.
+    CloseAcousticSnspdDialog,
     /// Loads a built-in demo circuit.
     LoadDemo(DemoCircuitKind),
     /// Expands or collapses a category in the component palette drawer.
@@ -283,6 +287,7 @@ impl UiScript {
         steps.extend(Self::half_adder_and_logic_gates_scenario().steps);
         steps.extend(Self::quantum_metamaterial_and_heat_transistor_scenario().steps);
         steps.extend(Self::corner_kerr_microcomb_scenario().steps);
+        steps.extend(Self::acoustic_snspd_scenario().steps);
         steps.extend(vec![
             UiAction::SetDevtoolsPanelVisible(true),
             UiAction::WaitFrames(3),
@@ -395,6 +400,24 @@ impl UiScript {
                     filename: "24_corner_kerr_microcomb_dialog.png".to_string(),
                 },
                 UiAction::CloseCornerKerrMicrocombDialog,
+                UiAction::WaitFrames(2),
+            ],
+        )
+    }
+
+    /// Scenario 11: Topological Acoustic Superconducting Nanowire Single-Phonon Detector (SNSPD) & Quantum Transceiver Dialog.
+    pub fn acoustic_snspd_scenario() -> Self {
+        Self::new(
+            "Topological Acoustic SNSPD & Quantum Transceiver Verification",
+            "Opens the Topological Acoustic SNSPD & Quantum Transceiver CAD dialog and verifies all 5 tabs and physics metrics",
+            vec![
+                UiAction::OpenAcousticSnspdDialog,
+                UiAction::WaitFrames(6),
+                UiAction::TakeScreenshot {
+                    label: "Topological Acoustic Superconducting Nanowire Single-Phonon Detector (SNSPD) Dialog".to_string(),
+                    filename: "25_acoustic_snspd_dialog.png".to_string(),
+                },
+                UiAction::CloseAcousticSnspdDialog,
                 UiAction::WaitFrames(2),
             ],
         )
@@ -554,6 +577,14 @@ impl ScriptRunner {
             UiAction::CloseCornerKerrMicrocombDialog => {
                 app.corner_kerr_microcomb_dialog.is_open = false;
                 self.execution_log.push("Closed Corner Kerr Microcomb modal dialog".to_string());
+            }
+            UiAction::OpenAcousticSnspdDialog => {
+                app.acoustic_snspd_dialog.is_open = true;
+                self.execution_log.push("Opened Acoustic SNSPD modal dialog".to_string());
+            }
+            UiAction::CloseAcousticSnspdDialog => {
+                app.acoustic_snspd_dialog.is_open = false;
+                self.execution_log.push("Closed Acoustic SNSPD modal dialog".to_string());
             }
             UiAction::LoadDemo(kind) => {
                 match kind {

@@ -104,6 +104,7 @@ pub mod floquet_corner_transducer_dialog;
 pub mod chern_simons_interferometer_dialog;
 pub mod chiral_heat_transistor_dialog;
 pub mod corner_kerr_microcomb_dialog;
+pub mod acoustic_snspd_dialog;
 
 pub use pill_badge::{
     proportional_zoom_scale, render_dual_telemetry_pill, render_pill_badge, PillBadgeStyle,
@@ -260,4 +261,7 @@ pub use chiral_heat_transistor_dialog::{
 };
 pub use corner_kerr_microcomb_dialog::{
     CornerCombTab, CornerKerrMicrocombDialog,
+};
+pub use acoustic_snspd_dialog::{
+    AcousticSnspdDialog, SnspdTab,
 };
