@@ -7,7 +7,7 @@
 //! 64-bit canvas hash debouncing.
 
 use super::canvas::SchematicCanvas;
-use super::circuit_compiler::compile_schematic;
+use super::circuit_compiler::{compile_schematic, compile_schematic_with_labels};
 use super::components::{ComponentKind, SchematicComponent};
 use egui::Pos2;
 use std::collections::HashSet;
@@ -81,6 +81,14 @@ impl NetlistSyncEngine {
                 seg.end.y.to_bits().hash(&mut hasher);
             }
         }
+        canvas.net_labels.len().hash(&mut hasher);
+        for label in &canvas.net_labels {
+            label.id.hash(&mut hasher);
+            label.name.hash(&mut hasher);
+            label.pos.x.to_bits().hash(&mut hasher);
+            label.pos.y.to_bits().hash(&mut hasher);
+            (label.orientation as usize).hash(&mut hasher);
+        }
         hasher.finish()
     }
 
@@ -94,7 +102,7 @@ impl NetlistSyncEngine {
             return &self.last_netlist_text;
         }
 
-        match compile_schematic(&canvas.components, &canvas.wires) {
+        match compile_schematic_with_labels(&canvas.components, &canvas.wires, &canvas.net_labels) {
             Ok(compiled) => {
                 self.last_netlist_text = compiled.spice_netlist;
             }
