@@ -115,7 +115,7 @@ pub use command_palette::CommandPalette;
 pub use confirmation_modal::{
     ConfirmationDecision, ConfirmationModal, DemoCircuitKind, PendingAction,
 };
-pub use floating_toolbar::{FloatingToolbarAction, FloatingToolbarState};
+pub use floating_toolbar::{FloatingToolbarAction, FloatingToolbarState, FloatingToolbarTheme};
 pub use preferences_dialog::{PreferencesDialog, PreferencesTab};
 pub use project_dialog::{ProjectDialog, ProjectDialogAction, ProjectDialogMode};
 pub use chern_circulator_dialog::ChernCirculatorDialog;

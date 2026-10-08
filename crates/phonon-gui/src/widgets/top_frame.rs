@@ -221,6 +221,62 @@ fn render_top_frame_internal(
                 }
                 ui.close();
             }
+            ui.menu_button("Recent Projects", |ui| {
+                let mut selected_recent = None;
+                let mut clear_all = false;
+                if let Some(a) = app.as_deref() {
+                    let mut recents = a.preferences.recent_projects.clone();
+                    if recents.is_empty() {
+                        if let Ok(stored) = a.storage_manager.list_projects() {
+                            recents = stored;
+                        }
+                    }
+                    if recents.is_empty() {
+                        ui.add_enabled(
+                            false,
+                            egui::Button::new(
+                                RichText::new("(No Recent Projects)").italics().size(12.0),
+                            ),
+                        );
+                    } else {
+                        for p in recents.iter().take(10) {
+                            let label = if p == &a.project_title {
+                                format!("* {}", p)
+                            } else {
+                                p.clone()
+                            };
+                            if ui.button(label).clicked() {
+                                selected_recent = Some(p.clone());
+                            }
+                        }
+                        ui.separator();
+                        if ui.button("Clear Recent Projects").clicked() {
+                            clear_all = true;
+                        }
+                    }
+                } else {
+                    ui.add_enabled(
+                        false,
+                        egui::Button::new(
+                            RichText::new("(No Recent Projects)").italics().size(12.0),
+                        ),
+                    );
+                }
+
+                if let Some(p) = selected_recent {
+                    if let Some(a) = app.as_deref_mut() {
+                        a.open_recent_project(&p);
+                    }
+                    ui.close();
+                }
+                if clear_all {
+                    if let Some(a) = app.as_deref_mut() {
+                        a.preferences.clear_recent_projects();
+                        let _ = a.preferences.save();
+                    }
+                    ui.close();
+                }
+            });
             if ui.button("Save Project (Ctrl+S)").clicked() {
                 if let Some(a) = app.as_deref_mut() {
                     let _ = a.save_project();
@@ -245,6 +301,13 @@ fn render_top_frame_internal(
                     d.insert_temp(ui.id().with("top_frame_rename_active"), true);
                     d.insert_temp(ui.id().with("top_frame_rename_buffer"), cur);
                 });
+                ui.close();
+            }
+            ui.separator();
+            if ui.button("Projects Catalog (Storage)...").clicked() {
+                if let Some(a) = app.as_deref_mut() {
+                    a.project_dialog.open_for_manager();
+                }
                 ui.close();
             }
             ui.separator();
@@ -362,6 +425,96 @@ fn render_top_frame_internal(
                     a.request_action(PendingAction::CloseApp);
                 } else {
                     action = TopFrameAction::Close;
+                }
+                ui.close();
+            }
+        });
+        ui.label(RichText::new("|").color(Color32::from_rgb(60, 70, 85)).size(11.0));
+
+        // Projects Menu (Instant access to saved projects catalog, especially convenient for web)
+        ui.menu_button("Projects", |ui| {
+            let mut clicked_proj = None;
+            let mut open_catalog = false;
+            let mut save_curr = false;
+            let mut save_as = false;
+
+            let storage_label = if config.is_web { "Browser Storage" } else { "Local Storage" };
+            ui.label(RichText::new(format!("Saved Projects ({})", storage_label)).strong().size(12.0));
+            ui.separator();
+
+            if let Some(a) = app.as_deref() {
+                let stored_list = a.storage_manager.list_projects().unwrap_or_default();
+                if stored_list.is_empty() {
+                    ui.add_enabled(
+                        false,
+                        egui::Button::new(
+                            RichText::new("(No saved projects in storage)").italics().size(12.0),
+                        ),
+                    );
+                } else {
+                    for name in stored_list.iter().take(15) {
+                        let is_current = name == &a.project_title;
+                        let text = if is_current {
+                            format!("* {}", name)
+                        } else {
+                            name.clone()
+                        };
+                        if ui.selectable_label(is_current, text).clicked() {
+                            clicked_proj = Some(name.clone());
+                        }
+                    }
+                }
+            } else {
+                ui.add_enabled(
+                    false,
+                    egui::Button::new(RichText::new("(No saved projects)").italics().size(12.0)),
+                );
+            }
+
+            ui.separator();
+            if ui.button("Projects Catalog / Manager...").clicked() {
+                open_catalog = true;
+            }
+            if ui.button("Save Current Project (Ctrl+S)").clicked() {
+                save_curr = true;
+            }
+            if ui.button("Save Project As...").clicked() {
+                save_as = true;
+            }
+
+            #[cfg(target_arch = "wasm32")]
+            {
+                ui.separator();
+                if ui.button("Export / Download .phn File").clicked() {
+                    if let Some(a) = app.as_deref_mut() {
+                        let title = a.project_title.clone();
+                        a.export_project(&title);
+                    }
+                    ui.close();
+                }
+            }
+
+            if let Some(p) = clicked_proj {
+                if let Some(a) = app.as_deref_mut() {
+                    a.open_recent_project(&p);
+                }
+                ui.close();
+            }
+            if open_catalog {
+                if let Some(a) = app.as_deref_mut() {
+                    a.project_dialog.open_for_manager();
+                }
+                ui.close();
+            }
+            if save_curr {
+                if let Some(a) = app.as_deref_mut() {
+                    let _ = a.save_project();
+                }
+                ui.close();
+            }
+            if save_as {
+                if let Some(a) = app.as_deref_mut() {
+                    a.open_save_as_dialog();
                 }
                 ui.close();
             }

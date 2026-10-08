@@ -534,14 +534,13 @@ pub struct SubcircuitRegistry {
 
 impl SubcircuitRegistry {
     pub fn new() -> Self {
-        let mut reg = Self {
+        Self {
             packages: HashMap::new(),
-        };
-        reg.register_built_in_defaults();
-        reg
+        }
     }
 
-    fn register_built_in_defaults(&mut self) {
+    /// Optional helper to register built-in demo packages for test harnesses or examples.
+    pub fn register_built_in_defaults(&mut self) {
         // Built-in demo package: Voltage Divider
         let r1 = SchematicComponent::new(1, ComponentKind::Resistor, egui::pos2(100.0, 100.0), 0);
         let r2 = SchematicComponent::new(2, ComponentKind::Resistor, egui::pos2(100.0, 180.0), 0);

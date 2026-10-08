@@ -131,7 +131,12 @@ fn test_phnc_corruption_detection() {
 #[test]
 fn test_subcircuit_registry_operations() {
     let mut registry = SubcircuitRegistry::new();
-    // Default contains VoltageDivider
+    // Initially empty by default - no phantom subcircuits
+    assert!(registry.list().is_empty());
+    assert!(registry.get("VoltageDivider").is_none());
+
+    // Explicit registration of demo defaults
+    registry.register_built_in_defaults();
     assert!(!registry.list().is_empty());
     assert!(registry.get("VoltageDivider").is_some());
 

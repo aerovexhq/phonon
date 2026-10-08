@@ -925,6 +925,8 @@ impl PhononApp {
 
         let _ = self.storage_manager
             .save_project(&title, &self.components, &self.wires);
+        self.preferences.add_recent_project(&title);
+        let _ = self.preferences.save();
 
         self.mark_clean();
         self.sim_status = format!("Project '{}' saved to {}", title, path.display());
@@ -971,6 +973,9 @@ impl PhononApp {
         let _ = self.storage_manager
             .save_project(&title, &self.components, &self.wires);
 
+        self.preferences.add_recent_project(&title);
+        let _ = self.preferences.save();
+
         self.mark_clean();
         self.sim_status = format!("Project saved to {}", resolved_path.display());
         Ok(())
@@ -994,6 +999,8 @@ impl PhononApp {
         self.top_frame_config.is_modified = false;
         self.pending_auto_center = true;
         self.run_erc();
+        self.preferences.add_recent_project(name);
+        let _ = self.preferences.save();
         self.sim_status = format!("Loaded project '{}'", name);
         Ok(())
     }
@@ -1018,8 +1025,16 @@ impl PhononApp {
         self.top_frame_config.is_modified = false;
         self.pending_auto_center = true;
         self.run_erc();
+        self.preferences.add_recent_project(&p.to_string_lossy());
+        let _ = self.preferences.save();
         self.sim_status = format!("Loaded from {}", p.display());
         Ok(())
+    }
+
+    /// Opens a project from recent history or virtual storage, prompting if unsaved changes exist.
+    pub fn open_recent_project(&mut self, name_or_path: &str) {
+        let p = std::path::PathBuf::from(name_or_path);
+        self.request_action(PendingAction::OpenProject(Some(p)));
     }
 
     /// Automatically records the active project in autosave session storage.
@@ -4086,6 +4101,7 @@ impl PhononApp {
             ui.ctx(),
             viewport,
             &self.selected_tool,
+            &theme,
         );
         if let Some(act) = toolbar_action {
             match act {

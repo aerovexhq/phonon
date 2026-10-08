@@ -198,6 +198,19 @@ pub fn hex_to_color32(hex: &str) -> Option<Color32> {
 }
 
 impl PhononTheme {
+    /// Determines whether the theme is dark based on canvas background perceived luminance.
+    pub fn is_dark(&self) -> bool {
+        self.luminance() < 128.0
+    }
+
+    /// Calculates perceived luminance of the canvas background in [0.0, 255.0].
+    pub fn luminance(&self) -> f32 {
+        let r = self.canvas_bg.r() as f32;
+        let g = self.canvas_bg.g() as f32;
+        let b = self.canvas_bg.b() as f32;
+        0.299 * r + 0.587 * g + 0.114 * b
+    }
+
     /// Serializes this theme into human-readable YAML configuration string.
     pub fn to_yaml_string(&self) -> String {
         format!(

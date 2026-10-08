@@ -41,6 +41,9 @@ pub struct AppPreferences {
     pub thermal_ambient_temp_k: f64,
     pub thermal_colormap: String,
     pub thermal_overlay_enabled: bool,
+
+    // 7. Recent Projects
+    pub recent_projects: Vec<String>,
 }
 
 impl Default for AppPreferences {
@@ -70,6 +73,8 @@ impl Default for AppPreferences {
             thermal_ambient_temp_k: 300.0,
             thermal_colormap: "Turbo".to_string(),
             thermal_overlay_enabled: false,
+
+            recent_projects: Vec::new(),
         }
     }
 }
@@ -125,6 +130,24 @@ impl AppPreferences {
         self.thermal_ambient_temp_k = self.thermal_ambient_temp_k.clamp(100.0, 600.0);
     }
 
+    /// Adds a project name or path to the top of the recent projects list, avoiding duplicates.
+    pub fn add_recent_project(&mut self, name: &str) {
+        let clean = name.trim().to_string();
+        if clean.is_empty() {
+            return;
+        }
+        self.recent_projects.retain(|p| p != &clean);
+        self.recent_projects.insert(0, clean);
+        if self.recent_projects.len() > 10 {
+            self.recent_projects.truncate(10);
+        }
+    }
+
+    /// Clears the recent projects history.
+    pub fn clear_recent_projects(&mut self) {
+        self.recent_projects.clear();
+    }
+
     /// Serializes preferences into human-readable configuration text.
     pub fn to_config_str(&self) -> String {
         let mut out = String::with_capacity(1024);
@@ -146,6 +169,10 @@ impl AppPreferences {
         out.push_str(&format!("thermal_ambient_temp_k: {}\n", self.thermal_ambient_temp_k));
         out.push_str(&format!("thermal_colormap: \"{}\"\n", self.thermal_colormap));
         out.push_str(&format!("thermal_overlay_enabled: {}\n", self.thermal_overlay_enabled));
+
+        for proj in &self.recent_projects {
+            out.push_str(&format!("recent_project: \"{}\"\n", proj));
+        }
 
         if let Some(custom) = &self.custom_theme {
             out.push_str("custom_theme_yaml: |\n");
@@ -218,6 +245,12 @@ impl AppPreferences {
                     "thermal_ambient_temp_k" => prefs.thermal_ambient_temp_k = val.parse().unwrap_or(300.0),
                     "thermal_colormap" => prefs.thermal_colormap = val.to_string(),
                     "thermal_overlay_enabled" => prefs.thermal_overlay_enabled = val.parse().unwrap_or(false),
+                    "recent_project" => {
+                        let clean = val.to_string();
+                        if !clean.is_empty() && !prefs.recent_projects.contains(&clean) {
+                            prefs.recent_projects.push(clean);
+                        }
+                    }
                     "custom_theme_yaml" => in_custom_yaml = true,
                     "keybind" => {
                         if let Some((act, sc)) = val.split_once('=') {
@@ -262,6 +295,11 @@ impl AppPreferences {
                 std::env::temp_dir().join("phonon").join("preferences.phn")
             }
         }
+    }
+
+    /// Saves preferences to persistent storage on disk or default target.
+    pub fn save(&self) -> Result<(), String> {
+        self.save_to_disk()
     }
 
     /// Writes preferences to persistent storage on disk.

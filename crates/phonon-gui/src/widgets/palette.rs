@@ -224,7 +224,7 @@ impl ComponentPalette {
                                 .color(Color32::from_rgb(200, 230, 200)),
                         );
                         ui.label(
-                            RichText::new("Active")
+                            RichText::new("(Active Workspace)")
                                 .font(FontId::proportional(10.0))
                                 .color(Color32::from_rgb(80, 200, 120)),
                         );

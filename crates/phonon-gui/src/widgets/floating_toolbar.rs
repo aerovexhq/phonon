@@ -3,6 +3,7 @@
 //! Ergonomic floating CAD tool island anchored in the canvas viewport.
 
 use crate::app::ToolMode;
+use crate::theme::PhononTheme;
 use egui::{
     Color32, CornerRadius, FontId, Margin, Order, Pos2, Rect, RichText, Sense, Stroke, StrokeKind,
     Vec2,
@@ -16,6 +17,154 @@ pub enum FloatingToolbarAction {
     Mirror,
     Delete,
     Clear,
+}
+
+/// Themed visual styling tokens for the floating CAD tools island.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct FloatingToolbarTheme {
+    pub bg_fill: Color32,
+    pub stroke_color: Color32,
+    pub badge_hover_fill: Color32,
+    pub dot_normal: Color32,
+    pub dot_hovered: Color32,
+    pub chevron_normal: Color32,
+    pub chevron_hovered: Color32,
+    pub separator: Color32,
+    pub btn_active_bg: Color32,
+    pub btn_active_fg: Color32,
+    pub btn_active_stroke: Color32,
+    pub btn_hover_bg: Color32,
+    pub btn_hover_fg: Color32,
+    pub btn_normal_fg: Color32,
+}
+
+impl FloatingToolbarTheme {
+    /// Derives the floating toolbar color tokens dynamically from the active `PhononTheme`.
+    pub fn from_theme(theme: &PhononTheme) -> Self {
+        let is_dark = theme.is_dark();
+
+        let bg_fill = if is_dark {
+            Color32::from_rgba_unmultiplied(
+                theme.component_body.r(),
+                theme.component_body.g(),
+                theme.component_body.b(),
+                240,
+            )
+        } else if theme.component_body.r() > 230
+            && theme.component_body.g() > 230
+            && theme.component_body.b() > 230
+        {
+            Color32::from_rgba_unmultiplied(255, 255, 255, 248)
+        } else {
+            Color32::from_rgba_unmultiplied(
+                theme.component_body.r(),
+                theme.component_body.g(),
+                theme.component_body.b(),
+                245,
+            )
+        };
+
+        let stroke_color = if is_dark {
+            Color32::from_rgba_unmultiplied(
+                theme.grid_dot.r(),
+                theme.grid_dot.g(),
+                theme.grid_dot.b(),
+                200,
+            )
+        } else {
+            Color32::from_rgba_unmultiplied(
+                theme.grid_dot.r(),
+                theme.grid_dot.g(),
+                theme.grid_dot.b(),
+                230,
+            )
+        };
+
+        let badge_hover_fill = if is_dark {
+            let r = theme.component_body.r().saturating_add(16);
+            let g = theme.component_body.g().saturating_add(16);
+            let b = theme.component_body.b().saturating_add(16);
+            Color32::from_rgba_unmultiplied(r, g, b, 255)
+        } else {
+            let r = theme.component_body.r().saturating_sub(12);
+            let g = theme.component_body.g().saturating_sub(12);
+            let b = theme.component_body.b().saturating_sub(12);
+            Color32::from_rgba_unmultiplied(r, g, b, 255)
+        };
+
+        let dot_normal = theme.text_secondary;
+        let dot_hovered = theme.accent_primary;
+
+        let chevron_normal = theme.text_secondary;
+        let chevron_hovered = theme.accent_primary;
+
+        let separator = Color32::from_rgba_unmultiplied(
+            theme.grid_dot.r(),
+            theme.grid_dot.g(),
+            theme.grid_dot.b(),
+            if is_dark { 160 } else { 190 },
+        );
+
+        let (btn_active_bg, btn_active_fg, btn_active_stroke) = if is_dark {
+            (
+                Color32::from_rgba_unmultiplied(
+                    theme.accent_primary.r(),
+                    theme.accent_primary.g(),
+                    theme.accent_primary.b(),
+                    75,
+                ),
+                theme.text_primary,
+                theme.accent_primary,
+            )
+        } else {
+            (
+                Color32::from_rgba_unmultiplied(
+                    theme.accent_primary.r(),
+                    theme.accent_primary.g(),
+                    theme.accent_primary.b(),
+                    40,
+                ),
+                theme.accent_primary,
+                theme.accent_primary,
+            )
+        };
+
+        let btn_hover_bg = if is_dark {
+            Color32::from_rgba_unmultiplied(
+                theme.grid_dot.r(),
+                theme.grid_dot.g(),
+                theme.grid_dot.b(),
+                80,
+            )
+        } else {
+            Color32::from_rgba_unmultiplied(
+                theme.grid_dot.r(),
+                theme.grid_dot.g(),
+                theme.grid_dot.b(),
+                120,
+            )
+        };
+
+        let btn_hover_fg = theme.text_primary;
+        let btn_normal_fg = theme.text_secondary;
+
+        Self {
+            bg_fill,
+            stroke_color,
+            badge_hover_fill,
+            dot_normal,
+            dot_hovered,
+            chevron_normal,
+            chevron_hovered,
+            separator,
+            btn_active_bg,
+            btn_active_fg,
+            btn_active_stroke,
+            btn_hover_bg,
+            btn_hover_fg,
+            btn_normal_fg,
+        }
+    }
 }
 
 /// Persistent user preferences and geometry state for the floating CAD tools island.
@@ -41,17 +190,20 @@ impl FloatingToolbarState {
         Self::default()
     }
 
-    /// Renders the floating CAD tools island over the canvas viewport in Order::Middle.
+    /// Renders the floating CAD tools island over the canvas viewport in Order::Middle,
+    /// dynamically adapting all colors and tokens to the active `PhononTheme`.
     pub fn show(
         &mut self,
         ctx: &egui::Context,
         canvas_viewport: Rect,
         active_tool: &ToolMode,
+        theme: &PhononTheme,
     ) -> Option<FloatingToolbarAction> {
         if !self.is_visible {
             return None;
         }
 
+        let toolbar_theme = FloatingToolbarTheme::from_theme(theme);
         let mut triggered_action = None;
 
         // Position: Anchored at TOP_LEFT of canvas viewport with 16.0 px padding if not custom
@@ -91,9 +243,9 @@ impl FloatingToolbarState {
                     let radius = 13.0;
 
                     let (fill_color, stroke_color) = if response.hovered() {
-                        (Color32::from_rgb(35, 48, 68), Color32::from_rgb(100, 160, 240))
+                        (toolbar_theme.badge_hover_fill, toolbar_theme.dot_hovered)
                     } else {
-                        (Color32::from_rgb(22, 28, 42), Color32::from_rgb(70, 95, 130))
+                        (toolbar_theme.bg_fill, toolbar_theme.stroke_color)
                     };
 
                     painter.circle_filled(center, radius, fill_color);
@@ -107,12 +259,18 @@ impl FloatingToolbarState {
                         ToolMode::Place(_) | ToolMode::PlaceComponent(_) => "+",
                     };
 
+                    let text_color = if response.hovered() {
+                        toolbar_theme.dot_hovered
+                    } else {
+                        toolbar_theme.btn_active_stroke
+                    };
+
                     let galley = painter.layout_no_wrap(
                         tool_char.to_string(),
                         FontId::proportional(12.0),
-                        Color32::from_rgb(180, 220, 255),
+                        text_color,
                     );
-                    painter.galley(center - galley.size() * 0.5, galley, Color32::from_rgb(180, 220, 255));
+                    painter.galley(center - galley.size() * 0.5, galley, text_color);
 
                     response.on_hover_text("CAD Tools [Click to expand, drag to relocate]");
                 });
@@ -123,9 +281,9 @@ impl FloatingToolbarState {
                 .fixed_pos(clamped_pos)
                 .show(ctx, |ui| {
                     let frame = egui::Frame::new()
-                        .fill(Color32::from_rgba_unmultiplied(20, 26, 38, 240))
+                        .fill(toolbar_theme.bg_fill)
                         .corner_radius(CornerRadius::same(14))
-                        .stroke(Stroke::new(1.2, Color32::from_rgb(60, 80, 110)))
+                        .stroke(Stroke::new(1.2, toolbar_theme.stroke_color))
                         .inner_margin(Margin::symmetric(8, 4));
 
                     frame.show(ui, |ui| {
@@ -143,9 +301,9 @@ impl FloatingToolbarState {
                             // Render 6-dot grip pattern
                             let grip_painter = ui.painter();
                             let dot_color = if grip_response.hovered() || grip_response.dragged() {
-                                Color32::from_rgb(140, 180, 230)
+                                toolbar_theme.dot_hovered
                             } else {
-                                Color32::from_rgb(80, 100, 130)
+                                toolbar_theme.dot_normal
                             };
 
                             let start_x = grip_rect.min.x + 3.0;
@@ -167,9 +325,9 @@ impl FloatingToolbarState {
                                 ui.allocate_exact_size(Vec2::new(16.0, 22.0), Sense::click());
 
                             let chev_color = if chev_response.hovered() {
-                                Color32::from_rgb(180, 210, 245)
+                                toolbar_theme.chevron_hovered
                             } else {
-                                Color32::from_rgb(110, 130, 160)
+                                toolbar_theme.chevron_normal
                             };
 
                             let chev_galley = ui.painter().layout_no_wrap(
@@ -190,7 +348,7 @@ impl FloatingToolbarState {
 
                             // Separator
                             ui.add_space(2.0);
-                            let sep_color = Color32::from_rgb(50, 65, 88);
+                            let sep_color = toolbar_theme.separator;
                             let sep_top = clamped_pos.y + 6.0;
                             let sep_bottom = clamped_pos.y + 26.0;
                             ui.painter().line_segment(
@@ -200,22 +358,22 @@ impl FloatingToolbarState {
                             ui.add_space(4.0);
 
                             // Select (V)
-                            if render_tool_button(ui, "V", *active_tool == ToolMode::Select, "Select Tool [V] - Pointer & Marquee Drag Box") {
+                            if render_tool_button(ui, "V", *active_tool == ToolMode::Select, "Select Tool [V] - Pointer & Marquee Drag Box", &toolbar_theme) {
                                 triggered_action = Some(FloatingToolbarAction::SelectTool(ToolMode::Select));
                             }
 
                             // Wire (W)
-                            if render_tool_button(ui, "W", *active_tool == ToolMode::Wire, "Wire Tool [W] - Manhattan Electrical Routing") {
+                            if render_tool_button(ui, "W", *active_tool == ToolMode::Wire, "Wire Tool [W] - Manhattan Electrical Routing", &toolbar_theme) {
                                 triggered_action = Some(FloatingToolbarAction::SelectTool(ToolMode::Wire));
                             }
 
                             // Bus (B)
-                            if render_tool_button(ui, "B", *active_tool == ToolMode::Bus, "Bus Tool [B] - Multi-Signal Bus Routing") {
+                            if render_tool_button(ui, "B", *active_tool == ToolMode::Bus, "Bus Tool [B] - Multi-Signal Bus Routing", &toolbar_theme) {
                                 triggered_action = Some(FloatingToolbarAction::SelectTool(ToolMode::Bus));
                             }
 
                             // Probe (P)
-                            if render_tool_button(ui, "P", *active_tool == ToolMode::Probe, "Probe Tool [P] - Interactive Voltage Telemetry") {
+                            if render_tool_button(ui, "P", *active_tool == ToolMode::Probe, "Probe Tool [P] - Interactive Voltage Telemetry", &toolbar_theme) {
                                 triggered_action = Some(FloatingToolbarAction::SelectTool(ToolMode::Probe));
                             }
 
@@ -228,22 +386,22 @@ impl FloatingToolbarState {
                             ui.add_space(4.0);
 
                             // Rotate (R)
-                            if render_tool_button(ui, "R", false, "Rotate [R] - Rotate Selection Clockwise (90 deg)") {
+                            if render_tool_button(ui, "R", false, "Rotate [R] - Rotate Selection Clockwise (90 deg)", &toolbar_theme) {
                                 triggered_action = Some(FloatingToolbarAction::Rotate);
                             }
 
                             // Mirror (M)
-                            if render_tool_button(ui, "M", false, "Mirror [M] - Toggle Horizontal Mirroring (Flip Left/Right)") {
+                            if render_tool_button(ui, "M", false, "Mirror [M] - Toggle Horizontal Mirroring (Flip Left/Right)", &toolbar_theme) {
                                 triggered_action = Some(FloatingToolbarAction::Mirror);
                             }
 
                             // Delete (Del)
-                            if render_tool_button(ui, "Del", false, "Delete [Del] - Delete Selected Items Atomically") {
+                            if render_tool_button(ui, "Del", false, "Delete [Del] - Delete Selected Items Atomically", &toolbar_theme) {
                                 triggered_action = Some(FloatingToolbarAction::Delete);
                             }
 
                             // Clear
-                            if render_tool_button(ui, "Clr", false, "Clear - Cancel Active Wire / Clear Selection") {
+                            if render_tool_button(ui, "Clr", false, "Clear - Cancel Active Wire / Clear Selection", &toolbar_theme) {
                                 triggered_action = Some(FloatingToolbarAction::Clear);
                             }
                         });
@@ -253,19 +411,36 @@ impl FloatingToolbarState {
 
         triggered_action
     }
+
+    /// Backwards-compatible convenience method using default Dark Navy theme.
+    pub fn show_default(
+        &mut self,
+        ctx: &egui::Context,
+        canvas_viewport: Rect,
+        active_tool: &ToolMode,
+    ) -> Option<FloatingToolbarAction> {
+        let default_theme = crate::theme::ThemePreset::DarkNavy.to_theme();
+        self.show(ctx, canvas_viewport, active_tool, &default_theme)
+    }
 }
 
-fn render_tool_button(ui: &mut egui::Ui, label: &str, is_active: bool, tooltip: &str) -> bool {
+fn render_tool_button(
+    ui: &mut egui::Ui,
+    label: &str,
+    is_active: bool,
+    tooltip: &str,
+    theme: &FloatingToolbarTheme,
+) -> bool {
     let (bg_color, fg_color, stroke_color) = if is_active {
         (
-            Color32::from_rgb(35, 75, 125),
-            Color32::from_rgb(255, 255, 255),
-            Color32::from_rgb(80, 160, 255),
+            theme.btn_active_bg,
+            theme.btn_active_fg,
+            theme.btn_active_stroke,
         )
     } else {
         (
             Color32::TRANSPARENT,
-            Color32::from_rgb(180, 200, 220),
+            theme.btn_normal_fg,
             Color32::TRANSPARENT,
         )
     };
@@ -276,9 +451,17 @@ fn render_tool_button(ui: &mut egui::Ui, label: &str, is_active: bool, tooltip: 
     let current_bg = if is_active {
         bg_color
     } else if btn_resp.hovered() {
-        Color32::from_rgb(32, 44, 62)
+        theme.btn_hover_bg
     } else {
         bg_color
+    };
+
+    let current_fg = if is_active {
+        fg_color
+    } else if btn_resp.hovered() {
+        theme.btn_hover_fg
+    } else {
+        fg_color
     };
 
     ui.painter().rect_filled(btn_rect, CornerRadius::same(5), current_bg);
@@ -289,17 +472,32 @@ fn render_tool_button(ui: &mut egui::Ui, label: &str, is_active: bool, tooltip: 
             Stroke::new(1.0, stroke_color),
             StrokeKind::Inside,
         );
+    } else if btn_resp.hovered() {
+        ui.painter().rect_stroke(
+            btn_rect,
+            CornerRadius::same(5),
+            Stroke::new(
+                0.8,
+                Color32::from_rgba_unmultiplied(
+                    theme.stroke_color.r(),
+                    theme.stroke_color.g(),
+                    theme.stroke_color.b(),
+                    80,
+                ),
+            ),
+            StrokeKind::Inside,
+        );
     }
 
     let text_galley = ui.painter().layout_no_wrap(
         label.to_string(),
         FontId::proportional(12.0),
-        fg_color,
+        current_fg,
     );
     ui.painter().galley(
         btn_rect.center() - text_galley.size() * 0.5,
         text_galley,
-        fg_color,
+        current_fg,
     );
 
     let clicked = btn_resp.clicked();

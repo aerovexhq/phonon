@@ -39,7 +39,7 @@ pub use widgets::command_palette::CommandPalette;
 pub use widgets::confirmation_modal::{
     ConfirmationDecision, ConfirmationModal, DemoCircuitKind, PendingAction,
 };
-pub use widgets::floating_toolbar::{FloatingToolbarAction, FloatingToolbarState};
+pub use widgets::floating_toolbar::{FloatingToolbarAction, FloatingToolbarState, FloatingToolbarTheme};
 pub use widgets::project_dialog::{ProjectDialog, ProjectDialogAction, ProjectDialogMode};
 pub use extraction::{DeviceModelKind, ExtractionWizardDialog};
 pub use schematic::binary_format::{
