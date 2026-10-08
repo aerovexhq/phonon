@@ -105,7 +105,7 @@ pub struct PwaOfflineDialog {
     pub network_condition: NetworkCondition,
 
     // Tab 4: Storage Quota & IndexedDB Persistence
-    pub total_quota_bytes: usize,
+    pub total_quota_bytes: u64,
     pub storage_categories: Vec<StorageCategory>,
     pub persistent_storage_granted: bool,
     pub indexeddb_active: bool,
@@ -288,7 +288,7 @@ impl PwaOfflineDialog {
             precache_assets,
             last_update_check_iso: "2026-10-06T18:35:00Z".to_string(),
             network_condition: NetworkCondition::OnlineFiber,
-            total_quota_bytes: 10 * 1024 * 1024 * 1024, // 10 GB
+            total_quota_bytes: 10_u64 * 1024 * 1024 * 1024, // 10 GB
             storage_categories,
             persistent_storage_granted: true,
             indexeddb_active: true,
