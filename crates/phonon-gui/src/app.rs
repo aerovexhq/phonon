@@ -5,13 +5,13 @@
 use crate::extraction::ExtractionWizardDialog;
 use crate::oscilloscope::{MultiGraphManager, OscilloscopePanel, WaveformTrace};
 use crate::schematic::{
-    compile_schematic, compile_schematic_with_labels, compute_junction_dots,
+    compile_schematic_with_labels, compute_junction_dots,
     compute_wire_crossings, compute_wire_telemetry, deserialize_project, load_project_from_file,
     render_wire_crossings, save_project_to_file, serialize_project, BinaryFormatError,
     CanvasCommand, CompiledCircuit, ComponentKind, ErcDiagnostic, ErcEngine, ErcSeverity,
     HistoryStack, MultiSheetManager, NetLabel, NetLabelOrientation, NetlistSyncEngine,
     SchematicBus, SchematicCanvas, SchematicComponent, SchematicWire, SubcircuitDefinition,
-    SubcircuitRegistry, SymbolLibrary, WireCrossing, WireSegment,
+    SubcircuitRegistry, SymbolLibrary, WireSegment,
 };
 use crate::thermal::{Colormap, ThermalOverlay};
 use crate::storage::ProjectStorageManager;
@@ -3761,6 +3761,18 @@ impl PhononApp {
                             } else {
                                 self.select_wire(wid, false);
                             }
+                        } else if let Some(label) = self
+                            .net_labels
+                            .iter()
+                            .rev()
+                            .find(|l| l.hit_test(mouse_world, 6.0))
+                        {
+                            let lid = label.id;
+                            if shift {
+                                self.toggle_label_selection(lid);
+                            } else {
+                                self.select_label(lid, false);
+                            }
                         } else if !shift {
                             self.clear_selection();
                         }
@@ -3877,11 +3889,29 @@ impl PhononApp {
                         }
                     }
                     ToolMode::NetLabel => {
-                        let lbl_id = self.net_labels.len() + 1;
-                        let lbl_name = format!("NET{}", lbl_id);
-                        let lbl = NetLabel::new(lbl_id, lbl_name, snapped_world);
+                        let is_empty = self.is_canvas_empty();
+                        let place_pos = if is_empty {
+                            let target_screen = self.canvas.world_to_screen(snapped_world);
+                            self.canvas.reset_origin_at_screen(target_screen);
+                            self.sheets.active_sheet_mut().camera_offset = self.canvas.pan;
+                            egui::Pos2::ZERO
+                        } else {
+                            snapped_world
+                        };
+
+                        let lbl_id = self.next_label_id;
+                        self.next_label_id += 1;
+                        let lbl_name = if self.active_net_label_text.trim().is_empty() {
+                            format!("NET{}", lbl_id)
+                        } else {
+                            self.active_net_label_text.clone()
+                        };
+                        let orientation = NetLabelOrientation::from_quarter_turns(self.placement_rotation);
+                        let mut lbl = NetLabel::new(lbl_id, lbl_name, place_pos);
+                        lbl.orientation = orientation;
                         self.history.record(CanvasCommand::AddNetLabel(lbl.clone()));
                         self.net_labels.push(lbl);
+                        self.sim_status = format!("Placed Net Label {}", self.active_net_label_text);
                         self.mark_dirty();
                     }
                 }
@@ -3912,6 +3942,12 @@ impl PhononApp {
                             .iter()
                             .filter(|c| self.is_component_selected(c.id))
                             .map(|c| (c.id, c.pos))
+                            .collect();
+                        self.drag_start_label_positions = self
+                            .net_labels
+                            .iter()
+                            .filter(|l| self.is_label_selected(l.id))
+                            .map(|l| (l.id, l.pos))
                             .collect();
                         self.drag_start_wires = self.wires.clone();
                         self.unsolvable_wiring_components.clear();
@@ -3960,6 +3996,31 @@ impl PhononApp {
                     } else {
                         self.select_wire(wire_id, false);
                     }
+                } else if let Some(label) = self.net_labels.iter().rev().find(|l| l.hit_test(mouse_world, 6.0)) {
+                    let label_id = label.id;
+                    if shift {
+                        self.toggle_label_selection(label_id);
+                    } else {
+                        if !self.is_label_selected(label_id) {
+                            self.select_label(label_id, false);
+                        }
+                        self.dragging_selection = true;
+                        self.drag_start_mouse_pos = Some(mouse_world);
+                        self.drag_start_positions = self
+                            .components
+                            .iter()
+                            .filter(|c| self.is_component_selected(c.id))
+                            .map(|c| (c.id, c.pos))
+                            .collect();
+                        self.drag_start_label_positions = self
+                            .net_labels
+                            .iter()
+                            .filter(|l| self.is_label_selected(l.id))
+                            .map(|l| (l.id, l.pos))
+                            .collect();
+                        self.drag_start_wires = self.wires.clone();
+                        self.unsolvable_wiring_components.clear();
+                    }
                 } else {
                     // Empty canvas: Start rubberband marquee box
                     self.marquee_start = Some(mouse_world);
@@ -3983,6 +4044,12 @@ impl PhononApp {
                         for (cid, start_pos) in &self.drag_start_positions {
                             if let Some(c) = self.components.iter_mut().find(|c| c.id == *cid) {
                                 c.pos = self.canvas.snap_to_grid(*start_pos + grid_delta);
+                            }
+                        }
+
+                        for (lid, start_pos) in &self.drag_start_label_positions {
+                            if let Some(l) = self.net_labels.iter_mut().find(|l| l.id == *lid) {
+                                l.pos = self.canvas.snap_to_grid(*start_pos + grid_delta);
                             }
                         }
 
@@ -4101,6 +4168,18 @@ impl PhononApp {
                         }
                     }
 
+                    for (id, start_pos) in self.drag_start_label_positions.drain(..) {
+                        if let Some(lbl) = self.net_labels.iter().find(|l| l.id == id) {
+                            if lbl.pos != start_pos {
+                                batch.push(CanvasCommand::MoveNetLabel {
+                                    id,
+                                    from: start_pos,
+                                    to: lbl.pos,
+                                });
+                            }
+                        }
+                    }
+
                     if !is_unsolvable {
                         for start_wire in self.drag_start_wires.drain(..) {
                             if let Some(curr_wire) = self.wires.iter().find(|w| w.id == start_wire.id) {
@@ -4151,12 +4230,49 @@ impl PhononApp {
                 }
             }
 
-            // Render component placement ghost preview
+            // Render component placement ghost preview with snap-target pin rings
             if let Some(kind) = self.selected_tool.place_kind() {
                 let mut ghost = SchematicComponent::new(0, kind.clone(), snapped_world, 0);
                 ghost.rotation = self.placement_rotation;
                 ghost.mirrored = self.placement_mirrored;
                 ghost.render_with_theme(&painter, &self.canvas, true, None, &theme);
+
+                let pin_ring_color = theme.accent_primary.gamma_multiply(0.7);
+                let pin_fill_color = theme.accent_primary.gamma_multiply(0.2);
+                for (_pin_name, pin_pos) in ghost.all_pins() {
+                    let pin_screen = self.canvas.world_to_screen(pin_pos);
+                    painter.circle_filled(pin_screen, 4.0 * self.canvas.zoom.clamp(0.8, 1.5), pin_fill_color);
+                    painter.circle_stroke(
+                        pin_screen,
+                        5.5 * self.canvas.zoom.clamp(0.8, 1.5),
+                        Stroke::new(1.5, pin_ring_color),
+                    );
+                }
+            }
+
+            // Render net label placement ghost preview
+            if self.selected_tool == ToolMode::NetLabel {
+                let orientation = NetLabelOrientation::from_quarter_turns(self.placement_rotation);
+                let ghost_name = if self.active_net_label_text.trim().is_empty() {
+                    format!("NET{}", self.next_label_id)
+                } else {
+                    self.active_net_label_text.clone()
+                };
+                let mut ghost_lbl = NetLabel::new(0, ghost_name, snapped_world);
+                ghost_lbl.orientation = orientation;
+                ghost_lbl.render_ghost(&painter, &self.canvas, &theme);
+
+                let anchor_screen = self.canvas.world_to_screen(snapped_world);
+                painter.circle_filled(
+                    anchor_screen,
+                    3.5 * self.canvas.zoom.clamp(0.8, 1.5),
+                    theme.accent_primary.gamma_multiply(0.3),
+                );
+                painter.circle_stroke(
+                    anchor_screen,
+                    5.0 * self.canvas.zoom.clamp(0.8, 1.5),
+                    Stroke::new(1.5, theme.accent_primary.gamma_multiply(0.8)),
+                );
             }
         }
 
@@ -4204,7 +4320,17 @@ impl PhononApp {
             );
         }
 
-        // 5e. Render illuminated selection halos (drawn around current component positions)
+        // 5e. Render wire crossing bridge hops
+        let crossings = compute_wire_crossings(&self.wires, &junctions);
+        render_wire_crossings(&painter, &self.canvas, &crossings, &theme);
+
+        // 5f. Render net labels
+        for label in &self.net_labels {
+            let is_sel = self.is_label_selected(label.id);
+            label.render(&painter, &self.canvas, is_sel, &theme);
+        }
+
+        // 5g. Render illuminated selection halos (drawn around current component positions)
         self.canvas.render_selection_halos(&painter, &self.components, &self.wires);
 
         // 5f. Render rubberband marquee drag box

@@ -3,7 +3,7 @@
 //! Hierarchical subcircuit macro-modeling, pin mapping, nested schematic encapsulation, and flat MNA netlist compilation.
 
 use super::canvas::SchematicCanvas;
-use super::circuit_compiler::{compile_schematic, compile_schematic_with_labels};
+use super::circuit_compiler::compile_schematic_with_labels;
 use super::components::ComponentKind;
 use egui::{Color32, FontId, Painter, Pos2, Rect, Stroke, StrokeKind, Vec2};
 use std::collections::HashMap;

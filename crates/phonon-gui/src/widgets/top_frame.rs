@@ -5,7 +5,7 @@
 //! Provides cross-platform unified titlebar, master SVG icon emblem, brand menus,
 //! draggable window chrome, and desktop/web divergence controls.
 
-use crate::schematic::{compile_schematic, compile_schematic_with_labels};
+use crate::schematic::compile_schematic_with_labels;
 use crate::widgets::confirmation_modal::{DemoCircuitKind, PendingAction};
 use crate::widgets::icon::render_phonon_icon;
 use egui::{pos2, vec2, Color32, FontId, OpenUrl, Rect, RichText, Sense, Stroke, StrokeKind, Ui, ViewportCommand};

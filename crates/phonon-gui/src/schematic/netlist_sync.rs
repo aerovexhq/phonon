@@ -7,7 +7,7 @@
 //! 64-bit canvas hash debouncing.
 
 use super::canvas::SchematicCanvas;
-use super::circuit_compiler::{compile_schematic, compile_schematic_with_labels};
+use super::circuit_compiler::compile_schematic_with_labels;
 use super::components::{ComponentKind, SchematicComponent};
 use egui::Pos2;
 use std::collections::HashSet;
