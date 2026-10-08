@@ -4,6 +4,7 @@
 
 pub mod actions;
 pub mod app;
+pub mod board_synthesis;
 pub mod extraction;
 pub mod oscilloscope;
 pub mod preferences;
@@ -12,6 +13,8 @@ pub mod scripting;
 pub mod storage;
 pub mod theme;
 pub mod thermal;
+pub mod time_util;
+pub mod viewport_tabs;
 pub mod widgets;
 
 #[cfg(any(test, feature = "devtools"))]
@@ -71,6 +74,14 @@ pub use schematic::net_label::{NetLabel, NetLabelOrientation};
 pub use schematic::circuit_compiler::{
     compile_schematic, compile_schematic_with_labels, CompiledCircuit,
 };
+pub use board_synthesis::{
+    AutoPlacementParams, AutoPlacer, BoardAutoRouter, BoardSynthesisEngine, CopperLayer,
+    EmiDisturbancePair, Face3D, FootprintInstance, NetParasitics, PackageType, PhysicalNetConnection,
+    PhysicalPad, PhysicalParasiticsEngine, PhysicalTraceSegment, PhysicalWiringRealismReport,
+    PlacedBoardLayout, RoutedPhysicalNet, SolderMaskColor, SynthesisError, SynthesizedPhysicalCard,
+    TechMapper, TechMappingOptions, Vertex3D,
+};
+pub use viewport_tabs::{CentralTabManager, CentralViewportTab, CustomViewportTab};
 pub use widgets::cluster_dashboard_dialog::ClusterDashboardDialog;
 pub use widgets::dynamics_status::DynamicsStatusBadge;
 pub use widgets::exceptional_point_dialog::ExceptionalPointDialog;
@@ -227,6 +238,33 @@ pub use widgets::polaritonic_soliton_comb_dialog::{
 };
 pub use widgets::circuit_qed_transducer_dialog::{
     CircuitQedTab, CircuitQedTransducerDialog,
+};
+pub use widgets::exceptional_surface_diode_dialog::{
+    ExceptionalSurfaceDiodeDialog, ExceptionalSurfaceDiodeTab,
+};
+pub use widgets::topological_soliton_dialog::{
+    TopologicalSolitonDialog, TopologicalSolitonTab,
+};
+pub use widgets::fractional_chern_interconnect_dialog::{
+    FractionalChernInterconnectDialog, FractionalChernTab,
+};
+pub use widgets::chiral_lasing_metasurface_dialog::{
+    ChiralLasingMetasurfaceDialog, ChiralLasingTab,
+};
+pub use widgets::synthetic_gauge_holonomy_dialog::{
+    SyntheticGaugeHolonomyDialog, SyntheticGaugeTab,
+};
+pub use widgets::chiral_spintorque_memory_dialog::{
+    ChiralSpinTorqueMemoryDialog, MemoryDialogTab,
+};
+pub use widgets::valley_quantum_router_dialog::{
+    ValleyQuantumRouterDialog, ValleyRouterTab,
+};
+pub use widgets::fractional_parafermion_dialog::{
+    FractionalParafermionDialog, ParafermionDialogTab,
+};
+pub use widgets::topological_skin_axion_dialog::{
+    SkinAxionDialogTab, TopologicalSkinAxionDialog,
 };
 
 #[cfg(not(target_arch = "wasm32"))]

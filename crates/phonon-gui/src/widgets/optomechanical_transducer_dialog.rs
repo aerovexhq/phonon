@@ -25,7 +25,7 @@ use phonon_solver::quantum_optomechanical_transducer::{
     QuantumOptomechanicalTransducer, ScatteringMatrixPoint, SidebandCoolingParams,
     TransductionParams, TransducerAuditReport, TransmonInterfaceParams,
 };
-use std::time::Instant;
+use crate::time_util::Instant;
 
 /// Active tab in the Quantum Optomechanical Transducer Dialog.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

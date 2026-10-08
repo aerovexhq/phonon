@@ -125,7 +125,7 @@ impl FloquetSpinHallCirculatorDialog {
 
     /// Recomputes all physical spectra and updates the physics audit report.
     pub fn recompute(&mut self) {
-        let t0 = std::time::Instant::now();
+        let t0 = crate::time_util::Instant::now();
 
         let params = FloquetSpinHallParams {
             lattice: SpinHallParams {

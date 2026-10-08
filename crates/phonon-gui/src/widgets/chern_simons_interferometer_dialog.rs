@@ -117,7 +117,7 @@ impl ChernSimonsInterferometerDialog {
 
     /// Recomputes interference spectrum, memory decay trajectories, and audit report.
     pub fn recompute(&mut self) {
-        let start = std::time::Instant::now();
+        let start = crate::time_util::Instant::now();
 
         let inter_params = ChernSimonsInterferometerParams {
             anyon_kind: self.anyon_kind,

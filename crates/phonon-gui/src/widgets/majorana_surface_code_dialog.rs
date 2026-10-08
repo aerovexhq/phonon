@@ -27,7 +27,7 @@ use phonon_solver::majorana_surface_code::{
     PauliOperator, RecoveryResult, SurfaceCodePatch, SurfaceRng, SyndromeExtractionResult,
     TargetCliffordGate, ThresholdCurvePoint,
 };
-use std::time::Instant;
+use crate::time_util::Instant;
 
 /// Active tab in the Majorana Surface Code Co-Processor Dialog.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -449,7 +449,14 @@ impl MajoranaSurfaceCodeDialog {
                 }
 
                 if ui.button("Inject Random Errors").clicked() {
-                    let mut rng = SurfaceRng::new(Instant::now().elapsed().subsec_nanos() as u64);
+                    #[cfg(not(target_arch = "wasm32"))]
+                    let seed = std::time::SystemTime::now()
+                        .duration_since(std::time::UNIX_EPOCH)
+                        .map(|d| d.subsec_nanos() as u64)
+                        .unwrap_or(42);
+                    #[cfg(target_arch = "wasm32")]
+                    let seed = (js_sys::Date::now() as u64).wrapping_mul(6364136223846793005);
+                    let mut rng = SurfaceRng::new(seed);
                     let errs = self.coprocessor.surface_patch.inject_random_errors(self.physical_error_rate, &mut rng);
                     self.cached_syndrome = self.coprocessor.surface_patch.extract_syndromes(&errs, self.syndrome_noise, &mut rng);
                     self.cached_recovery = self.coprocessor.surface_patch.decode_and_correct(&self.cached_syndrome);

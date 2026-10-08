@@ -20,6 +20,8 @@ pub enum CanvasCommand {
     RotateComponent { id: usize, from_rot: u8, to_rot: u8 },
     /// Toggled mirror state of a component.
     MirrorComponent { id: usize, from_mirrored: bool, to_mirrored: bool },
+    /// Scaled a component to a new factor.
+    ScaleComponent { id: usize, from_scale: f32, to_scale: f32 },
     /// Modified component value string (e.g. resistance, capacitance, model name).
     ModifyComponentValue { id: usize, old_val: String, new_val: String },
     /// Routed and committed a new wire on the canvas.
@@ -82,6 +84,11 @@ impl CanvasCommand {
             Self::MirrorComponent { id, to_mirrored, .. } => {
                 if let Some(comp) = components.iter_mut().find(|c| c.id == *id) {
                     comp.mirrored = *to_mirrored;
+                }
+            }
+            Self::ScaleComponent { id, to_scale, .. } => {
+                if let Some(comp) = components.iter_mut().find(|c| c.id == *id) {
+                    comp.scale = *to_scale;
                 }
             }
             Self::ModifyComponentValue { id, new_val, .. } => {
@@ -162,6 +169,11 @@ impl CanvasCommand {
             Self::MirrorComponent { id, from_mirrored, .. } => {
                 if let Some(comp) = components.iter_mut().find(|c| c.id == *id) {
                     comp.mirrored = *from_mirrored;
+                }
+            }
+            Self::ScaleComponent { id, from_scale, .. } => {
+                if let Some(comp) = components.iter_mut().find(|c| c.id == *id) {
+                    comp.scale = *from_scale;
                 }
             }
             Self::ModifyComponentValue { id, old_val, .. } => {

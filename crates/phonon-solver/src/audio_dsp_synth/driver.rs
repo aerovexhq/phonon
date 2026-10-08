@@ -194,6 +194,7 @@ impl SoundcardAudioDriver {
         let mut peak = 0.0f64;
         let mut sum_sq = 0.0f64;
 
+        #[cfg(not(target_arch = "wasm32"))]
         let t_start = std::time::Instant::now();
         for _ in 0..count {
             let s = self.step_frame() as f64;
@@ -203,7 +204,10 @@ impl SoundcardAudioDriver {
             }
             sum_sq += abs_s * abs_s;
         }
+        #[cfg(not(target_arch = "wasm32"))]
         let elapsed = t_start.elapsed().as_secs_f64().max(1.0e-9);
+        #[cfg(target_arch = "wasm32")]
+        let elapsed = 0.001;
 
         let throughput = (count as f64) / elapsed;
         let rms = (sum_sq / (count as f64)).sqrt();

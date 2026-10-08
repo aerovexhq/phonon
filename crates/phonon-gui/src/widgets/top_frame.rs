@@ -598,6 +598,13 @@ fn render_top_frame_internal(
                 ui.checkbox(&mut a.show_thermal_overlay, "Show Thermal Badges");
                 ui.checkbox(&mut a.show_palette, "Show Component Palette");
                 ui.checkbox(&mut a.show_erc_overlay, "Show ERC Overlay");
+                ui.separator();
+                let is_3d = a.viewport_tabs.active_tab == crate::viewport_tabs::CentralViewportTab::PhysicalCard3D;
+                if ui.selectable_label(is_3d, "3D Physical Synthesized Card (F3)").clicked() {
+                    a.execute_action(crate::actions::ActionId::Toggle3DCardView);
+                    ui.close();
+                }
+                ui.separator();
                 ui.menu_button("Sheets", |ui| {
                     let mut switch_idx = None;
                     let mut add_new = false;
@@ -1223,6 +1230,60 @@ fn render_top_frame_internal(
                 if ui.button("Topological Circuit QED Transducer & Crossbar...").clicked() {
                     if let Some(a) = app.as_deref_mut() {
                         a.circuit_qed_transducer_dialog.is_open = true;
+                    }
+                    ui.close();
+                }
+                if ui.button("Non-Hermitian Exceptional Surface Chiral Diode & Repeater...").clicked() {
+                    if let Some(a) = app.as_deref_mut() {
+                        a.exceptional_surface_diode_dialog.is_open = true;
+                    }
+                    ui.close();
+                }
+                if ui.button("Topological Boundary Soliton Logic Gate & Majority Voter...").clicked() {
+                    if let Some(a) = app.as_deref_mut() {
+                        a.topological_soliton_dialog.is_open = true;
+                    }
+                    ui.close();
+                }
+                if ui.button("Quantum Metamaterial Fractional Chern & Parafermion Interconnect...").clicked() {
+                    if let Some(a) = app.as_deref_mut() {
+                        a.fractional_chern_interconnect_dialog.is_open = true;
+                    }
+                    ui.close();
+                }
+                if ui.button("Topological Floquet Chiral Laser & Vortex Waveguide...").clicked() {
+                    if let Some(a) = app.as_deref_mut() {
+                        a.chiral_lasing_metasurface_dialog.is_open = true;
+                    }
+                    ui.close();
+                }
+                if ui.button("Topological Acoustic Synthetic Gauge & Holonomic Processor...").clicked() {
+                    if let Some(a) = app.as_deref_mut() {
+                        a.synthetic_gauge_holonomy_dialog.is_open = true;
+                    }
+                    ui.close();
+                }
+                if ui.button("Chiral Phonon-Magnon Spin-Torque Memory...").clicked() {
+                    if let Some(a) = app.as_deref_mut() {
+                        a.chiral_spintorque_memory_dialog.is_open = true;
+                    }
+                    ui.close();
+                }
+                if ui.button("Topological Acoustic Valley-Hall Quantum Router...").clicked() {
+                    if let Some(a) = app.as_deref_mut() {
+                        a.valley_quantum_router_dialog.is_open = true;
+                    }
+                    ui.close();
+                }
+                if ui.button("Fractional Parafermion Surface Code & Braid Repeater...").clicked() {
+                    if let Some(a) = app.as_deref_mut() {
+                        a.fractional_parafermion_dialog.is_open = true;
+                    }
+                    ui.close();
+                }
+                if ui.button("Topological Skin Microwave Amplifier & Axion Transducer...").clicked() {
+                    if let Some(a) = app.as_deref_mut() {
+                        a.topological_skin_axion_dialog.is_open = true;
                     }
                     ui.close();
                 }

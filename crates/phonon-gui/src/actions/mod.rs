@@ -42,6 +42,8 @@ pub enum ActionId {
     ClearSelection,
     RotateClockwise,
     MirrorComponent,
+    SizeUpComponent,
+    SizeDownComponent,
     ToggleFloatingToolbar,
     ToggleGrid,
     ZoomFit,
@@ -59,6 +61,7 @@ pub enum ActionId {
     ClearWire,
     OpenCommandPalette,
     OpenPreferences,
+    Toggle3DCardView,
 }
 
 /// Metadata definition of a single CAD studio action.
@@ -248,6 +251,20 @@ impl ActionRegistry {
             ActionCategory::Edit,
             Some("M"),
         );
+        registry.register(
+            ActionId::SizeUpComponent,
+            "Size Up Component",
+            "Increase size of selected component if pins remain on grid",
+            ActionCategory::Edit,
+            Some("]"),
+        );
+        registry.register(
+            ActionId::SizeDownComponent,
+            "Size Down Component",
+            "Decrease size of selected component if pins remain on grid",
+            ActionCategory::Edit,
+            Some("["),
+        );
 
         // View
         registry.register(
@@ -305,6 +322,13 @@ impl ActionRegistry {
             "Open searchable CAD action launcher",
             ActionCategory::View,
             Some("Ctrl+K"),
+        );
+        registry.register(
+            ActionId::Toggle3DCardView,
+            "Toggle 3D Physical Card View",
+            "Switch between 2D Schematic Canvas and 3D Physical Synthesized Card",
+            ActionCategory::View,
+            Some("F3"),
         );
 
         // Simulate

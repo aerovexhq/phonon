@@ -572,7 +572,7 @@ impl NonHermitianSkinLaserDialog {
 
     /// Recomputes all physics solvers and metrics.
     pub fn recompute(&mut self) {
-        let t0 = std::time::Instant::now();
+        let t0 = crate::time_util::Instant::now();
 
         let skin_params = QuadrupoleSkinParams {
             nx: self.nx,

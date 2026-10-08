@@ -155,6 +155,19 @@ pub fn component_kind_to_discriminant(kind: ComponentKind) -> u16 {
         ComponentKind::LogicProbe => 55,
         ComponentKind::SevenSegment => 56,
         ComponentKind::Buzzer => 57,
+        ComponentKind::Adder => 58,
+        ComponentKind::Subtractor => 59,
+        ComponentKind::Multiplier => 60,
+        ComponentKind::Divider => 61,
+        ComponentKind::ArithmeticLogicUnit => 62,
+        ComponentKind::BitSplitter => 63,
+        ComponentKind::BitMerger => 64,
+        ComponentKind::BusTap => 65,
+        ComponentKind::FloatAdder => 66,
+        ComponentKind::FloatSubtractor => 67,
+        ComponentKind::FloatMultiplier => 68,
+        ComponentKind::FloatDivider => 69,
+        ComponentKind::FloatComparator => 70,
     }
 }
 
@@ -219,6 +232,19 @@ pub fn component_kind_from_discriminant(d: u16) -> Result<ComponentKind, BinaryF
         55 => Ok(ComponentKind::LogicProbe),
         56 => Ok(ComponentKind::SevenSegment),
         57 => Ok(ComponentKind::Buzzer),
+        58 => Ok(ComponentKind::Adder),
+        59 => Ok(ComponentKind::Subtractor),
+        60 => Ok(ComponentKind::Multiplier),
+        61 => Ok(ComponentKind::Divider),
+        62 => Ok(ComponentKind::ArithmeticLogicUnit),
+        63 => Ok(ComponentKind::BitSplitter),
+        64 => Ok(ComponentKind::BitMerger),
+        65 => Ok(ComponentKind::BusTap),
+        66 => Ok(ComponentKind::FloatAdder),
+        67 => Ok(ComponentKind::FloatSubtractor),
+        68 => Ok(ComponentKind::FloatMultiplier),
+        69 => Ok(ComponentKind::FloatDivider),
+        70 => Ok(ComponentKind::FloatComparator),
         other => Err(BinaryFormatError::UnknownComponentKind(other)),
     }
 }
@@ -256,9 +282,14 @@ pub fn write_component(comp: &SchematicComponent, buf: &mut Vec<u8>) {
     buf.extend_from_slice(&val_len.to_le_bytes());
     buf.extend_from_slice(&val_bytes[..val_len as usize]);
 
-    let prop_count = comp.properties.len().min(u16::MAX as usize) as u16;
+    let mut props_to_write = comp.properties.clone();
+    if (comp.scale - 1.0).abs() > 1e-4 && !props_to_write.iter().any(|(k, _)| k == "scale") {
+        props_to_write.push(("scale".to_string(), format!("{:.2}", comp.scale)));
+    }
+
+    let prop_count = props_to_write.len().min(u16::MAX as usize) as u16;
     buf.extend_from_slice(&prop_count.to_le_bytes());
-    for (k, v) in comp.properties.iter().take(prop_count as usize) {
+    for (k, v) in props_to_write.iter().take(prop_count as usize) {
         let k_bytes = k.as_bytes();
         let k_len = k_bytes.len().min(u16::MAX as usize) as u16;
         buf.extend_from_slice(&k_len.to_le_bytes());
@@ -285,6 +316,9 @@ pub fn write_wire(wire: &SchematicWire, buf: &mut Vec<u8>) {
     let net_len = net_bytes.len().min(u16::MAX as usize) as u16;
     buf.extend_from_slice(&net_len.to_le_bytes());
     buf.extend_from_slice(&net_bytes[..net_len as usize]);
+
+    let bw = wire.bit_width.clamp(1, u16::MAX as u32) as u16;
+    buf.extend_from_slice(&bw.to_le_bytes());
 }
 
 /// Reads an individual component from a binary byte slice at the given cursor.
@@ -405,6 +439,12 @@ pub fn read_component(
         mirrored = true;
     }
 
+    let scale = properties
+        .iter()
+        .find(|(k, _)| k == "scale")
+        .and_then(|(_, v)| v.parse::<f32>().ok())
+        .unwrap_or(1.0);
+
     Ok(SchematicComponent {
         id,
         name,
@@ -412,6 +452,7 @@ pub fn read_component(
         pos: Pos2::new(pos_x, pos_y),
         rotation,
         mirrored,
+        scale,
         value_str,
         model_name,
         properties,
@@ -482,7 +523,16 @@ pub fn read_wire(
 
     let start = Pos2::new(start_x, start_y);
     let end = Pos2::new(end_x, end_y);
-    Ok(SchematicWire::manhattan_route_with_net(id, start, end, net_name))
+    let bit_width = if *cursor + 2 <= bytes.len() {
+        let bw = u16::from_le_bytes([bytes[*cursor], bytes[*cursor + 1]]) as u32;
+        *cursor += 2;
+        if bw == 0 { 1 } else { bw }
+    } else {
+        1
+    };
+    let mut wire = SchematicWire::manhattan_route_with_net(id, start, end, net_name);
+    wire.bit_width = bit_width;
+    Ok(wire)
 }
 
 /// Serializes project state into ultra-compact binary format (.phn).

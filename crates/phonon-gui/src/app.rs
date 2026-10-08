@@ -49,6 +49,11 @@ use crate::widgets::{
     ChernSimonsInterferometerDialog, ChiralHeatTransistorDialog,
     CornerKerrMicrocombDialog, AcousticSnspdDialog, FloquetCvQkdDialog,
     PolaritonicSolitonCombDialog, CircuitQedTransducerDialog,
+    ExceptionalSurfaceDiodeDialog, TopologicalSolitonDialog,
+    FractionalChernInterconnectDialog, ChiralLasingMetasurfaceDialog,
+    SyntheticGaugeHolonomyDialog, ChiralSpinTorqueMemoryDialog,
+    ValleyQuantumRouterDialog, FractionalParafermionDialog,
+    TopologicalSkinAxionDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -462,6 +467,33 @@ pub struct PhononApp {
     /// Interactive Topological Higher-Order Acoustic Superconducting Circuit QED Quantum Transducer & Multi-Qubit Crossbar dialog.
     pub circuit_qed_transducer_dialog: CircuitQedTransducerDialog,
 
+    /// Interactive Non-Hermitian Exceptional Surface Chiral Phonon Diode & Unidirectional Quantum Repeater dialog.
+    pub exceptional_surface_diode_dialog: ExceptionalSurfaceDiodeDialog,
+
+    /// Interactive Topological Acoustic Boundary Soliton Logic Gate & Majority Voter dialog.
+    pub topological_soliton_dialog: TopologicalSolitonDialog,
+
+    /// Interactive Quantum Metamaterial Fractional Chern & Parafermion Braiding Interconnect dialog.
+    pub fractional_chern_interconnect_dialog: FractionalChernInterconnectDialog,
+
+    /// Interactive Topological Non-Hermitian Floquet Acoustic Chiral Lasing Metasurface & Vortex Waveguide dialog.
+    pub chiral_lasing_metasurface_dialog: ChiralLasingMetasurfaceDialog,
+
+    /// Interactive Topological Acoustic Synthetic Gauge Field & Non-Abelian Holonomic Quantum Gate Processor dialog.
+    pub synthetic_gauge_holonomy_dialog: SyntheticGaugeHolonomyDialog,
+
+    /// Interactive Chiral Phonon-Magnon Spin-Torque Acoustic Memory & Spintronic Crossbar dialog.
+    pub chiral_spintorque_memory_dialog: ChiralSpinTorqueMemoryDialog,
+
+    /// Interactive Topological Acoustic Valley-Hall Quantum Router & Entanglement Concentrator dialog.
+    pub valley_quantum_router_dialog: ValleyQuantumRouterDialog,
+
+    /// Interactive Fractional Parafermion Surface Code & Anyonic Braid Repeater dialog.
+    pub fractional_parafermion_dialog: FractionalParafermionDialog,
+
+    /// Interactive Topological Non-Hermitian Skin Microwave Amplifier & Axion Transducer dialog.
+    pub topological_skin_axion_dialog: TopologicalSkinAxionDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -543,6 +575,12 @@ pub struct PhononApp {
 
     /// Whether the desktop application window should request maximized state on first frame.
     pub pending_start_maximize: bool,
+
+    /// Generalized central viewport tab manager (Schematic Canvas, 3D Physical Card, etc.).
+    pub viewport_tabs: crate::viewport_tabs::CentralTabManager,
+
+    /// Interactive 3D Physical Card Viewport with abstracted ground plane.
+    pub card_3d_viewport: crate::widgets::card_3d_viewport::Card3dViewport,
 
     #[cfg(any(test, feature = "devtools"))]
     /// Interactive DevTools state and scenario runner.
@@ -714,6 +752,15 @@ impl Default for PhononApp {
             floquet_cv_qkd_dialog: FloquetCvQkdDialog::new_fast(),
             polaritonic_soliton_comb_dialog: PolaritonicSolitonCombDialog::new_fast(),
             circuit_qed_transducer_dialog: CircuitQedTransducerDialog::new_fast(),
+            exceptional_surface_diode_dialog: ExceptionalSurfaceDiodeDialog::new_fast(),
+            topological_soliton_dialog: TopologicalSolitonDialog::new_fast(),
+            fractional_chern_interconnect_dialog: FractionalChernInterconnectDialog::new_fast(),
+            chiral_lasing_metasurface_dialog: ChiralLasingMetasurfaceDialog::new_fast(),
+            synthetic_gauge_holonomy_dialog: SyntheticGaugeHolonomyDialog::new_fast(),
+            chiral_spintorque_memory_dialog: ChiralSpinTorqueMemoryDialog::new_fast(),
+            valley_quantum_router_dialog: ValleyQuantumRouterDialog::new_fast(),
+            fractional_parafermion_dialog: FractionalParafermionDialog::new_fast(),
+            topological_skin_axion_dialog: TopologicalSkinAxionDialog::new_fast(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -742,6 +789,8 @@ impl Default for PhononApp {
             should_close: false,
             last_canvas_rect: egui::Rect::from_min_size(egui::Pos2::ZERO, egui::Vec2::new(800.0, 600.0)),
             pending_start_maximize: true,
+            viewport_tabs: crate::viewport_tabs::CentralTabManager::new(),
+            card_3d_viewport: crate::widgets::card_3d_viewport::Card3dViewport::default(),
             #[cfg(any(test, feature = "devtools"))]
             devtools_state: crate::devtools::DevtoolsState::default(),
         };
@@ -1710,8 +1759,8 @@ impl PhononApp {
 
         // Macro-Level Integrated Circuit Half Adder
         let ha1 = SchematicComponent::new(8, ComponentKind::HalfAdder, Pos2::new(340.0, 560.0), 1);
-        let probe_ha_sum = SchematicComponent::new(9, ComponentKind::LogicProbe, Pos2::new(460.0, 545.0), 3);
-        let probe_ha_cout = SchematicComponent::new(10, ComponentKind::LogicProbe, Pos2::new(460.0, 575.0), 4);
+        let probe_ha_sum = SchematicComponent::new(9, ComponentKind::LogicProbe, Pos2::new(460.0, 540.0), 3);
+        let probe_ha_cout = SchematicComponent::new(10, ComponentKind::LogicProbe, Pos2::new(460.0, 580.0), 4);
 
         self.components = vec![
             va, vb, gnd,
@@ -1733,48 +1782,48 @@ impl PhononApp {
             WireSegment::new(Pos2::new(140.0, 400.0), Pos2::new(80.0, 400.0)),
         ]);
 
-        // Wire 3: Input A trunk from va(+) (140, 160) to XOR1 A (310, 205)
+        // Wire 3: Input A trunk from va(+) (140, 160) to XOR1 A (300, 200)
         let w3 = SchematicWire::new(3, vec![
             WireSegment::new(Pos2::new(140.0, 160.0), Pos2::new(220.0, 160.0)),
-            WireSegment::new(Pos2::new(220.0, 160.0), Pos2::new(220.0, 205.0)),
-            WireSegment::new(Pos2::new(220.0, 205.0), Pos2::new(310.0, 205.0)),
+            WireSegment::new(Pos2::new(220.0, 160.0), Pos2::new(220.0, 200.0)),
+            WireSegment::new(Pos2::new(220.0, 200.0), Pos2::new(300.0, 200.0)),
         ]);
-        // Wire 4: Input A branch from (220, 205) to AND1 A (310, 325)
+        // Wire 4: Input A branch from (220, 200) to AND1 A (300, 320)
         let w4 = SchematicWire::new(4, vec![
-            WireSegment::new(Pos2::new(220.0, 205.0), Pos2::new(220.0, 325.0)),
-            WireSegment::new(Pos2::new(220.0, 325.0), Pos2::new(310.0, 325.0)),
+            WireSegment::new(Pos2::new(220.0, 200.0), Pos2::new(220.0, 320.0)),
+            WireSegment::new(Pos2::new(220.0, 320.0), Pos2::new(300.0, 320.0)),
         ]);
-        // Wire 5: Input A branch from (220, 325) down to HA1 A (300, 545)
+        // Wire 5: Input A branch from (220, 320) down to HA1 A (300, 540)
         let w5 = SchematicWire::new(5, vec![
-            WireSegment::new(Pos2::new(220.0, 325.0), Pos2::new(220.0, 545.0)),
-            WireSegment::new(Pos2::new(220.0, 545.0), Pos2::new(300.0, 545.0)),
+            WireSegment::new(Pos2::new(220.0, 320.0), Pos2::new(220.0, 540.0)),
+            WireSegment::new(Pos2::new(220.0, 540.0), Pos2::new(300.0, 540.0)),
         ]);
 
-        // Wire 6: Input B trunk from vb(+) (140, 320) to AND1 B (310, 355)
+        // Wire 6: Input B trunk from vb(+) (140, 320) to AND1 B (300, 360)
         let w6 = SchematicWire::new(6, vec![
             WireSegment::new(Pos2::new(140.0, 320.0), Pos2::new(260.0, 320.0)),
-            WireSegment::new(Pos2::new(260.0, 320.0), Pos2::new(260.0, 355.0)),
-            WireSegment::new(Pos2::new(260.0, 355.0), Pos2::new(310.0, 355.0)),
+            WireSegment::new(Pos2::new(260.0, 320.0), Pos2::new(260.0, 360.0)),
+            WireSegment::new(Pos2::new(260.0, 360.0), Pos2::new(300.0, 360.0)),
         ]);
-        // Wire 7: Input B branch from (260, 320) to XOR1 B (310, 235)
+        // Wire 7: Input B branch from (260, 320) to XOR1 B (300, 240)
         let w7 = SchematicWire::new(7, vec![
-            WireSegment::new(Pos2::new(260.0, 320.0), Pos2::new(260.0, 235.0)),
-            WireSegment::new(Pos2::new(260.0, 235.0), Pos2::new(310.0, 235.0)),
+            WireSegment::new(Pos2::new(260.0, 320.0), Pos2::new(260.0, 240.0)),
+            WireSegment::new(Pos2::new(260.0, 240.0), Pos2::new(300.0, 240.0)),
         ]);
-        // Wire 8: Input B branch from (260, 355) down to HA1 B (300, 575)
+        // Wire 8: Input B branch from (260, 360) down to HA1 B (300, 580)
         let w8 = SchematicWire::new(8, vec![
-            WireSegment::new(Pos2::new(260.0, 355.0), Pos2::new(260.0, 575.0)),
-            WireSegment::new(Pos2::new(260.0, 575.0), Pos2::new(300.0, 575.0)),
+            WireSegment::new(Pos2::new(260.0, 360.0), Pos2::new(260.0, 580.0)),
+            WireSegment::new(Pos2::new(260.0, 580.0), Pos2::new(300.0, 580.0)),
         ]);
 
-        // Wire 9: SUM from XOR1 OUT (370, 220) to PROBE_SUM IN (440, 220)
-        let w9 = SchematicWire::new(9, vec![WireSegment::new(Pos2::new(370.0, 220.0), Pos2::new(440.0, 220.0))]);
-        // Wire 10: COUT from AND1 OUT (370, 340) to PROBE_COUT IN (440, 340)
-        let w10 = SchematicWire::new(10, vec![WireSegment::new(Pos2::new(370.0, 340.0), Pos2::new(440.0, 340.0))]);
-        // Wire 11: HA1 SUM (380, 545) to PROBE_HA_SUM IN (440, 545)
-        let w11 = SchematicWire::new(11, vec![WireSegment::new(Pos2::new(380.0, 545.0), Pos2::new(440.0, 545.0))]);
-        // Wire 12: HA1 COUT (380, 575) to PROBE_HA_COUT IN (440, 575)
-        let w12 = SchematicWire::new(12, vec![WireSegment::new(Pos2::new(380.0, 575.0), Pos2::new(440.0, 575.0))]);
+        // Wire 9: SUM from XOR1 OUT (380, 220) to PROBE_SUM IN (440, 220)
+        let w9 = SchematicWire::new(9, vec![WireSegment::new(Pos2::new(380.0, 220.0), Pos2::new(440.0, 220.0))]);
+        // Wire 10: COUT from AND1 OUT (380, 340) to PROBE_COUT IN (440, 340)
+        let w10 = SchematicWire::new(10, vec![WireSegment::new(Pos2::new(380.0, 340.0), Pos2::new(440.0, 340.0))]);
+        // Wire 11: HA1 SUM (380, 540) to PROBE_HA_SUM IN (440, 540)
+        let w11 = SchematicWire::new(11, vec![WireSegment::new(Pos2::new(380.0, 540.0), Pos2::new(440.0, 540.0))]);
+        // Wire 12: HA1 COUT (380, 580) to PROBE_HA_COUT IN (440, 580)
+        let w12 = SchematicWire::new(12, vec![WireSegment::new(Pos2::new(380.0, 580.0), Pos2::new(440.0, 580.0))]);
 
         self.wires = vec![w1, w2, w3, w4, w5, w6, w7, w8, w9, w10, w11, w12];
         self.next_wire_id = 13;
@@ -1817,16 +1866,16 @@ impl PhononApp {
         let xnor1 = SchematicComponent::new(11, ComponentKind::XnorGate, Pos2::new(580.0, 460.0), 1);
 
         // Probes for Column 1 Outputs
-        let p1 = SchematicComponent::new(12, ComponentKind::LogicProbe, Pos2::new(430.0, 160.0), 1);
-        let p2 = SchematicComponent::new(13, ComponentKind::LogicProbe, Pos2::new(430.0, 260.0), 2);
-        let p3 = SchematicComponent::new(14, ComponentKind::LogicProbe, Pos2::new(430.0, 360.0), 3);
-        let p4 = SchematicComponent::new(15, ComponentKind::LogicProbe, Pos2::new(430.0, 460.0), 4);
+        let p1 = SchematicComponent::new(12, ComponentKind::LogicProbe, Pos2::new(420.0, 160.0), 1);
+        let p2 = SchematicComponent::new(13, ComponentKind::LogicProbe, Pos2::new(420.0, 260.0), 2);
+        let p3 = SchematicComponent::new(14, ComponentKind::LogicProbe, Pos2::new(420.0, 360.0), 3);
+        let p4 = SchematicComponent::new(15, ComponentKind::LogicProbe, Pos2::new(420.0, 460.0), 4);
 
         // Probes for Column 2 Outputs
-        let p5 = SchematicComponent::new(16, ComponentKind::LogicProbe, Pos2::new(690.0, 160.0), 5);
-        let p6 = SchematicComponent::new(17, ComponentKind::LogicProbe, Pos2::new(690.0, 260.0), 6);
-        let p7 = SchematicComponent::new(18, ComponentKind::LogicProbe, Pos2::new(690.0, 360.0), 7);
-        let p8 = SchematicComponent::new(19, ComponentKind::LogicProbe, Pos2::new(690.0, 460.0), 8);
+        let p5 = SchematicComponent::new(16, ComponentKind::LogicProbe, Pos2::new(680.0, 160.0), 5);
+        let p6 = SchematicComponent::new(17, ComponentKind::LogicProbe, Pos2::new(680.0, 260.0), 6);
+        let p7 = SchematicComponent::new(18, ComponentKind::LogicProbe, Pos2::new(680.0, 360.0), 7);
+        let p8 = SchematicComponent::new(19, ComponentKind::LogicProbe, Pos2::new(680.0, 460.0), 8);
 
         self.components = vec![
             va, vb, gnd,
@@ -1854,84 +1903,84 @@ impl PhononApp {
         wid += 1;
 
         // Output wires to probes
-        wires.push(SchematicWire::new(wid, vec![WireSegment::new(Pos2::new(350.0, 160.0), Pos2::new(410.0, 160.0))])); wid += 1;
-        wires.push(SchematicWire::new(wid, vec![WireSegment::new(Pos2::new(350.0, 260.0), Pos2::new(410.0, 260.0))])); wid += 1;
-        wires.push(SchematicWire::new(wid, vec![WireSegment::new(Pos2::new(350.0, 360.0), Pos2::new(410.0, 360.0))])); wid += 1;
-        wires.push(SchematicWire::new(wid, vec![WireSegment::new(Pos2::new(350.0, 460.0), Pos2::new(410.0, 460.0))])); wid += 1;
+        wires.push(SchematicWire::new(wid, vec![WireSegment::new(Pos2::new(360.0, 160.0), Pos2::new(400.0, 160.0))])); wid += 1;
+        wires.push(SchematicWire::new(wid, vec![WireSegment::new(Pos2::new(360.0, 260.0), Pos2::new(400.0, 260.0))])); wid += 1;
+        wires.push(SchematicWire::new(wid, vec![WireSegment::new(Pos2::new(360.0, 360.0), Pos2::new(400.0, 360.0))])); wid += 1;
+        wires.push(SchematicWire::new(wid, vec![WireSegment::new(Pos2::new(360.0, 460.0), Pos2::new(400.0, 460.0))])); wid += 1;
 
-        wires.push(SchematicWire::new(wid, vec![WireSegment::new(Pos2::new(610.0, 160.0), Pos2::new(670.0, 160.0))])); wid += 1;
-        wires.push(SchematicWire::new(wid, vec![WireSegment::new(Pos2::new(610.0, 260.0), Pos2::new(670.0, 260.0))])); wid += 1;
-        wires.push(SchematicWire::new(wid, vec![WireSegment::new(Pos2::new(610.0, 360.0), Pos2::new(670.0, 360.0))])); wid += 1;
-        wires.push(SchematicWire::new(wid, vec![WireSegment::new(Pos2::new(610.0, 460.0), Pos2::new(670.0, 460.0))])); wid += 1;
+        wires.push(SchematicWire::new(wid, vec![WireSegment::new(Pos2::new(620.0, 160.0), Pos2::new(660.0, 160.0))])); wid += 1;
+        wires.push(SchematicWire::new(wid, vec![WireSegment::new(Pos2::new(620.0, 260.0), Pos2::new(660.0, 260.0))])); wid += 1;
+        wires.push(SchematicWire::new(wid, vec![WireSegment::new(Pos2::new(620.0, 360.0), Pos2::new(660.0, 360.0))])); wid += 1;
+        wires.push(SchematicWire::new(wid, vec![WireSegment::new(Pos2::new(620.0, 460.0), Pos2::new(660.0, 460.0))])); wid += 1;
 
-        // Input A network: VA(+) (120, 180) -> Trunk X=200 -> feeds BUF (290, 160), NOT (290, 260), AND A (290, 345), OR A (290, 445)
-        // and bridge to X=490 -> feeds NAND A (550, 145), NOR A (550, 245), XOR A (550, 345), XNOR A (550, 445)
+        // Input A network: VA(+) (120, 180) -> Trunk X=200 -> feeds BUF (280, 160), NOT (280, 260), AND A (280, 340), OR A (280, 440)
+        // and bridge to X=480 -> feeds NAND A (540, 140), NOR A (540, 240), XOR A (540, 340), XNOR A (540, 440)
         wires.push(SchematicWire::new(wid, vec![
             WireSegment::new(Pos2::new(120.0, 180.0), Pos2::new(200.0, 180.0)),
             WireSegment::new(Pos2::new(200.0, 180.0), Pos2::new(200.0, 160.0)),
-            WireSegment::new(Pos2::new(200.0, 160.0), Pos2::new(290.0, 160.0)),
+            WireSegment::new(Pos2::new(200.0, 160.0), Pos2::new(280.0, 160.0)),
         ])); wid += 1;
         wires.push(SchematicWire::new(wid, vec![
             WireSegment::new(Pos2::new(200.0, 180.0), Pos2::new(200.0, 260.0)),
-            WireSegment::new(Pos2::new(200.0, 260.0), Pos2::new(290.0, 260.0)),
+            WireSegment::new(Pos2::new(200.0, 260.0), Pos2::new(280.0, 260.0)),
         ])); wid += 1;
         wires.push(SchematicWire::new(wid, vec![
-            WireSegment::new(Pos2::new(200.0, 260.0), Pos2::new(200.0, 345.0)),
-            WireSegment::new(Pos2::new(200.0, 345.0), Pos2::new(290.0, 345.0)),
+            WireSegment::new(Pos2::new(200.0, 260.0), Pos2::new(200.0, 340.0)),
+            WireSegment::new(Pos2::new(200.0, 340.0), Pos2::new(280.0, 340.0)),
         ])); wid += 1;
         wires.push(SchematicWire::new(wid, vec![
-            WireSegment::new(Pos2::new(200.0, 345.0), Pos2::new(200.0, 445.0)),
-            WireSegment::new(Pos2::new(200.0, 445.0), Pos2::new(290.0, 445.0)),
+            WireSegment::new(Pos2::new(200.0, 340.0), Pos2::new(200.0, 440.0)),
+            WireSegment::new(Pos2::new(200.0, 440.0), Pos2::new(280.0, 440.0)),
         ])); wid += 1;
-        // Bridge from (200, 160) to (490, 145) via top corridor
+        // Bridge from (200, 160) to (480, 140) via top corridor
         wires.push(SchematicWire::new(wid, vec![
-            WireSegment::new(Pos2::new(200.0, 160.0), Pos2::new(200.0, 110.0)),
-            WireSegment::new(Pos2::new(200.0, 110.0), Pos2::new(490.0, 110.0)),
-            WireSegment::new(Pos2::new(490.0, 110.0), Pos2::new(490.0, 145.0)),
-            WireSegment::new(Pos2::new(490.0, 145.0), Pos2::new(550.0, 145.0)),
-        ])); wid += 1;
-        wires.push(SchematicWire::new(wid, vec![
-            WireSegment::new(Pos2::new(490.0, 145.0), Pos2::new(490.0, 245.0)),
-            WireSegment::new(Pos2::new(490.0, 245.0), Pos2::new(550.0, 245.0)),
+            WireSegment::new(Pos2::new(200.0, 160.0), Pos2::new(200.0, 100.0)),
+            WireSegment::new(Pos2::new(200.0, 100.0), Pos2::new(480.0, 100.0)),
+            WireSegment::new(Pos2::new(480.0, 100.0), Pos2::new(480.0, 140.0)),
+            WireSegment::new(Pos2::new(480.0, 140.0), Pos2::new(540.0, 140.0)),
         ])); wid += 1;
         wires.push(SchematicWire::new(wid, vec![
-            WireSegment::new(Pos2::new(490.0, 245.0), Pos2::new(490.0, 345.0)),
-            WireSegment::new(Pos2::new(490.0, 345.0), Pos2::new(550.0, 345.0)),
+            WireSegment::new(Pos2::new(480.0, 140.0), Pos2::new(480.0, 240.0)),
+            WireSegment::new(Pos2::new(480.0, 240.0), Pos2::new(540.0, 240.0)),
         ])); wid += 1;
         wires.push(SchematicWire::new(wid, vec![
-            WireSegment::new(Pos2::new(490.0, 345.0), Pos2::new(490.0, 445.0)),
-            WireSegment::new(Pos2::new(490.0, 445.0), Pos2::new(550.0, 445.0)),
+            WireSegment::new(Pos2::new(480.0, 240.0), Pos2::new(480.0, 340.0)),
+            WireSegment::new(Pos2::new(480.0, 340.0), Pos2::new(540.0, 340.0)),
+        ])); wid += 1;
+        wires.push(SchematicWire::new(wid, vec![
+            WireSegment::new(Pos2::new(480.0, 340.0), Pos2::new(480.0, 440.0)),
+            WireSegment::new(Pos2::new(480.0, 440.0), Pos2::new(540.0, 440.0)),
         ])); wid += 1;
 
-        // Input B network: VB(+) (120, 340) -> Trunk X=240 -> feeds AND B (290, 375), OR B (290, 475)
-        // and bridge to X=520 -> feeds NAND B (550, 175), NOR B (550, 275), XOR B (550, 375), XNOR B (550, 475)
+        // Input B network: VB(+) (120, 340) -> Trunk X=240 -> feeds AND B (280, 380), OR B (280, 480)
+        // and bridge to X=500 -> feeds NAND B (540, 180), NOR B (540, 280), XOR B (540, 380), XNOR B (540, 480)
         wires.push(SchematicWire::new(wid, vec![
             WireSegment::new(Pos2::new(120.0, 340.0), Pos2::new(240.0, 340.0)),
-            WireSegment::new(Pos2::new(240.0, 340.0), Pos2::new(240.0, 375.0)),
-            WireSegment::new(Pos2::new(240.0, 375.0), Pos2::new(290.0, 375.0)),
+            WireSegment::new(Pos2::new(240.0, 340.0), Pos2::new(240.0, 380.0)),
+            WireSegment::new(Pos2::new(240.0, 380.0), Pos2::new(280.0, 380.0)),
         ])); wid += 1;
         wires.push(SchematicWire::new(wid, vec![
-            WireSegment::new(Pos2::new(240.0, 375.0), Pos2::new(240.0, 475.0)),
-            WireSegment::new(Pos2::new(240.0, 475.0), Pos2::new(290.0, 475.0)),
+            WireSegment::new(Pos2::new(240.0, 380.0), Pos2::new(240.0, 480.0)),
+            WireSegment::new(Pos2::new(240.0, 480.0), Pos2::new(280.0, 480.0)),
         ])); wid += 1;
-        // Bridge from (240, 475) to (520, 475) via bottom corridor
+        // Bridge from (240, 480) to (500, 480) via bottom corridor
         wires.push(SchematicWire::new(wid, vec![
-            WireSegment::new(Pos2::new(240.0, 475.0), Pos2::new(240.0, 520.0)),
-            WireSegment::new(Pos2::new(240.0, 520.0), Pos2::new(520.0, 520.0)),
-            WireSegment::new(Pos2::new(520.0, 520.0), Pos2::new(520.0, 475.0)),
-            WireSegment::new(Pos2::new(520.0, 475.0), Pos2::new(550.0, 475.0)),
-        ])); wid += 1;
-        wires.push(SchematicWire::new(wid, vec![
-            WireSegment::new(Pos2::new(520.0, 475.0), Pos2::new(520.0, 375.0)),
-            WireSegment::new(Pos2::new(520.0, 375.0), Pos2::new(550.0, 375.0)),
+            WireSegment::new(Pos2::new(240.0, 480.0), Pos2::new(240.0, 520.0)),
+            WireSegment::new(Pos2::new(240.0, 520.0), Pos2::new(500.0, 520.0)),
+            WireSegment::new(Pos2::new(500.0, 520.0), Pos2::new(500.0, 480.0)),
+            WireSegment::new(Pos2::new(500.0, 480.0), Pos2::new(540.0, 480.0)),
         ])); wid += 1;
         wires.push(SchematicWire::new(wid, vec![
-            WireSegment::new(Pos2::new(520.0, 375.0), Pos2::new(520.0, 275.0)),
-            WireSegment::new(Pos2::new(520.0, 275.0), Pos2::new(550.0, 275.0)),
+            WireSegment::new(Pos2::new(500.0, 480.0), Pos2::new(500.0, 380.0)),
+            WireSegment::new(Pos2::new(500.0, 380.0), Pos2::new(540.0, 380.0)),
         ])); wid += 1;
         wires.push(SchematicWire::new(wid, vec![
-            WireSegment::new(Pos2::new(520.0, 275.0), Pos2::new(520.0, 175.0)),
-            WireSegment::new(Pos2::new(520.0, 175.0), Pos2::new(550.0, 175.0)),
+            WireSegment::new(Pos2::new(500.0, 380.0), Pos2::new(500.0, 280.0)),
+            WireSegment::new(Pos2::new(500.0, 280.0), Pos2::new(540.0, 280.0)),
+        ])); wid += 1;
+        wires.push(SchematicWire::new(wid, vec![
+            WireSegment::new(Pos2::new(500.0, 280.0), Pos2::new(500.0, 180.0)),
+            WireSegment::new(Pos2::new(500.0, 180.0), Pos2::new(540.0, 180.0)),
         ])); wid += 1;
 
         self.wires = wires;
@@ -1970,19 +2019,19 @@ impl PhononApp {
             .with_value("SAW_1GHZ");
 
         // Fractionalized Parafermionic Cavity XPC1
-        let xpc = SchematicComponent::new(4, ComponentKind::ParafermionicCavity, Pos2::new(370.0, 220.0), 1)
+        let xpc = SchematicComponent::new(4, ComponentKind::ParafermionicCavity, Pos2::new(360.0, 220.0), 1)
             .with_value("PARAFERM_RES");
 
         // Gate Bias Control VG1
-        let vg = SchematicComponent::new(5, ComponentKind::VoltageSource, Pos2::new(450.0, 100.0), 1)
+        let vg = SchematicComponent::new(5, ComponentKind::VoltageSource, Pos2::new(460.0, 100.0), 1)
             .with_value("DC 1.5V");
 
         // Chiral Skyrmion Acoustic Router XSR1
-        let xsr = SchematicComponent::new(6, ComponentKind::SkyrmionRouter, Pos2::new(510.0, 220.0), 1)
+        let xsr = SchematicComponent::new(6, ComponentKind::SkyrmionRouter, Pos2::new(520.0, 220.0), 1)
             .with_value("SKYRMION_RT");
 
         // Non-Abelian Majorana Braiding Junction XMJ1
-        let xmj = SchematicComponent::new(7, ComponentKind::MajoranaJunction, Pos2::new(670.0, 220.0), 1)
+        let xmj = SchematicComponent::new(7, ComponentKind::MajoranaJunction, Pos2::new(680.0, 220.0), 1)
             .with_value("TOPOMAJ_1");
 
         // Output Termination Resistor R1
@@ -1999,40 +2048,40 @@ impl PhononApp {
         let mut wires = Vec::new();
         let mut wid = 1usize;
 
-        // Ground Rail along Y=400.0: connects GND1(100, 400), V1(-)(100, 300), XSAW IN-(210, 260),
-        // XSAW OUT-(270, 260), VG(-)(450, 140), and R1(2)(780, 300).
+        // Ground Rail along Y=400.0: connects GND1(100, 400), V1(-)(100, 300), XSAW IN-(200, 260),
+        // XSAW OUT-(280, 260), VG(-)(460, 140), and R1(2)(780, 300).
         wires.push(SchematicWire::new(wid, vec![
             WireSegment::new(Pos2::new(100.0, 300.0), Pos2::new(100.0, 400.0)),
-            WireSegment::new(Pos2::new(100.0, 400.0), Pos2::new(210.0, 400.0)),
+            WireSegment::new(Pos2::new(100.0, 400.0), Pos2::new(200.0, 400.0)),
         ])); wid += 1;
 
         wires.push(SchematicWire::new(wid, vec![
-            WireSegment::new(Pos2::new(210.0, 260.0), Pos2::new(210.0, 400.0)),
-            WireSegment::new(Pos2::new(210.0, 400.0), Pos2::new(270.0, 400.0)),
+            WireSegment::new(Pos2::new(200.0, 260.0), Pos2::new(200.0, 400.0)),
+            WireSegment::new(Pos2::new(200.0, 400.0), Pos2::new(280.0, 400.0)),
         ])); wid += 1;
 
         wires.push(SchematicWire::new(wid, vec![
-            WireSegment::new(Pos2::new(270.0, 260.0), Pos2::new(270.0, 400.0)),
-            WireSegment::new(Pos2::new(270.0, 400.0), Pos2::new(450.0, 400.0)),
+            WireSegment::new(Pos2::new(280.0, 260.0), Pos2::new(280.0, 400.0)),
+            WireSegment::new(Pos2::new(280.0, 400.0), Pos2::new(460.0, 400.0)),
         ])); wid += 1;
 
         wires.push(SchematicWire::new(wid, vec![
-            WireSegment::new(Pos2::new(450.0, 140.0), Pos2::new(450.0, 400.0)),
-            WireSegment::new(Pos2::new(450.0, 400.0), Pos2::new(780.0, 400.0)),
+            WireSegment::new(Pos2::new(460.0, 140.0), Pos2::new(460.0, 400.0)),
+            WireSegment::new(Pos2::new(460.0, 400.0), Pos2::new(780.0, 400.0)),
         ])); wid += 1;
 
         wires.push(SchematicWire::new(wid, vec![
             WireSegment::new(Pos2::new(780.0, 300.0), Pos2::new(780.0, 400.0)),
         ])); wid += 1;
 
-        // Input Wire: V1(+) (100, 220) -> XSAW IN+ (210, 220)
+        // Input Wire: V1(+) (100, 220) -> XSAW IN+ (200, 220)
         wires.push(SchematicWire::new(wid, vec![
-            WireSegment::new(Pos2::new(100.0, 220.0), Pos2::new(210.0, 220.0)),
+            WireSegment::new(Pos2::new(100.0, 220.0), Pos2::new(200.0, 220.0)),
         ])); wid += 1;
 
-        // SAW to Parafermionic Cavity: XSAW OUT+ (270, 220) -> XPC PORT1 (340, 220)
+        // SAW to Parafermionic Cavity: XSAW OUT+ (280, 220) -> XPC PORT1 (320, 220)
         wires.push(SchematicWire::new(wid, vec![
-            WireSegment::new(Pos2::new(270.0, 220.0), Pos2::new(340.0, 220.0)),
+            WireSegment::new(Pos2::new(280.0, 220.0), Pos2::new(320.0, 220.0)),
         ])); wid += 1;
 
         // Parafermionic Cavity to Skyrmion Router: XPC PORT2 (400, 220) -> XSR IN (480, 220)
@@ -2040,25 +2089,25 @@ impl PhononApp {
             WireSegment::new(Pos2::new(400.0, 220.0), Pos2::new(480.0, 220.0)),
         ])); wid += 1;
 
-        // Skyrmion Gate Bias Wire: VG(+) (450, 60) -> (510, 60) -> XSR GATE (510, 190)
+        // Skyrmion Gate Bias Wire: VG(+) (460, 60) -> (520, 60) -> XSR GATE (520, 180)
         wires.push(SchematicWire::new(wid, vec![
-            WireSegment::new(Pos2::new(450.0, 60.0), Pos2::new(510.0, 60.0)),
-            WireSegment::new(Pos2::new(510.0, 60.0), Pos2::new(510.0, 190.0)),
+            WireSegment::new(Pos2::new(460.0, 60.0), Pos2::new(520.0, 60.0)),
+            WireSegment::new(Pos2::new(520.0, 60.0), Pos2::new(520.0, 180.0)),
         ])); wid += 1;
 
-        // Skyrmion Channel 0 to Majorana J1: XSR CH0 (540, 200) -> XMJ J1 (640, 200)
+        // Skyrmion Channel 0 to Majorana J1: XSR CH0 (560, 200) -> XMJ J1 (640, 200)
         wires.push(SchematicWire::new(wid, vec![
-            WireSegment::new(Pos2::new(540.0, 200.0), Pos2::new(640.0, 200.0)),
+            WireSegment::new(Pos2::new(560.0, 200.0), Pos2::new(640.0, 200.0)),
         ])); wid += 1;
 
-        // Skyrmion Channel 1 to Majorana J2: XSR CH1 (540, 240) -> XMJ J2 (640, 240)
+        // Skyrmion Channel 1 to Majorana J2: XSR CH1 (560, 240) -> XMJ J2 (640, 240)
         wires.push(SchematicWire::new(wid, vec![
-            WireSegment::new(Pos2::new(540.0, 240.0), Pos2::new(640.0, 240.0)),
+            WireSegment::new(Pos2::new(560.0, 240.0), Pos2::new(640.0, 240.0)),
         ])); wid += 1;
 
-        // Majorana J3 to Output Load and Probe: XMJ J3 (700, 220) -> R1 (780, 220) -> UPRB1 IN (840, 220)
+        // Majorana J3 to Output Load and Probe: XMJ J3 (720, 220) -> R1 (780, 220) -> UPRB1 IN (840, 220)
         wires.push(SchematicWire::new(wid, vec![
-            WireSegment::new(Pos2::new(700.0, 220.0), Pos2::new(780.0, 220.0)),
+            WireSegment::new(Pos2::new(720.0, 220.0), Pos2::new(780.0, 220.0)),
             WireSegment::new(Pos2::new(780.0, 220.0), Pos2::new(840.0, 220.0)),
         ])); wid += 1;
 
@@ -2116,27 +2165,27 @@ impl PhononApp {
         let xor3 = SchematicComponent::new(cid, ComponentKind::XorGate, Pos2::new(460.0, 560.0), 4); cid += 1;
 
         // 4. Multiplexers (4 Bits: ADD vs XOR)
-        let mux0 = SchematicComponent::new(cid, ComponentKind::Mux2to1, Pos2::new(580.0, 230.0), 1); cid += 1;
-        let mux1 = SchematicComponent::new(cid, ComponentKind::Mux2to1, Pos2::new(580.0, 350.0), 2); cid += 1;
-        let mux2 = SchematicComponent::new(cid, ComponentKind::Mux2to1, Pos2::new(580.0, 470.0), 3); cid += 1;
-        let mux3 = SchematicComponent::new(cid, ComponentKind::Mux2to1, Pos2::new(580.0, 590.0), 4); cid += 1;
+        let mux0 = SchematicComponent::new(cid, ComponentKind::Mux2to1, Pos2::new(580.0, 220.0), 1); cid += 1;
+        let mux1 = SchematicComponent::new(cid, ComponentKind::Mux2to1, Pos2::new(580.0, 340.0), 2); cid += 1;
+        let mux2 = SchematicComponent::new(cid, ComponentKind::Mux2to1, Pos2::new(580.0, 460.0), 3); cid += 1;
+        let mux3 = SchematicComponent::new(cid, ComponentKind::Mux2to1, Pos2::new(580.0, 580.0), 4); cid += 1;
 
         // 5. Output Registers (D-Flip-Flops)
-        let dff0 = SchematicComponent::new(cid, ComponentKind::DFlipFlop, Pos2::new(720.0, 230.0), 1); cid += 1;
-        let dff1 = SchematicComponent::new(cid, ComponentKind::DFlipFlop, Pos2::new(720.0, 350.0), 2); cid += 1;
-        let dff2 = SchematicComponent::new(cid, ComponentKind::DFlipFlop, Pos2::new(720.0, 470.0), 3); cid += 1;
-        let dff3 = SchematicComponent::new(cid, ComponentKind::DFlipFlop, Pos2::new(720.0, 590.0), 4); cid += 1;
+        let dff0 = SchematicComponent::new(cid, ComponentKind::DFlipFlop, Pos2::new(720.0, 240.0), 1); cid += 1;
+        let dff1 = SchematicComponent::new(cid, ComponentKind::DFlipFlop, Pos2::new(720.0, 360.0), 2); cid += 1;
+        let dff2 = SchematicComponent::new(cid, ComponentKind::DFlipFlop, Pos2::new(720.0, 480.0), 3); cid += 1;
+        let dff3 = SchematicComponent::new(cid, ComponentKind::DFlipFlop, Pos2::new(720.0, 600.0), 4); cid += 1;
 
         // 6. Logic Probes (Q0..Q3, QN0..QN3, COUT)
-        let prb_q0 = SchematicComponent::new(cid, ComponentKind::LogicProbe, Pos2::new(830.0, 215.0), 1); cid += 1;
-        let prb_qn0 = SchematicComponent::new(cid, ComponentKind::LogicProbe, Pos2::new(830.0, 245.0), 2); cid += 1;
-        let prb_q1 = SchematicComponent::new(cid, ComponentKind::LogicProbe, Pos2::new(830.0, 335.0), 3); cid += 1;
-        let prb_qn1 = SchematicComponent::new(cid, ComponentKind::LogicProbe, Pos2::new(830.0, 365.0), 4); cid += 1;
-        let prb_q2 = SchematicComponent::new(cid, ComponentKind::LogicProbe, Pos2::new(830.0, 455.0), 5); cid += 1;
-        let prb_qn2 = SchematicComponent::new(cid, ComponentKind::LogicProbe, Pos2::new(830.0, 485.0), 6); cid += 1;
-        let prb_q3 = SchematicComponent::new(cid, ComponentKind::LogicProbe, Pos2::new(830.0, 575.0), 7); cid += 1;
-        let prb_qn3 = SchematicComponent::new(cid, ComponentKind::LogicProbe, Pos2::new(830.0, 605.0), 8); cid += 1;
-        let prb_cout = SchematicComponent::new(cid, ComponentKind::LogicProbe, Pos2::new(830.0, 660.0), 9);
+        let prb_q0 = SchematicComponent::new(cid, ComponentKind::LogicProbe, Pos2::new(840.0, 220.0), 1); cid += 1;
+        let prb_qn0 = SchematicComponent::new(cid, ComponentKind::LogicProbe, Pos2::new(840.0, 260.0), 2); cid += 1;
+        let prb_q1 = SchematicComponent::new(cid, ComponentKind::LogicProbe, Pos2::new(840.0, 340.0), 3); cid += 1;
+        let prb_qn1 = SchematicComponent::new(cid, ComponentKind::LogicProbe, Pos2::new(840.0, 380.0), 4); cid += 1;
+        let prb_q2 = SchematicComponent::new(cid, ComponentKind::LogicProbe, Pos2::new(840.0, 460.0), 5); cid += 1;
+        let prb_qn2 = SchematicComponent::new(cid, ComponentKind::LogicProbe, Pos2::new(840.0, 500.0), 6); cid += 1;
+        let prb_q3 = SchematicComponent::new(cid, ComponentKind::LogicProbe, Pos2::new(840.0, 580.0), 7); cid += 1;
+        let prb_qn3 = SchematicComponent::new(cid, ComponentKind::LogicProbe, Pos2::new(840.0, 620.0), 8); cid += 1;
+        let prb_cout = SchematicComponent::new(cid, ComponentKind::LogicProbe, Pos2::new(840.0, 660.0), 9);
 
         // Ground Bus at X=60
         wires.push(SchematicWire::new(wid, vec![
@@ -2153,124 +2202,145 @@ impl PhononApp {
         wires.push(SchematicWire::new(wid, vec![
             WireSegment::new(Pos2::new(100.0, 580.0), Pos2::new(60.0, 580.0)),
         ])); wid += 1;
+        // Ground FA0 CIN (280, 280) to ground bus
         wires.push(SchematicWire::new(wid, vec![
             WireSegment::new(Pos2::new(60.0, 280.0), Pos2::new(280.0, 280.0)),
         ])); wid += 1;
 
-        // Clock line
+        // Clock distribution line at X=640 to DFF CLKs (680, y)
         wires.push(SchematicWire::new(wid, vec![
-            WireSegment::new(Pos2::new(100.0, 140.0), Pos2::new(660.0, 140.0)),
-            WireSegment::new(Pos2::new(660.0, 140.0), Pos2::new(660.0, 605.0)),
+            WireSegment::new(Pos2::new(100.0, 140.0), Pos2::new(640.0, 140.0)),
+            WireSegment::new(Pos2::new(640.0, 140.0), Pos2::new(640.0, 620.0)),
         ])); wid += 1;
-        wires.push(SchematicWire::new(wid, vec![WireSegment::new(Pos2::new(660.0, 245.0), Pos2::new(685.0, 245.0))])); wid += 1;
-        wires.push(SchematicWire::new(wid, vec![WireSegment::new(Pos2::new(660.0, 365.0), Pos2::new(685.0, 365.0))])); wid += 1;
-        wires.push(SchematicWire::new(wid, vec![WireSegment::new(Pos2::new(660.0, 485.0), Pos2::new(685.0, 485.0))])); wid += 1;
-        wires.push(SchematicWire::new(wid, vec![WireSegment::new(Pos2::new(660.0, 605.0), Pos2::new(685.0, 605.0))])); wid += 1;
+        wires.push(SchematicWire::new(wid, vec![
+            WireSegment::new(Pos2::new(640.0, 260.0), Pos2::new(680.0, 260.0)),
+        ])); wid += 1;
+        wires.push(SchematicWire::new(wid, vec![
+            WireSegment::new(Pos2::new(640.0, 380.0), Pos2::new(680.0, 380.0)),
+        ])); wid += 1;
+        wires.push(SchematicWire::new(wid, vec![
+            WireSegment::new(Pos2::new(640.0, 500.0), Pos2::new(680.0, 500.0)),
+        ])); wid += 1;
+        wires.push(SchematicWire::new(wid, vec![
+            WireSegment::new(Pos2::new(640.0, 620.0), Pos2::new(680.0, 620.0)),
+        ])); wid += 1;
 
-        // ALU Operation select line
+        // Operation select line V_OP(+) (100, 500) to MUX SELs (580, y)
         wires.push(SchematicWire::new(wid, vec![
             WireSegment::new(Pos2::new(100.0, 500.0), Pos2::new(160.0, 500.0)),
-            WireSegment::new(Pos2::new(160.0, 500.0), Pos2::new(160.0, 640.0)),
-            WireSegment::new(Pos2::new(160.0, 640.0), Pos2::new(580.0, 640.0)),
-            WireSegment::new(Pos2::new(580.0, 640.0), Pos2::new(580.0, 620.0)),
-        ])); wid += 1;
-        wires.push(SchematicWire::new(wid, vec![
-            WireSegment::new(Pos2::new(580.0, 620.0), Pos2::new(580.0, 260.0)),
+            WireSegment::new(Pos2::new(160.0, 500.0), Pos2::new(160.0, 660.0)),
+            WireSegment::new(Pos2::new(160.0, 660.0), Pos2::new(580.0, 660.0)),
+            WireSegment::new(Pos2::new(580.0, 660.0), Pos2::new(580.0, 260.0)),
         ])); wid += 1;
 
-        // Input A distribution
+        // Input A distribution: VA(+) (100, 260) to FAs and XORs
         wires.push(SchematicWire::new(wid, vec![
             WireSegment::new(Pos2::new(100.0, 260.0), Pos2::new(200.0, 260.0)),
             WireSegment::new(Pos2::new(200.0, 260.0), Pos2::new(200.0, 600.0)),
         ])); wid += 1;
+        // FA A inputs at (280, y)
         for y in [240.0, 360.0, 480.0, 600.0] {
-            wires.push(SchematicWire::new(wid, vec![WireSegment::new(Pos2::new(200.0, y), Pos2::new(280.0, y))])); wid += 1;
+            wires.push(SchematicWire::new(wid, vec![
+                WireSegment::new(Pos2::new(200.0, y), Pos2::new(280.0, y)),
+            ])); wid += 1;
         }
-        for (y_src, y_dst) in [(240.0, 185.0), (360.0, 305.0), (480.0, 425.0), (600.0, 545.0)] {
+        // XOR A inputs at (420, y)
+        for (y_src, y_dst) in [(240.0, 180.0), (360.0, 300.0), (480.0, 420.0), (600.0, 540.0)] {
             wires.push(SchematicWire::new(wid, vec![
                 WireSegment::new(Pos2::new(280.0, y_src), Pos2::new(280.0, y_dst)),
-                WireSegment::new(Pos2::new(280.0, y_dst), Pos2::new(430.0, y_dst)),
+                WireSegment::new(Pos2::new(280.0, y_dst), Pos2::new(420.0, y_dst)),
             ])); wid += 1;
         }
 
-        // Input B distribution
+        // Input B distribution: VB(+) (100, 380) to FAs and XORs
         wires.push(SchematicWire::new(wid, vec![
             WireSegment::new(Pos2::new(100.0, 380.0), Pos2::new(240.0, 380.0)),
             WireSegment::new(Pos2::new(240.0, 380.0), Pos2::new(240.0, 620.0)),
         ])); wid += 1;
-        wires.push(SchematicWire::new(wid, vec![WireSegment::new(Pos2::new(240.0, 380.0), Pos2::new(240.0, 260.0))])); wid += 1;
+        wires.push(SchematicWire::new(wid, vec![
+            WireSegment::new(Pos2::new(240.0, 380.0), Pos2::new(240.0, 260.0)),
+        ])); wid += 1;
+        // FA B inputs at (280, y)
         for y in [260.0, 380.0, 500.0, 620.0] {
-            wires.push(SchematicWire::new(wid, vec![WireSegment::new(Pos2::new(240.0, y), Pos2::new(280.0, y))])); wid += 1;
+            wires.push(SchematicWire::new(wid, vec![
+                WireSegment::new(Pos2::new(240.0, y), Pos2::new(280.0, y)),
+            ])); wid += 1;
         }
-        for (y_src, y_dst) in [(260.0, 215.0), (380.0, 335.0), (500.0, 455.0), (620.0, 575.0)] {
+        // XOR B inputs at (420, y)
+        for (y_src, y_dst) in [(260.0, 220.0), (380.0, 340.0), (500.0, 460.0), (620.0, 580.0)] {
             wires.push(SchematicWire::new(wid, vec![
                 WireSegment::new(Pos2::new(240.0, y_src), Pos2::new(240.0, y_dst)),
-                WireSegment::new(Pos2::new(240.0, y_dst), Pos2::new(430.0, y_dst)),
+                WireSegment::new(Pos2::new(240.0, y_dst), Pos2::new(420.0, y_dst)),
             ])); wid += 1;
         }
 
-        // Ripple Carry propagation
+        // Ripple Carry propagation: COUT to CIN
+        // FA0 COUT (360, 280) -> FA1 CIN (280, 400)
         wires.push(SchematicWire::new(wid, vec![
-            WireSegment::new(Pos2::new(360.0, 275.0), Pos2::new(390.0, 275.0)),
-            WireSegment::new(Pos2::new(390.0, 275.0), Pos2::new(390.0, 330.0)),
-            WireSegment::new(Pos2::new(390.0, 330.0), Pos2::new(260.0, 330.0)),
-            WireSegment::new(Pos2::new(260.0, 330.0), Pos2::new(260.0, 400.0)),
+            WireSegment::new(Pos2::new(360.0, 280.0), Pos2::new(390.0, 280.0)),
+            WireSegment::new(Pos2::new(390.0, 280.0), Pos2::new(390.0, 340.0)),
+            WireSegment::new(Pos2::new(390.0, 340.0), Pos2::new(260.0, 340.0)),
+            WireSegment::new(Pos2::new(260.0, 340.0), Pos2::new(260.0, 400.0)),
             WireSegment::new(Pos2::new(260.0, 400.0), Pos2::new(280.0, 400.0)),
         ])); wid += 1;
+        // FA1 COUT (360, 400) -> FA2 CIN (280, 520)
         wires.push(SchematicWire::new(wid, vec![
-            WireSegment::new(Pos2::new(360.0, 395.0), Pos2::new(390.0, 395.0)),
-            WireSegment::new(Pos2::new(390.0, 395.0), Pos2::new(390.0, 450.0)),
-            WireSegment::new(Pos2::new(390.0, 450.0), Pos2::new(260.0, 450.0)),
-            WireSegment::new(Pos2::new(260.0, 450.0), Pos2::new(260.0, 520.0)),
+            WireSegment::new(Pos2::new(360.0, 400.0), Pos2::new(390.0, 400.0)),
+            WireSegment::new(Pos2::new(390.0, 400.0), Pos2::new(390.0, 460.0)),
+            WireSegment::new(Pos2::new(390.0, 460.0), Pos2::new(260.0, 460.0)),
+            WireSegment::new(Pos2::new(260.0, 460.0), Pos2::new(260.0, 520.0)),
             WireSegment::new(Pos2::new(260.0, 520.0), Pos2::new(280.0, 520.0)),
         ])); wid += 1;
+        // FA2 COUT (360, 520) -> FA3 CIN (280, 640)
         wires.push(SchematicWire::new(wid, vec![
-            WireSegment::new(Pos2::new(360.0, 515.0), Pos2::new(390.0, 515.0)),
-            WireSegment::new(Pos2::new(390.0, 515.0), Pos2::new(390.0, 570.0)),
-            WireSegment::new(Pos2::new(390.0, 570.0), Pos2::new(260.0, 570.0)),
-            WireSegment::new(Pos2::new(260.0, 570.0), Pos2::new(260.0, 640.0)),
+            WireSegment::new(Pos2::new(360.0, 520.0), Pos2::new(390.0, 520.0)),
+            WireSegment::new(Pos2::new(390.0, 520.0), Pos2::new(390.0, 580.0)),
+            WireSegment::new(Pos2::new(390.0, 580.0), Pos2::new(260.0, 580.0)),
+            WireSegment::new(Pos2::new(260.0, 580.0), Pos2::new(260.0, 640.0)),
             WireSegment::new(Pos2::new(260.0, 640.0), Pos2::new(280.0, 640.0)),
         ])); wid += 1;
+        // FA3 COUT (360, 640) -> Carry Flag Probe (820, 660)
         wires.push(SchematicWire::new(wid, vec![
-            WireSegment::new(Pos2::new(360.0, 635.0), Pos2::new(400.0, 635.0)),
-            WireSegment::new(Pos2::new(400.0, 635.0), Pos2::new(400.0, 660.0)),
-            WireSegment::new(Pos2::new(400.0, 660.0), Pos2::new(810.0, 660.0)),
+            WireSegment::new(Pos2::new(360.0, 640.0), Pos2::new(400.0, 640.0)),
+            WireSegment::new(Pos2::new(400.0, 640.0), Pos2::new(400.0, 660.0)),
+            WireSegment::new(Pos2::new(400.0, 660.0), Pos2::new(820.0, 660.0)),
         ])); wid += 1;
 
-        // FA SUM to MUX D0
-        for (y_fa, y_mux) in [(245.0, 215.0), (365.0, 335.0), (485.0, 455.0), (605.0, 575.0)] {
+        // FA SUM outputs (360, y) to MUX D1 inputs (540, y)
+        let fa_sums = [(240.0, 240.0), (360.0, 360.0), (480.0, 480.0), (600.0, 600.0)];
+        for (y_fa, y_mux) in fa_sums {
             wires.push(SchematicWire::new(wid, vec![
-                WireSegment::new(Pos2::new(360.0, y_fa), Pos2::new(510.0, y_fa)),
-                WireSegment::new(Pos2::new(510.0, y_fa), Pos2::new(510.0, y_mux)),
-                WireSegment::new(Pos2::new(510.0, y_mux), Pos2::new(550.0, y_mux)),
+                WireSegment::new(Pos2::new(360.0, y_fa), Pos2::new(540.0, y_mux)),
             ])); wid += 1;
         }
 
-        // XOR OUT to MUX D1
-        for (y_xor, y_mux) in [(200.0, 245.0), (320.0, 365.0), (440.0, 485.0), (560.0, 605.0)] {
+        // XOR outputs (500, y) to MUX D0 inputs (540, y)
+        let xor_outs = [(200.0, 200.0), (320.0, 320.0), (440.0, 440.0), (560.0, 560.0)];
+        for (y_xor, y_mux) in xor_outs {
             wires.push(SchematicWire::new(wid, vec![
-                WireSegment::new(Pos2::new(490.0, y_xor), Pos2::new(530.0, y_xor)),
-                WireSegment::new(Pos2::new(530.0, y_xor), Pos2::new(530.0, y_mux)),
-                WireSegment::new(Pos2::new(530.0, y_mux), Pos2::new(550.0, y_mux)),
+                WireSegment::new(Pos2::new(500.0, y_xor), Pos2::new(540.0, y_mux)),
             ])); wid += 1;
         }
 
-        // MUX OUT to DFF D
-        for (y_mux, y_dff) in [(230.0, 215.0), (350.0, 335.0), (470.0, 455.0), (590.0, 575.0)] {
+        // MUX outputs (620, y) to DFF D inputs (680, y)
+        for y in [220.0, 340.0, 460.0, 580.0] {
             wires.push(SchematicWire::new(wid, vec![
-                WireSegment::new(Pos2::new(610.0, y_mux), Pos2::new(640.0, y_mux)),
-                WireSegment::new(Pos2::new(640.0, y_mux), Pos2::new(640.0, y_dff)),
-                WireSegment::new(Pos2::new(640.0, y_dff), Pos2::new(685.0, y_dff)),
+                WireSegment::new(Pos2::new(620.0, y), Pos2::new(680.0, y)),
             ])); wid += 1;
         }
 
-        // DFF Q to Probes
-        for y in [215.0, 335.0, 455.0, 575.0] {
-            wires.push(SchematicWire::new(wid, vec![WireSegment::new(Pos2::new(755.0, y), Pos2::new(810.0, y))])); wid += 1;
+        // DFF Q outputs (760, y) to Probes (820, y)
+        for y in [220.0, 340.0, 460.0, 580.0] {
+            wires.push(SchematicWire::new(wid, vec![
+                WireSegment::new(Pos2::new(760.0, y), Pos2::new(820.0, y)),
+            ])); wid += 1;
         }
-        // DFF QN to Probes
-        for y in [245.0, 365.0, 485.0, 605.0] {
-            wires.push(SchematicWire::new(wid, vec![WireSegment::new(Pos2::new(755.0, y), Pos2::new(810.0, y))])); wid += 1;
+
+        // DFF QN outputs (760, y) to Probes (820, y)
+        for y in [260.0, 380.0, 500.0, 620.0] {
+            wires.push(SchematicWire::new(wid, vec![
+                WireSegment::new(Pos2::new(760.0, y), Pos2::new(820.0, y)),
+            ])); wid += 1;
         }
 
         components.extend(vec![
@@ -2397,7 +2467,7 @@ impl PhononApp {
             .with_value("SAW_100MHZ"); cid += 1;
         let r_load = SchematicComponent::new(cid, ComponentKind::Resistor, Pos2::new(780.0, 220.0), 6)
             .with_value("50"); cid += 1;
-        let prb_if = SchematicComponent::new(cid, ComponentKind::LogicProbe, Pos2::new(850.0, 200.0), 1); cid += 1;
+        let prb_if = SchematicComponent::new(cid, ComponentKind::LogicProbe, Pos2::new(840.0, 180.0), 1); cid += 1;
         let prb_th = SchematicComponent::new(cid, ComponentKind::LogicProbe, Pos2::new(620.0, 60.0), 2);
 
         // Ground Bus at Y=460 from X=100 to X=780
@@ -2412,8 +2482,8 @@ impl PhononApp {
         wires.push(SchematicWire::new(wid, vec![WireSegment::new(Pos2::new(420.0, 400.0), Pos2::new(420.0, 460.0))])); wid += 1;
         wires.push(SchematicWire::new(wid, vec![WireSegment::new(Pos2::new(480.0, 400.0), Pos2::new(480.0, 460.0))])); wid += 1;
         wires.push(SchematicWire::new(wid, vec![WireSegment::new(Pos2::new(560.0, 380.0), Pos2::new(560.0, 460.0))])); wid += 1;
-        wires.push(SchematicWire::new(wid, vec![WireSegment::new(Pos2::new(650.0, 240.0), Pos2::new(650.0, 460.0))])); wid += 1;
-        wires.push(SchematicWire::new(wid, vec![WireSegment::new(Pos2::new(710.0, 240.0), Pos2::new(710.0, 460.0))])); wid += 1;
+        wires.push(SchematicWire::new(wid, vec![WireSegment::new(Pos2::new(640.0, 240.0), Pos2::new(640.0, 460.0))])); wid += 1;
+        wires.push(SchematicWire::new(wid, vec![WireSegment::new(Pos2::new(720.0, 240.0), Pos2::new(720.0, 460.0))])); wid += 1;
         wires.push(SchematicWire::new(wid, vec![WireSegment::new(Pos2::new(780.0, 260.0), Pos2::new(780.0, 460.0))])); wid += 1;
         wires.push(SchematicWire::new(wid, vec![
             WireSegment::new(Pos2::new(500.0, 140.0), Pos2::new(560.0, 140.0)),
@@ -2449,13 +2519,16 @@ impl PhononApp {
         wires.push(SchematicWire::new(wid, vec![WireSegment::new(Pos2::new(500.0, 240.0), Pos2::new(560.0, 160.0))])); wid += 1;
         wires.push(SchematicWire::new(wid, vec![
             WireSegment::new(Pos2::new(560.0, 240.0), Pos2::new(560.0, 300.0)),
-            WireSegment::new(Pos2::new(560.0, 240.0), Pos2::new(650.0, 200.0)),
+            WireSegment::new(Pos2::new(560.0, 240.0), Pos2::new(600.0, 240.0)),
+            WireSegment::new(Pos2::new(600.0, 240.0), Pos2::new(600.0, 200.0)),
+            WireSegment::new(Pos2::new(600.0, 200.0), Pos2::new(640.0, 200.0)),
         ])); wid += 1;
 
         // IF Output
         wires.push(SchematicWire::new(wid, vec![
-            WireSegment::new(Pos2::new(710.0, 200.0), Pos2::new(780.0, 180.0)),
-            WireSegment::new(Pos2::new(780.0, 180.0), Pos2::new(830.0, 200.0)),
+            WireSegment::new(Pos2::new(720.0, 200.0), Pos2::new(780.0, 200.0)),
+            WireSegment::new(Pos2::new(780.0, 200.0), Pos2::new(780.0, 180.0)),
+            WireSegment::new(Pos2::new(780.0, 180.0), Pos2::new(820.0, 180.0)),
         ])); wid += 1;
 
         components.extend(vec![
@@ -2532,7 +2605,7 @@ impl PhononApp {
         let gnd = SchematicComponent::new(cid, ComponentKind::Ground, Pos2::new(100.0, 440.0), 1); cid += 1;
 
         // 2. 3.5 GHz Piezoelectric SAW IDT Transducer
-        let xsaw = SchematicComponent::new(cid, ComponentKind::SawIdt, Pos2::new(230.0, 220.0), 1)
+        let xsaw = SchematicComponent::new(cid, ComponentKind::SawIdt, Pos2::new(240.0, 220.0), 1)
             .with_value("IDT_3.5GHZ"); cid += 1;
 
         // 3. Fractionalized Parafermionic Cavity
@@ -2540,30 +2613,30 @@ impl PhononApp {
             .with_value("PARAFERMION_Z4"); cid += 1;
 
         // 4. Synthetic Gauge Flux Bias Supply (+1.5V)
-        let vg = SchematicComponent::new(cid, ComponentKind::VoltageSource, Pos2::new(450.0, 80.0), 2)
+        let vg = SchematicComponent::new(cid, ComponentKind::VoltageSource, Pos2::new(440.0, 80.0), 2)
             .with_value("DC 1.5V"); cid += 1;
 
         // 5. Chiral Skyrmion Acoustic Router
-        let xsr = SchematicComponent::new(cid, ComponentKind::SkyrmionRouter, Pos2::new(490.0, 200.0), 1)
+        let xsr = SchematicComponent::new(cid, ComponentKind::SkyrmionRouter, Pos2::new(480.0, 200.0), 1)
             .with_value("CHIRAL_SK_ROUTER"); cid += 1;
 
         // 6. Non-Abelian Majorana Braiding Junction 1
-        let xmj1 = SchematicComponent::new(cid, ComponentKind::MajoranaJunction, Pos2::new(630.0, 180.0), 1)
+        let xmj1 = SchematicComponent::new(cid, ComponentKind::MajoranaJunction, Pos2::new(600.0, 200.0), 1)
             .with_value("BRAID_OP_B1"); cid += 1;
 
         // 7. Non-Abelian Majorana Braiding Junction 2
-        let xmj2 = SchematicComponent::new(cid, ComponentKind::MajoranaJunction, Pos2::new(750.0, 180.0), 2)
+        let xmj2 = SchematicComponent::new(cid, ComponentKind::MajoranaJunction, Pos2::new(720.0, 200.0), 2)
             .with_value("BRAID_OP_B2"); cid += 1;
 
         // 8. Superconducting Nanowire Single-Phonon Detector (SNSPD)
-        let r_snspd = SchematicComponent::new(cid, ComponentKind::Resistor, Pos2::new(860.0, 220.0), 1)
+        let r_snspd = SchematicComponent::new(cid, ComponentKind::Resistor, Pos2::new(840.0, 240.0), 1)
             .with_value("50_OHM"); cid += 1;
-        let d_snspd = SchematicComponent::new(cid, ComponentKind::ZenerDiode, Pos2::new(860.0, 340.0), 1)
+        let d_snspd = SchematicComponent::new(cid, ComponentKind::ZenerDiode, Pos2::new(840.0, 360.0), 1)
             .with_value("SNSPD_HOTSPOT"); cid += 1;
 
         // 9. Readout Probes
-        let prb_click = SchematicComponent::new(cid, ComponentKind::LogicProbe, Pos2::new(940.0, 180.0), 1); cid += 1;
-        let prb_braid = SchematicComponent::new(cid, ComponentKind::LogicProbe, Pos2::new(720.0, 120.0), 2);
+        let prb_click = SchematicComponent::new(cid, ComponentKind::LogicProbe, Pos2::new(920.0, 200.0), 1); cid += 1;
+        let prb_braid = SchematicComponent::new(cid, ComponentKind::LogicProbe, Pos2::new(680.0, 140.0), 2);
 
         // Ground Bus at Y=420 from X=100 to X=860
         wires.push(SchematicWire::new(wid, vec![
@@ -2571,46 +2644,78 @@ impl PhononApp {
             WireSegment::new(Pos2::new(100.0, 420.0), Pos2::new(860.0, 420.0)),
         ])); wid += 1;
 
-        wires.push(SchematicWire::new(wid, vec![WireSegment::new(Pos2::new(200.0, 240.0), Pos2::new(200.0, 420.0))])); wid += 1;
-        wires.push(SchematicWire::new(wid, vec![WireSegment::new(Pos2::new(260.0, 240.0), Pos2::new(260.0, 420.0))])); wid += 1;
-        wires.push(SchematicWire::new(wid, vec![WireSegment::new(Pos2::new(450.0, 120.0), Pos2::new(450.0, 420.0))])); wid += 1;
-        wires.push(SchematicWire::new(wid, vec![WireSegment::new(Pos2::new(860.0, 380.0), Pos2::new(860.0, 420.0))])); wid += 1;
-
-        // Microwave pulse to SAW IN+
-        wires.push(SchematicWire::new(wid, vec![WireSegment::new(Pos2::new(100.0, 200.0), Pos2::new(200.0, 200.0))])); wid += 1;
-        // SAW OUT+ to Parafermionic Cavity PORT1
-        wires.push(SchematicWire::new(wid, vec![WireSegment::new(Pos2::new(260.0, 200.0), Pos2::new(330.0, 200.0))])); wid += 1;
-        // Cavity PORT2 to Skyrmion Router IN
-        wires.push(SchematicWire::new(wid, vec![WireSegment::new(Pos2::new(390.0, 200.0), Pos2::new(460.0, 200.0))])); wid += 1;
-
-        // Synthetic flux bias to XSR GATE
+        // SAW IN- (200, 240) to ground bus
         wires.push(SchematicWire::new(wid, vec![
-            WireSegment::new(Pos2::new(450.0, 40.0), Pos2::new(490.0, 40.0)),
-            WireSegment::new(Pos2::new(490.0, 40.0), Pos2::new(490.0, 170.0)),
+            WireSegment::new(Pos2::new(200.0, 240.0), Pos2::new(200.0, 420.0)),
+        ])); wid += 1;
+        // SAW OUT- (280, 240) to ground bus
+        wires.push(SchematicWire::new(wid, vec![
+            WireSegment::new(Pos2::new(280.0, 240.0), Pos2::new(280.0, 420.0)),
+        ])); wid += 1;
+        // VG(-) (440, 120) to ground bus
+        wires.push(SchematicWire::new(wid, vec![
+            WireSegment::new(Pos2::new(440.0, 120.0), Pos2::new(440.0, 420.0)),
+        ])); wid += 1;
+        // D_SNSPD pin 2 (840, 400) to ground bus
+        wires.push(SchematicWire::new(wid, vec![
+            WireSegment::new(Pos2::new(840.0, 400.0), Pos2::new(840.0, 420.0)),
         ])); wid += 1;
 
-        // Skyrmion Router CH0 to XMJ1 J1
-        wires.push(SchematicWire::new(wid, vec![WireSegment::new(Pos2::new(520.0, 180.0), Pos2::new(600.0, 160.0))])); wid += 1;
-        // Skyrmion Router CH1 to XMJ1 J2
-        wires.push(SchematicWire::new(wid, vec![WireSegment::new(Pos2::new(520.0, 220.0), Pos2::new(600.0, 200.0))])); wid += 1;
-
-        // XMJ1 J3 to XMJ2 J1 and Braid Probe
+        // Microwave pulse to SAW IN+: V_PULSE(+) (100, 200) -> XSAW IN+ (200, 200)
         wires.push(SchematicWire::new(wid, vec![
-            WireSegment::new(Pos2::new(660.0, 180.0), Pos2::new(720.0, 160.0)),
-            WireSegment::new(Pos2::new(660.0, 180.0), Pos2::new(700.0, 120.0)),
+            WireSegment::new(Pos2::new(100.0, 200.0), Pos2::new(200.0, 200.0)),
         ])); wid += 1;
 
-        // Crossbar Braiding loop: XMJ2 J2 back to XMJ1 J2
-        wires.push(SchematicWire::new(wid, vec![WireSegment::new(Pos2::new(600.0, 200.0), Pos2::new(720.0, 200.0))])); wid += 1;
-
-        // XMJ2 J3 to SNSPD and Click Probe
+        // SAW OUT+ (280, 200) to Parafermionic Cavity PORT1 (320, 200)
         wires.push(SchematicWire::new(wid, vec![
-            WireSegment::new(Pos2::new(780.0, 180.0), Pos2::new(860.0, 180.0)),
-            WireSegment::new(Pos2::new(860.0, 180.0), Pos2::new(920.0, 180.0)),
+            WireSegment::new(Pos2::new(280.0, 200.0), Pos2::new(320.0, 200.0)),
         ])); wid += 1;
 
-        // SNSPD Resistor to Zener Hotspot
-        wires.push(SchematicWire::new(wid, vec![WireSegment::new(Pos2::new(860.0, 260.0), Pos2::new(860.0, 300.0))])); wid += 1;
+        // Parafermionic Cavity PORT2 (400, 200) to Skyrmion Router IN (440, 200)
+        wires.push(SchematicWire::new(wid, vec![
+            WireSegment::new(Pos2::new(400.0, 200.0), Pos2::new(440.0, 200.0)),
+        ])); wid += 1;
+
+        // Synthetic flux bias: VG(+) (440, 40) -> (480, 40) -> XSR GATE (480, 160)
+        wires.push(SchematicWire::new(wid, vec![
+            WireSegment::new(Pos2::new(440.0, 40.0), Pos2::new(480.0, 40.0)),
+            WireSegment::new(Pos2::new(480.0, 40.0), Pos2::new(480.0, 160.0)),
+        ])); wid += 1;
+
+        // Skyrmion Router CH0 (520, 180) to XMJ1 J1 (560, 180)
+        wires.push(SchematicWire::new(wid, vec![
+            WireSegment::new(Pos2::new(520.0, 180.0), Pos2::new(560.0, 180.0)),
+        ])); wid += 1;
+        // Skyrmion Router CH1 (520, 220) to XMJ1 J2 (560, 220)
+        wires.push(SchematicWire::new(wid, vec![
+            WireSegment::new(Pos2::new(520.0, 220.0), Pos2::new(560.0, 220.0)),
+        ])); wid += 1;
+
+        // XMJ1 J3 (640, 200) to XMJ2 J1 (680, 180) and Braid Probe (660, 140)
+        wires.push(SchematicWire::new(wid, vec![
+            WireSegment::new(Pos2::new(640.0, 200.0), Pos2::new(660.0, 200.0)),
+            WireSegment::new(Pos2::new(660.0, 200.0), Pos2::new(660.0, 180.0)),
+            WireSegment::new(Pos2::new(660.0, 180.0), Pos2::new(680.0, 180.0)),
+        ])); wid += 1;
+        wires.push(SchematicWire::new(wid, vec![
+            WireSegment::new(Pos2::new(660.0, 180.0), Pos2::new(660.0, 140.0)),
+        ])); wid += 1;
+
+        // XMJ2 J2 (680, 220) looped back to XMJ1 J2 (560, 220) for crossbar braiding topology
+        wires.push(SchematicWire::new(wid, vec![
+            WireSegment::new(Pos2::new(560.0, 220.0), Pos2::new(680.0, 220.0)),
+        ])); wid += 1;
+
+        // XMJ2 J3 (760, 200) to R_SNSPD pin 1 (840, 200) and PRB_CLICK (900, 200)
+        wires.push(SchematicWire::new(wid, vec![
+            WireSegment::new(Pos2::new(760.0, 200.0), Pos2::new(840.0, 200.0)),
+            WireSegment::new(Pos2::new(840.0, 200.0), Pos2::new(900.0, 200.0)),
+        ])); wid += 1;
+
+        // R_SNSPD pin 2 (840, 280) to D_SNSPD pin 1 (840, 320)
+        wires.push(SchematicWire::new(wid, vec![
+            WireSegment::new(Pos2::new(840.0, 280.0), Pos2::new(840.0, 320.0)),
+        ]));
 
         components.extend(vec![
             v_pulse, gnd, xsaw, xpc, vg, xsr, xmj1, xmj2, r_snspd, d_snspd, prb_click, prb_braid,
@@ -3456,6 +3561,116 @@ impl PhononApp {
         self.mirror_active();
     }
 
+    /// Increases size of all selected components (or single selected component)
+    /// to the next valid scale that keeps all pins strictly on the grid.
+    pub fn size_up_selected(&mut self) {
+        self.resize_selected(true);
+    }
+
+    /// Decreases size of all selected components (or single selected component)
+    /// to the next valid scale that keeps all pins strictly on the grid.
+    pub fn size_down_selected(&mut self) {
+        self.resize_selected(false);
+    }
+
+    fn resize_selected(&mut self, size_up: bool) {
+        let mut target_comp_ids = self.selected_component_ids.clone();
+        if let Some(cid) = self.selected_component_id {
+            target_comp_ids.insert(cid);
+        }
+
+        if target_comp_ids.is_empty() {
+            return;
+        }
+
+        let grid_size = self.canvas.grid_size;
+        let mut batch = Vec::new();
+        let mut pin_replacements: Vec<(Pos2, Pos2)> = Vec::new();
+
+        for comp in &mut self.components {
+            if target_comp_ids.contains(&comp.id) {
+                let from_scale = comp.scale;
+                let target_opt = if size_up {
+                    comp.next_valid_scale_up(grid_size)
+                } else {
+                    comp.next_valid_scale_down(grid_size)
+                };
+
+                if let Some(to_scale) = target_opt {
+                    let old_pins = comp.all_pins();
+                    comp.scale = to_scale;
+                    comp.set_property("scale", format!("{:.2}", to_scale));
+                    let new_pins = comp.all_pins();
+
+                    for (i, &(_, old_pos)) in old_pins.iter().enumerate() {
+                        if let Some(&(_, new_pos)) = new_pins.get(i) {
+                            if (old_pos - new_pos).length() > 1e-3 {
+                                pin_replacements.push((old_pos, new_pos));
+                            }
+                        }
+                    }
+
+                    batch.push(CanvasCommand::ScaleComponent {
+                        id: comp.id,
+                        from_scale,
+                        to_scale,
+                    });
+                }
+            }
+        }
+
+        if !batch.is_empty() {
+            // Update any attached wires whose endpoints were at old pin positions
+            if !pin_replacements.is_empty() {
+                for wire in &mut self.wires {
+                    let old_wire = wire.clone();
+                    let mut modified = false;
+
+                    if let Some(first_seg) = wire.segments.first_mut() {
+                        for &(old_pos, new_pos) in &pin_replacements {
+                            if (first_seg.start - old_pos).length() < 1e-2 {
+                                first_seg.start = new_pos;
+                                modified = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if let Some(last_seg) = wire.segments.last_mut() {
+                        for &(old_pos, new_pos) in &pin_replacements {
+                            if (last_seg.end - old_pos).length() < 1e-2 {
+                                last_seg.end = new_pos;
+                                modified = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if modified {
+                        // Re-route with Manhattan routing to ensure all segments remain orthogonal
+                        let start = wire.start_point();
+                        let end = wire.end_point();
+                        let mut routed = SchematicWire::manhattan_route_hv(wire.id, start, end);
+                        routed.net_name = wire.net_name.clone();
+                        *wire = routed;
+
+                        batch.push(CanvasCommand::DeleteWire(old_wire));
+                        batch.push(CanvasCommand::AddWire(wire.clone()));
+                    }
+                }
+            }
+
+            if batch.len() == 1 {
+                self.history.record(batch.remove(0));
+            } else {
+                self.history.record(CanvasCommand::Batch(batch));
+            }
+            self.mark_dirty();
+            self.sync_selection_to_canvas();
+            self.sim_status.clear();
+        }
+    }
+
     /// Executes a registered CAD action by identifier.
     pub fn execute_action(&mut self, action_id: ActionId) {
         match action_id {
@@ -3483,6 +3698,8 @@ impl PhononApp {
             ActionId::ClearSelection => self.clear_selection(),
             ActionId::RotateClockwise => self.rotate_active(),
             ActionId::MirrorComponent => self.mirror_active(),
+            ActionId::SizeUpComponent => self.size_up_selected(),
+            ActionId::SizeDownComponent => self.size_down_selected(),
             ActionId::ToggleFloatingToolbar => {
                 self.show_floating_toolbar = !self.show_floating_toolbar;
                 self.floating_toolbar_state.is_visible = self.show_floating_toolbar;
@@ -3518,6 +3735,14 @@ impl PhononApp {
             ActionId::ClearWire => self.active_wire_start = None,
             ActionId::OpenCommandPalette => self.command_palette.open(),
             ActionId::OpenPreferences => self.preferences_dialog.is_open = true,
+            ActionId::Toggle3DCardView => {
+                if self.viewport_tabs.active_tab == crate::viewport_tabs::CentralViewportTab::PhysicalCard3D {
+                    self.viewport_tabs.set_active_tab(crate::viewport_tabs::CentralViewportTab::Schematic);
+                } else {
+                    self.viewport_tabs.set_active_tab(crate::viewport_tabs::CentralViewportTab::PhysicalCard3D);
+                    let _ = self.card_3d_viewport.run_synthesis(&self.components, &self.wires);
+                }
+            }
         }
     }
 
@@ -3632,6 +3857,24 @@ impl PhononApp {
         // Mirror: M
         if !ctrl && ctx.input(|i| i.key_pressed(Key::M)) {
             self.mirror_active();
+            return;
+        }
+
+        // Size Up Component: ]
+        if !ctrl && ctx.input(|i| i.key_pressed(Key::CloseBracket)) {
+            self.size_up_selected();
+            return;
+        }
+
+        // Size Down Component: [
+        if !ctrl && ctx.input(|i| i.key_pressed(Key::OpenBracket)) {
+            self.size_down_selected();
+            return;
+        }
+
+        // Toggle 3D Physical Card View: F3
+        if ctx.input(|i| i.key_pressed(Key::F3)) {
+            self.execute_action(ActionId::Toggle3DCardView);
             return;
         }
 
@@ -4548,6 +4791,8 @@ impl PhononApp {
         if let Some(cid) = self.selected_component_id {
             let mut do_rotate = false;
             let mut do_mirror = false;
+            let mut do_size_up = false;
+            let mut do_size_down = false;
             let mut do_delete = false;
             let mut record_cmd = None;
             let mut comp_name_for_telemetry = String::new();
@@ -4615,6 +4860,126 @@ impl PhononApp {
                         do_mirror = true;
                     }
                 });
+
+                let current_scale = comp.scale;
+                let can_down = comp.next_valid_scale_down(self.canvas.grid_size).is_some();
+                let can_up = comp.next_valid_scale_up(self.canvas.grid_size).is_some();
+                ui.horizontal(|ui| {
+                    ui.label("Size:");
+                    if ui.add_enabled(can_down, egui::Button::new(" - ")).clicked() {
+                        do_size_down = true;
+                    }
+                    ui.label(format!("{:.2}x", current_scale));
+                    if ui.add_enabled(can_up, egui::Button::new(" + ")).clicked() {
+                        do_size_up = true;
+                    }
+                    ui.label("([ / ])");
+                });
+
+                // Digital & Bus Architecture (Logic gates, Arithmetic blocks, Splitters/Mergers, Float ops)
+                let is_gate = matches!(
+                    comp.kind,
+                    ComponentKind::AndGate
+                        | ComponentKind::OrGate
+                        | ComponentKind::NandGate
+                        | ComponentKind::NorGate
+                        | ComponentKind::XorGate
+                        | ComponentKind::XnorGate
+                );
+                let is_arithmetic = matches!(
+                    comp.kind,
+                    ComponentKind::Adder
+                        | ComponentKind::Subtractor
+                        | ComponentKind::Multiplier
+                        | ComponentKind::Divider
+                        | ComponentKind::ArithmeticLogicUnit
+                        | ComponentKind::BitSplitter
+                        | ComponentKind::BitMerger
+                        | ComponentKind::BusTap
+                );
+                let is_float = matches!(
+                    comp.kind,
+                    ComponentKind::FloatAdder
+                        | ComponentKind::FloatSubtractor
+                        | ComponentKind::FloatMultiplier
+                        | ComponentKind::FloatDivider
+                        | ComponentKind::FloatComparator
+                );
+
+                if is_gate || is_arithmetic || is_float {
+                    ui.separator();
+                    ui.label(RichText::new("Digital & Bus Architecture").strong().color(Color32::from_rgb(147, 197, 253)));
+
+                    if is_gate {
+                        let mut n = comp.input_count();
+                        ui.horizontal(|ui| {
+                            ui.label("Input Count:");
+                            if ui.add(egui::Slider::new(&mut n, 2..=16).text("inputs")).changed() {
+                                comp.set_input_count(n);
+                            }
+                        });
+                    }
+
+                    if is_gate || is_arithmetic {
+                        let mut bw = comp.bit_width();
+                        ui.horizontal(|ui| {
+                            ui.label("Bit Width:");
+                            for &w in &[1, 2, 4, 8, 16, 32, 64] {
+                                if ui.selectable_label(bw == w, format!("{}", w)).clicked() {
+                                    bw = w;
+                                    comp.set_bit_width(bw);
+                                }
+                            }
+                        });
+
+                        let mut parts_str = comp.input_partitions();
+                        ui.horizontal(|ui| {
+                            ui.label("Partitions:");
+                            if ui.text_edit_singleline(&mut parts_str).changed() {
+                                comp.set_input_partitions(parts_str.clone());
+                            }
+                        });
+                        ui.horizontal(|ui| {
+                            ui.label("Presets:");
+                            if ui.button("Uniform").clicked() {
+                                let n = comp.input_count();
+                                let w = comp.bit_width();
+                                let part = (w / n as u32).max(1);
+                                let s = (0..n).map(|_| part.to_string()).collect::<Vec<_>>().join(",");
+                                comp.set_input_partitions(s);
+                            }
+                            if ui.button("Dual").clicked() {
+                                let w = comp.bit_width();
+                                let half = (w / 2).max(1);
+                                comp.set_input_partitions(format!("{},{}", half, half));
+                            }
+                            if ui.button("Single Bus").clicked() {
+                                let w = comp.bit_width();
+                                comp.set_input_partitions(format!("{}", w));
+                            }
+                        });
+                    }
+
+                    if is_float {
+                        let current_prec = comp.float_precision();
+                        ui.horizontal(|ui| {
+                            ui.label("Precision:");
+                            for &prec in &["FP8", "FP16", "FP32", "FP64", "FP128"] {
+                                if ui.selectable_label(current_prec == prec, prec).clicked() {
+                                    comp.set_float_precision(prec);
+                                    let bits = match prec {
+                                        "FP8" => 8,
+                                        "FP16" => 16,
+                                        "FP32" => 32,
+                                        "FP64" => 64,
+                                        _ => 128,
+                                    };
+                                    comp.set_bit_width(bits);
+                                }
+                            }
+                        });
+                    }
+                }
 
                 // 3. Label Position Controls (Presets to prevent collision with shapes)
                 ui.separator();
@@ -4690,11 +5055,18 @@ impl PhononApp {
             if do_mirror {
                 self.mirror_active();
             }
+            if do_size_up {
+                self.size_up_selected();
+            }
+            if do_size_down {
+                self.size_down_selected();
+            }
             if do_delete {
                 self.delete_selected();
             }
         } else if let Some(wid) = self.selected_wire_id {
             let mut do_delete_wire = false;
+            let mut new_bit_width = None;
             if let Some(wire) = self.wires.iter().find(|w| w.id == wid) {
                 ui.label(RichText::new(format!("Wire #{} Telemetry", wire.id)).strong());
                 ui.separator();
@@ -4710,6 +5082,30 @@ impl PhononApp {
                 let total_len: f32 = wire.segments.iter().map(|s| s.length()).sum();
                 ui.label(format!("Total Length: {:.1} px ({:.2} mm)", total_len, total_len * 0.254));
 
+                ui.separator();
+                ui.label(RichText::new("Bus Architecture").strong().color(Color32::from_rgb(147, 197, 253)));
+                let mut bw = wire.bit_width;
+                ui.horizontal(|ui| {
+                    ui.label("Bit Width:");
+                    for &w in &[1, 2, 4, 8, 16, 32, 64] {
+                        if ui.selectable_label(bw == w, format!("{}", w)).clicked() {
+                            bw = w;
+                        }
+                    }
+                });
+                if bw != wire.bit_width {
+                    new_bit_width = Some(bw);
+                }
+                if wire.is_bus() {
+                    ui.label(
+                        RichText::new(format!("Compressed Bus: /{} badge rendered", wire.bit_width))
+                            .color(Color32::from_rgb(147, 197, 253))
+                    );
+                } else {
+                    ui.label("Scalar Wire (1 bit)");
+                }
+                ui.separator();
+
                 if let Some(&v) = self.wire_voltages.get(&wire.id) {
                     ui.monospace(format!("DC Voltage: {}", crate::oscilloscope::format_voltage_si(v)));
                 }
@@ -4724,6 +5120,11 @@ impl PhononApp {
                 ui.add_space(6.0);
                 if ui.button("Delete Wire").clicked() {
                     do_delete_wire = true;
+                }
+            }
+            if let Some(bw) = new_bit_width {
+                if let Some(w_mut) = self.wires.iter_mut().find(|w| w.id == wid) {
+                    w_mut.bit_width = bw;
                 }
             }
             if do_delete_wire {
@@ -4959,9 +5360,27 @@ impl PhononApp {
                 self.render_inspector(ui);
             });
 
-        // 6. Center Canvas
+        // 6. Center Viewport (Generalized Tab System: Schematic Canvas vs 3D Physical Card)
         CentralPanel::default().show(ui, |ui| {
-            self.render_canvas(ui);
+            // Central Viewport Tab Bar
+            ui.horizontal(|ui| {
+                self.viewport_tabs.render_tab_bar(ui);
+            });
+            ui.add_space(2.0);
+            ui.separator();
+
+            match self.viewport_tabs.active_tab {
+                crate::viewport_tabs::CentralViewportTab::Schematic => {
+                    self.render_canvas(ui);
+                }
+                crate::viewport_tabs::CentralViewportTab::PhysicalCard3D => {
+                    self.card_3d_viewport.render(ui, &self.components, &self.wires);
+                }
+                crate::viewport_tabs::CentralViewportTab::BoardLayout2D => {
+                    self.card_3d_viewport.reset_camera_top();
+                    self.card_3d_viewport.render(ui, &self.components, &self.wires);
+                }
+            }
         });
 
         // 7. Optional SPICE Netlist Window
@@ -5317,6 +5736,33 @@ impl PhononApp {
 
         // 98. Interactive Topological Acoustic Superconducting Circuit QED Quantum Transducer & Multi-Qubit Crossbar Dialog
         self.circuit_qed_transducer_dialog.ui(ui.ctx());
+
+        // 99. Interactive Non-Hermitian Exceptional Surface Chiral Phonon Diode & Unidirectional Quantum Repeater Dialog
+        self.exceptional_surface_diode_dialog.ui(ui.ctx());
+
+        // 100. Interactive Topological Acoustic Boundary Soliton Logic Gate & Majority Voter Dialog
+        self.topological_soliton_dialog.ui(ui.ctx());
+
+        // 101. Interactive Quantum Metamaterial Fractional Chern & Parafermion Braiding Interconnect Dialog
+        self.fractional_chern_interconnect_dialog.ui(ui.ctx());
+
+        // 102. Interactive Topological Non-Hermitian Floquet Acoustic Chiral Lasing Metasurface & Vortex Waveguide Dialog
+        self.chiral_lasing_metasurface_dialog.ui(ui.ctx());
+
+        // 103. Interactive Topological Acoustic Synthetic Gauge Field & Non-Abelian Holonomic Quantum Gate Processor Dialog
+        self.synthetic_gauge_holonomy_dialog.ui(ui.ctx());
+
+        // 104. Interactive Chiral Phonon-Magnon Spin-Torque Acoustic Memory & Spintronic Crossbar Dialog
+        self.chiral_spintorque_memory_dialog.ui(ui.ctx());
+
+        // 105. Interactive Topological Acoustic Valley-Hall Quantum Router & Entanglement Concentrator Dialog
+        self.valley_quantum_router_dialog.ui(ui.ctx());
+
+        // 106. Interactive Fractional Parafermion Surface Code & Anyonic Braid Repeater Dialog
+        self.fractional_parafermion_dialog.ui(ui.ctx());
+
+        // 107. Interactive Topological Skin Microwave Amplifier & Axion Transducer Dialog
+        self.topological_skin_axion_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {

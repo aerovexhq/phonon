@@ -842,6 +842,157 @@ pub fn compile_schematic_with_labels(
                     comp.name, a, b, cin, sum, cout, comp.value_str
                 ));
             }
+            ComponentKind::Adder => {
+                let a = get_net(&comp.name, "A");
+                let b = get_net(&comp.name, "B");
+                let cin = get_net(&comp.name, "CIN");
+                let sum = get_net(&comp.name, "SUM");
+                let cout = get_net(&comp.name, "COUT");
+                graph.add_resistor(&format!("{}_RA", comp.name), &a, "0", 1e7).map_err(|e| e.to_string())?;
+                graph.add_resistor(&format!("{}_RB", comp.name), &b, "0", 1e7).map_err(|e| e.to_string())?;
+                graph.add_resistor(&format!("{}_RCIN", comp.name), &cin, "0", 1e7).map_err(|e| e.to_string())?;
+                graph.add_resistor(&format!("{}_RSUM", comp.name), &sum, "0", 100.0).map_err(|e| e.to_string())?;
+                graph.add_resistor(&format!("{}_RCOUT", comp.name), &cout, "0", 100.0).map_err(|e| e.to_string())?;
+                subckts.insert("ADDER".to_string());
+                spice_lines.push(format!("X{} {} {} {} {} {} {}", comp.name, a, b, cin, sum, cout, comp.value_str));
+            }
+            ComponentKind::Subtractor => {
+                let a = get_net(&comp.name, "A");
+                let b = get_net(&comp.name, "B");
+                let bin = get_net(&comp.name, "BIN");
+                let diff = get_net(&comp.name, "DIFF");
+                let bout = get_net(&comp.name, "BOUT");
+                graph.add_resistor(&format!("{}_RA", comp.name), &a, "0", 1e7).map_err(|e| e.to_string())?;
+                graph.add_resistor(&format!("{}_RB", comp.name), &b, "0", 1e7).map_err(|e| e.to_string())?;
+                graph.add_resistor(&format!("{}_RBIN", comp.name), &bin, "0", 1e7).map_err(|e| e.to_string())?;
+                graph.add_resistor(&format!("{}_RDIFF", comp.name), &diff, "0", 100.0).map_err(|e| e.to_string())?;
+                graph.add_resistor(&format!("{}_RBOUT", comp.name), &bout, "0", 100.0).map_err(|e| e.to_string())?;
+                subckts.insert("SUBTRACTOR".to_string());
+                spice_lines.push(format!("X{} {} {} {} {} {} {}", comp.name, a, b, bin, diff, bout, comp.value_str));
+            }
+            ComponentKind::Multiplier => {
+                let a = get_net(&comp.name, "A");
+                let b = get_net(&comp.name, "B");
+                let prod = get_net(&comp.name, "PROD");
+                graph.add_resistor(&format!("{}_RA", comp.name), &a, "0", 1e7).map_err(|e| e.to_string())?;
+                graph.add_resistor(&format!("{}_RB", comp.name), &b, "0", 1e7).map_err(|e| e.to_string())?;
+                graph.add_resistor(&format!("{}_RPROD", comp.name), &prod, "0", 100.0).map_err(|e| e.to_string())?;
+                subckts.insert("MULTIPLIER".to_string());
+                spice_lines.push(format!("X{} {} {} {} {}", comp.name, a, b, prod, comp.value_str));
+            }
+            ComponentKind::Divider => {
+                let num = get_net(&comp.name, "NUM");
+                let den = get_net(&comp.name, "DEN");
+                let quot = get_net(&comp.name, "QUOT");
+                let rem = get_net(&comp.name, "REM");
+                graph.add_resistor(&format!("{}_RNUM", comp.name), &num, "0", 1e7).map_err(|e| e.to_string())?;
+                graph.add_resistor(&format!("{}_RDEN", comp.name), &den, "0", 1e7).map_err(|e| e.to_string())?;
+                graph.add_resistor(&format!("{}_RQUOT", comp.name), &quot, "0", 100.0).map_err(|e| e.to_string())?;
+                graph.add_resistor(&format!("{}_RREM", comp.name), &rem, "0", 100.0).map_err(|e| e.to_string())?;
+                subckts.insert("DIVIDER".to_string());
+                spice_lines.push(format!("X{} {} {} {} {} {}", comp.name, num, den, quot, rem, comp.value_str));
+            }
+            ComponentKind::ArithmeticLogicUnit => {
+                let a = get_net(&comp.name, "A");
+                let b = get_net(&comp.name, "B");
+                let op = get_net(&comp.name, "OP");
+                let cin = get_net(&comp.name, "CIN");
+                let out = get_net(&comp.name, "OUT");
+                let flags = get_net(&comp.name, "FLAGS");
+                let cout = get_net(&comp.name, "COUT");
+                graph.add_resistor(&format!("{}_RA", comp.name), &a, "0", 1e7).map_err(|e| e.to_string())?;
+                graph.add_resistor(&format!("{}_RB", comp.name), &b, "0", 1e7).map_err(|e| e.to_string())?;
+                graph.add_resistor(&format!("{}_ROP", comp.name), &op, "0", 1e7).map_err(|e| e.to_string())?;
+                graph.add_resistor(&format!("{}_RCIN", comp.name), &cin, "0", 1e7).map_err(|e| e.to_string())?;
+                graph.add_resistor(&format!("{}_ROUT", comp.name), &out, "0", 100.0).map_err(|e| e.to_string())?;
+                graph.add_resistor(&format!("{}_RFLAGS", comp.name), &flags, "0", 100.0).map_err(|e| e.to_string())?;
+                graph.add_resistor(&format!("{}_RCOUT", comp.name), &cout, "0", 100.0).map_err(|e| e.to_string())?;
+                subckts.insert("ALU".to_string());
+                spice_lines.push(format!("X{} {} {} {} {} {} {} {} {}", comp.name, a, b, op, cin, out, flags, cout, comp.value_str));
+            }
+            ComponentKind::BitSplitter => {
+                let in_net = get_net(&comp.name, "IN");
+                let out0 = get_net(&comp.name, "OUT0");
+                let out1 = get_net(&comp.name, "OUT1");
+                graph.add_resistor(&format!("{}_RIN", comp.name), &in_net, "0", 1e7).map_err(|e| e.to_string())?;
+                graph.add_resistor(&format!("{}_ROUT0", comp.name), &out0, "0", 50.0).map_err(|e| e.to_string())?;
+                graph.add_resistor(&format!("{}_ROUT1", comp.name), &out1, "0", 50.0).map_err(|e| e.to_string())?;
+                subckts.insert("BIT_SPLITTER".to_string());
+                spice_lines.push(format!("X{} {} {} {} {}", comp.name, in_net, out0, out1, comp.value_str));
+            }
+            ComponentKind::BitMerger => {
+                let in0 = get_net(&comp.name, "IN0");
+                let in1 = get_net(&comp.name, "IN1");
+                let out = get_net(&comp.name, "OUT");
+                graph.add_resistor(&format!("{}_RIN0", comp.name), &in0, "0", 1e7).map_err(|e| e.to_string())?;
+                graph.add_resistor(&format!("{}_RIN1", comp.name), &in1, "0", 1e7).map_err(|e| e.to_string())?;
+                graph.add_resistor(&format!("{}_ROUT", comp.name), &out, "0", 50.0).map_err(|e| e.to_string())?;
+                subckts.insert("BIT_MERGER".to_string());
+                spice_lines.push(format!("X{} {} {} {} {}", comp.name, in0, in1, out, comp.value_str));
+            }
+            ComponentKind::BusTap => {
+                let in_net = get_net(&comp.name, "IN");
+                let thru = get_net(&comp.name, "THRU");
+                let tap = get_net(&comp.name, "TAP");
+                graph.add_resistor(&format!("{}_RTHRU", comp.name), &in_net, &thru, 0.01).map_err(|e| e.to_string())?;
+                graph.add_resistor(&format!("{}_RTAP", comp.name), &in_net, &tap, 0.01).map_err(|e| e.to_string())?;
+                subckts.insert("BUS_TAP".to_string());
+                spice_lines.push(format!("X{} {} {} {} {}", comp.name, in_net, thru, tap, comp.value_str));
+            }
+            ComponentKind::FloatAdder => {
+                let a = get_net(&comp.name, "A");
+                let b = get_net(&comp.name, "B");
+                let sum = get_net(&comp.name, "SUM");
+                graph.add_resistor(&format!("{}_RA", comp.name), &a, "0", 1e7).map_err(|e| e.to_string())?;
+                graph.add_resistor(&format!("{}_RB", comp.name), &b, "0", 1e7).map_err(|e| e.to_string())?;
+                graph.add_resistor(&format!("{}_RSUM", comp.name), &sum, "0", 50.0).map_err(|e| e.to_string())?;
+                subckts.insert("FLOAT_ADDER".to_string());
+                spice_lines.push(format!("X{} {} {} {} {}", comp.name, a, b, sum, comp.value_str));
+            }
+            ComponentKind::FloatSubtractor => {
+                let a = get_net(&comp.name, "A");
+                let b = get_net(&comp.name, "B");
+                let diff = get_net(&comp.name, "DIFF");
+                graph.add_resistor(&format!("{}_RA", comp.name), &a, "0", 1e7).map_err(|e| e.to_string())?;
+                graph.add_resistor(&format!("{}_RB", comp.name), &b, "0", 1e7).map_err(|e| e.to_string())?;
+                graph.add_resistor(&format!("{}_RDIFF", comp.name), &diff, "0", 50.0).map_err(|e| e.to_string())?;
+                subckts.insert("FLOAT_SUBTRACTOR".to_string());
+                spice_lines.push(format!("X{} {} {} {} {}", comp.name, a, b, diff, comp.value_str));
+            }
+            ComponentKind::FloatMultiplier => {
+                let a = get_net(&comp.name, "A");
+                let b = get_net(&comp.name, "B");
+                let prod = get_net(&comp.name, "PROD");
+                graph.add_resistor(&format!("{}_RA", comp.name), &a, "0", 1e7).map_err(|e| e.to_string())?;
+                graph.add_resistor(&format!("{}_RB", comp.name), &b, "0", 1e7).map_err(|e| e.to_string())?;
+                graph.add_resistor(&format!("{}_RPROD", comp.name), &prod, "0", 50.0).map_err(|e| e.to_string())?;
+                subckts.insert("FLOAT_MULTIPLIER".to_string());
+                spice_lines.push(format!("X{} {} {} {} {}", comp.name, a, b, prod, comp.value_str));
+            }
+            ComponentKind::FloatDivider => {
+                let num = get_net(&comp.name, "NUM");
+                let den = get_net(&comp.name, "DEN");
+                let quot = get_net(&comp.name, "QUOT");
+                graph.add_resistor(&format!("{}_RNUM", comp.name), &num, "0", 1e7).map_err(|e| e.to_string())?;
+                graph.add_resistor(&format!("{}_RDEN", comp.name), &den, "0", 1e7).map_err(|e| e.to_string())?;
+                graph.add_resistor(&format!("{}_RQUOT", comp.name), &quot, "0", 50.0).map_err(|e| e.to_string())?;
+                subckts.insert("FLOAT_DIVIDER".to_string());
+                spice_lines.push(format!("X{} {} {} {} {}", comp.name, num, den, quot, comp.value_str));
+            }
+            ComponentKind::FloatComparator => {
+                let a = get_net(&comp.name, "A");
+                let b = get_net(&comp.name, "B");
+                let gt = get_net(&comp.name, "GT");
+                let eq = get_net(&comp.name, "EQ");
+                let lt = get_net(&comp.name, "LT");
+                graph.add_resistor(&format!("{}_RA", comp.name), &a, "0", 1e7).map_err(|e| e.to_string())?;
+                graph.add_resistor(&format!("{}_RB", comp.name), &b, "0", 1e7).map_err(|e| e.to_string())?;
+                graph.add_resistor(&format!("{}_RGT", comp.name), &gt, "0", 50.0).map_err(|e| e.to_string())?;
+                graph.add_resistor(&format!("{}_REQ", comp.name), &eq, "0", 50.0).map_err(|e| e.to_string())?;
+                graph.add_resistor(&format!("{}_RLT", comp.name), &lt, "0", 50.0).map_err(|e| e.to_string())?;
+                subckts.insert("FLOAT_COMPARATOR".to_string());
+                spice_lines.push(format!("X{} {} {} {} {} {} {}", comp.name, a, b, gt, eq, lt, comp.value_str));
+            }
             ComponentKind::Mux4to1 => {
                 let d0 = get_net(&comp.name, "D0");
                 let d1 = get_net(&comp.name, "D1");

@@ -318,7 +318,14 @@ impl AerovexShmBackend {
             self.telemetry.step_count + 1
         };
         self.healthy = true;
-        self.last_tick_time = Some(Instant::now());
+        #[cfg(not(target_arch = "wasm32"))]
+        {
+            self.last_tick_time = Some(Instant::now());
+        }
+        #[cfg(target_arch = "wasm32")]
+        {
+            self.last_tick_time = None;
+        }
         Ok(())
     }
 }

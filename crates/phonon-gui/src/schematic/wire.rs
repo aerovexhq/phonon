@@ -124,6 +124,8 @@ pub struct SchematicWire {
     pub id: usize,
     pub segments: Vec<WireSegment>,
     pub net_name: Option<String>,
+    /// Number of bits carried by this wire (default 1). Values > 1 indicate a compressed bus.
+    pub bit_width: u32,
 }
 
 impl SchematicWire {
@@ -132,6 +134,7 @@ impl SchematicWire {
             id,
             segments,
             net_name: None,
+            bit_width: 1,
         }
     }
 
@@ -139,6 +142,22 @@ impl SchematicWire {
     pub fn with_net_name(mut self, net_name: impl Into<String>) -> Self {
         self.net_name = Some(net_name.into());
         self
+    }
+
+    /// Builder method configuring the bus bit width.
+    pub fn with_bit_width(mut self, width: u32) -> Self {
+        self.bit_width = width.max(1);
+        self
+    }
+
+    /// Returns the bit width of this wire (1 for single wire, >1 for compressed bus).
+    pub fn bit_width(&self) -> u32 {
+        self.bit_width
+    }
+
+    /// Returns true if this wire is a multi-bit compressed bus (bit_width > 1).
+    pub fn is_bus(&self) -> bool {
+        self.bit_width > 1
     }
 
     /// Returns the start point of the first wire segment, or (0, 0) if empty.
@@ -166,6 +185,7 @@ impl SchematicWire {
             id,
             segments,
             net_name: None,
+            bit_width: 1,
         }
     }
 
@@ -184,6 +204,7 @@ impl SchematicWire {
             id,
             segments,
             net_name: None,
+            bit_width: 1,
         }
     }
 
@@ -390,12 +411,51 @@ impl SchematicWire {
         } else {
             theme.wire_normal
         };
-        let stroke = Stroke::new(2.0 * canvas.zoom.clamp(0.8, 2.0), color);
+        let stroke_width = if self.bit_width > 1 {
+            (3.5 * canvas.zoom).clamp(2.5, 5.0)
+        } else {
+            2.0 * canvas.zoom.clamp(0.8, 2.0)
+        };
+        let stroke = Stroke::new(stroke_width, color);
 
         for seg in &self.segments {
             let s_screen = canvas.world_to_screen(seg.start);
             let e_screen = canvas.world_to_screen(seg.end);
             painter.line_segment([s_screen, e_screen], stroke);
+        }
+
+        // Draw Logisim-style bus slash & width badge "/N" at the midpoint of the longest segment
+        if self.bit_width > 1 && !self.segments.is_empty() {
+            if let Some(longest) = self
+                .segments
+                .iter()
+                .max_by(|a, b| a.length().partial_cmp(&b.length()).unwrap_or(std::cmp::Ordering::Equal))
+            {
+                if longest.length() > 10.0 {
+                    let mid_world = Pos2::new(
+                        (longest.start.x + longest.end.x) * 0.5,
+                        (longest.start.y + longest.end.y) * 0.5,
+                    );
+                    let mid_screen = canvas.world_to_screen(mid_world);
+                    let slash_vec = egui::Vec2::new(-4.0, -7.0) * canvas.zoom.clamp(0.8, 1.5);
+                    let p1 = mid_screen + slash_vec;
+                    let p2 = mid_screen - slash_vec;
+                    let slash_stroke = Stroke::new((2.0 * canvas.zoom).clamp(1.5, 3.0), color);
+                    painter.line_segment([p1, p2], slash_stroke);
+
+                    let label = format!("/{}", self.bit_width);
+                    let font_id = egui::FontId::monospace(10.0 * canvas.zoom.clamp(0.8, 1.4));
+                    let text_pos =
+                        mid_screen + egui::Vec2::new(5.0, -10.0) * canvas.zoom.clamp(0.8, 1.4);
+                    painter.text(
+                        text_pos,
+                        egui::Align2::LEFT_BOTTOM,
+                        label,
+                        font_id,
+                        color,
+                    );
+                }
+            }
         }
     }
 }
@@ -514,6 +574,7 @@ pub fn wire_from_points(id: usize, points: &[Pos2], net_name: Option<String>) ->
         id,
         segments,
         net_name,
+        bit_width: 1,
     }
 }
 

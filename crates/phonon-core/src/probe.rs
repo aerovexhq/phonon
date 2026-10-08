@@ -64,8 +64,16 @@ impl AerovexPresenceProbe {
     /// 3. Computes the heartbeat age from the header timestamp or file modification time.
     /// 4. Completes within sub-millisecond execution latency (< 1.0 ms, typically < 20 us).
     pub fn probe_path<P: AsRef<Path>>(path: P) -> ProbeStatus {
-        let start = Instant::now();
-        let path_ref = path.as_ref();
+        #[cfg(target_arch = "wasm32")]
+        {
+            let _ = path;
+            return ProbeStatus::NotRunning;
+        }
+
+        #[cfg(not(target_arch = "wasm32"))]
+        {
+            let start = Instant::now();
+            let path_ref = path.as_ref();
 
         // 1. Verify existence and read metadata
         let metadata = match std::fs::metadata(path_ref) {
@@ -154,6 +162,7 @@ impl AerovexPresenceProbe {
             version,
             latency_us,
             heartbeat_age_ms: age_ms,
+        }
         }
     }
 

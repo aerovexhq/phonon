@@ -2,6 +2,7 @@
 
 //! GUI widgets, visual status indicators, iconography, and custom window frames for Phonon Studio.
 
+pub mod card_3d_viewport;
 pub mod cluster_dashboard_dialog;
 pub mod dynamics_status;
 pub mod exceptional_point_dialog;
@@ -108,6 +109,15 @@ pub mod acoustic_snspd_dialog;
 pub mod floquet_cv_qkd_dialog;
 pub mod polaritonic_soliton_comb_dialog;
 pub mod circuit_qed_transducer_dialog;
+pub mod exceptional_surface_diode_dialog;
+pub mod topological_soliton_dialog;
+pub mod fractional_chern_interconnect_dialog;
+pub mod chiral_lasing_metasurface_dialog;
+pub mod synthetic_gauge_holonomy_dialog;
+pub mod chiral_spintorque_memory_dialog;
+pub mod valley_quantum_router_dialog;
+pub mod fractional_parafermion_dialog;
+pub mod topological_skin_axion_dialog;
 
 pub use pill_badge::{
     proportional_zoom_scale, render_dual_telemetry_pill, render_pill_badge, PillBadgeStyle,
@@ -120,6 +130,7 @@ pub use confirmation_modal::{
 pub use floating_toolbar::{FloatingToolbarAction, FloatingToolbarState, FloatingToolbarTheme};
 pub use preferences_dialog::{PreferencesDialog, PreferencesTab};
 pub use project_dialog::{ProjectDialog, ProjectDialogAction, ProjectDialogMode};
+pub use card_3d_viewport::{Camera3D, Card3dViewport};
 pub use chern_circulator_dialog::ChernCirculatorDialog;
 pub use cluster_dashboard_dialog::ClusterDashboardDialog;
 pub use dynamics_status::DynamicsStatusBadge;
@@ -277,3 +288,31 @@ pub use polaritonic_soliton_comb_dialog::{
 pub use circuit_qed_transducer_dialog::{
     CircuitQedTab, CircuitQedTransducerDialog,
 };
+pub use exceptional_surface_diode_dialog::{
+    ExceptionalSurfaceDiodeDialog, ExceptionalSurfaceDiodeTab,
+};
+pub use topological_soliton_dialog::{
+    TopologicalSolitonDialog, TopologicalSolitonTab,
+};
+pub use fractional_chern_interconnect_dialog::{
+    FractionalChernInterconnectDialog, FractionalChernTab,
+};
+pub use chiral_lasing_metasurface_dialog::{
+    ChiralLasingMetasurfaceDialog, ChiralLasingTab,
+};
+pub use synthetic_gauge_holonomy_dialog::{
+    SyntheticGaugeHolonomyDialog, SyntheticGaugeTab,
+};
+pub use chiral_spintorque_memory_dialog::{
+    ChiralSpinTorqueMemoryDialog, MemoryDialogTab,
+};
+pub use valley_quantum_router_dialog::{
+    ValleyQuantumRouterDialog, ValleyRouterTab,
+};
+pub use fractional_parafermion_dialog::{
+    FractionalParafermionDialog, ParafermionDialogTab,
+};
+pub use topological_skin_axion_dialog::{
+    SkinAxionDialogTab, TopologicalSkinAxionDialog,
+};
+

@@ -133,7 +133,7 @@ impl PolaritonicSolitonCombDialog {
 
     /// Re-evaluates all solver engines based on currently configured dialog parameters.
     pub fn recompute_all(&mut self) {
-        let start = std::time::Instant::now();
+        let start = crate::time_util::Instant::now();
 
         let kagome_params = KagomePolaritonParams {
             hopping_t_mhz: self.hopping_t_mhz,

@@ -365,6 +365,15 @@ pub mod acoustic_snspd;
 pub mod floquet_cv_qkd;
 pub mod polaritonic_soliton_comb;
 pub mod circuit_qed_transducer;
+pub mod exceptional_surface_diode;
+pub mod topological_soliton_logic;
+pub mod fractional_chern_interconnect;
+pub mod chiral_lasing_metasurface;
+pub mod synthetic_gauge_holonomy;
+pub mod chiral_spintorque_memory;
+pub mod valley_quantum_router;
+pub mod fractional_parafermion_surface;
+pub mod topological_skin_axion;
 
 pub use acoustic::{
     AcousticBenchmarkReport, AcousticBenchmarkRunner, AcousticLinkSimulator, AcousticRealismTier,
@@ -1473,3 +1482,88 @@ pub use circuit_qed_transducer::{
     MultiQubitCrossbarSolver, RabiOscillationPoint, RoutingMatrixElement,
     TransmonCircuitQedSolver, TransmonParams, TwoQubitGateDynamics,
 };
+
+pub use exceptional_surface_diode::{
+    ChiralDiodeMetrics, ChiralDiodeParams, ChiralDiodeSolver, DiodeSMatrixPoint,
+    ChiralExceptionalSurfaceMetrics, ChiralExceptionalSurfaceParams, ChiralExceptionalSurfacePoint,
+    ChiralExceptionalSurfaceSolver, ExceptionalSurfaceAuditReport, ExceptionalSurfaceDiodeProcessor,
+    FermiArcSegment, QuantumRepeaterMetrics, QuantumRepeaterParams, QuantumRepeaterSolver,
+    RepeaterTimePoint, WaveguideModeSpatialPoint,
+};
+
+pub use topological_soliton_logic::{
+    BoundarySolitonMetrics, BoundarySolitonParams, BoundarySolitonSolver, CollisionMetrics,
+    CollisionParams, CollisionTrajectoryPoint, CollisionalPhaseShiftSolver, GateWaveformPoint,
+    MajorityVoterMetrics, MajorityVoterParams, MajorityVoterSolver, SolitonGateMode,
+    SolitonSpatialPoint, TopologicalSolitonAuditReport, TopologicalSolitonProcessor,
+    TruthTableEntry,
+};
+
+pub use fractional_chern_interconnect::{
+    BraidTrajectoryPoint as ParafermionBraidTrajectoryPoint, BraidingInterconnectMetrics,
+    BraidingInterconnectParams, BraidingInterconnectSolver, DomainWallWavefunctionPoint,
+    EdgeDispersionPoint as FractionalChernEdgeDispersionPoint,
+    FractionalChernInterconnectAuditReport, FractionalChernInterconnectProcessor,
+    FractionalChernLatticeParams, FractionalChernLatticeSolver, FractionalChernMetrics,
+    LatticeSpatialPoint, ParafermionDomainWallMetrics, ParafermionDomainWallParams,
+    ParafermionDomainWallSolver, ParafermionZeroMode, QuditGateKind, ReadoutSpectrumPoint,
+};
+
+pub use chiral_lasing_metasurface::{
+    AcousticVortexMetrics, AcousticVortexParams, AcousticVortexWaveguideSolver,
+    ChiralLasingMetasurfaceAuditReport, ChiralLasingMetasurfaceProcessor, ComplexQuasiEnergyPoint,
+    FarFieldRadiationPoint, FloquetChiralLatticeMetrics, FloquetChiralLatticeParams,
+    FloquetChiralLatticeSolver, LasingSpectrumPoint, LasingTransientPoint, MetasurfaceSpatialNode,
+    ModeCompetitionMetrics, ModeCompetitionParams, ModeCompetitionRateSolver, VortexRadialPoint,
+};
+
+pub use synthetic_gauge_holonomy::{
+    ComplexMatrix2x2 as HolonomicMatrix2x2, DispersiveReadoutPoint, HofstadterSpectrumPoint,
+    ParameterLoopProfile, SyntheticEdgeDispersionPoint, SyntheticGaugeFieldSolver,
+    SyntheticGaugeHolonomyAuditReport, SyntheticGaugeMetrics, SyntheticGaugeParams,
+    SyntheticHolonomicGateKind, SyntheticHolonomicGateMetrics, SyntheticHolonomicGateParams,
+    SyntheticHolonomicGateProcessor, SyntheticHolonomyTrajectoryPoint,
+    TopologicalSyntheticGaugeProcessor, WilczekZeeMetrics, WilczekZeeParams, WilczekZeeSolver,
+};
+
+pub use chiral_spintorque_memory::{
+    AcousticSpinTorqueMetrics, AcousticSpinTorqueParams, AcousticSpinTorqueSolver,
+    ChiralSpinTorqueAuditReport, ChiralSpinTorqueMemoryProcessor, MagnetizationTrajectoryPoint,
+    MemoryCellState, PolaritonIsolationPoint, PolaritonWritingHeadMetrics,
+    PolaritonWritingHeadParams, PolaritonWritingHeadSolver, SpatialStrainProfilePoint,
+    SpintronicCrossbarMetrics, SpintronicCrossbarParams, SpintronicCrossbarSolver,
+    SquidReadoutTracePoint,
+};
+
+pub use valley_quantum_router::{
+    BellDensityMatrix, CavityReadoutSpectrumPoint, DistillationYieldPoint,
+    EntanglementConcentratorMetrics, EntanglementConcentratorParams,
+    EntanglementConcentratorSolver, RouterChannelTarget, RouterDynamicTracePoint,
+    RouterSpectralPoint, TopologicalValleyQuantumProcessor, ValleyHallLatticeMetrics,
+    ValleyHallLatticeParams, ValleyHallLatticeSolver, ValleyQuantumRouterMetrics,
+    ValleyQuantumRouterParams, ValleyQuantumRouterSolver, ValleyRouterAuditReport,
+    ValleyRouterDispersionPoint, ValleySpatialFieldPoint,
+};
+
+pub use fractional_parafermion_surface::{
+    DistillationRoundPoint, FractionalParafermionAuditReport,
+    FractionalParafermionBraidTrajectoryPoint, FractionalParafermionLatticeMetrics,
+    FractionalParafermionLatticeParams, FractionalParafermionLatticeSolver,
+    FractionalParafermionOrder, FractionalParafermionProcessor,
+    FractionalParafermionWavepacketPoint, ParafermionStabilizerKind,
+    QuditCavitySpectrumPoint, QuditDistillationMetrics, QuditDistillationParams,
+    QuditDistillationSolver, SurfaceCodeRepeaterMetrics, SurfaceCodeRepeaterParams,
+    SurfaceCodeRepeaterSolver, SurfaceLatticeNode, ThresholdScalingPoint,
+};
+
+pub use topological_skin_axion::{
+    AxionCouplingScanPoint, AxionPhononTransducerSolver, AxionResonancePoint,
+    AxionTransducerMetrics, AxionTransducerParams, CrossbarLinearityPoint,
+    CrossbarSParameterPoint, CryogenicCrossbarMetrics, CryogenicCrossbarParams,
+    CryogenicReadoutCrossbarSolver, GainBandwidthPoint, GbzPoint, SkinAmplifierMetrics,
+    SkinAmplifierParams, SkinAxionAuditReport, SkinMicrowaveAmplifierSolver,
+    SkinSpatialProfilePoint, TopologicalSkinAxionProcessor,
+};
+
+
+

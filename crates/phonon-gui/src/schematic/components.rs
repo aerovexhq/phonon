@@ -54,12 +54,25 @@ pub enum ComponentKind {
     // Digital & Arithmetic ICs (High-Level)
     HalfAdder,
     FullAdder,
+    Adder,
+    Subtractor,
+    Multiplier,
+    Divider,
+    ArithmeticLogicUnit,
+    BitSplitter,
+    BitMerger,
+    BusTap,
     Mux2to1,
     Mux4to1,
     Demux1to2,
     DFlipFlop,
     SrLatch,
     Counter4Bit,
+    FloatAdder,
+    FloatSubtractor,
+    FloatMultiplier,
+    FloatDivider,
+    FloatComparator,
 
     // Analog & Mixed-Signal ICs
     OpAmp,
@@ -127,12 +140,25 @@ impl ComponentKind {
             | Self::XnorGate => ComponentCategory::LogicGates,
             Self::HalfAdder
             | Self::FullAdder
+            | Self::Adder
+            | Self::Subtractor
+            | Self::Multiplier
+            | Self::Divider
+            | Self::ArithmeticLogicUnit
+            | Self::BitSplitter
+            | Self::BitMerger
+            | Self::BusTap
             | Self::Mux2to1
             | Self::Mux4to1
             | Self::Demux1to2
             | Self::DFlipFlop
             | Self::SrLatch
-            | Self::Counter4Bit => ComponentCategory::IntegratedCircuits,
+            | Self::Counter4Bit
+            | Self::FloatAdder
+            | Self::FloatSubtractor
+            | Self::FloatMultiplier
+            | Self::FloatDivider
+            | Self::FloatComparator => ComponentCategory::IntegratedCircuits,
             Self::OpAmp | Self::Comparator | Self::Timer555 | Self::VoltageRegulator => {
                 ComponentCategory::AnalogICs
             }
@@ -186,12 +212,25 @@ impl ComponentKind {
             Self::XnorGate => "XnorGate",
             Self::HalfAdder => "HalfAdder",
             Self::FullAdder => "FullAdder",
+            Self::Adder => "Adder",
+            Self::Subtractor => "Subtractor",
+            Self::Multiplier => "Multiplier",
+            Self::Divider => "Divider",
+            Self::ArithmeticLogicUnit => "ArithmeticLogicUnit",
+            Self::BitSplitter => "BitSplitter",
+            Self::BitMerger => "BitMerger",
+            Self::BusTap => "BusTap",
             Self::Mux2to1 => "Mux2to1",
             Self::Mux4to1 => "Mux4to1",
             Self::Demux1to2 => "Demux1to2",
             Self::DFlipFlop => "DFlipFlop",
             Self::SrLatch => "SrLatch",
             Self::Counter4Bit => "Counter4Bit",
+            Self::FloatAdder => "FloatAdder",
+            Self::FloatSubtractor => "FloatSubtractor",
+            Self::FloatMultiplier => "FloatMultiplier",
+            Self::FloatDivider => "FloatDivider",
+            Self::FloatComparator => "FloatComparator",
             Self::OpAmp => "OpAmp",
             Self::Comparator => "Comparator",
             Self::Timer555 => "Timer555",
@@ -213,7 +252,7 @@ impl ComponentKind {
         }
     }
 
-    /// All 58 categorized component kinds in static array.
+    /// All 71 categorized component kinds in static array.
     pub const ALL: &'static [Self] = &[
         Self::Resistor,
         Self::Potentiometer,
@@ -249,12 +288,25 @@ impl ComponentKind {
         Self::XnorGate,
         Self::HalfAdder,
         Self::FullAdder,
+        Self::Adder,
+        Self::Subtractor,
+        Self::Multiplier,
+        Self::Divider,
+        Self::ArithmeticLogicUnit,
+        Self::BitSplitter,
+        Self::BitMerger,
+        Self::BusTap,
         Self::Mux2to1,
         Self::Mux4to1,
         Self::Demux1to2,
         Self::DFlipFlop,
         Self::SrLatch,
         Self::Counter4Bit,
+        Self::FloatAdder,
+        Self::FloatSubtractor,
+        Self::FloatMultiplier,
+        Self::FloatDivider,
+        Self::FloatComparator,
         Self::OpAmp,
         Self::Comparator,
         Self::Timer555,
@@ -315,12 +367,25 @@ impl ComponentKind {
             Self::XnorGate => "xnor gate exclusive nor uxnor digital logic gate equivalence coincidence gate",
             Self::HalfAdder => "half adder uha arithmetic block 1-bit binary adder sum carry xor and ha",
             Self::FullAdder => "full adder ufa arithmetic block 1-bit binary adder carry-in sum carry-out fa",
+            Self::Adder => "adder digital adder n-bit binary adder sum carry arithmetic uadd",
+            Self::Subtractor => "subtractor digital subtractor n-bit binary subtractor diff borrow usub",
+            Self::Multiplier => "multiplier digital multiplier n-bit binary multiplier product umul",
+            Self::Divider => "divider digital divider n-bit binary divider quotient remainder udiv",
+            Self::ArithmeticLogicUnit => "alu arithmetic logic unit digital alu multi-function processor op ualu",
+            Self::BitSplitter => "bit splitter bus splitter expander unpacker wire split bus logisim usplit",
+            Self::BitMerger => "bit merger bus merger collapser combiner wire merge bus logisim umerge",
+            Self::BusTap => "bus tap bit tap sub-bus extractor wire tap utap",
             Self::Mux2to1 => "2:1 multiplexer mux2to1 integrated circuits & logic 2-to-1 binary data multiplexer xmux umux",
             Self::Mux4to1 => "4:1 multiplexer mux4to1 high-level digital 4-to-1 binary data selector umux4",
             Self::Demux1to2 => "1:2 demultiplexer demux1to2 data distributor 1-to-2 decoder udemux",
             Self::DFlipFlop => "d flip-flop dff sequential logic edge-triggered data register latch udff",
             Self::SrLatch => "sr latch set reset bistable multivibrator memory cell usrl",
             Self::Counter4Bit => "4-bit binary counter ripple counter digital divider ucnt",
+            Self::FloatAdder => "float adder floating point adder ieee 754 fp8 fp16 fp32 fp64 ufpadd",
+            Self::FloatSubtractor => "float subtractor floating point subtractor ieee 754 fp8 fp16 fp32 fp64 ufpsub",
+            Self::FloatMultiplier => "float multiplier floating point multiplier ieee 754 fp8 fp16 fp32 fp64 ufpmul",
+            Self::FloatDivider => "float divider floating point divider ieee 754 fp8 fp16 fp32 fp64 ufpdiv",
+            Self::FloatComparator => "float comparator floating point comparator ieee 754 fp8 fp16 fp32 fp64 ufcmp",
             Self::OpAmp => "operational amplifier opamp integrated circuits & logic high-gain differential voltage operational amplifier xop uop",
             Self::Comparator => "voltage comparator ucmp analog mixed-signal high-speed threshold detector",
             Self::Timer555 => "555 timer ne555 lm555 precision astable monostable timer oscillator u555",
@@ -379,12 +444,25 @@ impl ComponentKind {
             Self::XnorGate => "XNOR Gate",
             Self::HalfAdder => "Half Adder",
             Self::FullAdder => "Full Adder",
+            Self::Adder => "N-Bit Adder",
+            Self::Subtractor => "N-Bit Subtractor",
+            Self::Multiplier => "N-Bit Multiplier",
+            Self::Divider => "N-Bit Divider",
+            Self::ArithmeticLogicUnit => "Arithmetic Logic Unit (ALU)",
+            Self::BitSplitter => "Bit Splitter",
+            Self::BitMerger => "Bit Merger",
+            Self::BusTap => "Bus Tap",
             Self::Mux2to1 => "2:1 Multiplexer",
             Self::Mux4to1 => "4:1 Multiplexer",
             Self::Demux1to2 => "1:2 Demultiplexer",
             Self::DFlipFlop => "D Flip-Flop",
             Self::SrLatch => "SR Latch",
             Self::Counter4Bit => "4-Bit Counter",
+            Self::FloatAdder => "Floating-Point Adder",
+            Self::FloatSubtractor => "Floating-Point Subtractor",
+            Self::FloatMultiplier => "Floating-Point Multiplier",
+            Self::FloatDivider => "Floating-Point Divider",
+            Self::FloatComparator => "Floating-Point Comparator",
             Self::OpAmp => "Operational Amplifier",
             Self::Comparator => "Voltage Comparator",
             Self::Timer555 => "555 Timer",
@@ -443,12 +521,25 @@ impl ComponentKind {
             Self::XnorGate => "Dual-input digital CMOS exclusive-NOR (XNOR) logic gate",
             Self::HalfAdder => "1-bit combinational binary half adder (Sum = A ^ B, Carry = A & B)",
             Self::FullAdder => "1-bit combinational binary full adder with carry input (Sum, Carry Out)",
+            Self::Adder => "Configurable N-bit multi-operand digital binary addition block",
+            Self::Subtractor => "Configurable N-bit multi-operand digital binary subtraction block",
+            Self::Multiplier => "Configurable N-bit digital binary multiplication array block",
+            Self::Divider => "Configurable N-bit digital binary division and remainder block",
+            Self::ArithmeticLogicUnit => "Multi-operation digital arithmetic logic unit (ALU)",
+            Self::BitSplitter => "Splits multi-bit compressed bus wire into individual bits or sub-buses",
+            Self::BitMerger => "Merges multiple individual bits or sub-buses into a compressed bus wire",
+            Self::BusTap => "Extracts a bit range tap from a compressed multi-bit bus wire",
             Self::Mux2to1 => "2-to-1 binary data multiplexer",
             Self::Mux4to1 => "4-to-1 binary data multiplexer with dual select lines",
             Self::Demux1to2 => "1-to-2 binary data demultiplexer and line distributor",
             Self::DFlipFlop => "Positive-edge triggered D flip-flop with complementary outputs (Q, Q_bar)",
             Self::SrLatch => "Bistable set-reset (SR) flip-flop latch memory element",
             Self::Counter4Bit => "Synchronous 4-bit binary up-counter with reset",
+            Self::FloatAdder => "IEEE-754 / Posit floating-point adder (FP8, FP16, FP32, FP64, arbitrary)",
+            Self::FloatSubtractor => "IEEE-754 / Posit floating-point subtractor (FP8, FP16, FP32, FP64, arbitrary)",
+            Self::FloatMultiplier => "IEEE-754 / Posit floating-point multiplier (FP8, FP16, FP32, FP64, arbitrary)",
+            Self::FloatDivider => "IEEE-754 / Posit floating-point divider (FP8, FP16, FP32, FP64, arbitrary)",
+            Self::FloatComparator => "IEEE-754 / Posit floating-point comparator (FP8, FP16, FP32, FP64, arbitrary)",
             Self::OpAmp => "High-gain differential voltage operational amplifier",
             Self::Comparator => "High-speed precision analog voltage comparator",
             Self::Timer555 => "Industry-standard 555 precision monolithic timer and multivibrator",
@@ -507,12 +598,25 @@ impl ComponentKind {
             Self::XnorGate => "UXNOR",
             Self::HalfAdder => "UHA",
             Self::FullAdder => "UFA",
+            Self::Adder => "UADD",
+            Self::Subtractor => "USUB",
+            Self::Multiplier => "UMUL",
+            Self::Divider => "UDIV",
+            Self::ArithmeticLogicUnit => "UALU",
+            Self::BitSplitter => "USPLIT",
+            Self::BitMerger => "UMERG",
+            Self::BusTap => "UTAP",
             Self::Mux2to1 => "UMUX",
             Self::Mux4to1 => "UMUX",
             Self::Demux1to2 => "UDMX",
             Self::DFlipFlop => "UDFF",
             Self::SrLatch => "USRL",
             Self::Counter4Bit => "UCNT",
+            Self::FloatAdder => "UFADD",
+            Self::FloatSubtractor => "UFSUB",
+            Self::FloatMultiplier => "UFMUL",
+            Self::FloatDivider => "UFDIV",
+            Self::FloatComparator => "UFCMP",
             Self::OpAmp => "UOP",
             Self::Comparator => "UCMP",
             Self::Timer555 => "U555",
@@ -571,12 +675,25 @@ impl ComponentKind {
             Self::XnorGate => "XNOR2",
             Self::HalfAdder => "HALF_ADDER",
             Self::FullAdder => "FULL_ADDER",
+            Self::Adder => "8BIT",
+            Self::Subtractor => "8BIT",
+            Self::Multiplier => "8BIT",
+            Self::Divider => "8BIT",
+            Self::ArithmeticLogicUnit => "8BIT_ALU",
+            Self::BitSplitter => "8_TO_4x2",
+            Self::BitMerger => "4x2_TO_8",
+            Self::BusTap => "TAP_0_3",
             Self::Mux2to1 => "MUX21",
             Self::Mux4to1 => "MUX41",
             Self::Demux1to2 => "DEMUX12",
             Self::DFlipFlop => "DFF",
             Self::SrLatch => "SRLATCH",
             Self::Counter4Bit => "COUNTER4",
+            Self::FloatAdder => "FP32",
+            Self::FloatSubtractor => "FP32",
+            Self::FloatMultiplier => "FP32",
+            Self::FloatDivider => "FP32",
+            Self::FloatComparator => "FP32",
             Self::OpAmp => "OPAMP_IDEAL",
             Self::Comparator => "COMPARATOR",
             Self::Timer555 => "LM555",
@@ -611,14 +728,14 @@ impl ComponentKind {
             ],
             Self::Ground => vec![("GND", Vec2::new(0.0, -20.0))],
             Self::Transformer => vec![
-                ("P+", Vec2::new(-30.0, -30.0)),
-                ("P-", Vec2::new(-30.0, 30.0)),
-                ("S+", Vec2::new(30.0, -30.0)),
-                ("S-", Vec2::new(30.0, 30.0)),
+                ("P+", Vec2::new(-40.0, -20.0)),
+                ("P-", Vec2::new(-40.0, 20.0)),
+                ("S+", Vec2::new(40.0, -20.0)),
+                ("S-", Vec2::new(40.0, 20.0)),
             ],
             Self::SwitchSpst | Self::PushButton => vec![
-                ("1", Vec2::new(-30.0, 0.0)),
-                ("2", Vec2::new(30.0, 0.0)),
+                ("1", Vec2::new(-40.0, 0.0)),
+                ("2", Vec2::new(40.0, 0.0)),
             ],
             Self::VoltageSource
             | Self::AcVoltageSource
@@ -650,8 +767,8 @@ impl ComponentKind {
                 ("E", Vec2::new(20.0, 40.0)),
             ],
             Self::BufferGate | Self::Inverter => vec![
-                ("IN", Vec2::new(-30.0, 0.0)),
-                ("OUT", Vec2::new(30.0, 0.0)),
+                ("IN", Vec2::new(-40.0, 0.0)),
+                ("OUT", Vec2::new(40.0, 0.0)),
             ],
             Self::AndGate
             | Self::OrGate
@@ -659,159 +776,235 @@ impl ComponentKind {
             | Self::NorGate
             | Self::XorGate
             | Self::XnorGate => vec![
-                ("A", Vec2::new(-30.0, -15.0)),
-                ("B", Vec2::new(-30.0, 15.0)),
-                ("OUT", Vec2::new(30.0, 0.0)),
+                ("A", Vec2::new(-40.0, -20.0)),
+                ("B", Vec2::new(-40.0, 20.0)),
+                ("OUT", Vec2::new(40.0, 0.0)),
             ],
             Self::HalfAdder => vec![
-                ("A", Vec2::new(-40.0, -15.0)),
-                ("B", Vec2::new(-40.0, 15.0)),
-                ("SUM", Vec2::new(40.0, -15.0)),
-                ("COUT", Vec2::new(40.0, 15.0)),
+                ("A", Vec2::new(-40.0, -20.0)),
+                ("B", Vec2::new(-40.0, 20.0)),
+                ("SUM", Vec2::new(40.0, -20.0)),
+                ("COUT", Vec2::new(40.0, 20.0)),
             ],
             Self::FullAdder => vec![
                 ("A", Vec2::new(-40.0, -20.0)),
                 ("B", Vec2::new(-40.0, 0.0)),
                 ("CIN", Vec2::new(-40.0, 20.0)),
-                ("SUM", Vec2::new(40.0, -15.0)),
-                ("COUT", Vec2::new(40.0, 15.0)),
+                ("SUM", Vec2::new(40.0, -20.0)),
+                ("COUT", Vec2::new(40.0, 20.0)),
+            ],
+            Self::Adder => vec![
+                ("A", Vec2::new(-40.0, -20.0)),
+                ("B", Vec2::new(-40.0, 20.0)),
+                ("CIN", Vec2::new(0.0, -40.0)),
+                ("SUM", Vec2::new(40.0, 0.0)),
+                ("COUT", Vec2::new(0.0, 40.0)),
+            ],
+            Self::Subtractor => vec![
+                ("A", Vec2::new(-40.0, -20.0)),
+                ("B", Vec2::new(-40.0, 20.0)),
+                ("BIN", Vec2::new(0.0, -40.0)),
+                ("DIFF", Vec2::new(40.0, 0.0)),
+                ("BOUT", Vec2::new(0.0, 40.0)),
+            ],
+            Self::Multiplier => vec![
+                ("A", Vec2::new(-40.0, -20.0)),
+                ("B", Vec2::new(-40.0, 20.0)),
+                ("PROD", Vec2::new(40.0, 0.0)),
+            ],
+            Self::Divider => vec![
+                ("NUM", Vec2::new(-40.0, -20.0)),
+                ("DEN", Vec2::new(-40.0, 20.0)),
+                ("QUOT", Vec2::new(40.0, -20.0)),
+                ("REM", Vec2::new(40.0, 20.0)),
+            ],
+            Self::ArithmeticLogicUnit => vec![
+                ("A", Vec2::new(-40.0, -40.0)),
+                ("B", Vec2::new(-40.0, 0.0)),
+                ("OP", Vec2::new(0.0, -40.0)),
+                ("CIN", Vec2::new(-40.0, 40.0)),
+                ("OUT", Vec2::new(40.0, 0.0)),
+                ("FLAGS", Vec2::new(40.0, 40.0)),
+                ("COUT", Vec2::new(0.0, 40.0)),
+            ],
+            Self::BitSplitter => vec![
+                ("IN", Vec2::new(-40.0, 0.0)),
+                ("OUT0", Vec2::new(40.0, -20.0)),
+                ("OUT1", Vec2::new(40.0, 20.0)),
+            ],
+            Self::BitMerger => vec![
+                ("IN0", Vec2::new(-40.0, -20.0)),
+                ("IN1", Vec2::new(-40.0, 20.0)),
+                ("OUT", Vec2::new(40.0, 0.0)),
+            ],
+            Self::BusTap => vec![
+                ("IN", Vec2::new(-40.0, 0.0)),
+                ("THRU", Vec2::new(40.0, 0.0)),
+                ("TAP", Vec2::new(0.0, 40.0)),
+            ],
+            Self::FloatAdder => vec![
+                ("A", Vec2::new(-40.0, -20.0)),
+                ("B", Vec2::new(-40.0, 20.0)),
+                ("SUM", Vec2::new(40.0, 0.0)),
+            ],
+            Self::FloatSubtractor => vec![
+                ("A", Vec2::new(-40.0, -20.0)),
+                ("B", Vec2::new(-40.0, 20.0)),
+                ("DIFF", Vec2::new(40.0, 0.0)),
+            ],
+            Self::FloatMultiplier => vec![
+                ("A", Vec2::new(-40.0, -20.0)),
+                ("B", Vec2::new(-40.0, 20.0)),
+                ("PROD", Vec2::new(40.0, 0.0)),
+            ],
+            Self::FloatDivider => vec![
+                ("NUM", Vec2::new(-40.0, -20.0)),
+                ("DEN", Vec2::new(-40.0, 20.0)),
+                ("QUOT", Vec2::new(40.0, 0.0)),
+            ],
+            Self::FloatComparator => vec![
+                ("A", Vec2::new(-40.0, -20.0)),
+                ("B", Vec2::new(-40.0, 20.0)),
+                ("GT", Vec2::new(40.0, -40.0)),
+                ("EQ", Vec2::new(40.0, 0.0)),
+                ("LT", Vec2::new(40.0, 40.0)),
             ],
             Self::Mux2to1 => vec![
-                ("D0", Vec2::new(-30.0, -15.0)),
-                ("D1", Vec2::new(-30.0, 15.0)),
-                ("SEL", Vec2::new(0.0, 30.0)),
-                ("OUT", Vec2::new(30.0, 0.0)),
+                ("D0", Vec2::new(-40.0, -20.0)),
+                ("D1", Vec2::new(-40.0, 20.0)),
+                ("SEL", Vec2::new(0.0, 40.0)),
+                ("OUT", Vec2::new(40.0, 0.0)),
             ],
             Self::Mux4to1 => vec![
-                ("D0", Vec2::new(-30.0, -25.0)),
-                ("D1", Vec2::new(-30.0, -10.0)),
-                ("D2", Vec2::new(-30.0, 10.0)),
-                ("D3", Vec2::new(-30.0, 25.0)),
-                ("S0", Vec2::new(-10.0, 35.0)),
-                ("S1", Vec2::new(10.0, 35.0)),
-                ("OUT", Vec2::new(30.0, 0.0)),
+                ("D0", Vec2::new(-40.0, -60.0)),
+                ("D1", Vec2::new(-40.0, -20.0)),
+                ("D2", Vec2::new(-40.0, 20.0)),
+                ("D3", Vec2::new(-40.0, 60.0)),
+                ("S0", Vec2::new(-20.0, 60.0)),
+                ("S1", Vec2::new(20.0, 60.0)),
+                ("OUT", Vec2::new(40.0, 0.0)),
             ],
             Self::Demux1to2 => vec![
-                ("IN", Vec2::new(-30.0, 0.0)),
-                ("SEL", Vec2::new(0.0, 30.0)),
-                ("Y0", Vec2::new(30.0, -15.0)),
-                ("Y1", Vec2::new(30.0, 15.0)),
+                ("IN", Vec2::new(-40.0, 0.0)),
+                ("SEL", Vec2::new(0.0, 40.0)),
+                ("Y0", Vec2::new(40.0, -20.0)),
+                ("Y1", Vec2::new(40.0, 20.0)),
             ],
             Self::DFlipFlop => vec![
-                ("D", Vec2::new(-35.0, -15.0)),
-                ("CLK", Vec2::new(-35.0, 15.0)),
-                ("Q", Vec2::new(35.0, -15.0)),
-                ("QN", Vec2::new(35.0, 15.0)),
+                ("D", Vec2::new(-40.0, -20.0)),
+                ("CLK", Vec2::new(-40.0, 20.0)),
+                ("Q", Vec2::new(40.0, -20.0)),
+                ("QN", Vec2::new(40.0, 20.0)),
             ],
             Self::SrLatch => vec![
-                ("S", Vec2::new(-35.0, -15.0)),
-                ("R", Vec2::new(-35.0, 15.0)),
-                ("Q", Vec2::new(35.0, -15.0)),
-                ("QN", Vec2::new(35.0, 15.0)),
+                ("S", Vec2::new(-40.0, -20.0)),
+                ("R", Vec2::new(-40.0, 20.0)),
+                ("Q", Vec2::new(40.0, -20.0)),
+                ("QN", Vec2::new(40.0, 20.0)),
             ],
             Self::Counter4Bit => vec![
-                ("CLK", Vec2::new(-40.0, -15.0)),
-                ("RST", Vec2::new(-40.0, 15.0)),
-                ("Q0", Vec2::new(40.0, -30.0)),
-                ("Q1", Vec2::new(40.0, -10.0)),
-                ("Q2", Vec2::new(40.0, 10.0)),
-                ("Q3", Vec2::new(40.0, 30.0)),
+                ("CLK", Vec2::new(-40.0, -20.0)),
+                ("RST", Vec2::new(-40.0, 20.0)),
+                ("Q0", Vec2::new(40.0, -60.0)),
+                ("Q1", Vec2::new(40.0, -20.0)),
+                ("Q2", Vec2::new(40.0, 20.0)),
+                ("Q3", Vec2::new(40.0, 60.0)),
             ],
             Self::OpAmp => vec![
-                ("IN+", Vec2::new(-40.0, -15.0)),
-                ("IN-", Vec2::new(-40.0, 15.0)),
+                ("IN+", Vec2::new(-40.0, -20.0)),
+                ("IN-", Vec2::new(-40.0, 20.0)),
                 ("OUT", Vec2::new(40.0, 0.0)),
-                ("V+", Vec2::new(0.0, -30.0)),
-                ("V-", Vec2::new(0.0, 30.0)),
+                ("V+", Vec2::new(0.0, -40.0)),
+                ("V-", Vec2::new(0.0, 40.0)),
             ],
             Self::Comparator => vec![
-                ("IN+", Vec2::new(-40.0, -15.0)),
-                ("IN-", Vec2::new(-40.0, 15.0)),
+                ("IN+", Vec2::new(-40.0, -20.0)),
+                ("IN-", Vec2::new(-40.0, 20.0)),
                 ("OUT", Vec2::new(40.0, 0.0)),
             ],
             Self::Timer555 => vec![
-                ("GND", Vec2::new(-30.0, 30.0)),
-                ("TRIG", Vec2::new(-30.0, 10.0)),
-                ("OUT", Vec2::new(30.0, -10.0)),
-                ("RESET", Vec2::new(-30.0, -30.0)),
-                ("CTRL", Vec2::new(30.0, 30.0)),
-                ("THRES", Vec2::new(30.0, 10.0)),
-                ("DISCH", Vec2::new(30.0, -30.0)),
-                ("VCC", Vec2::new(-30.0, -10.0)),
+                ("GND", Vec2::new(-40.0, 60.0)),
+                ("TRIG", Vec2::new(-40.0, 20.0)),
+                ("OUT", Vec2::new(40.0, -20.0)),
+                ("RESET", Vec2::new(-40.0, -60.0)),
+                ("CTRL", Vec2::new(40.0, 60.0)),
+                ("THRES", Vec2::new(40.0, 20.0)),
+                ("DISCH", Vec2::new(40.0, -60.0)),
+                ("VCC", Vec2::new(-40.0, -20.0)),
             ],
             Self::VoltageRegulator => vec![
-                ("VIN", Vec2::new(-30.0, 0.0)),
-                ("GND", Vec2::new(0.0, 30.0)),
-                ("VOUT", Vec2::new(30.0, 0.0)),
+                ("VIN", Vec2::new(-40.0, 0.0)),
+                ("GND", Vec2::new(0.0, 40.0)),
+                ("VOUT", Vec2::new(40.0, 0.0)),
             ],
             Self::LogicProbe => vec![("IN", Vec2::new(-20.0, 0.0))],
             Self::SevenSegment => vec![
-                ("A", Vec2::new(-30.0, -30.0)),
-                ("B", Vec2::new(-30.0, -10.0)),
-                ("C", Vec2::new(-30.0, 10.0)),
-                ("D", Vec2::new(-30.0, 30.0)),
-                ("E", Vec2::new(30.0, -30.0)),
-                ("F", Vec2::new(30.0, -10.0)),
-                ("G", Vec2::new(30.0, 10.0)),
-                ("COM", Vec2::new(0.0, 35.0)),
+                ("A", Vec2::new(-40.0, -60.0)),
+                ("B", Vec2::new(-40.0, -20.0)),
+                ("C", Vec2::new(-40.0, 20.0)),
+                ("D", Vec2::new(-40.0, 60.0)),
+                ("E", Vec2::new(40.0, -60.0)),
+                ("F", Vec2::new(40.0, -20.0)),
+                ("G", Vec2::new(40.0, 20.0)),
+                ("COM", Vec2::new(0.0, 40.0)),
             ],
-            Self::Buzzer => vec![("+", Vec2::new(0.0, -30.0)), ("-", Vec2::new(0.0, 30.0))],
+            Self::Buzzer => vec![("+", Vec2::new(0.0, -40.0)), ("-", Vec2::new(0.0, 40.0))],
             Self::StrainGauge => vec![
-                ("P+", Vec2::new(0.0, -30.0)),
-                ("P-", Vec2::new(0.0, 30.0)),
+                ("P+", Vec2::new(0.0, -40.0)),
+                ("P-", Vec2::new(0.0, 40.0)),
             ],
             Self::TactileMatrix => vec![
-                ("R+", Vec2::new(-30.0, 0.0)),
-                ("R-", Vec2::new(30.0, 0.0)),
-                ("C+", Vec2::new(0.0, -30.0)),
-                ("C-", Vec2::new(0.0, 30.0)),
+                ("R+", Vec2::new(-40.0, 0.0)),
+                ("R-", Vec2::new(40.0, 0.0)),
+                ("C+", Vec2::new(0.0, -40.0)),
+                ("C-", Vec2::new(0.0, 40.0)),
             ],
             Self::Imu9Dof => vec![
-                ("VDD", Vec2::new(-30.0, -20.0)),
-                ("GND", Vec2::new(-30.0, 20.0)),
-                ("SCL", Vec2::new(30.0, -20.0)),
-                ("SDA", Vec2::new(30.0, 20.0)),
+                ("VDD", Vec2::new(-40.0, -20.0)),
+                ("GND", Vec2::new(-40.0, 20.0)),
+                ("SCL", Vec2::new(40.0, -20.0)),
+                ("SDA", Vec2::new(40.0, 20.0)),
             ],
             Self::SawIdt => vec![
-                ("IN+", Vec2::new(-30.0, -20.0)),
-                ("IN-", Vec2::new(-30.0, 20.0)),
-                ("OUT+", Vec2::new(30.0, -20.0)),
-                ("OUT-", Vec2::new(30.0, 20.0)),
+                ("IN+", Vec2::new(-40.0, -20.0)),
+                ("IN-", Vec2::new(-40.0, 20.0)),
+                ("OUT+", Vec2::new(40.0, -20.0)),
+                ("OUT-", Vec2::new(40.0, 20.0)),
             ],
             Self::MajoranaJunction => vec![
-                ("J1", Vec2::new(-30.0, -20.0)),
-                ("J2", Vec2::new(-30.0, 20.0)),
-                ("J3", Vec2::new(30.0, 0.0)),
+                ("J1", Vec2::new(-40.0, -20.0)),
+                ("J2", Vec2::new(-40.0, 20.0)),
+                ("J3", Vec2::new(40.0, 0.0)),
             ],
             Self::ParafermionicCavity => vec![
-                ("PORT1", Vec2::new(-30.0, 0.0)),
-                ("PORT2", Vec2::new(30.0, 0.0)),
+                ("PORT1", Vec2::new(-40.0, 0.0)),
+                ("PORT2", Vec2::new(40.0, 0.0)),
             ],
             Self::SkyrmionRouter => vec![
-                ("IN", Vec2::new(-30.0, 0.0)),
-                ("CH0", Vec2::new(30.0, -20.0)),
-                ("CH1", Vec2::new(30.0, 20.0)),
-                ("GATE", Vec2::new(0.0, -30.0)),
+                ("IN", Vec2::new(-40.0, 0.0)),
+                ("CH0", Vec2::new(40.0, -20.0)),
+                ("CH1", Vec2::new(40.0, 20.0)),
+                ("GATE", Vec2::new(0.0, -40.0)),
             ],
             Self::PhLungs => vec![
-                ("P_SUB", Vec2::new(0.0, -32.0)),
-                ("REF", Vec2::new(0.0, 32.0)),
+                ("P_SUB", Vec2::new(0.0, -40.0)),
+                ("REF", Vec2::new(0.0, 40.0)),
             ],
             Self::PhVocalFolds => vec![
-                ("SUB", Vec2::new(-32.0, 0.0)),
-                ("SUPRA", Vec2::new(32.0, 0.0)),
-                ("CTRL", Vec2::new(0.0, -32.0)),
-                ("REF", Vec2::new(0.0, 32.0)),
+                ("SUB", Vec2::new(-40.0, 0.0)),
+                ("SUPRA", Vec2::new(40.0, 0.0)),
+                ("CTRL", Vec2::new(0.0, -40.0)),
+                ("REF", Vec2::new(0.0, 40.0)),
             ],
             Self::PhVocalTract => vec![
                 ("IN", Vec2::new(-40.0, 0.0)),
                 ("OUT", Vec2::new(40.0, 0.0)),
-                ("WALL", Vec2::new(0.0, 32.0)),
-                ("CTRL", Vec2::new(0.0, -32.0)),
+                ("WALL", Vec2::new(0.0, 40.0)),
+                ("CTRL", Vec2::new(0.0, -40.0)),
             ],
             Self::PhLipRadiation => vec![
-                ("IN", Vec2::new(-30.0, 0.0)),
-                ("RAD", Vec2::new(30.0, 0.0)),
+                ("IN", Vec2::new(-40.0, 0.0)),
+                ("RAD", Vec2::new(40.0, 0.0)),
             ],
         }
     }
@@ -876,32 +1069,32 @@ impl ComponentKind {
             }
             Self::Transformer => {
                 // Primary coil (left)
-                painter.line_segment([to_screen(-30.0, -30.0), to_screen(-15.0, -20.0)], stroke);
+                painter.line_segment([to_screen(-40.0, -20.0), to_screen(-15.0, -20.0)], stroke);
                 painter.circle_stroke(to_screen(-15.0, -10.0), 8.0 * zoom, stroke);
                 painter.circle_stroke(to_screen(-15.0, 10.0), 8.0 * zoom, stroke);
-                painter.line_segment([to_screen(-15.0, 20.0), to_screen(-30.0, 30.0)], stroke);
+                painter.line_segment([to_screen(-15.0, 20.0), to_screen(-40.0, 20.0)], stroke);
                 // Magnetic core bars (middle)
                 painter.line_segment([to_screen(-3.0, -25.0), to_screen(-3.0, 25.0)], stroke);
                 painter.line_segment([to_screen(3.0, -25.0), to_screen(3.0, 25.0)], stroke);
                 // Secondary coil (right)
-                painter.line_segment([to_screen(30.0, -30.0), to_screen(15.0, -20.0)], stroke);
+                painter.line_segment([to_screen(40.0, -20.0), to_screen(15.0, -20.0)], stroke);
                 painter.circle_stroke(to_screen(15.0, -10.0), 8.0 * zoom, stroke);
                 painter.circle_stroke(to_screen(15.0, 10.0), 8.0 * zoom, stroke);
-                painter.line_segment([to_screen(15.0, 20.0), to_screen(30.0, 30.0)], stroke);
+                painter.line_segment([to_screen(15.0, 20.0), to_screen(40.0, 20.0)], stroke);
             }
             Self::SwitchSpst => {
-                painter.line_segment([to_screen(-30.0, 0.0), to_screen(-18.0, 0.0)], stroke);
+                painter.line_segment([to_screen(-40.0, 0.0), to_screen(-18.0, 0.0)], stroke);
                 painter.circle_stroke(to_screen(-15.0, 0.0), 3.0 * zoom, stroke);
                 painter.circle_stroke(to_screen(15.0, 0.0), 3.0 * zoom, stroke);
-                painter.line_segment([to_screen(18.0, 0.0), to_screen(30.0, 0.0)], stroke);
+                painter.line_segment([to_screen(18.0, 0.0), to_screen(40.0, 0.0)], stroke);
                 // Switch blade in open position
                 painter.line_segment([to_screen(-12.0, 0.0), to_screen(12.0, -14.0)], stroke);
             }
             Self::PushButton => {
-                painter.line_segment([to_screen(-30.0, 0.0), to_screen(-15.0, 0.0)], stroke);
+                painter.line_segment([to_screen(-40.0, 0.0), to_screen(-15.0, 0.0)], stroke);
                 painter.circle_stroke(to_screen(-12.0, 0.0), 3.0 * zoom, stroke);
                 painter.circle_stroke(to_screen(12.0, 0.0), 3.0 * zoom, stroke);
-                painter.line_segment([to_screen(15.0, 0.0), to_screen(30.0, 0.0)], stroke);
+                painter.line_segment([to_screen(15.0, 0.0), to_screen(40.0, 0.0)], stroke);
                 // Contact bar
                 painter.line_segment([to_screen(-16.0, -10.0), to_screen(16.0, -10.0)], stroke);
                 // Push stem
@@ -1097,14 +1290,14 @@ impl ComponentKind {
                 painter.line_segment([tri[0], tri[1]], stroke);
                 painter.line_segment([tri[1], tri[2]], stroke);
                 painter.line_segment([tri[2], tri[0]], stroke);
-                painter.line_segment([to_screen(-40.0, -15.0), to_screen(-25.0, -15.0)], stroke);
-                painter.line_segment([to_screen(-40.0, 15.0), to_screen(-25.0, 15.0)], stroke);
+                painter.line_segment([to_screen(-40.0, -20.0), to_screen(-25.0, -20.0)], stroke);
+                painter.line_segment([to_screen(-40.0, 20.0), to_screen(-25.0, 20.0)], stroke);
                 painter.line_segment([to_screen(25.0, 0.0), to_screen(40.0, 0.0)], stroke);
-                painter.line_segment([to_screen(0.0, -30.0), to_screen(0.0, -15.0)], stroke);
-                painter.line_segment([to_screen(0.0, 30.0), to_screen(0.0, 15.0)], stroke);
-                painter.line_segment([to_screen(-20.0, -15.0), to_screen(-14.0, -15.0)], stroke);
-                painter.line_segment([to_screen(-17.0, -18.0), to_screen(-17.0, -12.0)], stroke);
-                painter.line_segment([to_screen(-20.0, 15.0), to_screen(-14.0, 15.0)], stroke);
+                painter.line_segment([to_screen(0.0, -40.0), to_screen(0.0, -15.0)], stroke);
+                painter.line_segment([to_screen(0.0, 40.0), to_screen(0.0, 15.0)], stroke);
+                painter.line_segment([to_screen(-20.0, -20.0), to_screen(-14.0, -20.0)], stroke);
+                painter.line_segment([to_screen(-17.0, -23.0), to_screen(-17.0, -17.0)], stroke);
+                painter.line_segment([to_screen(-20.0, 20.0), to_screen(-14.0, 20.0)], stroke);
             }
             Self::Inverter => {
                 let tri = [
@@ -1115,13 +1308,13 @@ impl ComponentKind {
                 painter.line_segment([tri[0], tri[1]], stroke);
                 painter.line_segment([tri[1], tri[2]], stroke);
                 painter.line_segment([tri[2], tri[0]], stroke);
-                painter.line_segment([to_screen(-30.0, 0.0), to_screen(-18.0, 0.0)], stroke);
+                painter.line_segment([to_screen(-40.0, 0.0), to_screen(-18.0, 0.0)], stroke);
                 painter.circle_stroke(to_screen(17.0, 0.0), 5.0 * zoom, stroke);
-                painter.line_segment([to_screen(22.0, 0.0), to_screen(30.0, 0.0)], stroke);
+                painter.line_segment([to_screen(22.0, 0.0), to_screen(40.0, 0.0)], stroke);
             }
             Self::NandGate => {
-                painter.line_segment([to_screen(-30.0, -15.0), to_screen(-15.0, -15.0)], stroke);
-                painter.line_segment([to_screen(-30.0, 15.0), to_screen(-15.0, 15.0)], stroke);
+                painter.line_segment([to_screen(-40.0, -20.0), to_screen(-15.0, -20.0)], stroke);
+                painter.line_segment([to_screen(-40.0, 20.0), to_screen(-15.0, 20.0)], stroke);
                 painter.line_segment([to_screen(-15.0, -22.0), to_screen(-15.0, 22.0)], stroke);
                 painter.line_segment([to_screen(-15.0, -22.0), to_screen(0.0, -22.0)], stroke);
                 painter.line_segment([to_screen(-15.0, 22.0), to_screen(0.0, 22.0)], stroke);
@@ -1136,11 +1329,11 @@ impl ComponentKind {
                     painter.line_segment([arc_pts[i], arc_pts[i + 1]], stroke);
                 }
                 painter.circle_stroke(to_screen(18.0, 0.0), 4.0 * zoom, stroke);
-                painter.line_segment([to_screen(22.0, 0.0), to_screen(30.0, 0.0)], stroke);
+                painter.line_segment([to_screen(22.0, 0.0), to_screen(40.0, 0.0)], stroke);
             }
             Self::NorGate => {
-                painter.line_segment([to_screen(-30.0, -15.0), to_screen(-12.0, -15.0)], stroke);
-                painter.line_segment([to_screen(-30.0, 15.0), to_screen(-12.0, 15.0)], stroke);
+                painter.line_segment([to_screen(-40.0, -20.0), to_screen(-12.0, -20.0)], stroke);
+                painter.line_segment([to_screen(-40.0, 20.0), to_screen(-12.0, 20.0)], stroke);
                 let back_pts = [
                     to_screen(-18.0, -22.0),
                     to_screen(-12.0, 0.0),
@@ -1163,7 +1356,7 @@ impl ComponentKind {
                 painter.line_segment([front_bot[0], front_bot[1]], stroke);
                 painter.line_segment([front_bot[1], front_bot[2]], stroke);
                 painter.circle_stroke(to_screen(18.0, 0.0), 4.0 * zoom, stroke);
-                painter.line_segment([to_screen(22.0, 0.0), to_screen(30.0, 0.0)], stroke);
+                painter.line_segment([to_screen(22.0, 0.0), to_screen(40.0, 0.0)], stroke);
             }
             Self::BufferGate => {
                 let tri = [
@@ -1174,12 +1367,12 @@ impl ComponentKind {
                 painter.line_segment([tri[0], tri[1]], stroke);
                 painter.line_segment([tri[1], tri[2]], stroke);
                 painter.line_segment([tri[2], tri[0]], stroke);
-                painter.line_segment([to_screen(-30.0, 0.0), to_screen(-18.0, 0.0)], stroke);
-                painter.line_segment([to_screen(18.0, 0.0), to_screen(30.0, 0.0)], stroke);
+                painter.line_segment([to_screen(-40.0, 0.0), to_screen(-18.0, 0.0)], stroke);
+                painter.line_segment([to_screen(18.0, 0.0), to_screen(40.0, 0.0)], stroke);
             }
             Self::AndGate => {
-                painter.line_segment([to_screen(-30.0, -15.0), to_screen(-15.0, -15.0)], stroke);
-                painter.line_segment([to_screen(-30.0, 15.0), to_screen(-15.0, 15.0)], stroke);
+                painter.line_segment([to_screen(-40.0, -20.0), to_screen(-15.0, -20.0)], stroke);
+                painter.line_segment([to_screen(-40.0, 20.0), to_screen(-15.0, 20.0)], stroke);
                 painter.line_segment([to_screen(-15.0, -22.0), to_screen(-15.0, 22.0)], stroke);
                 painter.line_segment([to_screen(-15.0, -22.0), to_screen(0.0, -22.0)], stroke);
                 painter.line_segment([to_screen(-15.0, 22.0), to_screen(0.0, 22.0)], stroke);
@@ -1193,11 +1386,11 @@ impl ComponentKind {
                 for i in 0..arc_pts.len() - 1 {
                     painter.line_segment([arc_pts[i], arc_pts[i + 1]], stroke);
                 }
-                painter.line_segment([to_screen(18.0, 0.0), to_screen(30.0, 0.0)], stroke);
+                painter.line_segment([to_screen(18.0, 0.0), to_screen(40.0, 0.0)], stroke);
             }
             Self::OrGate => {
-                painter.line_segment([to_screen(-30.0, -15.0), to_screen(-12.0, -15.0)], stroke);
-                painter.line_segment([to_screen(-30.0, 15.0), to_screen(-12.0, 15.0)], stroke);
+                painter.line_segment([to_screen(-40.0, -20.0), to_screen(-12.0, -20.0)], stroke);
+                painter.line_segment([to_screen(-40.0, 20.0), to_screen(-12.0, 20.0)], stroke);
                 let back_pts = [
                     to_screen(-18.0, -22.0),
                     to_screen(-12.0, 0.0),
@@ -1219,11 +1412,11 @@ impl ComponentKind {
                 painter.line_segment([front_top[1], front_top[2]], stroke);
                 painter.line_segment([front_bot[0], front_bot[1]], stroke);
                 painter.line_segment([front_bot[1], front_bot[2]], stroke);
-                painter.line_segment([to_screen(18.0, 0.0), to_screen(30.0, 0.0)], stroke);
+                painter.line_segment([to_screen(18.0, 0.0), to_screen(40.0, 0.0)], stroke);
             }
             Self::XorGate => {
-                painter.line_segment([to_screen(-30.0, -15.0), to_screen(-20.0, -15.0)], stroke);
-                painter.line_segment([to_screen(-30.0, 15.0), to_screen(-20.0, 15.0)], stroke);
+                painter.line_segment([to_screen(-40.0, -20.0), to_screen(-20.0, -20.0)], stroke);
+                painter.line_segment([to_screen(-40.0, 20.0), to_screen(-20.0, 20.0)], stroke);
                 let outer_back = [
                     to_screen(-24.0, -22.0),
                     to_screen(-18.0, 0.0),
@@ -1252,11 +1445,11 @@ impl ComponentKind {
                 painter.line_segment([front_top[1], front_top[2]], stroke);
                 painter.line_segment([front_bot[0], front_bot[1]], stroke);
                 painter.line_segment([front_bot[1], front_bot[2]], stroke);
-                painter.line_segment([to_screen(18.0, 0.0), to_screen(30.0, 0.0)], stroke);
+                painter.line_segment([to_screen(18.0, 0.0), to_screen(40.0, 0.0)], stroke);
             }
             Self::XnorGate => {
-                painter.line_segment([to_screen(-30.0, -15.0), to_screen(-20.0, -15.0)], stroke);
-                painter.line_segment([to_screen(-30.0, 15.0), to_screen(-20.0, 15.0)], stroke);
+                painter.line_segment([to_screen(-40.0, -20.0), to_screen(-20.0, -20.0)], stroke);
+                painter.line_segment([to_screen(-40.0, 20.0), to_screen(-20.0, 20.0)], stroke);
                 let outer_back = [
                     to_screen(-24.0, -22.0),
                     to_screen(-18.0, 0.0),
@@ -1286,7 +1479,7 @@ impl ComponentKind {
                 painter.line_segment([front_bot[0], front_bot[1]], stroke);
                 painter.line_segment([front_bot[1], front_bot[2]], stroke);
                 painter.circle_stroke(to_screen(18.0, 0.0), 4.0 * zoom, stroke);
-                painter.line_segment([to_screen(22.0, 0.0), to_screen(30.0, 0.0)], stroke);
+                painter.line_segment([to_screen(22.0, 0.0), to_screen(40.0, 0.0)], stroke);
             }
             Self::Mux2to1 => {
                 let trap = [
@@ -1298,10 +1491,10 @@ impl ComponentKind {
                 for i in 0..4 {
                     painter.line_segment([trap[i], trap[(i + 1) % 4]], stroke);
                 }
-                painter.line_segment([to_screen(-30.0, -15.0), to_screen(-15.0, -15.0)], stroke);
-                painter.line_segment([to_screen(-30.0, 15.0), to_screen(-15.0, 15.0)], stroke);
-                painter.line_segment([to_screen(0.0, 30.0), to_screen(0.0, 20.0)], stroke);
-                painter.line_segment([to_screen(15.0, 0.0), to_screen(30.0, 0.0)], stroke);
+                painter.line_segment([to_screen(-40.0, -20.0), to_screen(-15.0, -20.0)], stroke);
+                painter.line_segment([to_screen(-40.0, 20.0), to_screen(-15.0, 20.0)], stroke);
+                painter.line_segment([to_screen(0.0, 40.0), to_screen(0.0, 20.0)], stroke);
+                painter.line_segment([to_screen(15.0, 0.0), to_screen(40.0, 0.0)], stroke);
             }
             Self::HalfAdder => {
                 painter.rect_stroke(
@@ -1310,10 +1503,10 @@ impl ComponentKind {
                     stroke,
                     StrokeKind::Middle,
                 );
-                painter.line_segment([to_screen(-40.0, -15.0), to_screen(-24.0, -15.0)], stroke);
-                painter.line_segment([to_screen(-40.0, 15.0), to_screen(-24.0, 15.0)], stroke);
-                painter.line_segment([to_screen(24.0, -15.0), to_screen(40.0, -15.0)], stroke);
-                painter.line_segment([to_screen(24.0, 15.0), to_screen(40.0, 15.0)], stroke);
+                painter.line_segment([to_screen(-40.0, -20.0), to_screen(-24.0, -20.0)], stroke);
+                painter.line_segment([to_screen(-40.0, 20.0), to_screen(-24.0, 20.0)], stroke);
+                painter.line_segment([to_screen(24.0, -20.0), to_screen(40.0, -20.0)], stroke);
+                painter.line_segment([to_screen(24.0, 20.0), to_screen(40.0, 20.0)], stroke);
                 // "HA" symbol inside
                 painter.line_segment([to_screen(-10.0, -8.0), to_screen(-10.0, 8.0)], stroke);
                 painter.line_segment([to_screen(-10.0, 0.0), to_screen(-2.0, 0.0)], stroke);
@@ -1332,8 +1525,8 @@ impl ComponentKind {
                 painter.line_segment([to_screen(-40.0, -20.0), to_screen(-24.0, -20.0)], stroke);
                 painter.line_segment([to_screen(-40.0, 0.0), to_screen(-24.0, 0.0)], stroke);
                 painter.line_segment([to_screen(-40.0, 20.0), to_screen(-24.0, 20.0)], stroke);
-                painter.line_segment([to_screen(24.0, -15.0), to_screen(40.0, -15.0)], stroke);
-                painter.line_segment([to_screen(24.0, 15.0), to_screen(40.0, 15.0)], stroke);
+                painter.line_segment([to_screen(24.0, -20.0), to_screen(40.0, -20.0)], stroke);
+                painter.line_segment([to_screen(24.0, 20.0), to_screen(40.0, 20.0)], stroke);
                 // "FA" glyph
                 painter.line_segment([to_screen(-10.0, -8.0), to_screen(-10.0, 8.0)], stroke);
                 painter.line_segment([to_screen(-10.0, -8.0), to_screen(-3.0, -8.0)], stroke);
@@ -1351,12 +1544,12 @@ impl ComponentKind {
                 for i in 0..4 {
                     painter.line_segment([trap[i], trap[(i + 1) % 4]], stroke);
                 }
-                for y in [-25.0, -10.0, 10.0, 25.0] {
-                    painter.line_segment([to_screen(-30.0, y), to_screen(-15.0, y)], stroke);
+                for y in [-60.0, -20.0, 20.0, 60.0] {
+                    painter.line_segment([to_screen(-40.0, y), to_screen(-15.0, y * 0.4)], stroke);
                 }
-                painter.line_segment([to_screen(-10.0, 35.0), to_screen(-10.0, 26.0)], stroke);
-                painter.line_segment([to_screen(10.0, 35.0), to_screen(10.0, 22.0)], stroke);
-                painter.line_segment([to_screen(15.0, 0.0), to_screen(30.0, 0.0)], stroke);
+                painter.line_segment([to_screen(-20.0, 60.0), to_screen(-20.0, 28.0)], stroke);
+                painter.line_segment([to_screen(20.0, 60.0), to_screen(20.0, 20.0)], stroke);
+                painter.line_segment([to_screen(15.0, 0.0), to_screen(40.0, 0.0)], stroke);
             }
             Self::Demux1to2 => {
                 let trap = [
@@ -1368,10 +1561,10 @@ impl ComponentKind {
                 for i in 0..4 {
                     painter.line_segment([trap[i], trap[(i + 1) % 4]], stroke);
                 }
-                painter.line_segment([to_screen(-30.0, 0.0), to_screen(-15.0, 0.0)], stroke);
-                painter.line_segment([to_screen(0.0, 30.0), to_screen(0.0, 20.0)], stroke);
-                painter.line_segment([to_screen(15.0, -15.0), to_screen(30.0, -15.0)], stroke);
-                painter.line_segment([to_screen(15.0, 15.0), to_screen(30.0, 15.0)], stroke);
+                painter.line_segment([to_screen(-40.0, 0.0), to_screen(-15.0, 0.0)], stroke);
+                painter.line_segment([to_screen(0.0, 40.0), to_screen(0.0, 20.0)], stroke);
+                painter.line_segment([to_screen(15.0, -20.0), to_screen(40.0, -20.0)], stroke);
+                painter.line_segment([to_screen(15.0, 20.0), to_screen(40.0, 20.0)], stroke);
             }
             Self::DFlipFlop => {
                 painter.rect_stroke(
@@ -1380,14 +1573,14 @@ impl ComponentKind {
                     stroke,
                     StrokeKind::Middle,
                 );
-                painter.line_segment([to_screen(-35.0, -15.0), to_screen(-22.0, -15.0)], stroke);
-                painter.line_segment([to_screen(-35.0, 15.0), to_screen(-22.0, 15.0)], stroke);
-                painter.line_segment([to_screen(22.0, -15.0), to_screen(35.0, -15.0)], stroke);
-                painter.circle_stroke(to_screen(25.0, 15.0), 3.0 * zoom, stroke);
-                painter.line_segment([to_screen(28.0, 15.0), to_screen(35.0, 15.0)], stroke);
+                painter.line_segment([to_screen(-40.0, -20.0), to_screen(-22.0, -20.0)], stroke);
+                painter.line_segment([to_screen(-40.0, 20.0), to_screen(-22.0, 20.0)], stroke);
+                painter.line_segment([to_screen(22.0, -20.0), to_screen(40.0, -20.0)], stroke);
+                painter.circle_stroke(to_screen(25.0, 20.0), 3.0 * zoom, stroke);
+                painter.line_segment([to_screen(28.0, 20.0), to_screen(40.0, 20.0)], stroke);
                 // Clock triangle marker
-                painter.line_segment([to_screen(-22.0, 10.0), to_screen(-14.0, 15.0)], stroke);
-                painter.line_segment([to_screen(-14.0, 15.0), to_screen(-22.0, 20.0)], stroke);
+                painter.line_segment([to_screen(-22.0, 15.0), to_screen(-14.0, 20.0)], stroke);
+                painter.line_segment([to_screen(-14.0, 20.0), to_screen(-22.0, 25.0)], stroke);
             }
             Self::SrLatch => {
                 painter.rect_stroke(
@@ -1396,11 +1589,11 @@ impl ComponentKind {
                     stroke,
                     StrokeKind::Middle,
                 );
-                painter.line_segment([to_screen(-35.0, -15.0), to_screen(-22.0, -15.0)], stroke);
-                painter.line_segment([to_screen(-35.0, 15.0), to_screen(-22.0, 15.0)], stroke);
-                painter.line_segment([to_screen(22.0, -15.0), to_screen(35.0, -15.0)], stroke);
-                painter.circle_stroke(to_screen(25.0, 15.0), 3.0 * zoom, stroke);
-                painter.line_segment([to_screen(28.0, 15.0), to_screen(35.0, 15.0)], stroke);
+                painter.line_segment([to_screen(-40.0, -20.0), to_screen(-22.0, -20.0)], stroke);
+                painter.line_segment([to_screen(-40.0, 20.0), to_screen(-22.0, 20.0)], stroke);
+                painter.line_segment([to_screen(22.0, -20.0), to_screen(40.0, -20.0)], stroke);
+                painter.circle_stroke(to_screen(25.0, 20.0), 3.0 * zoom, stroke);
+                painter.line_segment([to_screen(28.0, 20.0), to_screen(40.0, 20.0)], stroke);
             }
             Self::Counter4Bit => {
                 painter.rect_stroke(
@@ -1409,14 +1602,14 @@ impl ComponentKind {
                     stroke,
                     StrokeKind::Middle,
                 );
-                painter.line_segment([to_screen(-40.0, -15.0), to_screen(-24.0, -15.0)], stroke);
-                painter.line_segment([to_screen(-40.0, 15.0), to_screen(-24.0, 15.0)], stroke);
-                for y in [-30.0, -10.0, 10.0, 30.0] {
-                    painter.line_segment([to_screen(24.0, y), to_screen(40.0, y)], stroke);
+                painter.line_segment([to_screen(-40.0, -20.0), to_screen(-24.0, -20.0)], stroke);
+                painter.line_segment([to_screen(-40.0, 20.0), to_screen(-24.0, 20.0)], stroke);
+                for y in [-60.0, -20.0, 20.0, 60.0] {
+                    painter.line_segment([to_screen(24.0, y * 0.4), to_screen(40.0, y)], stroke);
                 }
                 // Clock marker
-                painter.line_segment([to_screen(-24.0, -20.0), to_screen(-16.0, -15.0)], stroke);
-                painter.line_segment([to_screen(-16.0, -15.0), to_screen(-24.0, -10.0)], stroke);
+                painter.line_segment([to_screen(-24.0, -25.0), to_screen(-16.0, -20.0)], stroke);
+                painter.line_segment([to_screen(-16.0, -20.0), to_screen(-24.0, -15.0)], stroke);
             }
             Self::Comparator => {
                 let tri = [
@@ -1427,13 +1620,13 @@ impl ComponentKind {
                 painter.line_segment([tri[0], tri[1]], stroke);
                 painter.line_segment([tri[1], tri[2]], stroke);
                 painter.line_segment([tri[2], tri[0]], stroke);
-                painter.line_segment([to_screen(-40.0, -15.0), to_screen(-25.0, -15.0)], stroke);
-                painter.line_segment([to_screen(-40.0, 15.0), to_screen(-25.0, 15.0)], stroke);
+                painter.line_segment([to_screen(-40.0, -20.0), to_screen(-25.0, -20.0)], stroke);
+                painter.line_segment([to_screen(-40.0, 20.0), to_screen(-25.0, 20.0)], stroke);
                 painter.line_segment([to_screen(25.0, 0.0), to_screen(40.0, 0.0)], stroke);
                 // Plus & minus markers
-                painter.line_segment([to_screen(-20.0, -15.0), to_screen(-14.0, -15.0)], stroke);
-                painter.line_segment([to_screen(-17.0, -18.0), to_screen(-17.0, -12.0)], stroke);
-                painter.line_segment([to_screen(-20.0, 15.0), to_screen(-14.0, 15.0)], stroke);
+                painter.line_segment([to_screen(-20.0, -20.0), to_screen(-14.0, -20.0)], stroke);
+                painter.line_segment([to_screen(-17.0, -23.0), to_screen(-17.0, -17.0)], stroke);
+                painter.line_segment([to_screen(-20.0, 20.0), to_screen(-14.0, 20.0)], stroke);
             }
             Self::Timer555 => {
                 painter.rect_stroke(
@@ -1442,13 +1635,13 @@ impl ComponentKind {
                     stroke,
                     StrokeKind::Middle,
                 );
-                // Left 4 pins
-                for y in [-30.0, -10.0, 10.0, 30.0] {
-                    painter.line_segment([to_screen(-30.0, y), to_screen(-20.0, y)], stroke);
+                // Left 4 pins: RESET (-60), VCC (-20), TRIG (20), GND (60)
+                for y in [-60.0, -20.0, 20.0, 60.0] {
+                    painter.line_segment([to_screen(-40.0, y), to_screen(-20.0, y * 0.4)], stroke);
                 }
-                // Right 4 pins
-                for y in [-30.0, -10.0, 10.0, 30.0] {
-                    painter.line_segment([to_screen(20.0, y), to_screen(30.0, y)], stroke);
+                // Right 4 pins: DISCH (-60), OUT (-20), THRES (20), CTRL (60)
+                for y in [-60.0, -20.0, 20.0, 60.0] {
+                    painter.line_segment([to_screen(20.0, y * 0.4), to_screen(40.0, y)], stroke);
                 }
                 // Notch at top
                 painter.line_segment([to_screen(-6.0, -35.0), to_screen(6.0, -35.0)], stroke);
@@ -1460,9 +1653,9 @@ impl ComponentKind {
                     stroke,
                     StrokeKind::Middle,
                 );
-                painter.line_segment([to_screen(-30.0, 0.0), to_screen(-20.0, 0.0)], stroke);
-                painter.line_segment([to_screen(0.0, 17.0), to_screen(0.0, 30.0)], stroke);
-                painter.line_segment([to_screen(20.0, 0.0), to_screen(30.0, 0.0)], stroke);
+                painter.line_segment([to_screen(-40.0, 0.0), to_screen(-20.0, 0.0)], stroke);
+                painter.line_segment([to_screen(0.0, 17.0), to_screen(0.0, 40.0)], stroke);
+                painter.line_segment([to_screen(20.0, 0.0), to_screen(40.0, 0.0)], stroke);
                 // Center line
                 painter.line_segment([to_screen(-10.0, -8.0), to_screen(10.0, -8.0)], stroke);
             }
@@ -1491,20 +1684,20 @@ impl ComponentKind {
                 painter.line_segment([to_screen(-8.0, -18.0), to_screen(-8.0, -2.0)], stroke);
                 painter.line_segment([to_screen(-8.0, 0.0), to_screen(8.0, 0.0)], stroke);
                 // pin leads
-                for y in [-30.0, -10.0, 10.0, 30.0] {
-                    painter.line_segment([to_screen(-30.0, y), to_screen(-20.0, y)], stroke);
+                for y in [-60.0, -20.0, 20.0, 60.0] {
+                    painter.line_segment([to_screen(-40.0, y), to_screen(-20.0, y * 0.4)], stroke);
                 }
-                for y in [-30.0, -10.0, 10.0] {
-                    painter.line_segment([to_screen(20.0, y), to_screen(30.0, y)], stroke);
+                for y in [-60.0, -20.0, 20.0] {
+                    painter.line_segment([to_screen(20.0, y * 0.4), to_screen(40.0, y)], stroke);
                 }
-                painter.line_segment([to_screen(0.0, 32.0), to_screen(0.0, 35.0)], stroke);
+                painter.line_segment([to_screen(0.0, 32.0), to_screen(0.0, 40.0)], stroke);
             }
             Self::Buzzer => {
-                painter.line_segment([to_screen(0.0, -30.0), to_screen(0.0, -14.0)], stroke);
+                painter.line_segment([to_screen(0.0, -40.0), to_screen(0.0, -14.0)], stroke);
                 painter.circle_stroke(to_screen(0.0, 0.0), 14.0 * zoom, stroke);
                 painter.line_segment([to_screen(-8.0, -4.0), to_screen(8.0, -4.0)], stroke);
                 painter.line_segment([to_screen(-8.0, 4.0), to_screen(8.0, 4.0)], stroke);
-                painter.line_segment([to_screen(0.0, 14.0), to_screen(0.0, 30.0)], stroke);
+                painter.line_segment([to_screen(0.0, 14.0), to_screen(0.0, 40.0)], stroke);
             }
             Self::StrainGauge => {
                 let pts = [
@@ -1517,8 +1710,8 @@ impl ComponentKind {
                     painter.line_segment([pts[i], pts[(i + 1) % 4]], stroke);
                 }
                 painter.line_segment([to_screen(-10.0, 10.0), to_screen(10.0, -10.0)], stroke);
-                painter.line_segment([to_screen(0.0, -30.0), to_screen(0.0, -20.0)], stroke);
-                painter.line_segment([to_screen(0.0, 20.0), to_screen(0.0, 30.0)], stroke);
+                painter.line_segment([to_screen(0.0, -40.0), to_screen(0.0, -20.0)], stroke);
+                painter.line_segment([to_screen(0.0, 20.0), to_screen(0.0, 40.0)], stroke);
             }
             Self::TactileMatrix => {
                 painter.rect_stroke(
@@ -1531,10 +1724,10 @@ impl ComponentKind {
                 painter.line_segment([to_screen(-18.0, 6.0), to_screen(18.0, 6.0)], stroke);
                 painter.line_segment([to_screen(-6.0, -18.0), to_screen(-6.0, 18.0)], stroke);
                 painter.line_segment([to_screen(6.0, -18.0), to_screen(6.0, 18.0)], stroke);
-                painter.line_segment([to_screen(-30.0, 0.0), to_screen(-18.0, 0.0)], stroke);
-                painter.line_segment([to_screen(18.0, 0.0), to_screen(30.0, 0.0)], stroke);
-                painter.line_segment([to_screen(0.0, -30.0), to_screen(0.0, -18.0)], stroke);
-                painter.line_segment([to_screen(0.0, 18.0), to_screen(0.0, 30.0)], stroke);
+                painter.line_segment([to_screen(-40.0, 0.0), to_screen(-18.0, 0.0)], stroke);
+                painter.line_segment([to_screen(18.0, 0.0), to_screen(40.0, 0.0)], stroke);
+                painter.line_segment([to_screen(0.0, -40.0), to_screen(0.0, -18.0)], stroke);
+                painter.line_segment([to_screen(0.0, 18.0), to_screen(0.0, 40.0)], stroke);
             }
             Self::Imu9Dof => {
                 painter.rect_stroke(
@@ -1545,10 +1738,10 @@ impl ComponentKind {
                 );
                 painter.line_segment([to_screen(-6.0, 6.0), to_screen(8.0, 6.0)], stroke);
                 painter.line_segment([to_screen(-6.0, 6.0), to_screen(-6.0, -8.0)], stroke);
-                painter.line_segment([to_screen(-30.0, -20.0), to_screen(-18.0, -20.0)], stroke);
-                painter.line_segment([to_screen(-30.0, 20.0), to_screen(-18.0, 20.0)], stroke);
-                painter.line_segment([to_screen(18.0, -20.0), to_screen(30.0, -20.0)], stroke);
-                painter.line_segment([to_screen(18.0, 20.0), to_screen(30.0, 20.0)], stroke);
+                painter.line_segment([to_screen(-40.0, -20.0), to_screen(-18.0, -20.0)], stroke);
+                painter.line_segment([to_screen(-40.0, 20.0), to_screen(-18.0, 20.0)], stroke);
+                painter.line_segment([to_screen(18.0, -20.0), to_screen(40.0, -20.0)], stroke);
+                painter.line_segment([to_screen(18.0, 20.0), to_screen(40.0, 20.0)], stroke);
             }
             Self::SawIdt => {
                 painter.line_segment([to_screen(-20.0, -15.0), to_screen(20.0, -15.0)], stroke);
@@ -1559,33 +1752,33 @@ impl ComponentKind {
                 for x in [-8.0, 0.0, 8.0, 16.0] {
                     painter.line_segment([to_screen(x, 15.0), to_screen(x, -5.0)], stroke);
                 }
-                painter.line_segment([to_screen(-30.0, -20.0), to_screen(-20.0, -15.0)], stroke);
-                painter.line_segment([to_screen(-30.0, 20.0), to_screen(-20.0, 15.0)], stroke);
-                painter.line_segment([to_screen(20.0, -15.0), to_screen(30.0, -20.0)], stroke);
-                painter.line_segment([to_screen(20.0, 15.0), to_screen(30.0, 20.0)], stroke);
+                painter.line_segment([to_screen(-40.0, -20.0), to_screen(-20.0, -15.0)], stroke);
+                painter.line_segment([to_screen(-40.0, 20.0), to_screen(-20.0, 15.0)], stroke);
+                painter.line_segment([to_screen(20.0, -15.0), to_screen(40.0, -20.0)], stroke);
+                painter.line_segment([to_screen(20.0, 15.0), to_screen(40.0, 20.0)], stroke);
             }
             Self::MajoranaJunction => {
-                painter.line_segment([to_screen(-30.0, -20.0), to_screen(0.0, 0.0)], stroke);
-                painter.line_segment([to_screen(-30.0, 20.0), to_screen(0.0, 0.0)], stroke);
-                painter.line_segment([to_screen(0.0, 0.0), to_screen(30.0, 0.0)], stroke);
+                painter.line_segment([to_screen(-40.0, -20.0), to_screen(0.0, 0.0)], stroke);
+                painter.line_segment([to_screen(-40.0, 20.0), to_screen(0.0, 0.0)], stroke);
+                painter.line_segment([to_screen(0.0, 0.0), to_screen(40.0, 0.0)], stroke);
                 painter.circle_stroke(to_screen(0.0, 0.0), 8.0 * zoom, stroke);
             }
             Self::ParafermionicCavity => {
                 painter.circle_stroke(to_screen(0.0, 0.0), 16.0 * zoom, stroke);
                 painter.circle_stroke(to_screen(0.0, 0.0), 8.0 * zoom, stroke);
-                painter.line_segment([to_screen(-30.0, 0.0), to_screen(-16.0, 0.0)], stroke);
-                painter.line_segment([to_screen(16.0, 0.0), to_screen(30.0, 0.0)], stroke);
+                painter.line_segment([to_screen(-40.0, 0.0), to_screen(-16.0, 0.0)], stroke);
+                painter.line_segment([to_screen(16.0, 0.0), to_screen(40.0, 0.0)], stroke);
             }
             Self::SkyrmionRouter => {
                 painter.circle_stroke(to_screen(0.0, 0.0), 14.0 * zoom, stroke);
-                painter.line_segment([to_screen(-30.0, 0.0), to_screen(-14.0, 0.0)], stroke);
-                painter.line_segment([to_screen(10.0, -10.0), to_screen(30.0, -20.0)], stroke);
-                painter.line_segment([to_screen(10.0, 10.0), to_screen(30.0, 20.0)], stroke);
-                painter.line_segment([to_screen(0.0, -30.0), to_screen(0.0, -14.0)], stroke);
+                painter.line_segment([to_screen(-40.0, 0.0), to_screen(-14.0, 0.0)], stroke);
+                painter.line_segment([to_screen(10.0, -10.0), to_screen(40.0, -20.0)], stroke);
+                painter.line_segment([to_screen(10.0, 10.0), to_screen(40.0, 20.0)], stroke);
+                painter.line_segment([to_screen(0.0, -40.0), to_screen(0.0, -14.0)], stroke);
             }
             Self::PhLungs => {
                 // Trachea main stem
-                painter.line_segment([to_screen(0.0, -32.0), to_screen(0.0, -10.0)], stroke);
+                painter.line_segment([to_screen(0.0, -40.0), to_screen(0.0, -10.0)], stroke);
                 // Bronchial bifurcation
                 painter.line_segment([to_screen(0.0, -10.0), to_screen(-12.0, -2.0)], stroke);
                 painter.line_segment([to_screen(0.0, -10.0), to_screen(12.0, -2.0)], stroke);
@@ -1593,7 +1786,7 @@ impl ComponentKind {
                 painter.circle_stroke(to_screen(-12.0, 8.0), 10.0 * zoom, stroke);
                 painter.circle_stroke(to_screen(12.0, 8.0), 10.0 * zoom, stroke);
                 // Lower reference ground line
-                painter.line_segment([to_screen(0.0, 18.0), to_screen(0.0, 32.0)], stroke);
+                painter.line_segment([to_screen(0.0, 18.0), to_screen(0.0, 40.0)], stroke);
             }
             Self::PhVocalFolds => {
                 // Convergent-divergent vocal fold tissue boundaries
@@ -1610,11 +1803,11 @@ impl ComponentKind {
                 painter.line_segment([to_screen(3.0, -8.0), to_screen(3.0, 8.0)], stroke);
 
                 // Subglottal and supraglottal pins
-                painter.line_segment([to_screen(-32.0, 0.0), to_screen(-20.0, 0.0)], stroke);
-                painter.line_segment([to_screen(20.0, 0.0), to_screen(32.0, 0.0)], stroke);
+                painter.line_segment([to_screen(-40.0, 0.0), to_screen(-20.0, 0.0)], stroke);
+                painter.line_segment([to_screen(20.0, 0.0), to_screen(40.0, 0.0)], stroke);
                 // Control and reference pins
-                painter.line_segment([to_screen(0.0, -32.0), to_screen(0.0, -18.0)], stroke);
-                painter.line_segment([to_screen(0.0, 18.0), to_screen(0.0, 32.0)], stroke);
+                painter.line_segment([to_screen(0.0, -40.0), to_screen(0.0, -18.0)], stroke);
+                painter.line_segment([to_screen(0.0, 18.0), to_screen(0.0, 40.0)], stroke);
             }
             Self::PhVocalTract => {
                 // Flaring Webster horn profile
@@ -1637,12 +1830,12 @@ impl ComponentKind {
                 // Terminals
                 painter.line_segment([to_screen(-40.0, 0.0), to_screen(-24.0, 0.0)], stroke);
                 painter.line_segment([to_screen(24.0, 0.0), to_screen(40.0, 0.0)], stroke);
-                painter.line_segment([to_screen(0.0, -32.0), to_screen(0.0, -12.0)], stroke);
-                painter.line_segment([to_screen(0.0, 12.0), to_screen(0.0, 32.0)], stroke);
+                painter.line_segment([to_screen(0.0, -40.0), to_screen(0.0, -12.0)], stroke);
+                painter.line_segment([to_screen(0.0, 12.0), to_screen(0.0, 40.0)], stroke);
             }
             Self::PhLipRadiation => {
                 // Mouth orifice boundary
-                painter.line_segment([to_screen(-30.0, 0.0), to_screen(-12.0, 0.0)], stroke);
+                painter.line_segment([to_screen(-40.0, 0.0), to_screen(-12.0, 0.0)], stroke);
                 painter.line_segment([to_screen(-12.0, -18.0), to_screen(-12.0, 18.0)], stroke);
 
                 // Radiating spherical wavefront arcs
@@ -1656,7 +1849,213 @@ impl ComponentKind {
                 painter.line_segment([to_screen(18.0, 0.0), to_screen(6.0, 20.0)], stroke);
 
                 // Outward radiation terminal
-                painter.line_segment([to_screen(18.0, 0.0), to_screen(30.0, 0.0)], stroke);
+                painter.line_segment([to_screen(18.0, 0.0), to_screen(40.0, 0.0)], stroke);
+            }
+            Self::Adder => {
+                painter.rect_stroke(
+                    Rect::from_center_size(to_screen(0.0, 0.0), Vec2::new(48.0 * zoom, 60.0 * zoom)),
+                    2.0,
+                    stroke,
+                    StrokeKind::Middle,
+                );
+                // "+" symbol
+                painter.line_segment([to_screen(-8.0, 0.0), to_screen(8.0, 0.0)], stroke);
+                painter.line_segment([to_screen(0.0, -8.0), to_screen(0.0, 8.0)], stroke);
+                // Leads: A, B, CIN, SUM, COUT
+                painter.line_segment([to_screen(-40.0, -20.0), to_screen(-24.0, -20.0)], stroke);
+                painter.line_segment([to_screen(-40.0, 20.0), to_screen(-24.0, 20.0)], stroke);
+                painter.line_segment([to_screen(0.0, -40.0), to_screen(0.0, -30.0)], stroke);
+                painter.line_segment([to_screen(24.0, 0.0), to_screen(40.0, 0.0)], stroke);
+                painter.line_segment([to_screen(0.0, 30.0), to_screen(0.0, 40.0)], stroke);
+            }
+            Self::Subtractor => {
+                painter.rect_stroke(
+                    Rect::from_center_size(to_screen(0.0, 0.0), Vec2::new(48.0 * zoom, 60.0 * zoom)),
+                    2.0,
+                    stroke,
+                    StrokeKind::Middle,
+                );
+                // "-" symbol
+                painter.line_segment([to_screen(-8.0, 0.0), to_screen(8.0, 0.0)], stroke);
+                // Leads: A, B, BIN, DIFF, BOUT
+                painter.line_segment([to_screen(-40.0, -20.0), to_screen(-24.0, -20.0)], stroke);
+                painter.line_segment([to_screen(-40.0, 20.0), to_screen(-24.0, 20.0)], stroke);
+                painter.line_segment([to_screen(0.0, -40.0), to_screen(0.0, -30.0)], stroke);
+                painter.line_segment([to_screen(24.0, 0.0), to_screen(40.0, 0.0)], stroke);
+                painter.line_segment([to_screen(0.0, 30.0), to_screen(0.0, 40.0)], stroke);
+            }
+            Self::Multiplier => {
+                painter.rect_stroke(
+                    Rect::from_center_size(to_screen(0.0, 0.0), Vec2::new(48.0 * zoom, 60.0 * zoom)),
+                    2.0,
+                    stroke,
+                    StrokeKind::Middle,
+                );
+                // "X" symbol
+                painter.line_segment([to_screen(-6.0, -6.0), to_screen(6.0, 6.0)], stroke);
+                painter.line_segment([to_screen(-6.0, 6.0), to_screen(6.0, -6.0)], stroke);
+                // Leads: A, B, PROD
+                painter.line_segment([to_screen(-40.0, -20.0), to_screen(-24.0, -20.0)], stroke);
+                painter.line_segment([to_screen(-40.0, 20.0), to_screen(-24.0, 20.0)], stroke);
+                painter.line_segment([to_screen(24.0, 0.0), to_screen(40.0, 0.0)], stroke);
+            }
+            Self::Divider => {
+                painter.rect_stroke(
+                    Rect::from_center_size(to_screen(0.0, 0.0), Vec2::new(48.0 * zoom, 60.0 * zoom)),
+                    2.0,
+                    stroke,
+                    StrokeKind::Middle,
+                );
+                // "/" symbol
+                painter.line_segment([to_screen(-6.0, 6.0), to_screen(6.0, -6.0)], stroke);
+                // Leads: NUM, DEN, QUOT, REM
+                painter.line_segment([to_screen(-40.0, -20.0), to_screen(-24.0, -20.0)], stroke);
+                painter.line_segment([to_screen(-40.0, 20.0), to_screen(-24.0, 20.0)], stroke);
+                painter.line_segment([to_screen(24.0, -20.0), to_screen(40.0, -20.0)], stroke);
+                painter.line_segment([to_screen(24.0, 20.0), to_screen(40.0, 20.0)], stroke);
+            }
+            Self::ArithmeticLogicUnit => {
+                let pts = [
+                    to_screen(-24.0, -36.0),
+                    to_screen(24.0, -18.0),
+                    to_screen(24.0, 18.0),
+                    to_screen(-24.0, 36.0),
+                    to_screen(-24.0, 8.0),
+                    to_screen(-16.0, 0.0),
+                    to_screen(-24.0, -8.0),
+                ];
+                for i in 0..pts.len() {
+                    painter.line_segment([pts[i], pts[(i + 1) % pts.len()]], stroke);
+                }
+                // Leads: A, B, OP, CIN, OUT, FLAGS, COUT
+                painter.line_segment([to_screen(-40.0, -40.0), to_screen(-24.0, -24.0)], stroke);
+                painter.line_segment([to_screen(-40.0, 0.0), to_screen(-16.0, 0.0)], stroke);
+                painter.line_segment([to_screen(-40.0, 40.0), to_screen(-24.0, 24.0)], stroke);
+                painter.line_segment([to_screen(0.0, -40.0), to_screen(0.0, -27.0)], stroke);
+                painter.line_segment([to_screen(24.0, 0.0), to_screen(40.0, 0.0)], stroke);
+                painter.line_segment([to_screen(24.0, 18.0), to_screen(40.0, 40.0)], stroke);
+                painter.line_segment([to_screen(0.0, 27.0), to_screen(0.0, 40.0)], stroke);
+            }
+            Self::BitSplitter => {
+                // Vertical distribution bar
+                let thick_stroke = Stroke::new((3.5 * zoom).clamp(2.5, 5.0), stroke.color);
+                painter.line_segment([to_screen(-10.0, -24.0), to_screen(-10.0, 24.0)], thick_stroke);
+                // Input bus lead
+                painter.line_segment([to_screen(-40.0, 0.0), to_screen(-10.0, 0.0)], thick_stroke);
+                // Output leads
+                painter.line_segment([to_screen(-10.0, -20.0), to_screen(40.0, -20.0)], stroke);
+                painter.line_segment([to_screen(-10.0, 20.0), to_screen(40.0, 20.0)], stroke);
+            }
+            Self::BitMerger => {
+                // Vertical gathering bar
+                let thick_stroke = Stroke::new((3.5 * zoom).clamp(2.5, 5.0), stroke.color);
+                painter.line_segment([to_screen(10.0, -24.0), to_screen(10.0, 24.0)], thick_stroke);
+                // Output bus lead
+                painter.line_segment([to_screen(10.0, 0.0), to_screen(40.0, 0.0)], thick_stroke);
+                // Input leads
+                painter.line_segment([to_screen(-40.0, -20.0), to_screen(10.0, -20.0)], stroke);
+                painter.line_segment([to_screen(-40.0, 20.0), to_screen(10.0, 20.0)], stroke);
+            }
+            Self::BusTap => {
+                // Main bus horizontal through
+                let thick_stroke = Stroke::new((3.5 * zoom).clamp(2.5, 5.0), stroke.color);
+                painter.line_segment([to_screen(-40.0, 0.0), to_screen(40.0, 0.0)], thick_stroke);
+                // Tap branch
+                painter.line_segment([to_screen(0.0, 0.0), to_screen(0.0, 40.0)], stroke);
+                painter.circle_filled(to_screen(0.0, 0.0), 3.5 * zoom, stroke.color);
+            }
+            Self::FloatAdder => {
+                painter.rect_stroke(
+                    Rect::from_center_size(to_screen(0.0, 0.0), Vec2::new(48.0 * zoom, 60.0 * zoom)),
+                    2.0,
+                    stroke,
+                    StrokeKind::Middle,
+                );
+                // "F+" marker
+                painter.line_segment([to_screen(-14.0, -8.0), to_screen(-14.0, 8.0)], stroke);
+                painter.line_segment([to_screen(-14.0, -8.0), to_screen(-8.0, -8.0)], stroke);
+                painter.line_segment([to_screen(-14.0, 0.0), to_screen(-9.0, 0.0)], stroke);
+                painter.line_segment([to_screen(2.0, 0.0), to_screen(14.0, 0.0)], stroke);
+                painter.line_segment([to_screen(8.0, -6.0), to_screen(8.0, 6.0)], stroke);
+                // Leads: A, B, SUM
+                painter.line_segment([to_screen(-40.0, -20.0), to_screen(-24.0, -20.0)], stroke);
+                painter.line_segment([to_screen(-40.0, 20.0), to_screen(-24.0, 20.0)], stroke);
+                painter.line_segment([to_screen(24.0, 0.0), to_screen(40.0, 0.0)], stroke);
+            }
+            Self::FloatSubtractor => {
+                painter.rect_stroke(
+                    Rect::from_center_size(to_screen(0.0, 0.0), Vec2::new(48.0 * zoom, 60.0 * zoom)),
+                    2.0,
+                    stroke,
+                    StrokeKind::Middle,
+                );
+                // "F-" marker
+                painter.line_segment([to_screen(-14.0, -8.0), to_screen(-14.0, 8.0)], stroke);
+                painter.line_segment([to_screen(-14.0, -8.0), to_screen(-8.0, -8.0)], stroke);
+                painter.line_segment([to_screen(-14.0, 0.0), to_screen(-9.0, 0.0)], stroke);
+                painter.line_segment([to_screen(2.0, 0.0), to_screen(14.0, 0.0)], stroke);
+                // Leads: A, B, DIFF
+                painter.line_segment([to_screen(-40.0, -20.0), to_screen(-24.0, -20.0)], stroke);
+                painter.line_segment([to_screen(-40.0, 20.0), to_screen(-24.0, 20.0)], stroke);
+                painter.line_segment([to_screen(24.0, 0.0), to_screen(40.0, 0.0)], stroke);
+            }
+            Self::FloatMultiplier => {
+                painter.rect_stroke(
+                    Rect::from_center_size(to_screen(0.0, 0.0), Vec2::new(48.0 * zoom, 60.0 * zoom)),
+                    2.0,
+                    stroke,
+                    StrokeKind::Middle,
+                );
+                // "F*" marker
+                painter.line_segment([to_screen(-14.0, -8.0), to_screen(-14.0, 8.0)], stroke);
+                painter.line_segment([to_screen(-14.0, -8.0), to_screen(-8.0, -8.0)], stroke);
+                painter.line_segment([to_screen(-14.0, 0.0), to_screen(-9.0, 0.0)], stroke);
+                painter.line_segment([to_screen(4.0, -5.0), to_screen(12.0, 5.0)], stroke);
+                painter.line_segment([to_screen(4.0, 5.0), to_screen(12.0, -5.0)], stroke);
+                // Leads: A, B, PROD
+                painter.line_segment([to_screen(-40.0, -20.0), to_screen(-24.0, -20.0)], stroke);
+                painter.line_segment([to_screen(-40.0, 20.0), to_screen(-24.0, 20.0)], stroke);
+                painter.line_segment([to_screen(24.0, 0.0), to_screen(40.0, 0.0)], stroke);
+            }
+            Self::FloatDivider => {
+                painter.rect_stroke(
+                    Rect::from_center_size(to_screen(0.0, 0.0), Vec2::new(48.0 * zoom, 60.0 * zoom)),
+                    2.0,
+                    stroke,
+                    StrokeKind::Middle,
+                );
+                // "F/" marker
+                painter.line_segment([to_screen(-14.0, -8.0), to_screen(-14.0, 8.0)], stroke);
+                painter.line_segment([to_screen(-14.0, -8.0), to_screen(-8.0, -8.0)], stroke);
+                painter.line_segment([to_screen(-14.0, 0.0), to_screen(-9.0, 0.0)], stroke);
+                painter.line_segment([to_screen(4.0, 5.0), to_screen(12.0, -5.0)], stroke);
+                // Leads: NUM, DEN, QUOT
+                painter.line_segment([to_screen(-40.0, -20.0), to_screen(-24.0, -20.0)], stroke);
+                painter.line_segment([to_screen(-40.0, 20.0), to_screen(-24.0, 20.0)], stroke);
+                painter.line_segment([to_screen(24.0, 0.0), to_screen(40.0, 0.0)], stroke);
+            }
+            Self::FloatComparator => {
+                painter.rect_stroke(
+                    Rect::from_center_size(to_screen(0.0, 0.0), Vec2::new(48.0 * zoom, 70.0 * zoom)),
+                    2.0,
+                    stroke,
+                    StrokeKind::Middle,
+                );
+                // "F?" marker
+                painter.line_segment([to_screen(-10.0, -8.0), to_screen(-10.0, 8.0)], stroke);
+                painter.line_segment([to_screen(-10.0, -8.0), to_screen(-4.0, -8.0)], stroke);
+                painter.line_segment([to_screen(-10.0, 0.0), to_screen(-5.0, 0.0)], stroke);
+                painter.line_segment([to_screen(4.0, -8.0), to_screen(10.0, -8.0)], stroke);
+                painter.line_segment([to_screen(10.0, -8.0), to_screen(10.0, -2.0)], stroke);
+                painter.line_segment([to_screen(10.0, -2.0), to_screen(6.0, 1.0)], stroke);
+                painter.line_segment([to_screen(6.0, 1.0), to_screen(6.0, 4.0)], stroke);
+                painter.circle_filled(to_screen(6.0, 7.0), 1.2 * zoom, stroke.color);
+                // Leads: A, B, GT, EQ, LT
+                painter.line_segment([to_screen(-40.0, -20.0), to_screen(-24.0, -20.0)], stroke);
+                painter.line_segment([to_screen(-40.0, 20.0), to_screen(-24.0, 20.0)], stroke);
+                painter.line_segment([to_screen(24.0, -40.0), to_screen(40.0, -40.0)], stroke);
+                painter.line_segment([to_screen(24.0, 0.0), to_screen(40.0, 0.0)], stroke);
+                painter.line_segment([to_screen(24.0, 40.0), to_screen(40.0, 40.0)], stroke);
             }
         }
     }
@@ -1719,9 +2118,20 @@ pub struct SchematicComponent {
     pub rotation: u8,
     /// Mirror state (false = normal, true = mirrored horizontally before rotation).
     pub mirrored: bool,
+    /// Geometric scale factor of the component (default 1.0).
+    pub scale: f32,
     pub value_str: String,
     pub model_name: Option<String>,
     pub properties: Vec<(String, String)>,
+}
+
+fn is_coord_on_grid(coord: f32, grid_size: f32) -> bool {
+    if grid_size <= 0.0 {
+        return false;
+    }
+    let rem = coord.abs() % grid_size;
+    let dist = rem.min(grid_size - rem);
+    dist < 1e-3
 }
 
 impl SchematicComponent {
@@ -1735,9 +2145,93 @@ impl SchematicComponent {
             pos,
             rotation: 0,
             mirrored: false,
+            scale: 1.0,
             value_str,
             model_name: None,
             properties: Vec::new(),
+        }
+    }
+
+    /// Builder method setting the component geometric scale factor.
+    pub fn with_scale(mut self, scale: f32) -> Self {
+        self.scale = scale;
+        self
+    }
+
+    /// Checks whether the target scale keeps all component pins strictly on the grid.
+    pub fn is_valid_scale(&self, target_scale: f32, grid_size: f32) -> bool {
+        if target_scale < 0.25 || target_scale > 5.0 || grid_size <= 0.0 {
+            return false;
+        }
+        let pins = self.pin_definitions();
+        if pins.is_empty() {
+            return true;
+        }
+        for (_, offset) in pins {
+            let sx = offset.x * target_scale;
+            let sy = offset.y * target_scale;
+            if !is_coord_on_grid(sx, grid_size) || !is_coord_on_grid(sy, grid_size) {
+                return false;
+            }
+        }
+        true
+    }
+
+    /// Computes the next valid scale step larger than the current scale where all pins remain on grid.
+    pub fn next_valid_scale_up(&self, grid_size: f32) -> Option<f32> {
+        let current_quarter = (self.scale * 4.0).round() as i32;
+        for quarter in (current_quarter + 1)..=20 {
+            let candidate = quarter as f32 / 4.0;
+            if self.is_valid_scale(candidate, grid_size) {
+                return Some(candidate);
+            }
+        }
+        None
+    }
+
+    /// Computes the next valid scale step smaller than the current scale where all pins remain on grid.
+    pub fn next_valid_scale_down(&self, grid_size: f32) -> Option<f32> {
+        let current_quarter = (self.scale * 4.0).round() as i32;
+        for quarter in (1..current_quarter).rev() {
+            let candidate = quarter as f32 / 4.0;
+            if self.is_valid_scale(candidate, grid_size) {
+                return Some(candidate);
+            }
+        }
+        None
+    }
+
+    /// Checks if scaling to `target_scale` is permitted.
+    pub fn can_scale_to(&self, target_scale: f32, grid_size: f32) -> bool {
+        self.is_valid_scale(target_scale, grid_size)
+    }
+
+    /// Sets the component scale if valid for the given grid size. Returns true if updated.
+    pub fn set_scale(&mut self, target_scale: f32, grid_size: f32) -> bool {
+        if self.can_scale_to(target_scale, grid_size) {
+            self.scale = target_scale;
+            self.set_property("scale", format!("{:.2}", target_scale));
+            true
+        } else {
+            false
+        }
+    }
+
+    /// Increases the component size to the next valid scale on the grid.
+    pub fn size_up(&mut self, grid_size: f32) -> bool {
+        if let Some(next) = self.next_valid_scale_up(grid_size) {
+            self.set_scale(next, grid_size)
+        } else {
+            false
+        }
+    }
+
+    /// Decreases the component size to the next valid scale on the grid.
+    pub fn size_down(&mut self, grid_size: f32) -> bool {
+        if let Some(prev) = self.next_valid_scale_down(grid_size) {
+            self.set_scale(prev, grid_size)
+        } else {
+            false
         }
     }
 
@@ -1845,25 +2339,176 @@ impl SchematicComponent {
         self.transform_vec(v)
     }
 
+    /// Returns configured input pin count for multi-input logic gates and arithmetic blocks (2..=16, default 2).
+    pub fn input_count(&self) -> usize {
+        self.get_property("input_count")
+            .and_then(|v| v.parse().ok())
+            .unwrap_or(2)
+            .clamp(2, 16)
+    }
+
+    /// Sets configured input pin count for multi-input logic gates and arithmetic blocks.
+    pub fn set_input_count(&mut self, count: usize) {
+        let clamped = count.clamp(2, 16);
+        self.set_property("input_count", clamped.to_string());
+    }
+
+    /// Returns configured bit width for compressed bus wires and arithmetic blocks (1..=128, default 1).
+    pub fn bit_width(&self) -> u32 {
+        self.get_property("bit_width")
+            .and_then(|v| v.parse().ok())
+            .unwrap_or(1)
+            .clamp(1, 128)
+    }
+
+    /// Sets configured bit width for compressed bus wires and arithmetic blocks.
+    pub fn set_bit_width(&mut self, width: u32) {
+        let clamped = width.clamp(1, 128);
+        self.set_property("bit_width", clamped.to_string());
+    }
+
+    /// Returns raw input partition string (e.g. "4,4" or "2,2,2,2").
+    pub fn input_partitions(&self) -> String {
+        self.get_property("input_partitions")
+            .map(|s| s.to_string())
+            .unwrap_or_else(|| {
+                let n = self.input_count();
+                let bw = self.bit_width();
+                if n > 1 && bw > 1 && bw % n as u32 == 0 {
+                    let part = bw / n as u32;
+                    (0..n).map(|_| part.to_string()).collect::<Vec<_>>().join(",")
+                } else {
+                    format!("{}", bw)
+                }
+            })
+    }
+
+    /// Sets input partitions string (e.g. "4,4").
+    pub fn set_input_partitions(&mut self, partitions: impl Into<String>) {
+        self.set_property("input_partitions", partitions.into());
+    }
+
+    /// Parses input partitions into individual wire bit widths.
+    pub fn parsed_input_partitions(&self) -> Vec<u32> {
+        let s = self.input_partitions();
+        let parts: Vec<u32> = s
+            .split(',')
+            .filter_map(|p| p.trim().parse().ok())
+            .filter(|&w| w > 0)
+            .collect();
+        if parts.is_empty() {
+            vec![self.bit_width()]
+        } else {
+            parts
+        }
+    }
+
+    /// Returns floating-point precision mode (e.g. "FP8", "FP16", "FP32", "FP64").
+    pub fn float_precision(&self) -> String {
+        self.get_property("float_precision")
+            .map(|s| s.to_string())
+            .unwrap_or_else(|| "FP32".to_string())
+    }
+
+    /// Sets floating-point precision mode.
+    pub fn set_float_precision(&mut self, prec: impl Into<String>) {
+        self.set_property("float_precision", prec.into());
+    }
+
+    /// Returns dynamically generated pin definitions according to configured input counts and bus partitions.
+    /// Strictly guarantees all pins snap onto the 20px grid.
+    pub fn dynamic_pin_definitions(&self) -> Vec<(&'static str, Vec2)> {
+        const STATIC_IN_NAMES: [&'static str; 16] = [
+            "IN0", "IN1", "IN2", "IN3", "IN4", "IN5", "IN6", "IN7",
+            "IN8", "IN9", "IN10", "IN11", "IN12", "IN13", "IN14", "IN15",
+        ];
+        const STATIC_OUT_NAMES: [&'static str; 16] = [
+            "OUT0", "OUT1", "OUT2", "OUT3", "OUT4", "OUT5", "OUT6", "OUT7",
+            "OUT8", "OUT9", "OUT10", "OUT11", "OUT12", "OUT13", "OUT14", "OUT15",
+        ];
+
+        match self.kind {
+            ComponentKind::AndGate
+            | ComponentKind::OrGate
+            | ComponentKind::NandGate
+            | ComponentKind::NorGate
+            | ComponentKind::XorGate
+            | ComponentKind::XnorGate => {
+                let n = self.input_count();
+                if n == 2 {
+                    self.kind.pin_definitions()
+                } else {
+                    let mut pins = Vec::with_capacity(n + 1);
+                    for i in 0..n {
+                        let y = if n % 2 == 0 {
+                            (2 * i as i32 - (n as i32 - 1)) * 20
+                        } else {
+                            (i as i32 - (n as i32 / 2)) * 40
+                        };
+                        pins.push((STATIC_IN_NAMES[i], Vec2::new(-40.0, y as f32)));
+                    }
+                    pins.push(("OUT", Vec2::new(40.0, 0.0)));
+                    pins
+                }
+            }
+            ComponentKind::BitSplitter => {
+                let partitions = self.parsed_input_partitions();
+                let m = partitions.len().clamp(2, 16);
+                let mut pins = Vec::with_capacity(m + 1);
+                pins.push(("IN", Vec2::new(-40.0, 0.0)));
+                for i in 0..m {
+                    let y = if m % 2 == 0 {
+                        (2 * i as i32 - (m as i32 - 1)) * 20
+                    } else {
+                        (i as i32 - (m as i32 / 2)) * 40
+                    };
+                    pins.push((STATIC_OUT_NAMES[i], Vec2::new(40.0, y as f32)));
+                }
+                pins
+            }
+            ComponentKind::BitMerger => {
+                let partitions = self.parsed_input_partitions();
+                let m = partitions.len().clamp(2, 16);
+                let mut pins = Vec::with_capacity(m + 1);
+                for i in 0..m {
+                    let y = if m % 2 == 0 {
+                        (2 * i as i32 - (m as i32 - 1)) * 20
+                    } else {
+                        (i as i32 - (m as i32 / 2)) * 40
+                    };
+                    pins.push((STATIC_IN_NAMES[i], Vec2::new(-40.0, y as f32)));
+                }
+                pins.push(("OUT", Vec2::new(40.0, 0.0)));
+                pins
+            }
+            _ => self.kind.pin_definitions(),
+        }
+    }
+
+    /// Returns the local pin offsets relative to component origin, accounting for dynamic pin configuration.
+    pub fn pin_definitions(&self) -> Vec<(&'static str, Vec2)> {
+        self.dynamic_pin_definitions()
+    }
+
     /// Returns the world position of pin at `pin_idx`.
     pub fn pin_world_pos(&self, pin_idx: usize) -> Option<Pos2> {
-        let pins = self.kind.pin_definitions();
+        let pins = self.pin_definitions();
         let &(_, local_offset) = pins.get(pin_idx)?;
-        let rotated = self.transform_vec(local_offset);
+        let rotated = self.transform_vec(local_offset * self.scale);
         Some(self.pos + rotated)
     }
 
     /// Returns all pin names and their world coordinates.
     pub fn all_pins(&self) -> Vec<(&'static str, Pos2)> {
-        let pins = self.kind.pin_definitions();
+        let pins = self.pin_definitions();
         pins.iter()
-            .map(|&(name, offset)| (name, self.pos + self.transform_vec(offset)))
+            .map(|&(name, offset)| (name, self.pos + self.transform_vec(offset * self.scale)))
             .collect()
     }
 
     /// Returns the departure normal of the pin at `pin_idx` in world coordinates.
     pub fn pin_normal(&self, pin_idx: usize) -> crate::schematic::wire::PinNormal {
-        let pins = self.kind.pin_definitions();
+        let pins = self.pin_definitions();
         let &(_, local_offset) = match pins.get(pin_idx) {
             Some(p) => p,
             None => return crate::schematic::wire::PinNormal::North,
@@ -1904,18 +2549,59 @@ impl SchematicComponent {
             | ComponentKind::SchottkyDiode
             | ComponentKind::Buzzer => {
                 if self.rotation % 2 == 0 {
-                    (30.0, 70.0)
+                    (30.0 * self.scale, 70.0 * self.scale)
                 } else {
-                    (70.0, 30.0)
+                    (70.0 * self.scale, 30.0 * self.scale)
                 }
             }
-            ComponentKind::Ground | ComponentKind::VddRail | ComponentKind::LogicProbe => (30.0, 40.0),
+            ComponentKind::Ground | ComponentKind::VddRail | ComponentKind::LogicProbe => {
+                (30.0 * self.scale, 40.0 * self.scale)
+            }
+            ComponentKind::AndGate
+            | ComponentKind::OrGate
+            | ComponentKind::NandGate
+            | ComponentKind::NorGate
+            | ComponentKind::XorGate
+            | ComponentKind::XnorGate => {
+                let n = self.input_count();
+                let h = if n > 2 {
+                    (n as f32 * 20.0 + 20.0).max(60.0) * self.scale
+                } else {
+                    60.0 * self.scale
+                };
+                if self.rotation % 2 == 0 {
+                    (60.0 * self.scale, h)
+                } else {
+                    (h, 60.0 * self.scale)
+                }
+            }
             ComponentKind::HalfAdder
             | ComponentKind::FullAdder
+            | ComponentKind::Adder
+            | ComponentKind::Subtractor
+            | ComponentKind::Multiplier
+            | ComponentKind::Divider
+            | ComponentKind::ArithmeticLogicUnit
+            | ComponentKind::BitSplitter
+            | ComponentKind::BitMerger
+            | ComponentKind::BusTap
+            | ComponentKind::FloatAdder
+            | ComponentKind::FloatSubtractor
+            | ComponentKind::FloatMultiplier
+            | ComponentKind::FloatDivider
+            | ComponentKind::FloatComparator
             | ComponentKind::Counter4Bit
             | ComponentKind::Timer555
-            | ComponentKind::SevenSegment => (70.0, 70.0),
-            _ => (60.0, 60.0),
+            | ComponentKind::SevenSegment => {
+                let n = self.input_count();
+                let h = if n > 2 {
+                    (n as f32 * 20.0 + 20.0).max(70.0) * self.scale
+                } else {
+                    70.0 * self.scale
+                };
+                (70.0 * self.scale, h)
+            }
+            _ => (60.0 * self.scale, 60.0 * self.scale),
         };
         Rect::from_center_size(self.pos, Vec2::new(w, h))
     }
@@ -1985,12 +2671,35 @@ impl SchematicComponent {
 
         // Helper to transform local component coords to screen
         let to_screen = |lx: f32, ly: f32| -> Pos2 {
-            let rotated = self.transform_vec(Vec2::new(lx, ly));
+            let rotated = self.transform_vec(Vec2::new(lx * self.scale, ly * self.scale));
             canvas.world_to_screen(self.pos + rotated)
         };
 
         // Render geometric symbol strokes
-        self.kind.draw_symbol(painter, stroke, &to_screen, canvas.zoom);
+        self.kind.draw_symbol(painter, stroke, &to_screen, canvas.zoom * self.scale);
+
+        // Render dynamic input leads for multi-input gates (N > 2)
+        if self.input_count() > 2
+            && matches!(
+                self.kind,
+                ComponentKind::AndGate
+                    | ComponentKind::OrGate
+                    | ComponentKind::NandGate
+                    | ComponentKind::NorGate
+                    | ComponentKind::XorGate
+                    | ComponentKind::XnorGate
+            )
+        {
+            let n = self.input_count();
+            for i in 0..n {
+                let y = if n % 2 == 0 {
+                    (2 * i as i32 - (n as i32 - 1)) * 20
+                } else {
+                    (i as i32 - (n as i32 / 2)) * 40
+                } as f32;
+                painter.line_segment([to_screen(-40.0, y), to_screen(-20.0, y)], stroke);
+            }
+        }
 
         // Draw pin snap dots
         let pin_color = pin_color_override.unwrap_or(theme.pin_normal);
@@ -2006,9 +2715,9 @@ impl SchematicComponent {
 
         // Draw labels (Name and Value)
         let (name_offset, val_offset) = self.label_offsets();
-        let label_pos = canvas.world_to_screen(self.pos + name_offset);
-        let val_pos = canvas.world_to_screen(self.pos + val_offset);
-        let font_size = 12.0 * canvas.zoom.clamp(0.8, 1.8);
+        let label_pos = canvas.world_to_screen(self.pos + name_offset * self.scale);
+        let val_pos = canvas.world_to_screen(self.pos + val_offset * self.scale);
+        let font_size = 12.0 * canvas.zoom.clamp(0.8, 1.8) * self.scale.clamp(0.75, 1.5);
 
         painter.text(
             label_pos,

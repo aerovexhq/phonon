@@ -24,7 +24,7 @@ use phonon_solver::topological_corner_laser::{
     PtComplex, PtCornerMode, PtQuadrupoleParams, TemporalCoherencePoint,
     TopologicalCornerLaserProcessor,
 };
-use std::time::Instant;
+use crate::time_util::Instant;
 
 /// Active tab in the Topological Corner Polariton Laser Dialog.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

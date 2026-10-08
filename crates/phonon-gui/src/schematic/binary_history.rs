@@ -36,6 +36,7 @@ pub enum ActionOpcode {
     AddNetLabel = 0x0B,
     DeleteNetLabel = 0x0C,
     MoveNetLabel = 0x0D,
+    ScaleComponent = 0x0E,
 }
 
 impl ActionOpcode {
@@ -54,6 +55,7 @@ impl ActionOpcode {
             0x0B => Ok(Self::AddNetLabel),
             0x0C => Ok(Self::DeleteNetLabel),
             0x0D => Ok(Self::MoveNetLabel),
+            0x0E => Ok(Self::ScaleComponent),
             other => Err(BinaryHistoryError::UnknownOpcode(other)),
         }
     }
@@ -148,6 +150,16 @@ pub fn write_command(cmd: &CanvasCommand, out: &mut Vec<u8>) {
             out.extend_from_slice(&(*id as u64).to_le_bytes());
             out.push(if *from_mirrored { 1 } else { 0 });
             out.push(if *to_mirrored { 1 } else { 0 });
+        }
+        CanvasCommand::ScaleComponent {
+            id,
+            from_scale,
+            to_scale,
+        } => {
+            out.push(ActionOpcode::ScaleComponent as u8);
+            out.extend_from_slice(&(*id as u64).to_le_bytes());
+            out.extend_from_slice(&from_scale.to_le_bytes());
+            out.extend_from_slice(&to_scale.to_le_bytes());
         }
         CanvasCommand::ModifyComponentValue {
             id,
@@ -277,6 +289,22 @@ pub fn read_command(data: &[u8], cursor: &mut usize) -> Result<CanvasCommand, Bi
                 id,
                 from_mirrored,
                 to_mirrored,
+            })
+        }
+        ActionOpcode::ScaleComponent => {
+            if *cursor + 16 > data.len() {
+                return Err(BinaryHistoryError::TruncatedData);
+            }
+            let id = u64::from_le_bytes(data[*cursor..*cursor + 8].try_into().unwrap()) as usize;
+            *cursor += 8;
+            let from_scale = f32::from_le_bytes(data[*cursor..*cursor + 4].try_into().unwrap());
+            *cursor += 4;
+            let to_scale = f32::from_le_bytes(data[*cursor..*cursor + 4].try_into().unwrap());
+            *cursor += 4;
+            Ok(CanvasCommand::ScaleComponent {
+                id,
+                from_scale,
+                to_scale,
             })
         }
         ActionOpcode::ModifyComponentValue => {

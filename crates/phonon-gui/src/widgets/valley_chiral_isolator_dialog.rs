@@ -125,7 +125,7 @@ impl ValleyChiralIsolatorDialog {
 
     /// Recomputes all simulation models when parameters are modified.
     pub fn recompute(&mut self) {
-        let t_start = std::time::Instant::now();
+        let t_start = crate::time_util::Instant::now();
 
         let params = ValleyChiralParams {
             valley_hall: ValleyEdgeParams {

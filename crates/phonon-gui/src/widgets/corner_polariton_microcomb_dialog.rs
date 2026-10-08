@@ -13,7 +13,7 @@ use phonon_solver::corner_polariton_microcomb::{
     PhaseNoisePoint, SolitonCombPoint, SolitonDynamicsParams,
     SolitonTemporalPoint, SynthesizerParams,
 };
-use std::time::Instant;
+use crate::time_util::Instant;
 
 /// Active tab in the Corner-Polariton Micro-Comb Dialog.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

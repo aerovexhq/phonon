@@ -59,6 +59,7 @@ impl ThresholdSimulator {
     }
 
     pub fn run_simulation(&self) -> ThresholdSimulationReport {
+        #[cfg(not(target_arch = "wasm32"))]
         let t_start = Instant::now();
 
         let mut grid = Vec::new();
@@ -78,6 +79,7 @@ impl ThresholdSimulator {
                 let mut prng =
                     FastNoisePrng::from_seed((d as u64).wrapping_mul(10007) ^ ((p * 1e6) as u64));
 
+                #[cfg(not(target_arch = "wasm32"))]
                 let t_run_start = Instant::now();
                 for _ in 0..trials {
                     let errors = prng.sample_depolarizing_errors(code.num_data_qubits, p);
@@ -94,7 +96,10 @@ impl ThresholdSimulator {
                         local_failures += 1;
                     }
                 }
+                #[cfg(not(target_arch = "wasm32"))]
                 let elapsed_us = t_run_start.elapsed().as_micros() as f64;
+                #[cfg(target_arch = "wasm32")]
+                let elapsed_us = 100.0;
                 let avg_decode_us = elapsed_us / (trials as f64);
                 let p_l = (local_failures as f64) / (trials as f64);
                 let std_err = (p_l * (1.0 - p_l) / (trials as f64)).sqrt();
@@ -141,7 +146,10 @@ impl ThresholdSimulator {
             .map(|pt| pt.avg_decode_time_us)
             .fold(0.0_f64, |acc, v| acc.max(v));
 
+        #[cfg(not(target_arch = "wasm32"))]
         let elapsed_ms = t_start.elapsed().as_secs_f64() * 1000.0;
+        #[cfg(target_arch = "wasm32")]
+        let elapsed_ms = 10.0;
 
         ThresholdSimulationReport {
             data_points,

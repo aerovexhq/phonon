@@ -132,7 +132,7 @@ impl FloquetCornerTransducerDialog {
 
     /// Recomputes all transducer dynamics, routing metrics, and audit results.
     pub fn recompute(&mut self) {
-        let start = std::time::Instant::now();
+        let start = crate::time_util::Instant::now();
 
         let trans_params = CornerTransducerParams {
             center_freq_ghz: self.center_freq_ghz,

@@ -111,26 +111,26 @@ fn test_eight_orientation_combinations_dihedral_group() {
 fn test_pin_positions_with_mirroring() {
     let mut inv = SchematicComponent::new(10, ComponentKind::Inverter, Pos2::new(200.0, 200.0), 1);
 
-    // Inverter default pins: IN at (-30, 0), OUT at (30, 0)
+    // Inverter on-grid pins: IN at (-40, 0), OUT at (40, 0)
     let in_unmirrored = inv.pin_world_pos(0).unwrap();
     let out_unmirrored = inv.pin_world_pos(1).unwrap();
-    assert_eq!(in_unmirrored, Pos2::new(170.0, 200.0));
-    assert_eq!(out_unmirrored, Pos2::new(230.0, 200.0));
+    assert_eq!(in_unmirrored, Pos2::new(160.0, 200.0));
+    assert_eq!(out_unmirrored, Pos2::new(240.0, 200.0));
 
     // Mirror horizontally
     inv.mirror_horizontal();
     let in_mirrored = inv.pin_world_pos(0).unwrap();
     let out_mirrored = inv.pin_world_pos(1).unwrap();
 
-    // IN should flip to +30 relative (+X direction) -> (230, 200)
-    // OUT should flip to -30 relative (-X direction) -> (170, 200)
-    assert_eq!(in_mirrored, Pos2::new(230.0, 200.0));
-    assert_eq!(out_mirrored, Pos2::new(170.0, 200.0));
+    // IN should flip to +40 relative (+X direction) -> (240, 200)
+    // OUT should flip to -40 relative (-X direction) -> (160, 200)
+    assert_eq!(in_mirrored, Pos2::new(240.0, 200.0));
+    assert_eq!(out_mirrored, Pos2::new(160.0, 200.0));
 
     // all_pins() must also reflect mirrored coordinates
     let pins = inv.all_pins();
-    assert_eq!(pins[0], ("IN", Pos2::new(230.0, 200.0)));
-    assert_eq!(pins[1], ("OUT", Pos2::new(170.0, 200.0)));
+    assert_eq!(pins[0], ("IN", Pos2::new(240.0, 200.0)));
+    assert_eq!(pins[1], ("OUT", Pos2::new(160.0, 200.0)));
 }
 
 #[test]

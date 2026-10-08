@@ -373,17 +373,17 @@ fn test_transistor_speed_regression_tier6_simd() {
 
 #[test]
 fn test_schematic_cad_integrity_primitives_erc_binary_roundtrip() {
-    // 1. Verify all 35 primitives across categories
+    // 1. Verify all 71 primitives across categories
     let all_kinds = ComponentKind::ALL;
-    assert_eq!(all_kinds.len(), 35, "ComponentKind::ALL must contain exactly 35 primitives");
+    assert_eq!(all_kinds.len(), 71, "ComponentKind::ALL must contain exactly 71 primitives");
     assert_eq!(
         ComponentKind::ALL_VARIANTS.len(),
-        35,
-        "ComponentKind::ALL_VARIANTS must contain exactly 35 primitives"
+        71,
+        "ComponentKind::ALL_VARIANTS must contain exactly 71 primitives"
     );
 
     let categories = ComponentCategory::all_categories();
-    assert_eq!(categories.len(), 8, "Hierarchical taxonomy must define exactly 8 categories");
+    assert_eq!(categories.len(), 11, "Hierarchical taxonomy must define exactly 11 categories");
     let mut categorized_count = 0;
     for &cat in categories {
         let comps = cat.components();
@@ -393,10 +393,10 @@ fn test_schematic_cad_integrity_primitives_erc_binary_roundtrip() {
             categorized_count += 1;
         }
     }
-    assert_eq!(categorized_count, 35, "All 35 primitives must be covered across categories");
+    assert_eq!(categorized_count, 71, "All 71 primitives must be covered across categories");
 
-    // Instantiate all 35 primitives into schematic components
-    let mut components = Vec::with_capacity(35);
+    // Instantiate all 71 primitives into schematic components
+    let mut components = Vec::with_capacity(71);
     for (i, &kind) in all_kinds.iter().enumerate() {
         let id = i + 1;
         let pos = egui::Pos2::new(100.0 + (i as f32) * 25.0, 150.0 + (i as f32) * 20.0);
@@ -410,7 +410,7 @@ fn test_schematic_cad_integrity_primitives_erc_binary_roundtrip() {
         assert!(!pins.is_empty(), "Primitive {:?} must define at least 1 pin", kind);
         components.push(comp);
     }
-    assert_eq!(components.len(), 35);
+    assert_eq!(components.len(), 71);
 
     // 2. Verify ERC diagnostics
     // Case 2a: Clean circuit with 0 errors and 0 warnings
@@ -471,10 +471,10 @@ fn test_schematic_cad_integrity_primitives_erc_binary_roundtrip() {
     assert_eq!(CURRENT_VERSION, 1, "Format version must be 1");
 
     let deserialized: DeserializedProject = deserialize_project(&serialized_bytes)
-        .expect("Deserialization of all 35 components binary format must succeed");
+        .expect("Deserialization of all 71 components binary format must succeed");
 
     assert_eq!(deserialized.title, title);
-    assert_eq!(deserialized.components.len(), 35, "Deserialized must contain all 35 primitives");
+    assert_eq!(deserialized.components.len(), 71, "Deserialized must contain all 71 primitives");
     assert_eq!(deserialized.wires.len(), 2, "Deserialized must contain all 2 wires");
 
     for (orig, des) in components.iter().zip(deserialized.components.iter()) {
@@ -495,6 +495,6 @@ fn test_schematic_cad_integrity_primitives_erc_binary_roundtrip() {
     }
 
     println!(
-        "Schematic CAD Integrity: all 35 primitives verified, ERC diagnostics verified, binary format round-trip verified [PASS]"
+        "Schematic CAD Integrity: all 71 primitives verified, ERC diagnostics verified, binary format round-trip verified [PASS]"
     );
 }

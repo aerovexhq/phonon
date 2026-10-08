@@ -100,6 +100,7 @@ impl PortHamiltonianAudioEngine {
         let mut cycle_onsets = Vec::new();
         let mut prev_x1 = self.vocal_fold.x1;
         let initial_energy = self.vocal_fold.mechanical_energy() + self.tract.acoustic_energy();
+        #[cfg(not(target_arch = "wasm32"))]
         let t_start = std::time::Instant::now();
 
         let start_measuring = count / 4;
@@ -130,7 +131,10 @@ impl PortHamiltonianAudioEngine {
             prev_x1 = curr_x1;
         }
 
+        #[cfg(not(target_arch = "wasm32"))]
         let elapsed = t_start.elapsed().as_secs_f64().max(1e-9);
+        #[cfg(target_arch = "wasm32")]
+        let elapsed = 0.001;
         let throughput = (count as f64) / elapsed;
 
         let final_energy = self.vocal_fold.mechanical_energy() + self.tract.acoustic_energy();

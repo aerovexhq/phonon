@@ -118,7 +118,7 @@ impl ParafermionDialog {
 
     /// Recomputes all physics solvers and refreshes caches.
     pub fn recompute(&mut self) {
-        let start = std::time::Instant::now();
+        let start = crate::time_util::Instant::now();
 
         let params = ParafermionParams {
             lattice: ParafermionLatticeParams {

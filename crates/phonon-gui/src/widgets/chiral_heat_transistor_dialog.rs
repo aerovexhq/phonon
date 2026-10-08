@@ -116,7 +116,7 @@ impl ChiralHeatTransistorDialog {
 
     /// Recomputes numerical simulation models across both diode and transistor engines.
     pub fn recompute(&mut self) {
-        let start = std::time::Instant::now();
+        let start = crate::time_util::Instant::now();
 
         self.processor.diode.params.drive_freq_ghz = self.drive_freq_ghz;
         self.processor.diode.params.coupling_g_mhz = self.diode_coupling_g_mhz;

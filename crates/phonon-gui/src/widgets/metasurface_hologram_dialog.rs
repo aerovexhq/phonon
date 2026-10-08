@@ -27,7 +27,7 @@ use phonon_solver::acoustic_metasurface_hologram::{
     TractorBeamEngine, TrapStabilityMetrics, TrappedParticle,
 };
 use std::f64::consts::PI;
-use std::time::Instant;
+use crate::time_util::Instant;
 
 /// Active tab in the Multi-Octave Acoustic Metasurface Hologram Dialog.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

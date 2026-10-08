@@ -120,7 +120,7 @@ impl ChiralAcoustomagnonicDialog {
 
     /// Recomputes dispersion curves, S-parameter spectrum, and audit metrics.
     pub fn recompute(&mut self) {
-        let start = std::time::Instant::now();
+        let start = crate::time_util::Instant::now();
 
         let ac_params = AcoustomagnonicParams {
             center_freq_ghz: self.center_freq_ghz,

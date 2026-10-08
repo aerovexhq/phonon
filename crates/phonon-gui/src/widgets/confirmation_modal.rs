@@ -92,33 +92,71 @@ impl ConfirmationModal {
             egui::Order::Middle,
             egui::Id::new("confirmation_modal_backdrop"),
         ));
-        painter.rect_filled(screen_rect, 0.0, Color32::from_black_alpha(140));
+        painter.rect_filled(screen_rect, 0.0, Color32::from_black_alpha(160));
 
         // Keyboard hotkeys: Esc -> Cancel, Enter -> Save & Proceed
         if ctx.input(|i| i.key_pressed(Key::Escape)) {
             return ConfirmationDecision::Cancel;
         }
 
-        let mut open_flag = true;
-
         let window_frame = egui::Frame::window(&ctx.global_style())
-            .fill(Color32::from_rgb(20, 26, 36))
-            .stroke(Stroke::new(1.0, Color32::from_rgb(60, 75, 95)));
+            .fill(Color32::from_rgb(17, 24, 39))
+            .stroke(Stroke::new(1.0, Color32::from_rgb(51, 65, 85)))
+            .inner_margin(egui::Margin::symmetric(28, 24));
 
-        egui::Window::new(RichText::new("Unsaved Changes").strong())
-            .open(&mut open_flag)
+        egui::Window::new("Unsaved Changes Confirmation")
+            .title_bar(false) // Custom header bar so title is mathematically centered across full popup width, ignoring [x]
             .collapsible(false)
             .resizable(false)
             .fade_in(false)
             .anchor(Align2::CENTER_CENTER, vec2(0.0, 0.0))
-            .default_width(460.0)
+            .default_width(480.0)
             .order(egui::Order::Foreground)
             .frame(window_frame)
             .show(ctx, |ui| {
+                // Eliminate hover size expansion across the entire modal
+                ui.style_mut().visuals.widgets.hovered.expansion = 0.0;
+                ui.style_mut().visuals.widgets.active.expansion = 0.0;
+
                 ui.vertical(|ui| {
-                    ui.add_space(4.0);
-                    ui.heading("Save changes before proceeding?");
-                    ui.add_space(6.0);
+                    // Header Bar: Mathematically centered title across full popup width, ignoring the close [x]
+                    let header_rect = ui.allocate_space(vec2(ui.available_width(), 26.0)).1;
+
+                    // Centered title text
+                    ui.painter().text(
+                        header_rect.center(),
+                        Align2::CENTER_CENTER,
+                        "Unsaved Changes",
+                        egui::FontId::proportional(17.0),
+                        Color32::from_rgb(241, 245, 249),
+                    );
+
+                    // Close [x] button on the far right without displacing the title center
+                    let close_btn_rect = Rect::from_center_size(
+                        Pos2::new(header_rect.max.x - 12.0, header_rect.center().y),
+                        vec2(22.0, 22.0),
+                    );
+                    let close_resp = ui.put(
+                        close_btn_rect,
+                        egui::Button::new(
+                            RichText::new("✕")
+                                .size(13.0)
+                                .color(Color32::from_rgb(148, 163, 184)),
+                        )
+                        .frame(false),
+                    );
+                    if close_resp.clicked() {
+                        decision = ConfirmationDecision::Cancel;
+                    }
+
+                    ui.add_space(14.0);
+                    ui.label(
+                        RichText::new("Save changes before proceeding?")
+                            .size(15.0)
+                            .strong()
+                            .color(Color32::from_rgb(226, 232, 240)),
+                    );
+                    ui.add_space(8.0);
 
                     let desc = pending_action.action_description();
                     let msg = format!(
@@ -127,46 +165,60 @@ impl ConfirmationModal {
                     );
                     ui.label(
                         RichText::new(msg)
-                            .size(13.0)
-                            .color(Color32::from_rgb(200, 210, 225)),
+                            .size(13.5)
+                            .color(Color32::from_rgb(148, 163, 184)),
                     );
 
-                    ui.add_space(16.0);
+                    ui.add_space(20.0);
                     ui.separator();
-                    ui.add_space(8.0);
+                    ui.add_space(16.0);
 
+                    // Button Row: Professional dark slate / deep navy styling, fixed sizes, no hover jump
                     ui.horizontal(|ui| {
-                        // Cancel button
-                        if ui.button("Cancel").clicked() {
+                        // Cancel button: Professional neutral dark slate
+                        let cancel_btn = ui.add_sized(
+                            vec2(90.0, 34.0),
+                            egui::Button::new(
+                                RichText::new("Cancel")
+                                    .size(13.0)
+                                    .color(Color32::from_rgb(203, 213, 225)),
+                            )
+                            .fill(Color32::from_rgb(30, 41, 59))
+                            .stroke(Stroke::new(1.0, Color32::from_rgb(71, 85, 105))),
+                        );
+                        if cancel_btn.clicked() {
                             decision = ConfirmationDecision::Cancel;
                         }
 
                         ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-                            // Primary: Save & Proceed button
-                            let save_btn = ui.add(
+                            // Primary: Save & Proceed button (Deep slate navy, highly professional)
+                            let save_btn = ui.add_sized(
+                                vec2(136.0, 34.0),
                                 egui::Button::new(
                                     RichText::new("Save & Proceed")
+                                        .size(13.0)
                                         .strong()
-                                        .color(Color32::from_rgb(10, 15, 25)),
+                                        .color(Color32::from_rgb(241, 245, 249)),
                                 )
-                                .fill(Color32::from_rgb(56, 189, 248)),
+                                .fill(Color32::from_rgb(30, 58, 138))
+                                .stroke(Stroke::new(1.0, Color32::from_rgb(59, 130, 246))),
                             );
-                            if save_btn.clicked()
-                                || ctx.input(|i| i.key_pressed(Key::Enter))
-                            {
+                            if save_btn.clicked() || ctx.input(|i| i.key_pressed(Key::Enter)) {
                                 decision = ConfirmationDecision::SaveAndProceed;
                             }
 
-                            ui.add_space(8.0);
+                            ui.add_space(12.0);
 
-                            // Discard Changes button
-                            let discard_btn = ui.add(
+                            // Discard Changes button: Deep crimson slate, fixed size, no hover popping
+                            let discard_btn = ui.add_sized(
+                                vec2(136.0, 34.0),
                                 egui::Button::new(
                                     RichText::new("Discard Changes")
+                                        .size(13.0)
                                         .color(Color32::from_rgb(248, 113, 113)),
                                 )
-                                .fill(Color32::from_rgb(45, 25, 30))
-                                .stroke(Stroke::new(1.0, Color32::from_rgb(180, 50, 50))),
+                                .fill(Color32::from_rgb(55, 20, 26))
+                                .stroke(Stroke::new(1.0, Color32::from_rgb(153, 27, 27))),
                             );
                             if discard_btn.clicked() {
                                 decision = ConfirmationDecision::DiscardAndProceed;
@@ -175,10 +227,6 @@ impl ConfirmationModal {
                     });
                 });
             });
-
-        if !open_flag {
-            decision = ConfirmationDecision::Cancel;
-        }
 
         decision
     }

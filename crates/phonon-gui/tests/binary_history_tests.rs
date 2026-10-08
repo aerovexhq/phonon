@@ -35,14 +35,15 @@ fn test_action_opcode_mapping_and_errors() {
     assert_eq!(ActionOpcode::from_u8(0x0B).unwrap(), ActionOpcode::AddNetLabel);
     assert_eq!(ActionOpcode::from_u8(0x0C).unwrap(), ActionOpcode::DeleteNetLabel);
     assert_eq!(ActionOpcode::from_u8(0x0D).unwrap(), ActionOpcode::MoveNetLabel);
+    assert_eq!(ActionOpcode::from_u8(0x0E).unwrap(), ActionOpcode::ScaleComponent);
 
     assert_eq!(
         ActionOpcode::from_u8(0x00),
         Err(BinaryHistoryError::UnknownOpcode(0x00))
     );
     assert_eq!(
-        ActionOpcode::from_u8(0x0E),
-        Err(BinaryHistoryError::UnknownOpcode(0x0E))
+        ActionOpcode::from_u8(0x0F),
+        Err(BinaryHistoryError::UnknownOpcode(0x0F))
     );
     assert_eq!(
         ActionOpcode::from_u8(0xFF),
@@ -147,6 +148,27 @@ fn test_opcode_roundtrip_mirror_component() {
 
     let mut cursor = 0;
     let read_cmd = read_command(&bytes, &mut cursor).expect("Failed to read MirrorComponent");
+    assert_eq!(cursor, bytes.len());
+    assert_eq!(cmd, read_cmd);
+}
+
+#[test]
+fn test_opcode_roundtrip_scale_component() {
+    let cmd = CanvasCommand::ScaleComponent {
+        id: 88,
+        from_scale: 1.0,
+        to_scale: 1.5,
+    };
+
+    let mut bytes = Vec::new();
+    write_command(&cmd, &mut bytes);
+
+    assert_eq!(bytes[0], ActionOpcode::ScaleComponent as u8);
+    // 1 opcode + 8 id + 4 from_scale + 4 to_scale = 17 bytes
+    assert_eq!(bytes.len(), 17);
+
+    let mut cursor = 0;
+    let read_cmd = read_command(&bytes, &mut cursor).expect("Failed to read ScaleComponent");
     assert_eq!(cursor, bytes.len());
     assert_eq!(cmd, read_cmd);
 }
