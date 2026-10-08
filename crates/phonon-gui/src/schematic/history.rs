@@ -3,6 +3,7 @@
 //! Reversible command pattern history engine and non-destructive action stack for Phonon Studio.
 
 use super::components::SchematicComponent;
+use super::net_label::NetLabel;
 use super::wire::SchematicWire;
 use egui::Pos2;
 
@@ -25,21 +26,39 @@ pub enum CanvasCommand {
     AddWire(SchematicWire),
     /// Deleted an existing wire from the canvas.
     DeleteWire(SchematicWire),
-    /// Cleared all components and wires from the canvas.
+    /// Added a new logical net label to the canvas.
+    AddNetLabel(NetLabel),
+    /// Deleted an existing logical net label from the canvas.
+    DeleteNetLabel(NetLabel),
+    /// Translated a net label from a starting position to a target position.
+    MoveNetLabel { id: usize, from: Pos2, to: Pos2 },
+    /// Cleared all components, wires, and net labels from the canvas.
     ClearAll {
         components: Vec<SchematicComponent>,
         wires: Vec<SchematicWire>,
+        net_labels: Vec<NetLabel>,
     },
     /// A composite sequence of atomic canvas commands executed together.
     Batch(Vec<CanvasCommand>),
 }
 
 impl CanvasCommand {
-    /// Executes or re-executes this command, mutating the canvas state.
+    /// Executes or re-executes this command, mutating the canvas components and wires.
     pub fn execute(
         &self,
         components: &mut Vec<SchematicComponent>,
         wires: &mut Vec<SchematicWire>,
+    ) {
+        let mut dummy_labels = Vec::new();
+        self.execute_with_labels(components, wires, &mut dummy_labels);
+    }
+
+    /// Executes or re-executes this command, mutating components, wires, and net labels.
+    pub fn execute_with_labels(
+        &self,
+        components: &mut Vec<SchematicComponent>,
+        wires: &mut Vec<SchematicWire>,
+        labels: &mut Vec<NetLabel>,
     ) {
         match self {
             Self::AddComponent(comp) => {
@@ -78,23 +97,48 @@ impl CanvasCommand {
             Self::DeleteWire(wire) => {
                 wires.retain(|w| w.id != wire.id);
             }
+            Self::AddNetLabel(lbl) => {
+                if !labels.iter().any(|l| l.id == lbl.id) {
+                    labels.push(lbl.clone());
+                }
+            }
+            Self::DeleteNetLabel(lbl) => {
+                labels.retain(|l| l.id != lbl.id);
+            }
+            Self::MoveNetLabel { id, to, .. } => {
+                if let Some(lbl) = labels.iter_mut().find(|l| l.id == *id) {
+                    lbl.pos = *to;
+                }
+            }
             Self::ClearAll { .. } => {
                 components.clear();
                 wires.clear();
+                labels.clear();
             }
             Self::Batch(cmds) => {
                 for cmd in cmds {
-                    cmd.execute(components, wires);
+                    cmd.execute_with_labels(components, wires, labels);
                 }
             }
         }
     }
 
-    /// Reverses the effect of this command, returning the canvas to its prior state.
+    /// Reverses the effect of this command, returning components and wires to their prior state.
     pub fn undo(
         &self,
         components: &mut Vec<SchematicComponent>,
         wires: &mut Vec<SchematicWire>,
+    ) {
+        let mut dummy_labels = Vec::new();
+        self.undo_with_labels(components, wires, &mut dummy_labels);
+    }
+
+    /// Reverses the effect of this command, returning components, wires, and net labels to their prior state.
+    pub fn undo_with_labels(
+        &self,
+        components: &mut Vec<SchematicComponent>,
+        wires: &mut Vec<SchematicWire>,
+        labels: &mut Vec<NetLabel>,
     ) {
         match self {
             Self::AddComponent(comp) => {
@@ -133,16 +177,31 @@ impl CanvasCommand {
                     wires.push(wire.clone());
                 }
             }
+            Self::AddNetLabel(lbl) => {
+                labels.retain(|l| l.id != lbl.id);
+            }
+            Self::DeleteNetLabel(lbl) => {
+                if !labels.iter().any(|l| l.id == lbl.id) {
+                    labels.push(lbl.clone());
+                }
+            }
+            Self::MoveNetLabel { id, from, .. } => {
+                if let Some(lbl) = labels.iter_mut().find(|l| l.id == *id) {
+                    lbl.pos = *from;
+                }
+            }
             Self::ClearAll {
                 components: saved_comps,
                 wires: saved_wires,
+                net_labels: saved_labels,
             } => {
                 *components = saved_comps.clone();
                 *wires = saved_wires.clone();
+                *labels = saved_labels.clone();
             }
             Self::Batch(cmds) => {
                 for cmd in cmds.iter().rev() {
-                    cmd.undo(components, wires);
+                    cmd.undo_with_labels(components, wires, labels);
                 }
             }
         }
@@ -263,6 +322,22 @@ impl HistoryStack {
         }
     }
 
+    /// Reverses the most recent command on the undo stack with net labels and moves it to the redo stack.
+    pub fn undo_with_labels(
+        &mut self,
+        components: &mut Vec<SchematicComponent>,
+        wires: &mut Vec<SchematicWire>,
+        labels: &mut Vec<NetLabel>,
+    ) -> bool {
+        if let Some(cmd) = self.undo_stack.pop() {
+            cmd.undo_with_labels(components, wires, labels);
+            self.redo_stack.push(cmd);
+            true
+        } else {
+            false
+        }
+    }
+
     /// Re-applies the most recent undone command on the redo stack and moves it to the undo stack.
     ///
     /// Returns `true` if a redo was performed, or `false` if the redo stack was empty.
@@ -273,6 +348,22 @@ impl HistoryStack {
     ) -> bool {
         if let Some(cmd) = self.redo_stack.pop() {
             cmd.execute(components, wires);
+            self.undo_stack.push(cmd);
+            true
+        } else {
+            false
+        }
+    }
+
+    /// Re-applies the most recent undone command on the redo stack with net labels and moves it to the undo stack.
+    pub fn redo_with_labels(
+        &mut self,
+        components: &mut Vec<SchematicComponent>,
+        wires: &mut Vec<SchematicWire>,
+        labels: &mut Vec<NetLabel>,
+    ) -> bool {
+        if let Some(cmd) = self.redo_stack.pop() {
+            cmd.execute_with_labels(components, wires, labels);
             self.undo_stack.push(cmd);
             true
         } else {

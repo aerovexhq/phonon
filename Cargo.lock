@@ -2526,6 +2526,7 @@ dependencies = [
  "phonon-netlist",
  "phonon-solver",
  "phonon-thermal",
+ "serde",
  "thiserror 2.0.21",
  "wasm-bindgen",
  "wasm-bindgen-futures",

@@ -11,6 +11,7 @@
 
 use super::canvas::SchematicCanvas;
 use super::components::{ComponentKind, SchematicComponent};
+use super::net_label::NetLabel;
 use super::wire::SchematicWire;
 use egui::Pos2;
 use std::collections::HashSet;
@@ -79,7 +80,7 @@ pub struct ErcEngine;
 impl ErcEngine {
     /// Evaluates all electrical rules checks on the given schematic canvas.
     pub fn evaluate_canvas(canvas: &SchematicCanvas) -> Vec<ErcDiagnostic> {
-        Self::evaluate(&canvas.components, &canvas.wires)
+        Self::evaluate_with_labels(&canvas.components, &canvas.wires, &canvas.net_labels)
     }
 
     /// Evaluates electrical rules checks across component and wire slices.
@@ -87,9 +88,18 @@ impl ErcEngine {
         components: &[SchematicComponent],
         wires: &[SchematicWire],
     ) -> Vec<ErcDiagnostic> {
+        Self::evaluate_with_labels(components, wires, &[])
+    }
+
+    /// Evaluates electrical rules checks across components, wires, and net labels.
+    pub fn evaluate_with_labels(
+        components: &[SchematicComponent],
+        wires: &[SchematicWire],
+        net_labels: &[NetLabel],
+    ) -> Vec<ErcDiagnostic> {
         let mut diagnostics = Vec::new();
 
-        if components.is_empty() && wires.is_empty() {
+        if components.is_empty() && wires.is_empty() && net_labels.is_empty() {
             return diagnostics;
         }
 
@@ -138,6 +148,9 @@ impl ErcEngine {
             w.net_name
                 .as_ref()
                 .map_or(false, |n| n == "0" || n.eq_ignore_ascii_case("GND"))
+        }) || net_labels.iter().any(|l| {
+            let u = l.name.trim().to_uppercase();
+            u == "0" || u == "GND" || u == "GROUND"
         });
 
         if !has_ground && !components.is_empty() {
@@ -184,6 +197,23 @@ impl ErcEngine {
                     pt_idx,
                 });
             }
+        }
+
+        // Register net labels
+        struct LabelEntry {
+            canonical: String,
+            pt_idx: usize,
+            pos: Pos2,
+        }
+        let mut label_entries = Vec::with_capacity(net_labels.len());
+        for label in net_labels {
+            let pt = quantize(label.pos);
+            let pt_idx = get_pt_idx(pt, &mut point_map);
+            label_entries.push(LabelEntry {
+                canonical: label.name.trim().to_uppercase(),
+                pt_idx,
+                pos: label.pos,
+            });
         }
 
         // Register wire endpoints
@@ -245,7 +275,7 @@ impl ErcEngine {
             }
         }
 
-        // 3c. Union pins touching other pins directly
+        // 3c2. Union pins touching other pins directly
         let num_pins = pin_entries.len();
         for i in 0..num_pins {
             for j in (i + 1)..num_pins {
@@ -255,11 +285,50 @@ impl ErcEngine {
             }
         }
 
+        // 3c3. Union net labels that touch wire segments or pins
+        for label in &label_entries {
+            for wire in wires {
+                for seg in &wire.segments {
+                    if seg.contains_point(label.pos, 4.0) {
+                        let s_idx = get_pt_idx(quantize(seg.start), &mut point_map);
+                        let e_idx = get_pt_idx(quantize(seg.end), &mut point_map);
+                        dsu_union(&mut parent, label.pt_idx, s_idx);
+                        dsu_union(&mut parent, label.pt_idx, e_idx);
+                    }
+                }
+            }
+            for pin in &pin_entries {
+                if (pin.pin_pos - label.pos).length() <= 4.0 {
+                    dsu_union(&mut parent, label.pt_idx, pin.pt_idx);
+                }
+            }
+        }
+
+        // 3c4. Union net labels sharing identical names
+        let num_lbls = label_entries.len();
+        for i in 0..num_lbls {
+            for j in (i + 1)..num_lbls {
+                if !label_entries[i].canonical.is_empty()
+                    && label_entries[i].canonical == label_entries[j].canonical
+                {
+                    dsu_union(&mut parent, label_entries[i].pt_idx, label_entries[j].pt_idx);
+                }
+            }
+        }
+
         // 3d. Count pins per root node
         let mut pin_counts = vec![0usize; num_points];
         for pin in &pin_entries {
             let root = dsu_find(&mut parent, pin.pt_idx);
             pin_counts[root] += 1;
+        }
+
+        // If a root node is referenced to Ground via NetLabel, provide virtual reference connection
+        for label in &label_entries {
+            if label.canonical == "0" || label.canonical == "GND" || label.canonical == "GROUND" {
+                let root = dsu_find(&mut parent, label.pt_idx);
+                pin_counts[root] += 1;
+            }
         }
 
         // 4. Short-Circuited Voltage Source Check

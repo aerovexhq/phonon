@@ -517,4 +517,116 @@ pub fn wire_from_points(id: usize, points: &[Pos2], net_name: Option<String>) ->
     }
 }
 
+/// Represents an orthogonal intersection between two wires where they cross without an electrical connection.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct WireCrossing {
+    /// World position of the crossing intersection.
+    pub point: Pos2,
+    /// Whether the bridge arc is along the horizontal segment.
+    pub is_horizontal: bool,
+}
+
+/// Identifies all geometric wire crossings that do NOT have a solder junction dot.
+/// These are orthogonal crossing paths that must render a visual bridge hop.
+pub fn compute_wire_crossings(wires: &[SchematicWire], junctions: &[Pos2]) -> Vec<WireCrossing> {
+    let mut crossings = Vec::new();
+    let tol = 3.0;
+
+    for (w1_idx, w1) in wires.iter().enumerate() {
+        for seg1 in &w1.segments {
+            let seg1_h = (seg1.start.y - seg1.end.y).abs() <= 0.1;
+            let seg1_v = (seg1.start.x - seg1.end.x).abs() <= 0.1;
+
+            for w2 in wires.iter().skip(w1_idx) {
+                for seg2 in &w2.segments {
+                    if std::ptr::eq(seg1, seg2) {
+                        continue;
+                    }
+
+                    let seg2_h = (seg2.start.y - seg2.end.y).abs() <= 0.1;
+                    let seg2_v = (seg2.start.x - seg2.end.x).abs() <= 0.1;
+
+                    // Perpendicular crossings (H crosses V)
+                    if (seg1_h && seg2_v) || (seg1_v && seg2_h) {
+                        let (h_seg, v_seg) = if seg1_h {
+                            (seg1, seg2)
+                        } else {
+                            (seg2, seg1)
+                        };
+
+                        let cross_x = v_seg.start.x;
+                        let cross_y = h_seg.start.y;
+                        let pt = Pos2::new(cross_x, cross_y);
+
+                        let h_min_x = h_seg.start.x.min(h_seg.end.x);
+                        let h_max_x = h_seg.start.x.max(h_seg.end.x);
+                        let v_min_y = v_seg.start.y.min(v_seg.end.y);
+                        let v_max_y = v_seg.start.y.max(v_seg.end.y);
+
+                        // Must be strictly interior (not at endpoints)
+                        if cross_x > h_min_x + tol
+                            && cross_x < h_max_x - tol
+                            && cross_y > v_min_y + tol
+                            && cross_y < v_max_y - tol
+                        {
+                            // Ensure there is no solder junction dot at this point
+                            let has_junction = junctions.iter().any(|&j| (j - pt).length() <= tol);
+                            if !has_junction && !crossings.iter().any(|c: &WireCrossing| (c.point - pt).length() <= tol) {
+                                crossings.push(WireCrossing {
+                                    point: pt,
+                                    is_horizontal: true,
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    crossings
+}
+
+/// Renders visual bridge hop arcs for wire crossings onto the canvas painter.
+pub fn render_wire_crossings(
+    painter: &Painter,
+    canvas: &SchematicCanvas,
+    crossings: &[WireCrossing],
+    theme: &crate::theme::PhononTheme,
+) {
+    let wire_color = theme.wire_normal;
+    let bg_color = theme.canvas_bg;
+    let zoom = canvas.zoom.clamp(0.6, 2.5);
+    let hop_radius = 4.5 * zoom;
+    let stroke_width = 2.0 * zoom;
+
+    for crossing in crossings {
+        let center_screen = canvas.world_to_screen(crossing.point);
+
+        // 1. Mask out the vertical wire underneath with background color
+        let mask_rect = Rect::from_center_size(center_screen, egui::vec2(hop_radius * 2.2, hop_radius * 2.0));
+        painter.rect_filled(mask_rect, 0.0, bg_color);
+
+        // 2. Draw bridge hop arc on the horizontal wire
+        let left_pt = Pos2::new(center_screen.x - hop_radius, center_screen.y);
+        let right_pt = Pos2::new(center_screen.x + hop_radius, center_screen.y);
+        let p_top1 = Pos2::new(center_screen.x - hop_radius * 0.6, center_screen.y - hop_radius * 0.85);
+        let p_peak = Pos2::new(center_screen.x, center_screen.y - hop_radius);
+        let p_top2 = Pos2::new(center_screen.x + hop_radius * 0.6, center_screen.y - hop_radius * 0.85);
+
+        let stroke = Stroke::new(stroke_width, wire_color);
+        painter.line_segment([left_pt, p_top1], stroke);
+        painter.line_segment([p_top1, p_peak], stroke);
+        painter.line_segment([p_peak, p_top2], stroke);
+        painter.line_segment([p_top2, right_pt], stroke);
+
+        // 3. Draw vertical wire segments approaching the bridge
+        let v_top = Pos2::new(center_screen.x, mask_rect.min.y);
+        let v_bot = Pos2::new(center_screen.x, mask_rect.max.y);
+        painter.line_segment([Pos2::new(center_screen.x, center_screen.y - hop_radius * 1.5), v_top], stroke);
+        painter.line_segment([v_bot, Pos2::new(center_screen.x, center_screen.y + hop_radius * 1.5)], stroke);
+    }
+}
+
+
 

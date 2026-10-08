@@ -63,7 +63,14 @@ pub use schematic::subcircuit::{
     flatten_hierarchical_netlist, flatten_hierarchical_netlist_with_instances, PinDirection,
     SubcircuitDefinition, SubcircuitInstance, SubcircuitPin,
 };
-pub use schematic::wire::{compute_junction_dots, SchematicWire, WireSegment};
+pub use schematic::wire::{
+    compute_junction_dots, compute_wire_crossings, render_wire_crossings, SchematicWire,
+    WireCrossing, WireSegment,
+};
+pub use schematic::net_label::{NetLabel, NetLabelOrientation};
+pub use schematic::circuit_compiler::{
+    compile_schematic, compile_schematic_with_labels, CompiledCircuit,
+};
 pub use widgets::cluster_dashboard_dialog::ClusterDashboardDialog;
 pub use widgets::dynamics_status::DynamicsStatusBadge;
 pub use widgets::exceptional_point_dialog::ExceptionalPointDialog;

@@ -5,6 +5,7 @@
 use super::bus::SchematicBus;
 use super::components::SchematicComponent;
 use super::erc::{ErcDiagnostic, ErcSeverity};
+use super::net_label::NetLabel;
 use super::subcircuit::SubcircuitInstance;
 use super::wire::SchematicWire;
 use egui::{Color32, FontId, Painter, Pos2, Rect, Stroke, StrokeKind, Vec2};
@@ -22,10 +23,13 @@ pub struct SchematicCanvas {
     pub wires: Vec<SchematicWire>,
     pub subcircuit_instances: Vec<SubcircuitInstance>,
     pub buses: Vec<SchematicBus>,
+    pub net_labels: Vec<NetLabel>,
     /// Set of selected component IDs for multi-selection.
     pub selected_component_ids: HashSet<usize>,
     /// Set of selected wire IDs for multi-selection.
     pub selected_wire_ids: HashSet<usize>,
+    /// Set of selected net label IDs for multi-selection.
+    pub selected_label_ids: HashSet<usize>,
     /// Backward-compatible primary/last selected component ID.
     pub selected_component_id: Option<usize>,
     /// Backward-compatible primary/last selected wire ID.
@@ -47,8 +51,10 @@ impl Default for SchematicCanvas {
             wires: Vec::new(),
             subcircuit_instances: Vec::new(),
             buses: Vec::new(),
+            net_labels: Vec::new(),
             selected_component_ids: HashSet::new(),
             selected_wire_ids: HashSet::new(),
+            selected_label_ids: HashSet::new(),
             selected_component_id: None,
             selected_wire_id: None,
             marquee_start: None,
@@ -62,13 +68,14 @@ impl SchematicCanvas {
         Self::default()
     }
 
-    /// Checks whether the canvas has no components, wires, subcircuit instances, or buses.
+    /// Checks whether the canvas has no components, wires, subcircuit instances, buses, or net labels.
     #[inline]
     pub fn is_empty(&self) -> bool {
         self.components.is_empty()
             && self.wires.is_empty()
             && self.subcircuit_instances.is_empty()
             && self.buses.is_empty()
+            && self.net_labels.is_empty()
     }
 
     /// Resets the canvas coordinate origin to align with the specified screen position,
@@ -97,12 +104,18 @@ impl SchematicCanvas {
         self.buses.push(bus);
     }
 
-    /// Clears all schematic components, wires, subcircuit instances, and buses from the canvas.
+    /// Adds a logical net label to the canvas.
+    pub fn add_net_label(&mut self, label: NetLabel) {
+        self.net_labels.push(label);
+    }
+
+    /// Clears all schematic components, wires, subcircuit instances, buses, and net labels from the canvas.
     pub fn clear(&mut self) {
         self.components.clear();
         self.wires.clear();
         self.subcircuit_instances.clear();
         self.buses.clear();
+        self.net_labels.clear();
         self.clear_selection();
         self.marquee_start = None;
         self.marquee_current = None;
@@ -118,12 +131,35 @@ impl SchematicCanvas {
         self.selected_wire_ids.contains(&id) || self.selected_wire_id == Some(id)
     }
 
+    /// Checks whether a net label with the given ID is selected.
+    pub fn is_label_selected(&self, id: usize) -> bool {
+        self.selected_label_ids.contains(&id)
+    }
+
     /// Clears all selection state.
     pub fn clear_selection(&mut self) {
         self.selected_component_ids.clear();
         self.selected_wire_ids.clear();
+        self.selected_label_ids.clear();
         self.selected_component_id = None;
         self.selected_wire_id = None;
+    }
+
+    /// Selects a single net label or adds to selection if multi is true.
+    pub fn select_label(&mut self, id: usize, multi: bool) {
+        if !multi {
+            self.clear_selection();
+        }
+        self.selected_label_ids.insert(id);
+    }
+
+    /// Toggles net label in/out of the selection set.
+    pub fn toggle_label_selection(&mut self, id: usize) {
+        if self.selected_label_ids.contains(&id) {
+            self.selected_label_ids.remove(&id);
+        } else {
+            self.selected_label_ids.insert(id);
+        }
     }
 
     /// Selects a single component or adds to selection if multi is true.
@@ -376,6 +412,28 @@ impl SchematicCanvas {
                     let e_screen = self.world_to_screen(seg.end);
                     painter.line_segment([s_screen, e_screen], halo_stroke);
                 }
+            }
+        }
+
+        // Halos for selected net labels
+        for label in &self.net_labels {
+            if self.is_label_selected(label.id) {
+                let bbox_world = label.bounding_box();
+                let min_screen = self.world_to_screen(bbox_world.min);
+                let max_screen = self.world_to_screen(bbox_world.max);
+                let screen_rect = Rect::from_min_max(min_screen, max_screen).expand(3.0 * self.zoom.clamp(0.8, 1.5));
+
+                painter.rect_filled(
+                    screen_rect,
+                    4.0,
+                    Color32::from_rgba_unmultiplied(255, 180, 50, 35),
+                );
+                painter.rect_stroke(
+                    screen_rect,
+                    4.0,
+                    Stroke::new(1.8 * self.zoom.clamp(0.8, 1.8), Color32::from_rgba_unmultiplied(255, 190, 60, 210)),
+                    StrokeKind::Outside,
+                );
             }
         }
     }
@@ -654,6 +712,13 @@ impl SchematicCanvas {
                 include_pt(seg.start);
                 include_pt(seg.end);
             }
+        }
+
+        for label in &self.net_labels {
+            include_pt(label.pos);
+            let b = label.bounding_box();
+            include_pt(b.min);
+            include_pt(b.max);
         }
 
         if has_points {

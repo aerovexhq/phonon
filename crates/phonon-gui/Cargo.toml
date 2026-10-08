@@ -20,6 +20,7 @@ phonon-netlist = { path = "../phonon-netlist" }
 eframe = { workspace = true, features = ["glow"] }
 egui = { workspace = true }
 egui_plot = { workspace = true }
+serde = { workspace = true }
 thiserror = { workspace = true }
 
 [lib]

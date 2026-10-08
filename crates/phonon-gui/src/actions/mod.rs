@@ -55,6 +55,7 @@ pub enum ActionId {
     ToolWire,
     ToolBus,
     ToolProbe,
+    ToolNetLabel,
     ClearWire,
     OpenCommandPalette,
     OpenPreferences,
@@ -350,6 +351,13 @@ impl ActionRegistry {
             "Interactive pin voltage telemetry inspector",
             ActionCategory::Tools,
             Some("P"),
+        );
+        registry.register(
+            ActionId::ToolNetLabel,
+            "Net Label Tool",
+            "Logical net and off-sheet wire labeling tool",
+            ActionCategory::Tools,
+            Some("L"),
         );
         registry.register(
             ActionId::ClearWire,

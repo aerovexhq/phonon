@@ -256,6 +256,7 @@ impl FloatingToolbarState {
                         ToolMode::Wire => "W",
                         ToolMode::Bus => "B",
                         ToolMode::Probe => "P",
+                        ToolMode::NetLabel => "L",
                         ToolMode::Place(_) | ToolMode::PlaceComponent(_) => "+",
                     };
 
@@ -375,6 +376,11 @@ impl FloatingToolbarState {
                             // Probe (P)
                             if render_tool_button(ui, "P", *active_tool == ToolMode::Probe, "Probe Tool [P] - Interactive Voltage Telemetry", &toolbar_theme) {
                                 triggered_action = Some(FloatingToolbarAction::SelectTool(ToolMode::Probe));
+                            }
+
+                            // Net Label (L)
+                            if render_tool_button(ui, "L", *active_tool == ToolMode::NetLabel, "Net Label Tool [L] - Logical Net & Off-Sheet Wire Labeling", &toolbar_theme) {
+                                triggered_action = Some(FloatingToolbarAction::SelectTool(ToolMode::NetLabel));
                             }
 
                             // Separator

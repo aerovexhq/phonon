@@ -3,6 +3,7 @@
 //! Translates visual schematic components and wires into a solvable CircuitGraph and SPICE netlist.
 
 use super::components::{ComponentKind, SchematicComponent};
+use super::net_label::NetLabel;
 use super::wire::SchematicWire;
 use egui::Pos2;
 use phonon_core::CircuitGraph;
@@ -71,6 +72,15 @@ pub fn compile_schematic(
     components: &[SchematicComponent],
     wires: &[SchematicWire],
 ) -> Result<CompiledCircuit, String> {
+    compile_schematic_with_labels(components, wires, &[])
+}
+
+/// Compiles visual components, wires, and net labels into an electrical `CircuitGraph`.
+pub fn compile_schematic_with_labels(
+    components: &[SchematicComponent],
+    wires: &[SchematicWire],
+    net_labels: &[NetLabel],
+) -> Result<CompiledCircuit, String> {
     let mut dsu = DisjointSet::new();
 
     // 1. Union wire segment endpoints
@@ -113,6 +123,43 @@ pub fn compile_schematic(
         }
     }
 
+    // 2b. Union net labels that touch wire segments or pins
+    for label in net_labels {
+        let label_q = quantize(label.pos);
+        for wire in wires {
+            for seg in &wire.segments {
+                if seg.contains_point(label.pos, 4.0) {
+                    dsu.union(label_q, quantize(seg.start));
+                    dsu.union(label_q, quantize(seg.end));
+                }
+            }
+        }
+        for comp in components {
+            for (_, pin_pos) in comp.all_pins() {
+                if (pin_pos - label.pos).length() <= 4.0 {
+                    dsu.union(label_q, quantize(pin_pos));
+                }
+            }
+        }
+    }
+
+    // 2c. Union net labels sharing identical names (case-insensitive)
+    let mut label_groups: HashMap<String, Vec<(i32, i32)>> = HashMap::new();
+    for label in net_labels {
+        let key = label.name.trim().to_uppercase();
+        if !key.is_empty() {
+            label_groups.entry(key).or_default().push(quantize(label.pos));
+        }
+    }
+    for pts in label_groups.values() {
+        if pts.len() >= 2 {
+            let first = pts[0];
+            for &other in &pts[1..] {
+                dsu.union(first, other);
+            }
+        }
+    }
+
     // 3. Identify all points associated with Ground
     let mut ground_roots = Vec::new();
     for comp in components {
@@ -122,11 +169,30 @@ pub fn compile_schematic(
             ground_roots.push(root);
         }
     }
+    for label in net_labels {
+        let upper = label.name.trim().to_uppercase();
+        if upper == "0" || upper == "GND" || upper == "GROUND" {
+            let root = dsu.find(quantize(label.pos));
+            ground_roots.push(root);
+        }
+    }
 
     // 4. Assign human-readable net names to root clusters
     let mut root_to_net: HashMap<(i32, i32), String> = HashMap::new();
     for &gr in &ground_roots {
         root_to_net.insert(gr, "0".to_string());
+    }
+
+    // Pre-populate root clusters with explicit NetLabel names
+    for label in net_labels {
+        let upper = label.name.trim().to_uppercase();
+        if upper == "0" || upper == "GND" || upper == "GROUND" {
+            continue;
+        }
+        let root = dsu.find(quantize(label.pos));
+        if !root_to_net.contains_key(&root) {
+            root_to_net.insert(root, label.name.clone());
+        }
     }
 
     let mut net_counter = 1;
@@ -142,10 +208,21 @@ pub fn compile_schematic(
             let net_name = root_to_net.entry(root).or_insert_with(|| {
                 let name = format!("net{}", net_counter);
                 net_counter += 1;
-                all_nets.push(name.clone());
                 name
             });
+            if !all_nets.contains(net_name) {
+                all_nets.push(net_name.clone());
+            }
             pin_to_net.insert((comp.name.clone(), pin_name.to_string()), net_name.clone());
+        }
+    }
+
+    for label in net_labels {
+        let root = dsu.find(quantize(label.pos));
+        if let Some(net) = root_to_net.get(&root) {
+            if !all_nets.contains(net) {
+                all_nets.push(net.clone());
+            }
         }
     }
 

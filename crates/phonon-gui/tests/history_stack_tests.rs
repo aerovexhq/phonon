@@ -239,6 +239,7 @@ fn test_clear_all_undo() {
     stack.record(CanvasCommand::ClearAll {
         components: saved_comps,
         wires: saved_wires,
+        net_labels: Vec::new(),
     });
 
     assert!(components.is_empty());

@@ -5,12 +5,13 @@
 use crate::extraction::ExtractionWizardDialog;
 use crate::oscilloscope::{MultiGraphManager, OscilloscopePanel, WaveformTrace};
 use crate::schematic::{
-    compile_schematic, compute_junction_dots, compute_wire_telemetry, deserialize_project,
-    load_project_from_file, save_project_to_file, serialize_project, BinaryFormatError,
+    compile_schematic, compile_schematic_with_labels, compute_junction_dots,
+    compute_wire_crossings, compute_wire_telemetry, deserialize_project, load_project_from_file,
+    render_wire_crossings, save_project_to_file, serialize_project, BinaryFormatError,
     CanvasCommand, CompiledCircuit, ComponentKind, ErcDiagnostic, ErcEngine, ErcSeverity,
-    HistoryStack, MultiSheetManager, NetlistSyncEngine, SchematicBus, SchematicCanvas,
-    SchematicComponent, SchematicWire, SubcircuitDefinition, SubcircuitRegistry, SymbolLibrary,
-    WireSegment,
+    HistoryStack, MultiSheetManager, NetLabel, NetLabelOrientation, NetlistSyncEngine,
+    SchematicBus, SchematicCanvas, SchematicComponent, SchematicWire, SubcircuitDefinition,
+    SubcircuitRegistry, SymbolLibrary, WireCrossing, WireSegment,
 };
 use crate::thermal::{Colormap, ThermalOverlay};
 use crate::storage::ProjectStorageManager;
@@ -67,6 +68,7 @@ pub enum ToolMode {
     Place(ComponentKind),
     PlaceComponent(ComponentKind),
     Probe,
+    NetLabel,
 }
 
 impl ToolMode {
@@ -100,13 +102,19 @@ pub struct PhononApp {
     pub wires: Vec<SchematicWire>,
     pub next_comp_id: usize,
     pub next_wire_id: usize,
+    pub next_label_id: usize,
     pub selected_tool: ToolMode,
+    pub net_labels: Vec<NetLabel>,
+    pub active_net_label_text: String,
     /// Set of selected component IDs for multi-selection.
     pub selected_component_ids: HashSet<usize>,
     /// Set of selected wire IDs for multi-selection.
     pub selected_wire_ids: HashSet<usize>,
+    /// Set of selected net label IDs for multi-selection.
+    pub selected_label_ids: HashSet<usize>,
     pub selected_component_id: Option<usize>,
     pub selected_wire_id: Option<usize>,
+    pub selected_label_id: Option<usize>,
     pub active_wire_start: Option<Pos2>,
     /// Rubberband marquee drag start point in world coordinates.
     pub marquee_start: Option<Pos2>,
@@ -126,6 +134,8 @@ pub struct PhononApp {
     pub drag_start_mouse_pos: Option<Pos2>,
     /// Original positions of components before drag started.
     pub drag_start_positions: Vec<(usize, Pos2)>,
+    /// Original positions of net labels before drag started.
+    pub drag_start_label_positions: Vec<(usize, Pos2)>,
     /// Pre-drag snapshot of schematic wires for reversible history recording.
     pub drag_start_wires: Vec<SchematicWire>,
     /// Permanent wire attachments cached at drag start.
@@ -558,11 +568,16 @@ impl Default for PhononApp {
             wires: Vec::with_capacity(64),
             next_comp_id: 1,
             next_wire_id: 1,
+            next_label_id: 1,
             selected_tool: ToolMode::Select,
+            net_labels: Vec::new(),
+            active_net_label_text: "NET1".to_string(),
             selected_component_ids: HashSet::new(),
             selected_wire_ids: HashSet::new(),
+            selected_label_ids: HashSet::new(),
             selected_component_id: None,
             selected_wire_id: None,
+            selected_label_id: None,
             active_wire_start: None,
             marquee_start: None,
             marquee_current: None,
@@ -573,6 +588,7 @@ impl Default for PhononApp {
             dragging_selection: false,
             drag_start_mouse_pos: None,
             drag_start_positions: Vec::new(),
+            drag_start_label_positions: Vec::new(),
             drag_start_wires: Vec::new(),
             drag_attached_wires: Vec::new(),
             unsolvable_wiring_components: HashSet::new(),
@@ -1095,10 +1111,13 @@ impl PhononApp {
         self.components.clear();
         self.wires.clear();
         self.buses.clear();
+        self.net_labels.clear();
         self.next_comp_id = 1;
         self.next_wire_id = 1;
+        self.next_label_id = 1;
         self.selected_component_id = None;
         self.selected_wire_id = None;
+        self.selected_label_id = None;
         self.clear_selection();
         self.active_wire_start = None;
         self.dc_node_voltages.clear();
@@ -1110,6 +1129,7 @@ impl PhononApp {
         self.sim_status.clear();
         self.drag_start_pos = None;
         self.drag_start_positions.clear();
+        self.drag_start_label_positions.clear();
         self.drag_start_wires.clear();
         self.dragging_selection = false;
         self.editing_comp_value = None;
@@ -1118,20 +1138,22 @@ impl PhononApp {
         self.netlist_sync.invalidate();
     }
 
-    /// Checks whether the active schematic canvas has zero placed items (components, wires, and buses).
+    /// Checks whether the active schematic canvas has zero placed items (components, wires, buses, and net labels).
     #[inline]
     pub fn is_canvas_empty(&self) -> bool {
         self.components.is_empty()
             && self.wires.is_empty()
             && self.buses.is_empty()
+            && self.net_labels.is_empty()
             && self.canvas.subcircuit_instances.is_empty()
     }
 
-    /// Synchronizes app components, wires, and buses into the active canvas object and active sheet.
+    /// Synchronizes app components, wires, buses, and net labels into the active canvas object and active sheet.
     pub fn sync_canvas_state(&mut self) {
         self.canvas.components = self.components.clone();
         self.canvas.wires = self.wires.clone();
         self.canvas.buses = self.buses.clone();
+        self.canvas.net_labels = self.net_labels.clone();
         self.sync_selection_to_canvas();
 
         let active = self.sheets.active_sheet_mut();
@@ -1139,6 +1161,7 @@ impl PhononApp {
         active.canvas.wires = self.wires.clone();
         active.canvas.subcircuit_instances = self.canvas.subcircuit_instances.clone();
         active.canvas.buses = self.buses.clone();
+        active.canvas.net_labels = self.net_labels.clone();
         active.camera_offset = self.canvas.pan;
         active.camera_zoom = self.canvas.zoom;
     }
@@ -1175,8 +1198,10 @@ impl PhononApp {
         let active = self.sheets.active_sheet();
         self.components = active.canvas.components.clone();
         self.wires = active.canvas.wires.clone();
+        self.net_labels = active.canvas.net_labels.clone();
         self.canvas.components = self.components.clone();
         self.canvas.wires = self.wires.clone();
+        self.canvas.net_labels = self.net_labels.clone();
         self.canvas.subcircuit_instances = active.canvas.subcircuit_instances.clone();
         self.canvas.buses = active.canvas.buses.clone();
         self.buses = active.canvas.buses.clone();
@@ -1184,6 +1209,8 @@ impl PhononApp {
         self.canvas.zoom = active.camera_zoom;
         self.selected_component_id = None;
         self.selected_wire_id = None;
+        self.selected_label_id = None;
+        self.selected_label_ids.clear();
         self.active_wire_start = None;
         self.netlist_sync.invalidate();
     }
@@ -1210,10 +1237,11 @@ impl PhononApp {
 
     /// Clears the canvas, removing all components and wires, recording the action in history.
     pub fn clear_all(&mut self) {
-        if !self.components.is_empty() || !self.wires.is_empty() {
+        if !self.components.is_empty() || !self.wires.is_empty() || !self.net_labels.is_empty() {
             self.history.record(CanvasCommand::ClearAll {
                 components: self.components.clone(),
                 wires: self.wires.clone(),
+                net_labels: self.net_labels.clone(),
             });
             self.mark_dirty();
         }
@@ -1222,12 +1250,18 @@ impl PhononApp {
 
     /// Reverses the most recent canvas mutation action from the history stack.
     pub fn undo(&mut self) -> bool {
-        let success = self.history.undo(&mut self.components, &mut self.wires);
+        let success = self.history.undo_with_labels(
+            &mut self.components,
+            &mut self.wires,
+            &mut self.net_labels,
+        );
         if success {
             self.selected_component_id = None;
             self.selected_wire_id = None;
+            self.selected_label_id = None;
             self.selected_component_ids.clear();
             self.selected_wire_ids.clear();
+            self.selected_label_ids.clear();
             self.wires.sort_by_key(|w| w.id);
             self.sync_canvas_state();
             self.active_wire_start = None;
@@ -1240,6 +1274,10 @@ impl PhononApp {
             if self.next_wire_id <= max_w_id {
                 self.next_wire_id = max_w_id + 1;
             }
+            let max_l_id = self.net_labels.iter().map(|l| l.id).max().unwrap_or(0);
+            if self.next_label_id <= max_l_id {
+                self.next_label_id = max_l_id + 1;
+            }
             self.mark_dirty();
         }
         success
@@ -1247,12 +1285,18 @@ impl PhononApp {
 
     /// Re-applies the most recent undone canvas mutation action from the history stack.
     pub fn redo(&mut self) -> bool {
-        let success = self.history.redo(&mut self.components, &mut self.wires);
+        let success = self.history.redo_with_labels(
+            &mut self.components,
+            &mut self.wires,
+            &mut self.net_labels,
+        );
         if success {
             self.selected_component_id = None;
             self.selected_wire_id = None;
+            self.selected_label_id = None;
             self.selected_component_ids.clear();
             self.selected_wire_ids.clear();
+            self.selected_label_ids.clear();
             self.wires.sort_by_key(|w| w.id);
             self.sync_canvas_state();
             self.active_wire_start = None;
@@ -1264,6 +1308,10 @@ impl PhononApp {
             let max_w_id = self.wires.iter().map(|w| w.id).max().unwrap_or(0);
             if self.next_wire_id <= max_w_id {
                 self.next_wire_id = max_w_id + 1;
+            }
+            let max_l_id = self.net_labels.iter().map(|l| l.id).max().unwrap_or(0);
+            if self.next_label_id <= max_l_id {
+                self.next_label_id = max_l_id + 1;
             }
             self.mark_dirty();
         }
@@ -2623,7 +2671,7 @@ impl PhononApp {
 
     /// Compiles schematic and runs the non-linear DC Operating Point (.OP) solver.
     pub fn run_dc_op(&mut self) {
-        match compile_schematic(&self.components, &self.wires) {
+        match compile_schematic_with_labels(&self.components, &self.wires, &self.net_labels) {
             Err(err) => {
                 self.sim_status = format!("Compilation Error: {}", err);
             }
@@ -2755,7 +2803,7 @@ impl PhononApp {
 
     /// Executes backward adjoint sensitivity analysis and worst-case optimization for the schematic circuit.
     pub fn run_sensitivity_analysis(&mut self) {
-        match compile_schematic(&self.components, &self.wires) {
+        match compile_schematic_with_labels(&self.components, &self.wires, &self.net_labels) {
             Err(err) => {
                 self.sim_status = format!("Compilation Error: {}", err);
             }
@@ -2774,7 +2822,7 @@ impl PhononApp {
 
     /// Executes distributed Monte Carlo & Latin Hypercube parameter sweep and yield analysis.
     pub fn run_monte_carlo_sweep(&mut self) {
-        match compile_schematic(&self.components, &self.wires) {
+        match compile_schematic_with_labels(&self.components, &self.wires, &self.net_labels) {
             Err(err) => {
                 self.sim_status = format!("Compilation Error: {}", err);
             }
@@ -2793,7 +2841,7 @@ impl PhononApp {
 
     /// Runs dynamic electro-thermal co-simulation with thermal floorplan dialog.
     pub fn run_thermal_cosim(&mut self) {
-        match compile_schematic(&self.components, &self.wires) {
+        match compile_schematic_with_labels(&self.components, &self.wires, &self.net_labels) {
             Err(err) => {
                 self.sim_status = format!("Compilation Error: {}", err);
             }
@@ -2816,24 +2864,33 @@ impl PhononApp {
         self.selected_wire_ids.contains(&id) || self.selected_wire_id == Some(id)
     }
 
-    /// Clears all component and wire selections.
+    /// Checks whether a net label with the given ID is selected.
+    pub fn is_label_selected(&self, id: usize) -> bool {
+        self.selected_label_ids.contains(&id) || self.selected_label_id == Some(id)
+    }
+
+    /// Clears all component, wire, and net label selections.
     pub fn clear_selection(&mut self) {
         self.selected_component_ids.clear();
         self.selected_wire_ids.clear();
+        self.selected_label_ids.clear();
         self.selected_component_id = None;
         self.selected_wire_id = None;
+        self.selected_label_id = None;
         self.drag_start_mouse_pos = None;
         self.drag_attached_wires.clear();
         self.unsolvable_wiring_components.clear();
         self.sync_selection_to_canvas();
     }
 
-    /// Synchronizes selection state and components from PhononApp to SchematicCanvas.
+    /// Synchronizes selection state, components, wires, and net labels from PhononApp to SchematicCanvas.
     pub fn sync_selection_to_canvas(&mut self) {
         self.canvas.components = self.components.clone();
         self.canvas.wires = self.wires.clone();
+        self.canvas.net_labels = self.net_labels.clone();
         self.canvas.selected_component_ids = self.selected_component_ids.clone();
         self.canvas.selected_wire_ids = self.selected_wire_ids.clone();
+        self.canvas.selected_label_ids = self.selected_label_ids.clone();
         self.canvas.selected_component_id = self.selected_component_id;
         self.canvas.selected_wire_id = self.selected_wire_id;
         self.canvas.marquee_start = self.marquee_start;
@@ -2857,6 +2914,16 @@ impl PhononApp {
         }
         self.selected_wire_ids.insert(id);
         self.selected_wire_id = Some(id);
+        self.sync_selection_to_canvas();
+    }
+
+    /// Selects a single net label or adds to selection if multi is true.
+    pub fn select_label(&mut self, id: usize, multi: bool) {
+        if !multi {
+            self.clear_selection();
+        }
+        self.selected_label_ids.insert(id);
+        self.selected_label_id = Some(id);
         self.sync_selection_to_canvas();
     }
 
@@ -2888,16 +2955,32 @@ impl PhononApp {
         self.sync_selection_to_canvas();
     }
 
-    /// Selects all components and wires in the current schematic sheet.
-    pub fn select_all(&mut self) {
-        self.selected_component_ids = self.components.iter().map(|c| c.id).collect();
-        self.selected_wire_ids = self.wires.iter().map(|w| w.id).collect();
-        self.selected_component_id = self.selected_component_ids.iter().next().copied();
-        self.selected_wire_id = self.selected_wire_ids.iter().next().copied();
+    /// Toggles a net label's selection state (for Shift+Click).
+    pub fn toggle_label_selection(&mut self, id: usize) {
+        if self.selected_label_ids.contains(&id) {
+            self.selected_label_ids.remove(&id);
+            if self.selected_label_id == Some(id) {
+                self.selected_label_id = self.selected_label_ids.iter().next().copied();
+            }
+        } else {
+            self.selected_label_ids.insert(id);
+            self.selected_label_id = Some(id);
+        }
         self.sync_selection_to_canvas();
     }
 
-    /// Selects all components and wires intersecting the given rectangle in world coordinates.
+    /// Selects all components, wires, and net labels in the current schematic sheet.
+    pub fn select_all(&mut self) {
+        self.selected_component_ids = self.components.iter().map(|c| c.id).collect();
+        self.selected_wire_ids = self.wires.iter().map(|w| w.id).collect();
+        self.selected_label_ids = self.net_labels.iter().map(|l| l.id).collect();
+        self.selected_component_id = self.selected_component_ids.iter().next().copied();
+        self.selected_wire_id = self.selected_wire_ids.iter().next().copied();
+        self.selected_label_id = self.selected_label_ids.iter().next().copied();
+        self.sync_selection_to_canvas();
+    }
+
+    /// Selects all components, wires, and net labels intersecting the given rectangle in world coordinates.
     pub fn select_in_rect(&mut self, rect: egui::Rect, add: bool) {
         if !add {
             self.clear_selection();
@@ -2912,6 +2995,12 @@ impl PhononApp {
             if wire.intersects_rect(&rect) {
                 self.selected_wire_ids.insert(wire.id);
                 self.selected_wire_id = Some(wire.id);
+            }
+        }
+        for label in &self.net_labels {
+            if rect.intersects(label.bounding_box()) {
+                self.selected_label_ids.insert(label.id);
+                self.selected_label_id = Some(label.id);
             }
         }
         self.sync_selection_to_canvas();
@@ -3032,10 +3121,20 @@ impl PhononApp {
             }
         }
 
+        let sel_label_ids = self.selected_label_ids.clone();
+        let sel_label_id = self.selected_label_id;
+        let is_label_sel = |id: usize| sel_label_ids.contains(&id) || sel_label_id == Some(id);
+
+        for label in &mut self.net_labels {
+            if is_label_sel(label.id) {
+                label.pos += delta;
+            }
+        }
+
         self.sync_selection_to_canvas();
     }
 
-    /// Deletes all currently selected components and wires in a unified atomic undo/redo command.
+    /// Deletes all currently selected components, wires, and net labels in a unified atomic undo/redo command.
     pub fn delete_selected(&mut self) {
         let mut target_comp_ids = self.selected_component_ids.clone();
         if let Some(cid) = self.selected_component_id {
@@ -3047,12 +3146,18 @@ impl PhononApp {
             target_wire_ids.insert(wid);
         }
 
-        if target_comp_ids.is_empty() && target_wire_ids.is_empty() {
+        let mut target_label_ids = self.selected_label_ids.clone();
+        if let Some(lid) = self.selected_label_id {
+            target_label_ids.insert(lid);
+        }
+
+        if target_comp_ids.is_empty() && target_wire_ids.is_empty() && target_label_ids.is_empty() {
             return;
         }
 
         let mut to_delete_comps = Vec::new();
         let mut to_delete_wires = Vec::new();
+        let mut to_delete_labels = Vec::new();
 
         self.components.retain(|c| {
             if target_comp_ids.contains(&c.id) {
@@ -3072,12 +3177,24 @@ impl PhononApp {
             }
         });
 
+        self.net_labels.retain(|l| {
+            if target_label_ids.contains(&l.id) {
+                to_delete_labels.push(l.clone());
+                false
+            } else {
+                true
+            }
+        });
+
         let mut batch = Vec::new();
         for comp in to_delete_comps {
             batch.push(CanvasCommand::DeleteComponent(comp));
         }
         for wire in to_delete_wires {
             batch.push(CanvasCommand::DeleteWire(wire));
+        }
+        for label in to_delete_labels {
+            batch.push(CanvasCommand::DeleteNetLabel(label));
         }
 
         if !batch.is_empty() {
@@ -3093,7 +3210,7 @@ impl PhononApp {
         self.sim_status.clear();
     }
 
-    /// Duplicates all selected components and intra-selection wires, offset by (+40.0, +40.0) world coordinates.
+    /// Duplicates all selected components, wires, and net labels, offset by (+40.0, +40.0) world coordinates.
     pub fn duplicate_selected(&mut self) {
         let mut target_comp_ids = self.selected_component_ids.clone();
         if let Some(cid) = self.selected_component_id {
@@ -3105,7 +3222,12 @@ impl PhononApp {
             target_wire_ids.insert(wid);
         }
 
-        if target_comp_ids.is_empty() && target_wire_ids.is_empty() {
+        let mut target_label_ids = self.selected_label_ids.clone();
+        if let Some(lid) = self.selected_label_id {
+            target_label_ids.insert(lid);
+        }
+
+        if target_comp_ids.is_empty() && target_wire_ids.is_empty() && target_label_ids.is_empty() {
             return;
         }
 
@@ -3168,7 +3290,20 @@ impl PhononApp {
             }
         }
 
-        // 3. Atomically add items
+        // 3. Duplicate net labels
+        let mut new_labels = Vec::new();
+        for label in &self.net_labels {
+            if target_label_ids.contains(&label.id) {
+                let new_id = self.next_label_id;
+                self.next_label_id += 1;
+                let mut cloned = label.clone();
+                cloned.id = new_id;
+                cloned.pos += offset;
+                new_labels.push(cloned);
+            }
+        }
+
+        // 4. Atomically add items
         let mut batch = Vec::new();
         for comp in &new_comps {
             batch.push(CanvasCommand::AddComponent(comp.clone()));
@@ -3177,6 +3312,10 @@ impl PhononApp {
         for wire in &new_wires {
             batch.push(CanvasCommand::AddWire(wire.clone()));
             self.wires.push(wire.clone());
+        }
+        for label in &new_labels {
+            batch.push(CanvasCommand::AddNetLabel(label.clone()));
+            self.net_labels.push(label.clone());
         }
 
         if !batch.is_empty() {
@@ -3188,28 +3327,36 @@ impl PhononApp {
             self.mark_dirty();
         }
 
-        // 4. Select newly duplicated items
+        // 5. Select newly duplicated items
         self.selected_component_ids = new_comps.iter().map(|c| c.id).collect();
         self.selected_wire_ids = new_wires.iter().map(|w| w.id).collect();
+        self.selected_label_ids = new_labels.iter().map(|l| l.id).collect();
         self.selected_component_id = self.selected_component_ids.iter().next().copied();
         self.selected_wire_id = self.selected_wire_ids.iter().next().copied();
+        self.selected_label_id = self.selected_label_ids.iter().next().copied();
         self.sync_selection_to_canvas();
 
         self.sim_status = format!(
-            "Duplicated {} components, {} wires",
+            "Duplicated {} components, {} wires, {} labels",
             new_comps.len(),
-            new_wires.len()
+            new_wires.len(),
+            new_labels.len()
         );
     }
 
-    /// Rotates the active component(s) clockwise by 90 degrees.
+    /// Rotates the active component(s) or net label(s) clockwise by 90 degrees.
     pub fn rotate_active(&mut self) {
         let mut target_comp_ids = self.selected_component_ids.clone();
         if let Some(cid) = self.selected_component_id {
             target_comp_ids.insert(cid);
         }
 
-        if !target_comp_ids.is_empty() {
+        let mut target_label_ids = self.selected_label_ids.clone();
+        if let Some(lid) = self.selected_label_id {
+            target_label_ids.insert(lid);
+        }
+
+        if !target_comp_ids.is_empty() || !target_label_ids.is_empty() {
             let mut batch = Vec::new();
             for comp in &mut self.components {
                 if target_comp_ids.contains(&comp.id) {
@@ -3221,6 +3368,12 @@ impl PhononApp {
                         from_rot,
                         to_rot,
                     });
+                }
+            }
+
+            for label in &mut self.net_labels {
+                if target_label_ids.contains(&label.id) {
+                    label.orientation = label.orientation.rotate_clockwise();
                 }
             }
 
@@ -3347,6 +3500,10 @@ impl PhononApp {
             }
             ActionId::ToolProbe => {
                 self.selected_tool = ToolMode::Probe;
+                self.active_wire_start = None;
+            }
+            ActionId::ToolNetLabel => {
+                self.selected_tool = ToolMode::NetLabel;
                 self.active_wire_start = None;
             }
             ActionId::ClearWire => self.active_wire_start = None,
@@ -3518,6 +3675,15 @@ impl PhononApp {
         // Probe Tool: P
         if !ctrl && ctx.input(|i| i.key_pressed(Key::P)) {
             self.selected_tool = ToolMode::Probe;
+            self.active_wire_start = None;
+            self.placement_rotation = 0;
+            self.placement_mirrored = false;
+            return;
+        }
+
+        // Net Label Tool: L
+        if !ctrl && ctx.input(|i| i.key_pressed(Key::L)) {
+            self.selected_tool = ToolMode::NetLabel;
             self.active_wire_start = None;
             self.placement_rotation = 0;
             self.placement_mirrored = false;
@@ -3709,6 +3875,14 @@ impl PhononApp {
                                 break;
                             }
                         }
+                    }
+                    ToolMode::NetLabel => {
+                        let lbl_id = self.net_labels.len() + 1;
+                        let lbl_name = format!("NET{}", lbl_id);
+                        let lbl = NetLabel::new(lbl_id, lbl_name, snapped_world);
+                        self.history.record(CanvasCommand::AddNetLabel(lbl.clone()));
+                        self.net_labels.push(lbl);
+                        self.mark_dirty();
                     }
                 }
             }

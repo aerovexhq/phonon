@@ -3,7 +3,7 @@
 //! Hierarchical subcircuit macro-modeling, pin mapping, nested schematic encapsulation, and flat MNA netlist compilation.
 
 use super::canvas::SchematicCanvas;
-use super::circuit_compiler::compile_schematic;
+use super::circuit_compiler::{compile_schematic, compile_schematic_with_labels};
 use super::components::ComponentKind;
 use egui::{Color32, FontId, Painter, Pos2, Rect, Stroke, StrokeKind, Vec2};
 use std::collections::HashMap;
@@ -262,9 +262,13 @@ struct SubcircuitInternalComp {
 fn build_template_descriptors(def: &SubcircuitDefinition) -> Vec<SubcircuitInternalComp> {
     // If internal canvas has wires, compile to resolve pin-to-net mappings
     let compiled_pin_to_net = if !def.internal_canvas.wires.is_empty() {
-        compile_schematic(&def.internal_canvas.components, &def.internal_canvas.wires)
-            .ok()
-            .map(|c| c.pin_to_net)
+        compile_schematic_with_labels(
+            &def.internal_canvas.components,
+            &def.internal_canvas.wires,
+            &def.internal_canvas.net_labels,
+        )
+        .ok()
+        .map(|c| c.pin_to_net)
     } else {
         None
     };
@@ -361,7 +365,7 @@ pub fn flatten_hierarchical_netlist_with_instances(
 
     // 4. Emit top-level canvas primitive components if present
     if !canvas.components.is_empty() {
-        if let Ok(compiled) = compile_schematic(&canvas.components, &canvas.wires) {
+        if let Ok(compiled) = compile_schematic_with_labels(&canvas.components, &canvas.wires, &canvas.net_labels) {
             for line in compiled.spice_netlist.lines() {
                 if !line.starts_with('*')
                     && !line.starts_with(".TEMP")

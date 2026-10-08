@@ -6,6 +6,7 @@
 //! with configurable in-memory and on-disk depth limits.
 
 use super::history::{CanvasCommand, HistoryStack};
+use super::net_label::{NetLabel, NetLabelOrientation};
 use crate::schematic::binary_format::{
     read_component, read_wire, write_component, write_wire, BinaryFormatError,
 };
@@ -32,6 +33,9 @@ pub enum ActionOpcode {
     ClearAll = 0x08,
     Batch = 0x09,
     MirrorComponent = 0x0A,
+    AddNetLabel = 0x0B,
+    DeleteNetLabel = 0x0C,
+    MoveNetLabel = 0x0D,
 }
 
 impl ActionOpcode {
@@ -47,6 +51,9 @@ impl ActionOpcode {
             0x08 => Ok(Self::ClearAll),
             0x09 => Ok(Self::Batch),
             0x0A => Ok(Self::MirrorComponent),
+            0x0B => Ok(Self::AddNetLabel),
+            0x0C => Ok(Self::DeleteNetLabel),
+            0x0D => Ok(Self::MoveNetLabel),
             other => Err(BinaryHistoryError::UnknownOpcode(other)),
         }
     }
@@ -164,7 +171,7 @@ pub fn write_command(cmd: &CanvasCommand, out: &mut Vec<u8>) {
             out.push(ActionOpcode::DeleteWire as u8);
             write_wire(wire, out);
         }
-        CanvasCommand::ClearAll { components, wires } => {
+        CanvasCommand::ClearAll { components, wires, .. } => {
             out.push(ActionOpcode::ClearAll as u8);
             out.extend_from_slice(&(components.len() as u32).to_le_bytes());
             for c in components {
@@ -181,6 +188,22 @@ pub fn write_command(cmd: &CanvasCommand, out: &mut Vec<u8>) {
             for sub in sub_cmds {
                 write_command(sub, out);
             }
+        }
+        CanvasCommand::AddNetLabel(lbl) => {
+            out.push(ActionOpcode::AddNetLabel as u8);
+            write_net_label(lbl, out);
+        }
+        CanvasCommand::DeleteNetLabel(lbl) => {
+            out.push(ActionOpcode::DeleteNetLabel as u8);
+            write_net_label(lbl, out);
+        }
+        CanvasCommand::MoveNetLabel { id, from, to } => {
+            out.push(ActionOpcode::MoveNetLabel as u8);
+            out.extend_from_slice(&(*id as u64).to_le_bytes());
+            out.extend_from_slice(&from.x.to_le_bytes());
+            out.extend_from_slice(&from.y.to_le_bytes());
+            out.extend_from_slice(&to.x.to_le_bytes());
+            out.extend_from_slice(&to.y.to_le_bytes());
         }
     }
 }
@@ -324,7 +347,11 @@ pub fn read_command(data: &[u8], cursor: &mut usize) -> Result<CanvasCommand, Bi
                 wires.push(read_wire(data, cursor)?);
             }
 
-            Ok(CanvasCommand::ClearAll { components, wires })
+            Ok(CanvasCommand::ClearAll {
+                components,
+                wires,
+                net_labels: Vec::new(),
+            })
         }
         ActionOpcode::Batch => {
             if *cursor + 4 > data.len() {
@@ -338,7 +365,96 @@ pub fn read_command(data: &[u8], cursor: &mut usize) -> Result<CanvasCommand, Bi
             }
             Ok(CanvasCommand::Batch(sub_cmds))
         }
+        ActionOpcode::AddNetLabel => {
+            let lbl = read_net_label(data, cursor)?;
+            Ok(CanvasCommand::AddNetLabel(lbl))
+        }
+        ActionOpcode::DeleteNetLabel => {
+            let lbl = read_net_label(data, cursor)?;
+            Ok(CanvasCommand::DeleteNetLabel(lbl))
+        }
+        ActionOpcode::MoveNetLabel => {
+            if *cursor + 24 > data.len() {
+                return Err(BinaryHistoryError::TruncatedData);
+            }
+            let id = u64::from_le_bytes(data[*cursor..*cursor + 8].try_into().unwrap()) as usize;
+            *cursor += 8;
+            let fx = f32::from_le_bytes(data[*cursor..*cursor + 4].try_into().unwrap());
+            *cursor += 4;
+            let fy = f32::from_le_bytes(data[*cursor..*cursor + 4].try_into().unwrap());
+            *cursor += 4;
+            let tx = f32::from_le_bytes(data[*cursor..*cursor + 4].try_into().unwrap());
+            *cursor += 4;
+            let ty = f32::from_le_bytes(data[*cursor..*cursor + 4].try_into().unwrap());
+            *cursor += 4;
+            Ok(CanvasCommand::MoveNetLabel {
+                id,
+                from: Pos2::new(fx, fy),
+                to: Pos2::new(tx, ty),
+            })
+        }
     }
+}
+
+fn write_net_label(lbl: &NetLabel, out: &mut Vec<u8>) {
+    out.extend_from_slice(&(lbl.id as u64).to_le_bytes());
+    let name_bytes = lbl.name.as_bytes();
+    out.extend_from_slice(&(name_bytes.len() as u16).to_le_bytes());
+    out.extend_from_slice(name_bytes);
+    out.extend_from_slice(&lbl.pos.x.to_le_bytes());
+    out.extend_from_slice(&lbl.pos.y.to_le_bytes());
+    out.push(match lbl.orientation {
+        NetLabelOrientation::East => 0,
+        NetLabelOrientation::South => 1,
+        NetLabelOrientation::West => 2,
+        NetLabelOrientation::North => 3,
+    });
+}
+
+fn read_net_label(data: &[u8], cursor: &mut usize) -> Result<NetLabel, BinaryHistoryError> {
+    if *cursor + 8 > data.len() {
+        return Err(BinaryHistoryError::TruncatedData);
+    }
+    let id = u64::from_le_bytes(data[*cursor..*cursor + 8].try_into().unwrap()) as usize;
+    *cursor += 8;
+
+    if *cursor + 2 > data.len() {
+        return Err(BinaryHistoryError::TruncatedData);
+    }
+    let name_len = u16::from_le_bytes(data[*cursor..*cursor + 2].try_into().unwrap()) as usize;
+    *cursor += 2;
+
+    if *cursor + name_len > data.len() {
+        return Err(BinaryHistoryError::TruncatedData);
+    }
+    let name = std::str::from_utf8(&data[*cursor..*cursor + name_len])
+        .map_err(|_| BinaryHistoryError::InvalidUtf8)?
+        .to_string();
+    *cursor += name_len;
+
+    if *cursor + 9 > data.len() {
+        return Err(BinaryHistoryError::TruncatedData);
+    }
+    let px = f32::from_le_bytes(data[*cursor..*cursor + 4].try_into().unwrap());
+    *cursor += 4;
+    let py = f32::from_le_bytes(data[*cursor..*cursor + 4].try_into().unwrap());
+    *cursor += 4;
+    let orient_byte = data[*cursor];
+    *cursor += 1;
+    let orientation = match orient_byte {
+        0 => NetLabelOrientation::East,
+        1 => NetLabelOrientation::South,
+        2 => NetLabelOrientation::West,
+        3 => NetLabelOrientation::North,
+        _ => NetLabelOrientation::East,
+    };
+
+    Ok(NetLabel {
+        id,
+        name,
+        pos: Pos2::new(px, py),
+        orientation,
+    })
 }
 
 /// Serializes a full `HistoryStack` into a compact binary byte array with optional on-disk depth truncation.

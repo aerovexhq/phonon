@@ -32,14 +32,17 @@ fn test_action_opcode_mapping_and_errors() {
     assert_eq!(ActionOpcode::from_u8(0x08).unwrap(), ActionOpcode::ClearAll);
     assert_eq!(ActionOpcode::from_u8(0x09).unwrap(), ActionOpcode::Batch);
     assert_eq!(ActionOpcode::from_u8(0x0A).unwrap(), ActionOpcode::MirrorComponent);
+    assert_eq!(ActionOpcode::from_u8(0x0B).unwrap(), ActionOpcode::AddNetLabel);
+    assert_eq!(ActionOpcode::from_u8(0x0C).unwrap(), ActionOpcode::DeleteNetLabel);
+    assert_eq!(ActionOpcode::from_u8(0x0D).unwrap(), ActionOpcode::MoveNetLabel);
 
     assert_eq!(
         ActionOpcode::from_u8(0x00),
         Err(BinaryHistoryError::UnknownOpcode(0x00))
     );
     assert_eq!(
-        ActionOpcode::from_u8(0x0B),
-        Err(BinaryHistoryError::UnknownOpcode(0x0B))
+        ActionOpcode::from_u8(0x0E),
+        Err(BinaryHistoryError::UnknownOpcode(0x0E))
     );
     assert_eq!(
         ActionOpcode::from_u8(0xFF),
@@ -236,6 +239,7 @@ fn test_opcode_roundtrip_clear_all() {
     let cmd = CanvasCommand::ClearAll {
         components: vec![c1, c2],
         wires: vec![w1],
+        net_labels: Vec::new(),
     };
 
     let mut bytes = Vec::new();
@@ -595,6 +599,7 @@ fn test_clear_all_reversibility() {
     let cmd = CanvasCommand::ClearAll {
         components: components.clone(),
         wires: wires.clone(),
+        net_labels: Vec::new(),
     };
     cmd.execute(&mut components, &mut wires);
     stack.record(cmd);

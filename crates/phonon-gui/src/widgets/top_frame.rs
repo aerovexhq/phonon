@@ -5,7 +5,7 @@
 //! Provides cross-platform unified titlebar, master SVG icon emblem, brand menus,
 //! draggable window chrome, and desktop/web divergence controls.
 
-use crate::schematic::compile_schematic;
+use crate::schematic::{compile_schematic, compile_schematic_with_labels};
 use crate::widgets::confirmation_modal::{DemoCircuitKind, PendingAction};
 use crate::widgets::icon::render_phonon_icon;
 use egui::{pos2, vec2, Color32, FontId, OpenUrl, Rect, RichText, Sense, Stroke, StrokeKind, Ui, ViewportCommand};
@@ -328,7 +328,7 @@ fn render_top_frame_internal(
             ui.menu_button("Export", |ui| {
                 if ui.button("SPICE Netlist (.cir)...").clicked() {
                     if let Some(a) = app.as_deref_mut() {
-                        if let Ok(compiled) = compile_schematic(&a.components, &a.wires) {
+                        if let Ok(compiled) = compile_schematic_with_labels(&a.components, &a.wires, &a.net_labels) {
                             a.spice_netlist_text = compiled.spice_netlist;
                         }
                         a.show_netlist_window = true;
@@ -675,7 +675,7 @@ fn render_top_frame_internal(
             ui.separator();
             if ui.button("Netlist Inspector...").clicked() {
                 if let Some(a) = app.as_deref_mut() {
-                    if let Ok(compiled) = compile_schematic(&a.components, &a.wires) {
+                    if let Ok(compiled) = compile_schematic_with_labels(&a.components, &a.wires, &a.net_labels) {
                         a.spice_netlist_text = compiled.spice_netlist;
                     }
                     a.show_netlist_window = true;

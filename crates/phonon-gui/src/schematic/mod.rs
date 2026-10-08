@@ -11,6 +11,7 @@ pub mod circuit_compiler;
 pub mod components;
 pub mod erc;
 pub mod history;
+pub mod net_label;
 pub mod netlist_sync;
 pub mod sheet;
 pub mod subcircuit;
@@ -31,10 +32,13 @@ pub use binary_history::{
 pub use bus::{BusSignal, BusTapOff, SchematicBus};
 pub use canvas::SchematicCanvas;
 pub use categories::ComponentCategory;
-pub use circuit_compiler::{compile_schematic, compute_wire_telemetry, CompiledCircuit};
+pub use circuit_compiler::{
+    compile_schematic, compile_schematic_with_labels, compute_wire_telemetry, CompiledCircuit,
+};
 pub use components::{ComponentKind, SchematicComponent};
 pub use erc::{ErcCode, ErcDiagnostic, ErcEngine, ErcSeverity};
 pub use history::{CanvasCommand, HistoryStack};
+pub use net_label::{NetLabel, NetLabelOrientation};
 pub use netlist_sync::{NetlistSyncEngine, NetlistSyncError, SyncDelta};
 pub use sheet::{MultiSheetManager, SchematicSheet};
 pub use subcircuit::{
@@ -50,6 +54,7 @@ pub use symbol::{
     SymbolPrimitive, TerminalDirection,
 };
 pub use wire::{
-    compute_junction_dots, PinNormal, SchematicWire, WirePinOrientation, WireSegment,
+    compute_junction_dots, compute_wire_crossings, render_wire_crossings, PinNormal, SchematicWire,
+    WireCrossing, WirePinOrientation, WireSegment,
 };
 
