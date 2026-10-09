@@ -384,6 +384,7 @@ pub mod valley_majorana_router;
 pub mod chiral_graphene_braiding;
 pub mod floquet_magnon_memory;
 pub mod anyon_interferometer_qudit;
+pub mod floquet_corner_sensor;
 
 pub use acoustic::{
     AcousticBenchmarkReport, AcousticBenchmarkRunner, AcousticLinkSimulator, AcousticRealismTier,
@@ -1680,6 +1681,18 @@ pub use anyon_interferometer_qudit::{
     ProtectedQuditMetrics, ProtectedQuditParams, QuditDensityMatrixEntry,
     QuditGateType, TopologicalPhaseShiftMetrics, TopologicalPhaseShiftParams,
     TopologicalPhaseShiftSolver,
+};
+
+pub use floquet_corner_sensor::{
+    CornerLasingLICurvePoint, CornerPolaritonLaserMetrics, CornerPolaritonLaserParams,
+    CornerPolaritonLaserSolver, CornerSpatialIntensityPoint,
+    FloquetCornerSensorAuditReport, FloquetCornerSensorProcessor,
+    MagneticFieldSweepPoint, NonHermitianEigenvaluePoint,
+    NonHermitianModeSelectorMetrics, NonHermitianModeSelectorParams,
+    NonHermitianModeSelectorSolver, RotationSweepPoint,
+    SubPicoteslaMagnetometerMetrics, SubPicoteslaMagnetometerParams,
+    SubPicoteslaMagnetometerSolver, SyntheticGaugeRotationMetrics,
+    SyntheticGaugeRotationParams, SyntheticGaugeRotationSolver,
 };
 
 

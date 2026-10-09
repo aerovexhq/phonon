@@ -296,6 +296,9 @@ pub use widgets::floquet_magnon_memory_dialog::{
 pub use widgets::anyon_interferometer_qudit_dialog::{
     AnyonInterferometerQuditDialog, AnyonInterferometerQuditTab,
 };
+pub use widgets::floquet_corner_sensor_dialog::{
+    FloquetCornerSensorDialog, FloquetCornerSensorTab,
+};
 
 #[cfg(not(target_arch = "wasm32"))]
 use phonon_core::PhysicsDynamicsBackend;

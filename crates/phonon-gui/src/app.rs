@@ -58,7 +58,7 @@ use crate::widgets::{
     Genus2ParafermionDialog, FloquetCornerIsolatorDialog,
     SkinPolaritonLaserDialog, ValleyMajoranaRouterDialog,
     ChiralGrapheneBraidingDialog, FloquetMagnonMemoryDialog,
-    AnyonInterferometerQuditDialog,
+    AnyonInterferometerQuditDialog, FloquetCornerSensorDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -529,6 +529,9 @@ pub struct PhononApp {
     /// Interactive Cryogenic Quantum Metamaterial Multi-Terminal Anyon Interferometer & Protected Qudit Crossbar dialog.
     pub anyon_interferometer_qudit_dialog: AnyonInterferometerQuditDialog,
 
+    /// Interactive Floquet Corner Spin-Orbit Polariton Laser & Non-Hermitian Sensor dialog.
+    pub floquet_corner_sensor_dialog: FloquetCornerSensorDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -806,6 +809,7 @@ impl Default for PhononApp {
             chiral_graphene_braiding_dialog: ChiralGrapheneBraidingDialog::new_fast(),
             floquet_magnon_memory_dialog: FloquetMagnonMemoryDialog::new_fast(),
             anyon_interferometer_qudit_dialog: AnyonInterferometerQuditDialog::new_fast(),
+            floquet_corner_sensor_dialog: FloquetCornerSensorDialog::new_fast(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -5838,6 +5842,9 @@ impl PhononApp {
 
         // 117. Interactive Cryogenic Quantum Metamaterial Anyon Interferometer & Qudit Crossbar Dialog
         self.anyon_interferometer_qudit_dialog.ui(ui.ctx());
+
+        // 118. Interactive Floquet Corner Spin-Orbit Polariton Laser & Sensor Dialog
+        self.floquet_corner_sensor_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {
