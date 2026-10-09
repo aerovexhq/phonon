@@ -395,6 +395,7 @@ pub mod floquet_magnon_crossbar;
 pub mod moire_valley_qubit;
 pub mod corner_memory_repeater;
 pub mod non_hermitian_braiding;
+pub mod holonomic_qubit_repeater;
 
 pub use acoustic::{
     AcousticBenchmarkReport, AcousticBenchmarkRunner, AcousticLinkSimulator, AcousticRealismTier,
@@ -1781,4 +1782,14 @@ pub use non_hermitian_braiding::{
     HolonomicStateCompiler, NonHermitianBraidingAuditReport, NonHermitianBraidingProcessor,
     NonHermitianGateKind, NonHermitianGateResult, SkinBraidSequencePoint, SkinBraidingMetrics,
     SkinBraidingParams, SkinBraidingSolver, SkinBraidingSpatialPoint,
+};
+pub use holonomic_qubit_repeater::{
+    FractionalValleyMetrics, FractionalValleyParams, FractionalValleySolver,
+    HolonomicBraidingMetrics, HolonomicBraidingParams, HolonomicBraidingSolver,
+    HolonomicCornerSpatialPoint, HolonomicCryoMetrics, HolonomicCryoParams,
+    HolonomicCryoSolver, HolonomicLoopPoint, HolonomicQubitGate,
+    HolonomicQubitRepeaterAuditReport, HolonomicQubitRepeaterParams,
+    HolonomicQubitRepeaterProcessor, HolonomicQubitRepeaterSolution,
+    ParityReadoutSpectrumPoint, QubitHolonomicMatrix2x2, RepeaterNodeMetricPoint,
+    ValleySpectrumPoint, ValleyWaveguidePoint,
 };

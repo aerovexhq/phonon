@@ -139,6 +139,7 @@ pub mod floquet_magnon_crossbar_dialog;
 pub mod moire_valley_qubit_dialog;
 pub mod corner_memory_repeater_dialog;
 pub mod non_hermitian_braiding_dialog;
+pub mod holonomic_qubit_repeater_dialog;
 
 pub use pill_badge::{
     proportional_zoom_scale, render_dual_telemetry_pill, render_pill_badge, PillBadgeStyle,
@@ -398,6 +399,9 @@ pub use corner_memory_repeater_dialog::{
 };
 pub use non_hermitian_braiding_dialog::{
     NonHermitianBraidingDialog, NonHermitianBraidingTab,
+};
+pub use holonomic_qubit_repeater_dialog::{
+    HolonomicQubitRepeaterDialog, HolonomicQubitRepeaterTab,
 };
 
 

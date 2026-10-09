@@ -329,6 +329,9 @@ pub use widgets::corner_memory_repeater_dialog::{
 pub use widgets::non_hermitian_braiding_dialog::{
     NonHermitianBraidingDialog, NonHermitianBraidingTab,
 };
+pub use widgets::holonomic_qubit_repeater_dialog::{
+    HolonomicQubitRepeaterDialog, HolonomicQubitRepeaterTab,
+};
 
 #[cfg(not(target_arch = "wasm32"))]
 use phonon_core::PhysicsDynamicsBackend;
