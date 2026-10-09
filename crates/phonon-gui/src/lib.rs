@@ -305,6 +305,9 @@ pub use widgets::fractional_skyrmion_synapse_dialog::{
 pub use widgets::chiral_transducer_repeater_dialog::{
     ChiralTransducerRepeaterDialog, ChiralTransducerRepeaterTab,
 };
+pub use widgets::weyl_vortex_router_dialog::{
+    WeylVortexRouterDialog, WeylVortexRouterTab,
+};
 
 #[cfg(not(target_arch = "wasm32"))]
 use phonon_core::PhysicsDynamicsBackend;

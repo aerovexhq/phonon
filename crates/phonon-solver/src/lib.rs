@@ -387,6 +387,7 @@ pub mod anyon_interferometer_qudit;
 pub mod floquet_corner_sensor;
 pub mod fractional_skyrmion_synapse;
 pub mod chiral_transducer_repeater;
+pub mod weyl_vortex_router;
 
 pub use acoustic::{
     AcousticBenchmarkReport, AcousticBenchmarkRunner, AcousticLinkSimulator, AcousticRealismTier,
@@ -1713,4 +1714,11 @@ pub use chiral_transducer_repeater::{
     EntanglementRepeaterMetrics, EntanglementRepeaterParams, EntanglementRepeaterSolver,
     PiezoOptomechanicalMetrics, PiezoOptomechanicalParams, PiezoOptomechanicalSolver,
     RepeaterDistanceSweepPoint, TransductionPowerSweepPoint,
+};
+pub use weyl_vortex_router::{
+    HingeModeSpatialPoint, HigherOrderWeylMetrics, HigherOrderWeylParams, HigherOrderWeylSolver,
+    MultiTerminalRouterMetrics, MultiTerminalRouterParams, MultiTerminalRouterSolver,
+    RouterSpectrumPoint, WeylDispersionPoint, WeylVortexGridPoint, WeylVortexMetrics,
+    WeylVortexParams, WeylVortexRadialPoint, WeylVortexRouterAuditReport,
+    WeylVortexRouterProcessor, WeylVortexSolver,
 };

@@ -61,6 +61,7 @@ use crate::widgets::{
     AnyonInterferometerQuditDialog, FloquetCornerSensorDialog,
     FractionalSkyrmionSynapseDialog,
     ChiralTransducerRepeaterDialog,
+    WeylVortexRouterDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -540,6 +541,9 @@ pub struct PhononApp {
     /// Interactive Chiral Metamaterial Photonic-Phononic Qubit Transducer & Quantum Network Repeater Node dialog.
     pub chiral_transducer_repeater_dialog: ChiralTransducerRepeaterDialog,
 
+    /// Interactive HOWSM Vortex Transceiver & Multi-Terminal Quantum Acoustic Router dialog.
+    pub weyl_vortex_router_dialog: WeylVortexRouterDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -820,6 +824,7 @@ impl Default for PhononApp {
             floquet_corner_sensor_dialog: FloquetCornerSensorDialog::new_fast(),
             fractional_skyrmion_synapse_dialog: FractionalSkyrmionSynapseDialog::new_fast(),
             chiral_transducer_repeater_dialog: ChiralTransducerRepeaterDialog::new_fast(),
+            weyl_vortex_router_dialog: WeylVortexRouterDialog::new_fast(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -5861,6 +5866,9 @@ impl PhononApp {
 
         // 120. Interactive Chiral Metamaterial Transducer & Quantum Network Repeater Node Dialog
         self.chiral_transducer_repeater_dialog.ui(ui.ctx());
+
+        // 121. Interactive HOWSM Vortex Transceiver & Multi-Terminal Quantum Acoustic Router Dialog
+        self.weyl_vortex_router_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {
