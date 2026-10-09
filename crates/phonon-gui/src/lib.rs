@@ -323,6 +323,9 @@ pub use widgets::floquet_magnon_crossbar_dialog::{
 pub use widgets::moire_valley_qubit_dialog::{
     MoireValleyQubitDialog, MoireValleyQubitTab,
 };
+pub use widgets::corner_memory_repeater_dialog::{
+    CornerMemoryRepeaterDialog, CornerMemoryRepeaterTab,
+};
 
 #[cfg(not(target_arch = "wasm32"))]
 use phonon_core::PhysicsDynamicsBackend;

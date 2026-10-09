@@ -393,6 +393,7 @@ pub mod moire_superlattice_laser;
 pub mod disclination_holonomic_qudit;
 pub mod floquet_magnon_crossbar;
 pub mod moire_valley_qubit;
+pub mod corner_memory_repeater;
 
 pub use acoustic::{
     AcousticBenchmarkReport, AcousticBenchmarkRunner, AcousticLinkSimulator, AcousticRealismTier,
@@ -1764,4 +1765,12 @@ pub use moire_valley_qubit::{
     MoireValleyQubitProcessor, MultiNodeValleyBus, PhononMemoryCell, ValleyBlochVector,
     ValleyBusParams, ValleyBusRoutingMetrics, ValleyPseudospinState, ValleyQubitEngine,
     ValleyQubitMetrics, ValleyRabiPoint,
+};
+pub use corner_memory_repeater::{
+    CornerMemoryRepeaterAuditReport, CornerMemoryRepeaterProcessor,
+    CvQuantumRepeaterParams, CvQuantumRepeaterSolver, CvRepeaterMetrics,
+    HigherOrderCornerMemoryMetrics, HigherOrderCornerMemoryParams,
+    HigherOrderCornerMemorySolver, HigherOrderCornerSpatialPoint, RepeaterNodePoint,
+    RepeaterSqueezingProfilePoint, SyntheticGaugeTransductionParams,
+    SyntheticGaugeTransductionSolver, TransductionBusMetrics, TransductionSpectrumPoint,
 };
