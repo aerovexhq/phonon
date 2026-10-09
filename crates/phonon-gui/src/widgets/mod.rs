@@ -28,7 +28,6 @@ pub mod exceptional_surface_dialog;
 pub mod soti_corner_dialog;
 pub mod lieb_lattice_dialog;
 pub mod axion_insulator_dialog;
-pub mod floquet_time_crystal_dialog;
 pub mod command_palette;
 pub mod confirmation_modal;
 pub mod floating_toolbar;
@@ -37,9 +36,6 @@ pub mod preferences_dialog;
 pub mod project_dialog;
 pub mod subcircuit_dialog;
 pub mod lua_console_dialog;
-pub mod quantum_braiding_lattice_dialog;
-pub mod optomechanical_squeezing_dialog;
-pub mod skyrmion_router_dialog;
 pub mod acoustic_soliton_dialog;
 pub mod valley_multiplexer_dialog;
 pub mod non_hermitian_skin_dialog;
@@ -79,12 +75,6 @@ pub mod webgpu_spice_dialog;
 pub mod wavepacket_scattering_dialog;
 pub mod skyrmion_reservoir_dialog;
 pub mod phonon_magnon_dialog;
-pub mod quadrupole_parametric_dialog;
-pub mod non_hermitian_sensor_dialog;
-pub mod corner_doubler_dialog;
-pub mod universal_braiding_dialog;
-pub mod chiral_circulator_dialog;
-pub mod josephson_parametric_dialog;
 pub mod optomagnonic_comb_dialog;
 pub mod floquet_sensor_dialog;
 pub mod giant_atom_dialog;
@@ -139,7 +129,6 @@ pub mod floquet_magnon_crossbar_dialog;
 pub mod moire_valley_qubit_dialog;
 pub mod corner_memory_repeater_dialog;
 pub mod non_hermitian_braiding_dialog;
-pub mod holonomic_qubit_repeater_dialog;
 
 pub use pill_badge::{
     proportional_zoom_scale, render_dual_telemetry_pill, render_pill_badge, PillBadgeStyle,
@@ -178,13 +167,7 @@ pub use weyl_semimetal_dialog::{SemimetalMode, WeylSemimetalDialog};
 pub use soti_corner_dialog::{SotiCornerDialog, SpatialModeSelection};
 pub use lieb_lattice_dialog::{LiebLatticeDialog, LiebPlotTab, LiebSpatialModeSelection};
 pub use axion_insulator_dialog::{AxionInsulatorDialog, AxionPlotTab, AxionSpatialViewMode};
-pub use floquet_time_crystal_dialog::{FloquetPlotTab, FloquetTimeCrystalDialog};
 pub use lua_console_dialog::{LuaConsoleDialog, ScriptPreset};
-pub use quantum_braiding_lattice_dialog::{BraidingDialogTab, QuantumBraidingLatticeDialog};
-pub use optomechanical_squeezing_dialog::{
-    OptomechDialogTab, OptomechanicalSqueezingDialog, WignerColormap,
-};
-pub use skyrmion_router_dialog::{SkyrmionDialogTab, SkyrmionRouterDialog};
 pub use acoustic_soliton_dialog::{AcousticSolitonDialog, SolitonDialogTab};
 pub use valley_multiplexer_dialog::{ValleyDialogTab, ValleyMultiplexerDialog};
 pub use non_hermitian_skin_dialog::{NonHermitianSkinDialog, NonHermitianSkinDialogTab};
@@ -244,20 +227,6 @@ pub use skyrmion_reservoir_dialog::{
 pub use phonon_magnon_dialog::{
     PhononMagnonDialog, PhononMagnonTab, PolaritonAuditCriterion,
 };
-pub use quadrupole_parametric_dialog::{
-    CanvasColormap, QuadrupoleAuditCriterion, QuadrupoleParametricDialog,
-    QuadrupoleParametricTab, RealSpaceMode,
-};
-pub use non_hermitian_sensor_dialog::{
-    NhSensorAuditCriterion, NonHermitianSensorDialog, NonHermitianSensorTab,
-};
-pub use corner_doubler_dialog::{
-    CornerDoublerAuditCriterion, CornerDoublerDialog, CornerDoublerTab, DialogColormap,
-    DisplayModeType,
-};
-pub use universal_braiding_dialog::{UniversalBraidingDialog, UniversalBraidingTab};
-pub use chiral_circulator_dialog::{ChiralCirculatorDialog, ChiralCirculatorTab};
-pub use josephson_parametric_dialog::{JosephsonParametricDialog, JosephsonParametricTab};
 pub use optomagnonic_comb_dialog::{OptomagnonicCombDialog, OptomagnonicCombTab};
 pub use floquet_sensor_dialog::{FloquetSensorDialog, FloquetSensorTab};
 pub use giant_atom_dialog::{GiantAtomDialog, GiantAtomDialogTab};
@@ -399,9 +368,6 @@ pub use corner_memory_repeater_dialog::{
 };
 pub use non_hermitian_braiding_dialog::{
     NonHermitianBraidingDialog, NonHermitianBraidingTab,
-};
-pub use holonomic_qubit_repeater_dialog::{
-    HolonomicQubitRepeaterDialog, HolonomicQubitRepeaterTab,
 };
 
 

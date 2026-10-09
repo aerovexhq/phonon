@@ -115,10 +115,6 @@ pub use widgets::exceptional_surface_dialog::ExceptionalSurfaceDialog;
 pub use widgets::soti_corner_dialog::SotiCornerDialog;
 pub use widgets::lieb_lattice_dialog::LiebLatticeDialog;
 pub use widgets::axion_insulator_dialog::AxionInsulatorDialog;
-pub use widgets::floquet_time_crystal_dialog::FloquetTimeCrystalDialog;
-pub use widgets::quantum_braiding_lattice_dialog::QuantumBraidingLatticeDialog;
-pub use widgets::optomechanical_squeezing_dialog::OptomechanicalSqueezingDialog;
-pub use widgets::skyrmion_router_dialog::SkyrmionRouterDialog;
 pub use widgets::acoustic_soliton_dialog::AcousticSolitonDialog;
 pub use widgets::valley_multiplexer_dialog::{ValleyDialogTab, ValleyMultiplexerDialog};
 pub use widgets::non_hermitian_skin_dialog::{NonHermitianSkinDialog, NonHermitianSkinDialogTab};
@@ -173,20 +169,6 @@ pub use widgets::skyrmion_reservoir_dialog::{
 pub use widgets::phonon_magnon_dialog::{
     PhononMagnonDialog, PhononMagnonTab, PolaritonAuditCriterion,
 };
-pub use widgets::quadrupole_parametric_dialog::{
-    CanvasColormap, QuadrupoleAuditCriterion, QuadrupoleParametricDialog,
-    QuadrupoleParametricTab, RealSpaceMode,
-};
-pub use widgets::non_hermitian_sensor_dialog::{
-    NhSensorAuditCriterion, NonHermitianSensorDialog, NonHermitianSensorTab,
-};
-pub use widgets::corner_doubler_dialog::{
-    CornerDoublerAuditCriterion, CornerDoublerDialog, CornerDoublerTab, DialogColormap,
-    DisplayModeType,
-};
-pub use widgets::universal_braiding_dialog::{UniversalBraidingDialog, UniversalBraidingTab};
-pub use widgets::chiral_circulator_dialog::{ChiralCirculatorDialog, ChiralCirculatorTab};
-pub use widgets::josephson_parametric_dialog::{JosephsonParametricDialog, JosephsonParametricTab};
 pub use widgets::optomagnonic_comb_dialog::{OptomagnonicCombDialog, OptomagnonicCombTab};
 pub use widgets::floquet_sensor_dialog::{FloquetSensorDialog, FloquetSensorTab};
 pub use widgets::giant_atom_dialog::{GiantAtomDialog, GiantAtomDialogTab};
@@ -328,9 +310,6 @@ pub use widgets::corner_memory_repeater_dialog::{
 };
 pub use widgets::non_hermitian_braiding_dialog::{
     NonHermitianBraidingDialog, NonHermitianBraidingTab,
-};
-pub use widgets::holonomic_qubit_repeater_dialog::{
-    HolonomicQubitRepeaterDialog, HolonomicQubitRepeaterTab,
 };
 
 #[cfg(not(target_arch = "wasm32"))]

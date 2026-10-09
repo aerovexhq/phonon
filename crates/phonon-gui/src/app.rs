@@ -25,8 +25,7 @@ use crate::widgets::{
     ProjectDialogAction, SensitivityDialog, SmithChartDialog, SotiCornerDialog,
     SubcircuitDialogAction, SubcircuitPackageDialog, SymbolEditorDialog, ThermalFloorplanDialog,
     TopFrameAction, TopFrameConfig, TwistedMoireDialog, WeylSemimetalDialog, LuaConsoleDialog,
-    FloquetTimeCrystalDialog, QuantumBraidingLatticeDialog, OptomechanicalSqueezingDialog,
-    SkyrmionRouterDialog, AcousticSolitonDialog, ValleyMultiplexerDialog,
+    AcousticSolitonDialog, ValleyMultiplexerDialog,
     NonHermitianSkinDialog, QuadrupoleShgDialog, Synthetic4dDialog, PtSymmetricDialog,
     AcousticBicDialog, EulerAcousticDialog, OctupoleInsulatorDialog, AahQuasicrystalDialog,
     ValleyHallVortexDialog, SkyrmionDeflectorDialog, FloquetFrequencyDialog,
@@ -37,9 +36,8 @@ use crate::widgets::{
     PdnDroopDialog, SiliconAgingDialog, WaferYieldDialog, DseOptimizationDialog,
     SiliconLifecycleDialog, WasmOptimizationDialog, PwaOfflineDialog,
     DesktopIpcDialog, WebRtcMeshDialog, WebGpuSpiceDialog, WavepacketScatteringDialog,
-    SkyrmionReservoirDialog, PhononMagnonDialog, QuadrupoleParametricDialog,
-    NonHermitianSensorDialog, CornerDoublerDialog, UniversalBraidingDialog,
-    ChiralCirculatorDialog, JosephsonParametricDialog, OptomagnonicCombDialog,
+    SkyrmionReservoirDialog, PhononMagnonDialog,
+    OptomagnonicCombDialog,
     FloquetSensorDialog, OptomechanicalTransducerDialog, CornerPolaritonMicrocombDialog,
     GiantAtomDialog, ChiralEmpDialog, PolaritonBecDialog, SyntheticDimensionDialog,
     NonHermitianSkinLaserDialog, MoirePolaritonCombDialog, HolonomicCoprocessorDialog,
@@ -69,7 +67,6 @@ use crate::widgets::{
     MoireValleyQubitDialog,
     CornerMemoryRepeaterDialog,
     NonHermitianBraidingDialog,
-    HolonomicQubitRepeaterDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -264,18 +261,6 @@ pub struct PhononApp {
     /// Interactive Quantum Metamaterial Higher-Order Axion Insulator Simulator Studio dialog.
     pub axion_insulator_dialog: AxionInsulatorDialog,
 
-    /// Interactive Floquet-Bloch Quantum Acoustic Discrete Time Crystal Simulator Studio dialog.
-    pub floquet_time_crystal_dialog: FloquetTimeCrystalDialog,
-
-    /// Interactive Quantum Acoustic Protected Braiding Lattice Studio dialog.
-    pub quantum_braiding_lattice_dialog: QuantumBraidingLatticeDialog,
-
-    /// Interactive Cavity Optomechanical Squeezing & Phonon Counting Studio dialog.
-    pub optomechanical_squeezing_dialog: OptomechanicalSqueezingDialog,
-
-    /// Interactive Topological Acoustic Skyrmion Vortex Lattice & Domain Wall Router Studio dialog.
-    pub skyrmion_router_dialog: SkyrmionRouterDialog,
-
     /// Interactive Non-Linear Acoustic Domain Wall Kink & Soliton Waveguide Studio dialog.
     pub acoustic_soliton_dialog: AcousticSolitonDialog,
 
@@ -392,24 +377,6 @@ pub struct PhononApp {
 
     /// Interactive Coherent Phonon-Magnon Polariton Transducer & Quantum Microwave-to-Acoustic Interface dialog.
     pub phonon_magnon_dialog: PhononMagnonDialog,
-
-    /// Interactive Topological Higher-Order Acoustic Quadrupole Parametric Waveguide & Second-Harmonic Generation dialog.
-    pub quadrupole_parametric_dialog: QuadrupoleParametricDialog,
-
-    /// Interactive Non-Hermitian Floquet Skin-Effect Sensor & Exceptional Point Magnetometer dialog.
-    pub non_hermitian_sensor_dialog: NonHermitianSensorDialog,
-
-    /// Interactive Phonon Studio Topological Corner-Induced Acoustic Second-Harmonic Waveguide Interconnect & Nonlinear Frequency Doubler dialog.
-    pub corner_doubler_dialog: CornerDoublerDialog,
-
-    /// Interactive Universal Non-Abelian Anyon Braiding & Topological Quantum Acoustic Co-Processor dialog.
-    pub universal_braiding_dialog: UniversalBraidingDialog,
-
-    /// Interactive Topological Floquet Chiral Magnon-Phonon Polariton Circulator & Cryogenic Isolator dialog.
-    pub chiral_circulator_dialog: ChiralCirculatorDialog,
-
-    /// Interactive Superconducting Josephson Parametric Acoustic Waveguide Amplification & Squeezed Vacuum dialog.
-    pub josephson_parametric_dialog: JosephsonParametricDialog,
 
     /// Interactive Cavity Optomagnonic Polariton Frequency Comb & Dissipative Kerr Soliton dialog.
     pub optomagnonic_comb_dialog: OptomagnonicCombDialog,
@@ -572,9 +539,6 @@ pub struct PhononApp {
 
     /// Interactive Non-Hermitian Higher-Order Chiral Braiding & EP Sensor dialog (Phase 467).
     pub non_hermitian_braiding_dialog: NonHermitianBraidingDialog,
-
-    /// Interactive Non-Abelian Holonomic Qubit Braiding & Fractional Valley Repeater dialog (Phase 468).
-    pub holonomic_qubit_repeater_dialog: HolonomicQubitRepeaterDialog,
 
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
@@ -761,10 +725,6 @@ impl Default for PhononApp {
             soti_corner_dialog: SotiCornerDialog::new(),
             lieb_lattice_dialog: LiebLatticeDialog::new(),
             axion_insulator_dialog: AxionInsulatorDialog::new(),
-            floquet_time_crystal_dialog: FloquetTimeCrystalDialog::new(),
-            quantum_braiding_lattice_dialog: QuantumBraidingLatticeDialog::new_fast(),
-            optomechanical_squeezing_dialog: OptomechanicalSqueezingDialog::new(),
-            skyrmion_router_dialog: SkyrmionRouterDialog::new_fast(),
             acoustic_soliton_dialog: AcousticSolitonDialog::new(),
             valley_multiplexer_dialog: ValleyMultiplexerDialog::new_fast(),
             non_hermitian_skin_dialog: NonHermitianSkinDialog::new(),
@@ -804,12 +764,6 @@ impl Default for PhononApp {
             wavepacket_scattering_dialog: WavepacketScatteringDialog::new_fast(),
             skyrmion_reservoir_dialog: SkyrmionReservoirDialog::new_fast(),
             phonon_magnon_dialog: PhononMagnonDialog::new_fast(),
-            quadrupole_parametric_dialog: QuadrupoleParametricDialog::new_fast(),
-            non_hermitian_sensor_dialog: NonHermitianSensorDialog::new_fast(),
-            corner_doubler_dialog: CornerDoublerDialog::new_fast(),
-            universal_braiding_dialog: UniversalBraidingDialog::new_fast(),
-            chiral_circulator_dialog: ChiralCirculatorDialog::new_fast(),
-            josephson_parametric_dialog: JosephsonParametricDialog::new_fast(),
             optomagnonic_comb_dialog: OptomagnonicCombDialog::new_fast(),
             floquet_sensor_dialog: FloquetSensorDialog::new_fast(),
             giant_atom_dialog: GiantAtomDialog::new_fast(),
@@ -864,7 +818,6 @@ impl Default for PhononApp {
             moire_valley_qubit_dialog: MoireValleyQubitDialog::new_fast(),
             corner_memory_repeater_dialog: CornerMemoryRepeaterDialog::new_fast(),
             non_hermitian_braiding_dialog: NonHermitianBraidingDialog::new_fast(),
-            holonomic_qubit_repeater_dialog: HolonomicQubitRepeaterDialog::new_fast(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -5622,18 +5575,6 @@ impl PhononApp {
         // 29. Interactive Quantum Metamaterial Higher-Order Axion Insulator Dialog
         self.axion_insulator_dialog.ui(ui.ctx());
 
-        // 30. Interactive Floquet-Bloch Quantum Acoustic Discrete Time Crystal Simulator Dialog
-        self.floquet_time_crystal_dialog.ui(ui.ctx());
-
-        // 31. Interactive Quantum Acoustic Protected Braiding Lattice Studio Dialog
-        self.quantum_braiding_lattice_dialog.ui(ui.ctx());
-
-        // 32. Interactive Cavity Optomechanical Squeezing & Phonon Counting Studio Dialog
-        self.optomechanical_squeezing_dialog.ui(ui.ctx());
-
-        // 33. Interactive Topological Acoustic Skyrmion Vortex Lattice & Domain Wall Router Dialog
-        self.skyrmion_router_dialog.ui(ui.ctx());
-
         // 34. Interactive Non-Linear Acoustic Domain Wall Kink & Soliton Waveguide Dialog
         self.acoustic_soliton_dialog.ui(ui.ctx());
 
@@ -5750,24 +5691,6 @@ impl PhononApp {
 
         // 68. Interactive Coherent Phonon-Magnon Polariton Transducer Dialog
         self.phonon_magnon_dialog.ui(ui.ctx());
-
-        // 69. Interactive Topological Higher-Order Acoustic Quadrupole Parametric Waveguide Dialog
-        self.quadrupole_parametric_dialog.ui(ui.ctx());
-
-        // 70. Interactive Non-Hermitian Floquet Skin-Effect Sensor & EP Magnetometer Dialog
-        self.non_hermitian_sensor_dialog.ui(ui.ctx());
-
-        // 71. Interactive Topological Corner-Induced Second-Harmonic Waveguide Interconnect & Doubler Dialog
-        self.corner_doubler_dialog.ui(ui.ctx());
-
-        // 72. Interactive Universal Non-Abelian Braiding & Topological Co-Processor Dialog
-        self.universal_braiding_dialog.ui(ui.ctx());
-
-        // 73. Interactive Topological Floquet Chiral Polariton Circulator Dialog
-        self.chiral_circulator_dialog.ui(ui.ctx());
-
-        // 74. Interactive Superconducting Josephson Parametric Acoustic Waveguide Dialog
-        self.josephson_parametric_dialog.ui(ui.ctx());
 
         // 75. Interactive Cavity Optomagnonic Polariton Frequency Comb Dialog
         self.optomagnonic_comb_dialog.ui(ui.ctx());
@@ -5918,7 +5841,6 @@ impl PhononApp {
         self.moire_valley_qubit_dialog.ui(ui.ctx());
         self.corner_memory_repeater_dialog.ui(ui.ctx());
         self.non_hermitian_braiding_dialog.ui(ui.ctx());
-        self.holonomic_qubit_repeater_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {

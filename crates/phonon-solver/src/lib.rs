@@ -5,12 +5,9 @@
 
 pub mod acoustic;
 pub mod acoustic_chern_circulator;
-pub mod acoustic_skyrmion_router;
 pub mod acoustic_domain_wall_soliton;
 pub mod valley_acoustic_multiplexer;
 pub mod quadrupole_shg;
-pub mod quadrupole_parametric;
-pub mod corner_harmonic_doubler;
 pub mod synthetic_4d_qhe;
 pub mod pt_symmetric_acoustic;
 pub mod acoustic_bic;
@@ -71,8 +68,6 @@ pub mod chiral_phonon_sc;
 pub mod chiral_phonon_spin_mechanics;
 pub mod chiral_phonon_magnon_isolator;
 pub mod chiral_polariton;
-pub mod chiral_polariton_circulator;
-pub mod josephson_parametric_amplifier;
 pub mod chiral_quantum_hall_pfaffian;
 pub mod chiral_spin_seebeck;
 pub mod chiral_spintronic_memristor;
@@ -88,7 +83,6 @@ pub mod floquet_corner_transduction;
 pub mod floquet_majorana_braiding_processor;
 pub mod floquet_topological;
 pub mod floquet_metasurface;
-pub mod floquet_time_crystal;
 pub mod floquet_time_crystal_sensor;
 pub mod fqh;
 pub mod fqh_acoustic_interferometer;
@@ -195,7 +189,6 @@ pub mod non_hermitian_chiral_hoti;
 pub mod non_hermitian_ep_gyroscope;
 pub mod non_hermitian_pt_symmetry;
 pub mod non_hermitian_skin;
-pub mod non_hermitian_sensor;
 pub mod non_hermitian_topo;
 pub mod non_reciprocal_phonon_amplifier;
 pub mod optics;
@@ -341,9 +334,6 @@ pub mod weyl_semimetal;
 pub mod jtwpa_simulator;
 pub mod non_abelian_holonomic;
 pub mod twisted_moire_superlattice;
-pub mod protected_braiding_lattice;
-pub mod optomechanical_squeezing;
-pub mod universal_braiding_processor;
 pub mod chiral_edge_magnetoplasmon;
 pub mod polariton_bec_vortices;
 pub mod synthetic_dimension_router;
@@ -395,7 +385,6 @@ pub mod floquet_magnon_crossbar;
 pub mod moire_valley_qubit;
 pub mod corner_memory_repeater;
 pub mod non_hermitian_braiding;
-pub mod holonomic_qubit_repeater;
 
 pub use acoustic::{
     AcousticBenchmarkReport, AcousticBenchmarkRunner, AcousticLinkSimulator, AcousticRealismTier,
@@ -1050,27 +1039,6 @@ pub use axion_insulator::{
     HighSymmetryPoint as AxionHighSymmetryPoint,
     AXION_HIGH_SYMMETRY_PATH,
 };
-pub use floquet_time_crystal::{
-    EdwardsAndersonOrder, FloquetState, FloquetStateKind, FloquetTimeCrystalParams,
-    FloquetUnitaryOperator, RigidityPhaseDiagram, StroboscopicTrajectory,
-    SubharmonicSpectralAnalysis,
-};
-pub use protected_braiding_lattice::{
-    BraidStep, BraidingComplex, CompiledBraidResult, CorrectionResult, MajoranaBraidingParams,
-    MajoranaMode, MajoranaTargetGate, NonAbelianBraidGenerator, ParityReadout, StabilizerCheck,
-    StabilizerKind, SurfaceCodeGrid, SyndromeResult, UnitaryMatrix, HBAR_J_S,
-};
-pub use optomechanical_squeezing::{
-    FockStateDistribution, NonClassicalityMetrics, OptomechanicalSqueezingParams,
-    PhononCountingResolvedSpectrum, PhononStateKind, QuadratureSqueezingSolver,
-    QuadratureVariance, ResolvedPeak, WignerQuasiProbability, HBAR, SQL_VARIANCE,
-};
-pub use acoustic_skyrmion_router::{
-    ChiralDomainWallRouter, DefectTransmissionResult, DomainWallDefect,
-    SParameterPoint as SkyrmionSParameterPoint,
-    SParameterSpectrum as SkyrmionSParameterSpectrum, SkyrmionLatticeParams, SkyrmionLatticeType,
-    ThieleDynamics, TopologicalChargeCalculator, TrajectoryPoint, Vector3Field,
-};
 pub use acoustic_domain_wall_soliton::{
     DomainWallWaveguideParams, DomainWallWaveguideRouter, SineGordonParams, SineGordonSolver,
     SineGordonState, SolitonKind, WaveguideSParameters,
@@ -1245,44 +1213,6 @@ pub use phonon_magnon_polariton::{
     PhononMagnonParams, PolaritonDispersionEngine, PolaritonDispersionPoint,
     QuantumTransducerSolver, SParameterSample, TransducerCouplingParams,
     GYROMAGNETIC_RATIO,
-};
-pub use quadrupole_parametric::{
-    BbhBandPoint, BoundaryDispersionPoint, ParametricAmplifierMetrics, ParametricDriveParams,
-    ParametricEdgeAmplifier, ParametricGainSample, QuadrupoleWaveguide, QuadrupoleWaveguideParams,
-    ShgParams, ShgPhaseMatchSample, ShgSolver, ShgStepPoint,
-};
-pub use non_hermitian_sensor::{
-    AcousticMagnonicMagnetometer, Complex as NhComplex, EpSensor, EpSensorParams,
-    ExceptionalPointOrder, MagnetoacousticParams, MagnetometerTelemetry,
-    NonHermitianLatticeParams, SkinEffectSolver,
-};
-pub use corner_harmonic_doubler::{
-    CornerBendAngle, CornerCouplingParams, CornerEigenstate as DoublerCornerEigenstate,
-    CornerId as DoublerCornerId, CornerToEdgeLattice, CornerToEdgeLatticeResult,
-    CornerTopologicalRouter, DoublerParams, DoublerSteadyState, DoublerTransientPoint,
-    EdgeEigenstate, HarmonicSpectrumPoint, NonlinearFrequencyDoubler, PortTelemetry, RouterParams,
-    RouterTargetPort, RoutingWaveField, ScatteringMatrix,
-};
-pub use universal_braiding_processor::{
-    ArbitraryRzRotation, AuditCriterion, BellStateKind, BraidingAuditReport, BraidingParams,
-    CliffordTGateCompiler, CompiledGateResult, CrossbarMatrixRouter, CrossbarParams,
-    DispersiveCavityResponse, ElementaryBraid, EntanglementSynthesizer, FermionParity,
-    InterferometerParams, MajoranaZeroMode, ParitySpectrumData, QndTrajectoryTrace,
-    TargetGate as UniversalTargetGate, UniversalBraidingProcessor,
-};
-pub use chiral_polariton_circulator::{
-    ChiralPolaritonCirculator, ChiralPolaritonParams, CirculatorAuditCriterion,
-    CirculatorAuditReport, CirculatorParams, Complex as CirculatorComplex,
-    CryogenicIsolatorMetrics, CryogenicIsolatorParams, FloquetPolaritonDispersion,
-    PolaritonBranchPoint, SParameters as PolaritonSParameters,
-    ThreePortCirculator as ChiralThreePortCirculator,
-};
-pub use josephson_parametric_amplifier::{
-    CvClusterStateParams, CvClusterStateSolver, CvEntanglementMetrics,
-    JpaAuditCriterion, JpaAuditReport, JpaWaveguideParams, JosephsonInductanceModel,
-    JosephsonParametricProcessor, ParametricAmplificationResponse,
-    SqueezedVacuumSolver, SqueezingParams,
-    WignerQuasiProbability as JpaWignerQuasiProbability,
 };
 pub use optomagnonic_comb::{
     AvoidedCrossingPoint, CombAuditItem, CombAuditReport, CombModeData,
@@ -1782,14 +1712,4 @@ pub use non_hermitian_braiding::{
     HolonomicStateCompiler, NonHermitianBraidingAuditReport, NonHermitianBraidingProcessor,
     NonHermitianGateKind, NonHermitianGateResult, SkinBraidSequencePoint, SkinBraidingMetrics,
     SkinBraidingParams, SkinBraidingSolver, SkinBraidingSpatialPoint,
-};
-pub use holonomic_qubit_repeater::{
-    FractionalValleyMetrics, FractionalValleyParams, FractionalValleySolver,
-    HolonomicBraidingMetrics, HolonomicBraidingParams, HolonomicBraidingSolver,
-    HolonomicCornerSpatialPoint, HolonomicCryoMetrics, HolonomicCryoParams,
-    HolonomicCryoSolver, HolonomicLoopPoint, HolonomicQubitGate,
-    HolonomicQubitRepeaterAuditReport, HolonomicQubitRepeaterParams,
-    HolonomicQubitRepeaterProcessor, HolonomicQubitRepeaterSolution,
-    ParityReadoutSpectrumPoint, QubitHolonomicMatrix2x2, RepeaterNodeMetricPoint,
-    ValleySpectrumPoint, ValleyWaveguidePoint,
 };

@@ -831,30 +831,6 @@ fn render_top_frame_internal(
                     }
                     ui.close();
                 }
-                if ui.button("Floquet Time Crystal Studio...").clicked() {
-                    if let Some(a) = app.as_deref_mut() {
-                        a.floquet_time_crystal_dialog.is_open = true;
-                    }
-                    ui.close();
-                }
-                if ui.button("Quantum Braiding Lattice Processor...").clicked() {
-                    if let Some(a) = app.as_deref_mut() {
-                        a.quantum_braiding_lattice_dialog.is_open = true;
-                    }
-                    ui.close();
-                }
-                if ui.button("Cavity Optomechanical Squeezing...").clicked() {
-                    if let Some(a) = app.as_deref_mut() {
-                        a.optomechanical_squeezing_dialog.is_open = true;
-                    }
-                    ui.close();
-                }
-                if ui.button("Acoustic Skyrmion Router...").clicked() {
-                    if let Some(a) = app.as_deref_mut() {
-                        a.skyrmion_router_dialog.is_open = true;
-                    }
-                    ui.close();
-                }
                 if ui.button("Acoustic Domain Wall Solitons...").clicked() {
                     if let Some(a) = app.as_deref_mut() {
                         a.acoustic_soliton_dialog.is_open = true;
@@ -1050,42 +1026,6 @@ fn render_top_frame_internal(
                 if ui.button("Phonon-Magnon Polariton Transducer...").clicked() {
                     if let Some(a) = app.as_deref_mut() {
                         a.phonon_magnon_dialog.is_open = true;
-                    }
-                    ui.close();
-                }
-                if ui.button("Topological Quadrupole Parametric Waveguide...").clicked() {
-                    if let Some(a) = app.as_deref_mut() {
-                        a.quadrupole_parametric_dialog.is_open = true;
-                    }
-                    ui.close();
-                }
-                if ui.button("Non-Hermitian Skin-Effect Sensor...").clicked() {
-                    if let Some(a) = app.as_deref_mut() {
-                        a.non_hermitian_sensor_dialog.is_open = true;
-                    }
-                    ui.close();
-                }
-                if ui.button("Corner Harmonic Doubler & Router...").clicked() {
-                    if let Some(a) = app.as_deref_mut() {
-                        a.corner_doubler_dialog.is_open = true;
-                    }
-                    ui.close();
-                }
-                if ui.button("Universal Quantum Acoustic Braiding Co-Processor...").clicked() {
-                    if let Some(a) = app.as_deref_mut() {
-                        a.universal_braiding_dialog.is_open = true;
-                    }
-                    ui.close();
-                }
-                if ui.button("Topological Floquet Chiral Polariton Circulator...").clicked() {
-                    if let Some(a) = app.as_deref_mut() {
-                        a.chiral_circulator_dialog.is_open = true;
-                    }
-                    ui.close();
-                }
-                if ui.button("Superconducting Josephson Parametric Waveguide...").clicked() {
-                    if let Some(a) = app.as_deref_mut() {
-                        a.josephson_parametric_dialog.is_open = true;
                     }
                     ui.close();
                 }
@@ -1410,12 +1350,6 @@ fn render_top_frame_internal(
                 if ui.button("Non-Hermitian Chiral Braiding & EP Sensor...").clicked() {
                     if let Some(a) = app.as_deref_mut() {
                         a.non_hermitian_braiding_dialog.is_open = true;
-                    }
-                    ui.close();
-                }
-                if ui.button("Holonomic Qubit Braiding & Fractional Valley Repeater...").clicked() {
-                    if let Some(a) = app.as_deref_mut() {
-                        a.holonomic_qubit_repeater_dialog.is_open = true;
                     }
                     ui.close();
                 }
