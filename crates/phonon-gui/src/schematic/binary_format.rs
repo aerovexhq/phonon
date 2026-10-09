@@ -45,12 +45,16 @@ pub const PHONON_MAGIC: [u8; 8] = *b"PHONON\x01\0";
 /// Current binary specification version.
 pub const CURRENT_VERSION: u16 = 1;
 
-/// Deserialized project payload containing title, components, and wires.
+/// Flag bit indicating presence of optional centralized component pricing metadata.
+pub const FLAG_HAS_PRICING: u16 = 0x0001;
+
+/// Deserialized project payload containing title, components, wires, and optional pricing metadata.
 #[derive(Debug, Clone, PartialEq)]
 pub struct DeserializedProject {
     pub title: String,
     pub components: Vec<SchematicComponent>,
     pub wires: Vec<SchematicWire>,
+    pub pricing_metadata: Option<String>,
 }
 
 /// Errors occurring during binary format serialization, deserialization, or I/O.
@@ -541,12 +545,26 @@ pub fn serialize_project(
     components: &[SchematicComponent],
     wires: &[SchematicWire],
 ) -> Vec<u8> {
+    serialize_project_with_pricing(title, components, wires, None)
+}
+
+/// Serializes project state into binary format with optional custom pricing metadata.
+pub fn serialize_project_with_pricing(
+    title: &str,
+    components: &[SchematicComponent],
+    wires: &[SchematicWire],
+    pricing_metadata: Option<&str>,
+) -> Vec<u8> {
     let mut buf = Vec::with_capacity(128 + components.len() * 48 + wires.len() * 32);
 
     // 1. Header (24 bytes):
     buf.extend_from_slice(&PHONON_MAGIC);
     buf.extend_from_slice(&CURRENT_VERSION.to_le_bytes());
-    let flags: u16 = 0;
+    let flags: u16 = if pricing_metadata.is_some() {
+        FLAG_HAS_PRICING
+    } else {
+        0
+    };
     buf.extend_from_slice(&flags.to_le_bytes());
     let comp_count = components.len() as u32;
     buf.extend_from_slice(&comp_count.to_le_bytes());
@@ -569,7 +587,15 @@ pub fn serialize_project(
         write_wire(wire, &mut buf);
     }
 
-    // 5. Checksum Footer (4 bytes LE Adler-32):
+    // 5. Optional pricing metadata:
+    if let Some(pricing) = pricing_metadata {
+        let p_bytes = pricing.as_bytes();
+        let p_len = p_bytes.len() as u32;
+        buf.extend_from_slice(&p_len.to_le_bytes());
+        buf.extend_from_slice(p_bytes);
+    }
+
+    // 6. Checksum Footer (4 bytes LE Adler-32):
     let checksum = compute_adler32(&buf);
     buf.extend_from_slice(&checksum.to_le_bytes());
 
@@ -606,7 +632,7 @@ pub fn deserialize_project(bytes: &[u8]) -> Result<DeserializedProject, BinaryFo
         return Err(BinaryFormatError::CorruptChecksum);
     }
 
-    let _flags = u16::from_le_bytes([bytes[10], bytes[11]]);
+    let flags = u16::from_le_bytes([bytes[10], bytes[11]]);
     let comp_count = u32::from_le_bytes([bytes[12], bytes[13], bytes[14], bytes[15]]) as usize;
     let wire_count = u32::from_le_bytes([bytes[16], bytes[17], bytes[18], bytes[19]]) as usize;
     let title_len = u32::from_le_bytes([bytes[20], bytes[21], bytes[22], bytes[23]]) as usize;
@@ -634,10 +660,31 @@ pub fn deserialize_project(bytes: &[u8]) -> Result<DeserializedProject, BinaryFo
         wires.push(read_wire(payload, &mut cursor)?);
     }
 
+    let pricing_metadata = if (flags & FLAG_HAS_PRICING) != 0 && cursor + 4 <= payload_len {
+        let p_len = u32::from_le_bytes([
+            payload[cursor],
+            payload[cursor + 1],
+            payload[cursor + 2],
+            payload[cursor + 3],
+        ]) as usize;
+        cursor += 4;
+        if cursor + p_len <= payload_len {
+            let p_str = std::str::from_utf8(&payload[cursor..cursor + p_len])
+                .map_err(|e| BinaryFormatError::Utf8Error(e.to_string()))?
+                .to_string();
+            Some(p_str)
+        } else {
+            None
+        }
+    } else {
+        None
+    };
+
     Ok(DeserializedProject {
         title: title_str,
         components,
         wires,
+        pricing_metadata,
     })
 }
 
@@ -648,7 +695,18 @@ pub fn save_project_to_file<P: AsRef<Path>>(
     components: &[SchematicComponent],
     wires: &[SchematicWire],
 ) -> Result<(), BinaryFormatError> {
-    let bytes = serialize_project(title, components, wires);
+    save_project_to_file_with_pricing(path, title, components, wires, None)
+}
+
+/// Serializes and writes a project with custom pricing metadata directly to disk.
+pub fn save_project_to_file_with_pricing<P: AsRef<Path>>(
+    path: P,
+    title: &str,
+    components: &[SchematicComponent],
+    wires: &[SchematicWire],
+    pricing_metadata: Option<&str>,
+) -> Result<(), BinaryFormatError> {
+    let bytes = serialize_project_with_pricing(title, components, wires, pricing_metadata);
     std::fs::write(path, bytes)?;
     Ok(())
 }

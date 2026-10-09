@@ -7,12 +7,14 @@ use crate::oscilloscope::{MultiGraphManager, OscilloscopePanel, WaveformTrace};
 use crate::schematic::{
     compile_schematic_with_labels, compute_junction_dots,
     compute_wire_crossings, compute_wire_telemetry, deserialize_project, load_project_from_file,
-    render_wire_crossings, save_project_to_file, serialize_project, BinaryFormatError,
+    render_wire_crossings, save_project_to_file_with_pricing,
+    serialize_project_with_pricing, BinaryFormatError,
     CanvasCommand, CompiledCircuit, ComponentKind, ErcDiagnostic, ErcEngine, ErcSeverity,
     HistoryStack, MultiSheetManager, NetLabel, NetLabelOrientation, NetlistSyncEngine,
     SchematicBus, SchematicCanvas, SchematicComponent, SchematicWire, SubcircuitDefinition,
     SubcircuitRegistry, SymbolLibrary, WireSegment,
 };
+use phonon_solver::production_economics::ProductionCostRegistry;
 use crate::thermal::{Colormap, ThermalOverlay};
 use crate::storage::ProjectStorageManager;
 use crate::widgets::{
@@ -1048,14 +1050,15 @@ impl PhononApp {
         };
 
         let title = self.project_title.clone();
+        let pricing = self.production_economics_dialog.sim.registry.serialize_to_text();
         #[cfg(not(target_arch = "wasm32"))]
         {
-            save_project_to_file(&path, &title, &self.components, &self.wires)
+            save_project_to_file_with_pricing(&path, &title, &self.components, &self.wires, Some(&pricing))
                 .map_err(|e| format!("Failed to save project to {}: {}", path.display(), e))?;
         }
 
         let _ = self.storage_manager
-            .save_project(&title, &self.components, &self.wires);
+            .save_project_with_pricing(&title, &self.components, &self.wires, Some(&pricing));
         self.preferences.add_recent_project(&title);
         let _ = self.preferences.save();
 
@@ -1095,14 +1098,15 @@ impl PhononApp {
         self.current_project_path = Some(resolved_path.clone());
 
         let title = self.project_title.clone();
+        let pricing = self.production_economics_dialog.sim.registry.serialize_to_text();
         #[cfg(not(target_arch = "wasm32"))]
         {
-            save_project_to_file(&resolved_path, &title, &self.components, &self.wires)
+            save_project_to_file_with_pricing(&resolved_path, &title, &self.components, &self.wires, Some(&pricing))
                 .map_err(|e| format!("Failed to save to {}: {}", resolved_path.display(), e))?;
         }
 
         let _ = self.storage_manager
-            .save_project(&title, &self.components, &self.wires);
+            .save_project_with_pricing(&title, &self.components, &self.wires, Some(&pricing));
 
         self.preferences.add_recent_project(&title);
         let _ = self.preferences.save();
@@ -1115,6 +1119,10 @@ impl PhononApp {
     /// Loads a project by name from the virtual project file system.
     pub fn load_project_by_name(&mut self, name: &str) -> Result<(), String> {
         let proj = self.storage_manager.load_project(name)?;
+        if let Some(ref p_str) = proj.pricing_metadata {
+            self.production_economics_dialog.sim.registry = ProductionCostRegistry::deserialize_from_text(p_str);
+            self.production_economics_dialog.sim.recompute();
+        }
         self.clear_canvas_state();
         self.history.clear();
         self.project_title = proj.title;
@@ -1140,6 +1148,10 @@ impl PhononApp {
     pub fn load_project_from_path(&mut self, path: impl AsRef<std::path::Path>) -> Result<(), String> {
         let p = path.as_ref();
         let proj = load_project_from_file(p).map_err(|e| e.to_string())?;
+        if let Some(ref p_str) = proj.pricing_metadata {
+            self.production_economics_dialog.sim.registry = ProductionCostRegistry::deserialize_from_text(p_str);
+            self.production_economics_dialog.sim.recompute();
+        }
         self.clear_canvas_state();
         self.history.clear();
         self.project_title = proj.title;
@@ -1170,10 +1182,12 @@ impl PhononApp {
 
     /// Automatically records the active project in autosave session storage.
     pub fn autosave_current_project(&mut self) {
-        let _ = self.storage_manager.save_autosave(
+        let pricing = self.production_economics_dialog.sim.registry.serialize_to_text();
+        let _ = self.storage_manager.save_autosave_with_pricing(
             &self.project_title,
             &self.components,
             &self.wires,
+            Some(&pricing),
         );
     }
 
@@ -1181,6 +1195,10 @@ impl PhononApp {
     pub fn try_restore_last_project(&mut self) -> bool {
         if let Some(proj) = self.storage_manager.load_autosave() {
             if !proj.components.is_empty() || !proj.wires.is_empty() {
+                if let Some(ref p_str) = proj.pricing_metadata {
+                    self.production_economics_dialog.sim.registry = ProductionCostRegistry::deserialize_from_text(p_str);
+                    self.production_economics_dialog.sim.recompute();
+                }
                 self.clear_canvas_state();
                 self.history.clear();
                 self.project_title = proj.title;
@@ -1198,10 +1216,12 @@ impl PhononApp {
 
     /// Exports a project payload to a browser download or desktop file.
     pub fn export_project(&mut self, name: &str) {
+        let pricing = self.production_economics_dialog.sim.registry.serialize_to_text();
         let data = if name == self.project_title {
-            serialize_project(&self.project_title, &self.components, &self.wires)
+            serialize_project_with_pricing(&self.project_title, &self.components, &self.wires, Some(&pricing))
         } else if let Ok(proj) = self.storage_manager.load_project(name) {
-            serialize_project(&proj.title, &proj.components, &proj.wires)
+            let p_ref = proj.pricing_metadata.as_deref().or(Some(&pricing));
+            serialize_project_with_pricing(&proj.title, &proj.components, &proj.wires, p_ref)
         } else {
             return;
         };
@@ -1452,12 +1472,17 @@ impl PhononApp {
     /// Serializes current schematic project into ultra-compact binary format (.phn).
     pub fn save_to_bytes(&self) -> Vec<u8> {
         let title = &self.top_frame_config.circuit_name;
-        serialize_project(title, &self.components, &self.wires)
+        let pricing = self.production_economics_dialog.sim.registry.serialize_to_text();
+        serialize_project_with_pricing(title, &self.components, &self.wires, Some(&pricing))
     }
 
     /// Loads schematic project from ultra-compact binary format (.phn) bytes, resetting history clean index.
     pub fn load_from_bytes(&mut self, bytes: &[u8]) -> Result<(), BinaryFormatError> {
         let proj = deserialize_project(bytes)?;
+        if let Some(ref p_str) = proj.pricing_metadata {
+            self.production_economics_dialog.sim.registry = ProductionCostRegistry::deserialize_from_text(p_str);
+            self.production_economics_dialog.sim.recompute();
+        }
         self.components = proj.components;
         self.wires = proj.wires;
         self.history.clear();
@@ -1490,7 +1515,8 @@ impl PhononApp {
     ) -> Result<(), BinaryFormatError> {
         self.history.mark_clean();
         let title = &self.top_frame_config.circuit_name;
-        save_project_to_file(path, title, &self.components, &self.wires)?;
+        let pricing = self.production_economics_dialog.sim.registry.serialize_to_text();
+        save_project_to_file_with_pricing(path, title, &self.components, &self.wires, Some(&pricing))?;
         self.sim_status = "Saved project (.phn)".to_string();
         Ok(())
     }
@@ -1501,6 +1527,10 @@ impl PhononApp {
         path: P,
     ) -> Result<(), BinaryFormatError> {
         let proj = load_project_from_file(path)?;
+        if let Some(ref p_str) = proj.pricing_metadata {
+            self.production_economics_dialog.sim.registry = ProductionCostRegistry::deserialize_from_text(p_str);
+            self.production_economics_dialog.sim.recompute();
+        }
         self.components = proj.components;
         self.wires = proj.wires;
         self.history.clear();
@@ -5645,6 +5675,10 @@ impl PhononApp {
         self.rhbd_self_healing_dialog.ui(ui.ctx());
 
         // 53. Interactive Production Economics & Hierarchical BOM Cost Estimator Dialog
+        if self.production_economics_dialog.request_sync_canvas {
+            self.sync_canvas_state();
+            self.production_economics_dialog.sync_from_canvas(&self.canvas, &self.subcircuits);
+        }
         self.production_economics_dialog.ui(ui.ctx());
 
         // 54. Interactive 2.5D/3D Multi-Die & Chiplet Packaging Studio Dialog

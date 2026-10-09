@@ -1135,8 +1135,8 @@ pub use rhbd_self_healing::{
     SelSimulationResult, SelTransientPoint, SelfHealingCluster, TaskCriticality,
 };
 pub use production_economics::{
-    BomLineItem, CentralCostRegistry, EconomicsTelemetryReport, HierarchicalBom,
-    PriceEntry, ProductionEconomicsCoSimulator, ProductionVolumeModel, VolumeBreakpoint,
+    BomLineItem, CentralCostRegistry, Currency, EconomicsTelemetryReport, HierarchicalBom,
+    PriceEntry, ProductionCostRegistry, ProductionEconomicsCoSimulator, ProductionVolumeModel, VolumeBreakpoint,
 };
 pub use chiplet_packaging::{
     compute_s_parameters, evaluate_thermo_mechanics, evaluate_ucie_phy, extract_rdl_rlgc,

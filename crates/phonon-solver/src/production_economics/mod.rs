@@ -10,7 +10,8 @@ pub mod hierarchical_bom;
 pub mod volume_scaling;
 
 pub use cost_registry::{CentralCostRegistry, PriceEntry};
-pub use hierarchical_bom::{BomLineItem, HierarchicalBom};
+pub use cost_registry::CentralCostRegistry as ProductionCostRegistry;
+pub use hierarchical_bom::{BomLineItem, Currency, HierarchicalBom};
 pub use volume_scaling::{ProductionVolumeModel, VolumeBreakpoint};
 
 /// High-level diagnostic telemetry report for production economics and BOM budgeting.

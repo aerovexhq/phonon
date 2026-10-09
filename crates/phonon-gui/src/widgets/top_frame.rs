@@ -341,6 +341,34 @@ fn render_top_frame_internal(
                     }
                     ui.close();
                 }
+                if ui.button("Bill of Materials (BOM CSV)...").clicked() {
+                    if let Some(a) = app.as_deref_mut() {
+                        a.sync_canvas_state();
+                        a.production_economics_dialog.sync_from_canvas(&a.canvas, &a.subcircuits);
+                        let csv = a.production_economics_dialog.sim.bom.export_csv_with_currency(
+                            &a.production_economics_dialog.sim.registry,
+                            1000,
+                            a.production_economics_dialog.selected_currency,
+                        );
+                        ui.ctx().copy_text(csv);
+                        a.sim_status = format!("Exported {} BOM (CSV) to clipboard", a.production_economics_dialog.selected_currency.code());
+                    }
+                    ui.close();
+                }
+                if ui.button("Bill of Materials (BOM JSON)...").clicked() {
+                    if let Some(a) = app.as_deref_mut() {
+                        a.sync_canvas_state();
+                        a.production_economics_dialog.sync_from_canvas(&a.canvas, &a.subcircuits);
+                        let json = a.production_economics_dialog.sim.bom.export_json(
+                            &a.production_economics_dialog.sim.registry,
+                            1000,
+                            a.production_economics_dialog.selected_currency,
+                        );
+                        ui.ctx().copy_text(json);
+                        a.sim_status = format!("Exported {} BOM (JSON) to clipboard", a.production_economics_dialog.selected_currency.code());
+                    }
+                    ui.close();
+                }
             });
             ui.separator();
             ui.menu_button("Load Demos", |ui| {
@@ -1380,6 +1408,10 @@ fn render_top_frame_internal(
             if ui.button("Production Economics & BOM Cost Estimator...").clicked() {
                 if let Some(a) = app.as_deref_mut() {
                     a.production_economics_dialog.is_open = true;
+                    if !a.components.is_empty() {
+                        a.sync_canvas_state();
+                        a.production_economics_dialog.sync_from_canvas(&a.canvas, &a.subcircuits);
+                    }
                 }
                 ui.close();
             }

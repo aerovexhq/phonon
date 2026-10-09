@@ -6,7 +6,7 @@
 //! (`localStorage`, Origin Private File System / Blob downloads).
 
 use crate::schematic::{
-    deserialize_project, serialize_project, DeserializedProject,
+    deserialize_project, serialize_project_with_pricing, DeserializedProject,
 };
 
 /// Metadata descriptor for a saved project.
@@ -406,7 +406,18 @@ impl ProjectStorageManager {
         components: &[crate::schematic::SchematicComponent],
         wires: &[crate::schematic::SchematicWire],
     ) -> Result<(), String> {
-        let bytes = serialize_project(title, components, wires);
+        self.save_project_with_pricing(title, components, wires, None)
+    }
+
+    /// Saves project state with optional custom pricing metadata under a given name.
+    pub fn save_project_with_pricing(
+        &mut self,
+        title: &str,
+        components: &[crate::schematic::SchematicComponent],
+        wires: &[crate::schematic::SchematicWire],
+        pricing_metadata: Option<&str>,
+    ) -> Result<(), String> {
+        let bytes = serialize_project_with_pricing(title, components, wires, pricing_metadata);
         self.adapter.save_project(title, &bytes)
     }
 
@@ -433,7 +444,18 @@ impl ProjectStorageManager {
         components: &[crate::schematic::SchematicComponent],
         wires: &[crate::schematic::SchematicWire],
     ) -> Result<(), String> {
-        let bytes = serialize_project(title, components, wires);
+        self.save_autosave_with_pricing(title, components, wires, None)
+    }
+
+    /// Autosaves the active circuit session with optional custom pricing metadata.
+    pub fn save_autosave_with_pricing(
+        &mut self,
+        title: &str,
+        components: &[crate::schematic::SchematicComponent],
+        wires: &[crate::schematic::SchematicWire],
+        pricing_metadata: Option<&str>,
+    ) -> Result<(), String> {
+        let bytes = serialize_project_with_pricing(title, components, wires, pricing_metadata);
         self.adapter.save_autosave(&bytes)
     }
 

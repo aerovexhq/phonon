@@ -8,6 +8,64 @@
 
 use super::cost_registry::CentralCostRegistry;
 
+/// Supported currencies for international production costing and quotations.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Currency {
+    USD,
+    EUR,
+    GBP,
+    JPY,
+}
+
+impl Currency {
+    pub fn symbol(&self) -> &'static str {
+        match self {
+            Self::USD => "$",
+            Self::EUR => "EUR ",
+            Self::GBP => "GBP ",
+            Self::JPY => "JPY ",
+        }
+    }
+
+    pub fn code(&self) -> &'static str {
+        match self {
+            Self::USD => "USD",
+            Self::EUR => "EUR",
+            Self::GBP => "GBP",
+            Self::JPY => "JPY",
+        }
+    }
+
+    pub fn rate_from_usd(&self) -> f64 {
+        match self {
+            Self::USD => 1.0,
+            Self::EUR => 0.92,
+            Self::GBP => 0.79,
+            Self::JPY => 152.0,
+        }
+    }
+
+    pub fn convert_from_usd(&self, amount_usd: f64) -> f64 {
+        amount_usd * self.rate_from_usd()
+    }
+
+    pub fn format_amount(&self, amount_usd: f64) -> String {
+        let converted = self.convert_from_usd(amount_usd);
+        match self {
+            Self::JPY => format!("JPY {:.0}", converted),
+            _ => format!("{}{:.4}", self.symbol(), converted),
+        }
+    }
+
+    pub fn format_total(&self, amount_usd: f64) -> String {
+        let converted = self.convert_from_usd(amount_usd);
+        match self {
+            Self::JPY => format!("JPY {:.0}", converted),
+            _ => format!("{}{:.2}", self.symbol(), converted),
+        }
+    }
+}
+
 /// An individual line item in the hierarchical Bill of Materials.
 #[derive(Debug, Clone, PartialEq)]
 pub struct BomLineItem {
@@ -291,12 +349,26 @@ impl HierarchicalBom {
 
     /// Exports the Bill of Materials as standard comma-separated values (CSV).
     pub fn export_csv(&self, registry: &CentralCostRegistry, batch_volume: u32) -> String {
+        self.export_csv_with_currency(registry, batch_volume, Currency::USD)
+    }
+
+    /// Exports the Bill of Materials as standard CSV localized to target currency.
+    pub fn export_csv_with_currency(
+        &self,
+        registry: &CentralCostRegistry,
+        batch_volume: u32,
+        currency: Currency,
+    ) -> String {
         let mut csv = String::new();
-        csv.push_str("Item ID,Designators,Qty,Part Key,Description,Unit Cost (USD),Extended Cost (USD)\n");
+        csv.push_str(&format!(
+            "Item ID,Designators,Qty,Part Key,Description,Unit Cost ({}),Extended Cost ({})\n",
+            currency.code(),
+            currency.code()
+        ));
 
         for item in &self.items {
-            let unit_cost = item.effective_unit_cost(registry);
-            let ext_cost = item.extended_cost(registry);
+            let unit_cost = currency.convert_from_usd(item.effective_unit_cost(registry));
+            let ext_cost = currency.convert_from_usd(item.extended_cost(registry));
             csv.push_str(&format!(
                 "\"{}\",\"{}\",{},\"{}\",\"{}\",{:.4},{:.4}\n",
                 item.id, item.designators, item.quantity, item.part_key, item.description, unit_cost, ext_cost
@@ -304,8 +376,8 @@ impl HierarchicalBom {
 
             if item.is_subcircuit && item.is_split {
                 for child in &item.children {
-                    let c_unit = child.effective_unit_cost(registry);
-                    let c_ext = child.extended_cost(registry);
+                    let c_unit = currency.convert_from_usd(child.effective_unit_cost(registry));
+                    let c_ext = currency.convert_from_usd(child.extended_cost(registry));
                     csv.push_str(&format!(
                         "\"  -> {}\",\"{}\",{},\"{}\",\"{}\",{:.4},{:.4}\n",
                         child.id, child.designators, child.quantity, child.part_key, child.description, c_unit, c_ext
@@ -314,15 +386,18 @@ impl HierarchicalBom {
             }
         }
 
-        let total_unit = self.total_prototype_unit_cost(registry);
+        let total_unit = currency.convert_from_usd(self.total_prototype_unit_cost(registry));
         let batch_total = total_unit * (batch_volume as f64);
         csv.push_str(&format!(
-            "\n\"TOTAL PROTOTYPE UNIT COST\",,,,,,${:.4}\n",
+            "\n\"TOTAL PROTOTYPE UNIT COST ({})\",,,,,,{:.4}\n",
+            currency.code(),
             total_unit
         ));
         csv.push_str(&format!(
-            "\"TOTAL BATCH INVESTMENT (N={})\",,,,,,${:.2}\n",
-            batch_volume, batch_total
+            "\"TOTAL BATCH INVESTMENT (N={}, {})\",,,,,,{:.2}\n",
+            batch_volume,
+            currency.code(),
+            batch_total
         ));
 
         csv
@@ -330,13 +405,27 @@ impl HierarchicalBom {
 
     /// Exports the Bill of Materials as a clean Markdown table.
     pub fn export_markdown_table(&self, registry: &CentralCostRegistry, batch_volume: u32) -> String {
+        self.export_markdown_table_with_currency(registry, batch_volume, Currency::USD)
+    }
+
+    /// Exports the Bill of Materials as a clean Markdown table localized to target currency.
+    pub fn export_markdown_table_with_currency(
+        &self,
+        registry: &CentralCostRegistry,
+        batch_volume: u32,
+        currency: Currency,
+    ) -> String {
         let mut md = String::new();
-        md.push_str("| Designator | Qty | Part Key | Description | Unit Price ($) | Extended ($) |\n");
+        md.push_str(&format!(
+            "| Designator | Qty | Part Key | Description | Unit Price ({}) | Extended ({}) |\n",
+            currency.code(),
+            currency.code()
+        ));
         md.push_str("|:---|:---:|:---|:---|:---:|:---:|\n");
 
         for item in &self.items {
-            let unit_cost = item.effective_unit_cost(registry);
-            let ext_cost = item.extended_cost(registry);
+            let unit_cost = currency.convert_from_usd(item.effective_unit_cost(registry));
+            let ext_cost = currency.convert_from_usd(item.extended_cost(registry));
             let prefix = if item.is_subcircuit {
                 if item.is_split { "[SPLIT SUB] " } else { "[SUB] " }
             } else {
@@ -344,29 +433,100 @@ impl HierarchicalBom {
             };
 
             md.push_str(&format!(
-                "| {}{} | {} | `{}` | {} | ${:.4} | ${:.4} |\n",
-                prefix, item.designators, item.quantity, item.part_key, item.description, unit_cost, ext_cost
+                "| {}{} | {} | `{}` | {} | {}{:.4} | {}{:.4} |\n",
+                prefix, item.designators, item.quantity, item.part_key, item.description, currency.symbol(), unit_cost, currency.symbol(), ext_cost
             ));
 
             if item.is_subcircuit && item.is_split {
                 for child in &item.children {
-                    let c_unit = child.effective_unit_cost(registry);
-                    let c_ext = child.extended_cost(registry);
+                    let c_unit = currency.convert_from_usd(child.effective_unit_cost(registry));
+                    let c_ext = currency.convert_from_usd(child.extended_cost(registry));
                     md.push_str(&format!(
-                        "| &nbsp;&nbsp;&rarr; `{}` | {} | `{}` | {} | ${:.4} | ${:.4} |\n",
-                        child.designators, child.quantity, child.part_key, child.description, c_unit, c_ext
+                        "| &nbsp;&nbsp;&rarr; `{}` | {} | `{}` | {} | {}{:.4} | {}{:.4} |\n",
+                        child.designators, child.quantity, child.part_key, child.description, currency.symbol(), c_unit, currency.symbol(), c_ext
                     ));
                 }
             }
         }
 
-        let total_unit = self.total_prototype_unit_cost(registry);
+        let total_unit = currency.convert_from_usd(self.total_prototype_unit_cost(registry));
         let batch_total = total_unit * (batch_volume as f64);
         md.push_str(&format!(
-            "\n**Total Prototype Unit Cost**: ${:.4} | **Batch Total (N={})**: ${:.2}\n",
-            total_unit, batch_volume, batch_total
+            "\n**Total Prototype Unit Cost**: {}{:.4} | **Batch Total (N={})**: {}{:.2}\n",
+            currency.symbol(), total_unit, batch_volume, currency.symbol(), batch_total
         ));
 
         md
+    }
+
+    /// Exports the Bill of Materials as structured JSON without external dependencies.
+    pub fn export_json(
+        &self,
+        registry: &CentralCostRegistry,
+        batch_volume: u32,
+        currency: Currency,
+    ) -> String {
+        let proto_unit_usd = self.total_prototype_unit_cost(registry);
+        let proto_unit_local = currency.convert_from_usd(proto_unit_usd);
+        let batch_total_local = proto_unit_local * (batch_volume as f64);
+
+        let mut lines = Vec::new();
+        lines.push("{".to_string());
+        lines.push(format!("  \"currency\": \"{}\",", currency.code()));
+        lines.push(format!("  \"exchange_rate\": {:.4},", currency.rate_from_usd()));
+        lines.push(format!("  \"batch_volume\": {},", batch_volume));
+        lines.push(format!("  \"prototype_unit_cost_usd\": {:.6},", proto_unit_usd));
+        lines.push(format!("  \"prototype_unit_cost_local\": {:.6},", proto_unit_local));
+        lines.push(format!("  \"batch_total_cost_local\": {:.4},", batch_total_local));
+        lines.push(format!("  \"total_component_count\": {},", self.total_component_count()));
+        lines.push(format!("  \"unique_line_items\": {},", self.unique_line_items_count()));
+        lines.push("  \"items\": [".to_string());
+
+        for (idx, item) in self.items.iter().enumerate() {
+            let u_usd = item.effective_unit_cost(registry);
+            let u_loc = currency.convert_from_usd(u_usd);
+            let ext_loc = currency.convert_from_usd(item.extended_cost(registry));
+            let comma = if idx + 1 < self.items.len() { "," } else { "" };
+
+            lines.push("    {".to_string());
+            lines.push(format!("      \"id\": \"{}\",", item.id));
+            lines.push(format!("      \"designators\": \"{}\",", item.designators));
+            lines.push(format!("      \"quantity\": {},", item.quantity));
+            lines.push(format!("      \"part_key\": \"{}\",", item.part_key));
+            lines.push(format!("      \"description\": \"{}\",", item.description));
+            lines.push(format!("      \"is_subcircuit\": {},", item.is_subcircuit));
+            lines.push(format!("      \"is_split\": {},", item.is_split));
+            lines.push(format!("      \"unit_cost_usd\": {:.6},", u_usd));
+            lines.push(format!("      \"unit_cost_local\": {:.6},", u_loc));
+            lines.push(format!("      \"extended_cost_local\": {:.6}", ext_loc));
+
+            if item.is_subcircuit && !item.children.is_empty() {
+                lines.push(",      \"children\": [".to_string());
+                for (c_idx, child) in item.children.iter().enumerate() {
+                    let cu_usd = child.effective_unit_cost(registry);
+                    let cu_loc = currency.convert_from_usd(cu_usd);
+                    let cext_loc = currency.convert_from_usd(child.extended_cost(registry));
+                    let c_comma = if c_idx + 1 < item.children.len() { "," } else { "" };
+
+                    lines.push("        {".to_string());
+                    lines.push(format!("          \"id\": \"{}\",", child.id));
+                    lines.push(format!("          \"designators\": \"{}\",", child.designators));
+                    lines.push(format!("          \"quantity\": {},", child.quantity));
+                    lines.push(format!("          \"part_key\": \"{}\",", child.part_key));
+                    lines.push(format!("          \"description\": \"{}\",", child.description));
+                    lines.push(format!("          \"unit_cost_local\": {:.6},", cu_loc));
+                    lines.push(format!("          \"extended_cost_local\": {:.6}", cext_loc));
+                    lines.push(format!("        }}{}", c_comma));
+                }
+                lines.push("      ]".to_string());
+            }
+
+            lines.push(format!("    }}{}", comma));
+        }
+
+        lines.push("  ]".to_string());
+        lines.push("}".to_string());
+
+        lines.join("\n")
     }
 }

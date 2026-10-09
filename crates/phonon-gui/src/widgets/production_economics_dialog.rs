@@ -12,7 +12,7 @@
 use egui::{Color32, Context, RichText, Ui, Window};
 use egui_plot::{Legend, Line, Plot, PlotPoints};
 use phonon_solver::production_economics::{
-    ProductionEconomicsCoSimulator, VolumeBreakpoint,
+    Currency, ProductionEconomicsCoSimulator, VolumeBreakpoint,
 };
 
 /// Active tab in the Production Economics Dialog.
@@ -29,6 +29,12 @@ pub enum EconomicsTab {
 pub struct ProductionEconomicsDialog {
     pub is_open: bool,
     pub active_tab: EconomicsTab,
+
+    // Selected currency for display and quotation export
+    pub selected_currency: Currency,
+
+    // Flag requesting BOM extraction from active schematic canvas
+    pub request_sync_canvas: bool,
 
     // Filter and search buffers
     pub registry_search_query: String,
@@ -77,6 +83,8 @@ impl Default for ProductionEconomicsDialog {
         Self {
             is_open: false,
             active_tab: EconomicsTab::HierarchicalBomTree,
+            selected_currency: Currency::USD,
+            request_sync_canvas: false,
             registry_search_query: String::new(),
             new_part_key_buf: String::new(),
             new_part_cost_buf: String::new(),
@@ -98,6 +106,20 @@ impl ProductionEconomicsDialog {
     /// Fast non-blocking constructor guaranteeing sub-millisecond initialization for cold boot.
     pub fn new_fast() -> Self {
         Self::default()
+    }
+
+    /// Synchronizes the Bill of Materials directly from the active schematic canvas.
+    pub fn sync_from_canvas(
+        &mut self,
+        canvas: &crate::schematic::SchematicCanvas,
+        subcircuit_defs: &std::collections::HashMap<String, crate::schematic::subcircuit::SubcircuitDefinition>,
+    ) {
+        self.request_sync_canvas = false;
+        let bom = crate::schematic::bom::generate_bom_from_canvas(canvas, subcircuit_defs);
+        if !bom.items.is_empty() {
+            self.sim.bom = bom;
+            self.recompute_sim();
+        }
     }
 
     /// Recomputes all economics models, volume breakpoints, and cached curves.
@@ -211,6 +233,9 @@ impl ProductionEconomicsDialog {
 
         ui.add_space(6.0);
         ui.horizontal(|ui| {
+            if ui.button("Sync from Active Schematic").clicked() {
+                self.request_sync_canvas = true;
+            }
             if ui.button("Split All Subcircuits").clicked() {
                 self.sim.bom.split_all();
                 self.recompute_sim();
@@ -223,6 +248,12 @@ impl ProductionEconomicsDialog {
                 self.sim.bom = phonon_solver::production_economics::HierarchicalBom::new_sample_avionics_power_supply();
                 self.recompute_sim();
             }
+            ui.separator();
+            ui.label("Currency:");
+            ui.selectable_value(&mut self.selected_currency, Currency::USD, "USD ($)");
+            ui.selectable_value(&mut self.selected_currency, Currency::EUR, "EUR");
+            ui.selectable_value(&mut self.selected_currency, Currency::GBP, "GBP");
+            ui.selectable_value(&mut self.selected_currency, Currency::JPY, "JPY");
         });
 
         ui.add_space(8.0);
@@ -240,14 +271,17 @@ impl ProductionEconomicsDialog {
                     ui.label(RichText::new("Part Key").strong());
                     ui.label(RichText::new("Description").strong());
                     ui.label(RichText::new("Qty").strong());
-                    ui.label(RichText::new("Unit Price ($)").strong());
-                    ui.label(RichText::new("Extended ($)").strong());
+                    ui.label(RichText::new(format!("Unit Price ({})", self.selected_currency.code())).strong());
+                    ui.label(RichText::new(format!("Extended ({})", self.selected_currency.code())).strong());
                     ui.label(RichText::new("Hierarchical Split").strong());
                     ui.end_row();
 
                     for item in &self.sim.bom.items {
-                        let eff_unit = item.effective_unit_cost(&self.sim.registry);
-                        let ext = item.extended_cost(&self.sim.registry);
+                        let eff_unit_usd = item.effective_unit_cost(&self.sim.registry);
+                        let ext_usd = item.extended_cost(&self.sim.registry);
+
+                        let eff_unit_loc = self.selected_currency.convert_from_usd(eff_unit_usd);
+                        let ext_loc = self.selected_currency.convert_from_usd(ext_usd);
 
                         // Designator
                         if item.is_subcircuit {
@@ -267,19 +301,20 @@ impl ProductionEconomicsDialog {
 
                         // Unit price editor
                         ui.horizontal(|ui| {
-                            ui.label("$");
-                            let mut val = eff_unit;
+                            ui.label(self.selected_currency.symbol());
+                            let mut val = eff_unit_loc;
                             if item.is_subcircuit && item.is_split {
                                 ui.label(RichText::new(format!("{:.4} (Sum)", val)).color(Color32::from_rgb(80, 220, 120)));
                             } else {
-                                if ui.add(egui::DragValue::new(&mut val).speed(0.005).range(0.0001..=1000.0)).changed() {
-                                    changed_price = Some((item.part_key.clone(), val));
+                                if ui.add(egui::DragValue::new(&mut val).speed(0.005).range(0.0001..=100000.0)).changed() {
+                                    let usd_cost = val / self.selected_currency.rate_from_usd();
+                                    changed_price = Some((item.part_key.clone(), usd_cost));
                                 }
                             }
                         });
 
                         // Extended price
-                        ui.label(format!("${:.4}", ext));
+                        ui.label(format!("{}{:.4}", self.selected_currency.symbol(), ext_loc));
 
                         // Split button for subcircuits
                         if item.is_subcircuit {
@@ -296,8 +331,11 @@ impl ProductionEconomicsDialog {
                         // Render indented children if split
                         if item.is_subcircuit && item.is_split {
                             for child in &item.children {
-                                let c_unit = child.effective_unit_cost(&self.sim.registry);
-                                let c_ext = child.extended_cost(&self.sim.registry);
+                                let c_unit_usd = child.effective_unit_cost(&self.sim.registry);
+                                let c_ext_usd = child.extended_cost(&self.sim.registry);
+
+                                let c_unit_loc = self.selected_currency.convert_from_usd(c_unit_usd);
+                                let c_ext_loc = self.selected_currency.convert_from_usd(c_ext_usd);
 
                                 ui.horizontal(|ui| {
                                     ui.label("  ");
@@ -309,14 +347,15 @@ impl ProductionEconomicsDialog {
                                 ui.label(format!("{}", child.quantity));
 
                                 ui.horizontal(|ui| {
-                                    ui.label("$");
-                                    let mut c_val = c_unit;
-                                    if ui.add(egui::DragValue::new(&mut c_val).speed(0.005).range(0.0001..=100.0)).changed() {
-                                        changed_price = Some((child.part_key.clone(), c_val));
+                                    ui.label(self.selected_currency.symbol());
+                                    let mut c_val = c_unit_loc;
+                                    if ui.add(egui::DragValue::new(&mut c_val).speed(0.005).range(0.0001..=100000.0)).changed() {
+                                        let usd_cost = c_val / self.selected_currency.rate_from_usd();
+                                        changed_price = Some((child.part_key.clone(), usd_cost));
                                     }
                                 });
 
-                                ui.label(format!("${:.4}", c_ext));
+                                ui.label(format!("{}{:.4}", self.selected_currency.symbol(), c_ext_loc));
                                 ui.label(RichText::new("Child Element").weak());
                                 ui.end_row();
                             }
@@ -605,15 +644,21 @@ impl ProductionEconomicsDialog {
         ui.add_space(6.0);
         ui.horizontal(|ui| {
             if ui.button("Copy CSV to Clipboard").clicked() {
-                let csv = self.sim.bom.export_csv(&self.sim.registry, target_vol);
+                let csv = self.sim.bom.export_csv_with_currency(&self.sim.registry, target_vol, self.selected_currency);
                 ui.ctx().copy_text(csv);
-                self.feedback_message = Some(("Copied CSV Bill of Materials to clipboard".to_string(), 3.0));
+                self.feedback_message = Some((format!("Copied {} CSV Bill of Materials to clipboard", self.selected_currency.code()), 3.0));
+            }
+
+            if ui.button("Copy JSON to Clipboard").clicked() {
+                let json = self.sim.bom.export_json(&self.sim.registry, target_vol, self.selected_currency);
+                ui.ctx().copy_text(json);
+                self.feedback_message = Some((format!("Copied {} JSON Bill of Materials to clipboard", self.selected_currency.code()), 3.0));
             }
 
             if ui.button("Copy Markdown Quotation Table").clicked() {
-                let md = self.sim.bom.export_markdown_table(&self.sim.registry, target_vol);
+                let md = self.sim.bom.export_markdown_table_with_currency(&self.sim.registry, target_vol, self.selected_currency);
                 ui.ctx().copy_text(md);
-                self.feedback_message = Some(("Copied Markdown quotation to clipboard".to_string(), 3.0));
+                self.feedback_message = Some((format!("Copied {} Markdown quotation to clipboard", self.selected_currency.code()), 3.0));
             }
 
             if let Some((ref msg, _)) = self.feedback_message {
@@ -622,9 +667,9 @@ impl ProductionEconomicsDialog {
         });
 
         ui.add_space(8.0);
-        ui.label(RichText::new("Formatted CSV Bill of Materials Preview:").strong());
+        ui.label(RichText::new(format!("Formatted {} Bill of Materials Preview (CSV):", self.selected_currency.code())).strong());
 
-        let csv_preview = self.sim.bom.export_csv(&self.sim.registry, target_vol);
+        let csv_preview = self.sim.bom.export_csv_with_currency(&self.sim.registry, target_vol, self.selected_currency);
         egui::ScrollArea::vertical().max_height(260.0).show(ui, |ui| {
             ui.text_edit_multiline(&mut csv_preview.as_str());
         });
@@ -632,12 +677,17 @@ impl ProductionEconomicsDialog {
 
     fn render_telemetry_footer(&self, ui: &mut Ui) {
         let rep = self.sim.report();
+        let sym = self.selected_currency.symbol();
+        let p_bom = self.selected_currency.convert_from_usd(rep.prototype_bom_unit_cost);
+        let m_bom = self.selected_currency.convert_from_usd(rep.mass_prod_bom_unit_cost_10k);
+        let m_cogs = self.selected_currency.convert_from_usd(rep.total_cogs_unit_cost_10k);
+
         ui.horizontal(|ui| {
-            ui.label(format!("Proto BOM: ${:.3}", rep.prototype_bom_unit_cost));
+            ui.label(format!("Proto BOM: {}{:.3}", sym, p_bom));
             ui.separator();
-            ui.label(format!("10k BOM: ${:.3}", rep.mass_prod_bom_unit_cost_10k));
+            ui.label(format!("10k BOM: {}{:.3}", sym, m_bom));
             ui.separator();
-            ui.label(format!("10k COGS: ${:.3}", rep.total_cogs_unit_cost_10k));
+            ui.label(format!("10k COGS: {}{:.3}", sym, m_cogs));
             ui.separator();
             ui.label(format!("10k Margin: {:.1}%", rep.gross_margin_pct_10k));
             ui.separator();
