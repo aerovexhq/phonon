@@ -390,6 +390,7 @@ pub mod chiral_transducer_repeater;
 pub mod weyl_vortex_router;
 pub mod parafermion_surface_coprocessor;
 pub mod moire_superlattice_laser;
+pub mod disclination_holonomic_qudit;
 
 pub use acoustic::{
     AcousticBenchmarkReport, AcousticBenchmarkRunner, AcousticLinkSimulator, AcousticRealismTier,
@@ -1739,4 +1740,12 @@ pub use moire_superlattice_laser::{
     MoireSuperlatticeSolver, PolaritonInputOutputCurvePoint, ValleyNodeSensorPoint,
     ValleySensorNetworkMetrics, ValleySensorNetworkParams, ValleySensorNetworkSolver,
     ValleyTransmissionSpectrumPoint,
+};
+pub use disclination_holonomic_qudit::{
+    DisclinationCavityMetrics, DisclinationCavityParams, DisclinationCavitySolver,
+    DisclinationHolonomicAuditReport, DisclinationHolonomicProcessor, DisclinationSpatialPoint,
+    DisclinationSpectrumPoint, FrankAngleKind, HolonomicMatrixElement, HolonomicQuditEngine,
+    HolonomicQuditMetrics, HolonomicQuditParams, MultiCavityRoutingNode, ParameterLoopPoint,
+    QuantumQuditProcessorEngine, QuantumQuditProcessorMetrics, QuantumQuditProcessorParams,
+    QuditDimension, QuditHolonomicGateKind, QuditReadoutSpectrumPoint, QuditTomographyState,
 };

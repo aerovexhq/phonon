@@ -314,6 +314,9 @@ pub use widgets::parafermion_surface_dialog::{
 pub use widgets::moire_superlattice_laser_dialog::{
     MoireSuperlatticeLaserDialog, MoireSuperlatticeTab,
 };
+pub use widgets::disclination_holonomic_qudit_dialog::{
+    DisclinationHolonomicQuditDialog, DisclinationHolonomicTab,
+};
 
 #[cfg(not(target_arch = "wasm32"))]
 use phonon_core::PhysicsDynamicsBackend;

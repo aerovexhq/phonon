@@ -64,6 +64,7 @@ use crate::widgets::{
     WeylVortexRouterDialog,
     ParafermionSurfaceDialog,
     MoireSuperlatticeLaserDialog,
+    DisclinationHolonomicQuditDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -552,6 +553,9 @@ pub struct PhononApp {
     /// Interactive Moire Superlattice Polariton Laser & Valley Sensor Network dialog.
     pub moire_superlattice_laser_dialog: MoireSuperlatticeLaserDialog,
 
+    /// Interactive Disclination Cavity & Non-Abelian Holonomic Qudit Processor dialog.
+    pub disclination_holonomic_qudit_dialog: DisclinationHolonomicQuditDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -835,6 +839,7 @@ impl Default for PhononApp {
             weyl_vortex_router_dialog: WeylVortexRouterDialog::new_fast(),
             parafermion_surface_dialog: ParafermionSurfaceDialog::new_fast(),
             moire_superlattice_laser_dialog: MoireSuperlatticeLaserDialog::new_fast(),
+            disclination_holonomic_qudit_dialog: DisclinationHolonomicQuditDialog::new_fast(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -5883,6 +5888,7 @@ impl PhononApp {
         // 122. Interactive Parafermion Lattice Co-Processor & Quantum Acoustic Surface Engine Dialog
         self.parafermion_surface_dialog.ui(ui.ctx());
         self.moire_superlattice_laser_dialog.ui(ui.ctx());
+        self.disclination_holonomic_qudit_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {
