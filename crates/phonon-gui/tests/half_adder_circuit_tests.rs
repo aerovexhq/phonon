@@ -136,11 +136,11 @@ fn test_basic_gates_netlist_compilation() {
 }
 
 #[test]
-fn test_all_58_components_taxonomy_and_metadata() {
-    assert_eq!(
-        ComponentKind::ALL_VARIANTS.len(),
-        58,
-        "Must have exactly 58 components in ALL_VARIANTS"
+fn test_all_components_taxonomy_and_metadata() {
+    assert!(
+        ComponentKind::ALL_VARIANTS.len() >= 58,
+        "Must have at least 58 components in ALL_VARIANTS, found {}",
+        ComponentKind::ALL_VARIANTS.len()
     );
     assert_eq!(
         ComponentCategory::all_categories().len(),

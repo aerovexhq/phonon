@@ -81,8 +81,8 @@ fn test_component_category_mapping_bijection() {
 
     assert_eq!(
         all_comps.len(),
-        58,
-        "Total categorized primitives must equal 58"
+        ComponentKind::ALL_VARIANTS.len(),
+        "Total categorized primitives must equal total ComponentKind variants"
     );
 }
 

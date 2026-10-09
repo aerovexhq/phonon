@@ -46,13 +46,21 @@ fn main() -> ExitCode {
     };
 
     match command {
-        Commands::Gui => match phonon_gui::run_gui() {
-            Ok(()) => ExitCode::SUCCESS,
-            Err(e) => {
-                eprintln!("Phonon GUI runtime error: {e}");
+        Commands::Gui => {
+            #[cfg(not(target_arch = "wasm32"))]
+            match phonon_gui::run_gui() {
+                Ok(()) => ExitCode::SUCCESS,
+                Err(e) => {
+                    eprintln!("Phonon GUI runtime error: {e}");
+                    ExitCode::FAILURE
+                }
+            }
+            #[cfg(target_arch = "wasm32")]
+            {
+                eprintln!("Phonon GUI cannot be run directly via CLI on WebAssembly");
                 ExitCode::FAILURE
             }
-        },
+        }
         Commands::Validate { netlist } => match execute_validate(&netlist) {
             Ok(report) => {
                 println!(

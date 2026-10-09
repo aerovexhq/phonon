@@ -137,6 +137,7 @@ fn test_wire_crossing_detection_and_bridge_hop_isolation() {
         id: 1,
         net_name: Some("NET1".to_string()),
         segments: vec![WireSegment::new(Pos2::new(40.0, 100.0), Pos2::new(160.0, 100.0))],
+        bit_width: 1,
     };
 
     // Wire 2: Vertical from (100, 40) to (100, 160)
@@ -144,6 +145,7 @@ fn test_wire_crossing_detection_and_bridge_hop_isolation() {
         id: 2,
         net_name: Some("NET2".to_string()),
         segments: vec![WireSegment::new(Pos2::new(100.0, 40.0), Pos2::new(100.0, 160.0))],
+        bit_width: 1,
     };
 
     let wires = vec![wire_h, wire_v];
@@ -164,6 +166,7 @@ fn test_wire_crossing_detection_and_bridge_hop_isolation() {
         id: 3,
         net_name: Some("NET3".to_string()),
         segments: vec![WireSegment::new(Pos2::new(40.0, 120.0), Pos2::new(160.0, 120.0))],
+        bit_width: 1,
     };
     let parallel_crossings = compute_wire_crossings(&[wires[0].clone(), parallel_wire], &[]);
     assert_eq!(parallel_crossings.len(), 0);
