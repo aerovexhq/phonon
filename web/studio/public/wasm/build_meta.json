@@ -1,12 +1,12 @@
 {
-  "commit_hash": "634a4ce",
-  "build_timestamp_iso": "2026-10-08T20:11:08Z",
-  "raw_size_bytes": 18364394,
-  "optimized_size_bytes": 14544844,
+  "commit_hash": "3c75816",
+  "build_timestamp_iso": "2026-10-09T20:27:32Z",
+  "raw_size_bytes": 18763179,
+  "optimized_size_bytes": 14859198,
   "reduction_percent": 20.8,
-  "wasm_sha256": "c10022f18a9deea8f1e32d10b5ae7c9eb1c3211dc26a89c091288bd0d6745671",
-  "js_sha256": "166de598314063a77173bf49082873a3c56ad7ae2fee98abdd54dbf019991e1e",
-  "cache_query_key": "634a4ce",
+  "wasm_sha256": "e8bc361d8b3fd3443b43494cac775dc76805ac8ecdad747306952ece1d4f79c7",
+  "js_sha256": "604f8267ed06c220e13bb9414294ce0d872bbe767d83b934a9028934563f7a82",
+  "cache_query_key": "3c75816",
   "lto_mode": "fat",
   "opt_level": "-Oz"
 }
