@@ -129,6 +129,7 @@ pub mod chiral_graphene_braiding_dialog;
 pub mod floquet_magnon_memory_dialog;
 pub mod anyon_interferometer_qudit_dialog;
 pub mod floquet_corner_sensor_dialog;
+pub mod fractional_skyrmion_synapse_dialog;
 
 pub use pill_badge::{
     proportional_zoom_scale, render_dual_telemetry_pill, render_pill_badge, PillBadgeStyle,
@@ -358,6 +359,9 @@ pub use anyon_interferometer_qudit_dialog::{
 };
 pub use floquet_corner_sensor_dialog::{
     FloquetCornerSensorDialog, FloquetCornerSensorTab,
+};
+pub use fractional_skyrmion_synapse_dialog::{
+    FractionalSkyrmionSynapseDialog, FractionalSkyrmionSynapseTab,
 };
 
 

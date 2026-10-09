@@ -59,6 +59,7 @@ use crate::widgets::{
     SkinPolaritonLaserDialog, ValleyMajoranaRouterDialog,
     ChiralGrapheneBraidingDialog, FloquetMagnonMemoryDialog,
     AnyonInterferometerQuditDialog, FloquetCornerSensorDialog,
+    FractionalSkyrmionSynapseDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -532,6 +533,9 @@ pub struct PhononApp {
     /// Interactive Floquet Corner Spin-Orbit Polariton Laser & Non-Hermitian Sensor dialog.
     pub floquet_corner_sensor_dialog: FloquetCornerSensorDialog,
 
+    /// Interactive Quantum Metamaterial Fractional Hall Skyrmion Synaptic Memory & Anyonic Neural Crossbar dialog.
+    pub fractional_skyrmion_synapse_dialog: FractionalSkyrmionSynapseDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -810,6 +814,7 @@ impl Default for PhononApp {
             floquet_magnon_memory_dialog: FloquetMagnonMemoryDialog::new_fast(),
             anyon_interferometer_qudit_dialog: AnyonInterferometerQuditDialog::new_fast(),
             floquet_corner_sensor_dialog: FloquetCornerSensorDialog::new_fast(),
+            fractional_skyrmion_synapse_dialog: FractionalSkyrmionSynapseDialog::new_fast(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -5845,6 +5850,9 @@ impl PhononApp {
 
         // 118. Interactive Floquet Corner Spin-Orbit Polariton Laser & Sensor Dialog
         self.floquet_corner_sensor_dialog.ui(ui.ctx());
+
+        // 119. Interactive Quantum Metamaterial Fractional Hall Skyrmion Synaptic Memory & Neural Crossbar Dialog
+        self.fractional_skyrmion_synapse_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {

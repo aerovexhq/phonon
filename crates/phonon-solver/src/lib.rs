@@ -385,6 +385,7 @@ pub mod chiral_graphene_braiding;
 pub mod floquet_magnon_memory;
 pub mod anyon_interferometer_qudit;
 pub mod floquet_corner_sensor;
+pub mod fractional_skyrmion_synapse;
 
 pub use acoustic::{
     AcousticBenchmarkReport, AcousticBenchmarkRunner, AcousticLinkSimulator, AcousticRealismTier,
@@ -1693,6 +1694,17 @@ pub use floquet_corner_sensor::{
     SubPicoteslaMagnetometerMetrics, SubPicoteslaMagnetometerParams,
     SubPicoteslaMagnetometerSolver, SyntheticGaugeRotationMetrics,
     SyntheticGaugeRotationParams, SyntheticGaugeRotationSolver,
+};
+
+pub use fractional_skyrmion_synapse::{
+    ChiralNeuromorphicMetrics, ChiralNeuromorphicParams, ChiralNeuromorphicSolver,
+    ChiralSpectrumPoint, CrossbarCellPoint, CryogenicNeuralCrossbarMetrics,
+    CryogenicNeuralCrossbarParams, CryogenicNeuralCrossbarSolver,
+    FractionalSkyrmionMetrics, FractionalSkyrmionParams, FractionalSkyrmionProfilePoint,
+    FractionalSkyrmionSolver, FractionalSkyrmionSynapseAuditReport,
+    FractionalSkyrmionSynapseProcessor, LifSpikeTrajectoryPoint,
+    NonAbelianSynapseMetrics, NonAbelianSynapseParams, NonAbelianSynapseSolver,
+    SynapticCurvePoint,
 };
 
 
