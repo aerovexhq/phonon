@@ -311,6 +311,9 @@ pub use widgets::weyl_vortex_router_dialog::{
 pub use widgets::parafermion_surface_dialog::{
     ParafermionSurfaceDialog, ParafermionSurfaceTab,
 };
+pub use widgets::moire_superlattice_laser_dialog::{
+    MoireSuperlatticeLaserDialog, MoireSuperlatticeTab,
+};
 
 #[cfg(not(target_arch = "wasm32"))]
 use phonon_core::PhysicsDynamicsBackend;

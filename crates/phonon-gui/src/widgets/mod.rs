@@ -133,6 +133,7 @@ pub mod fractional_skyrmion_synapse_dialog;
 pub mod chiral_transducer_repeater_dialog;
 pub mod weyl_vortex_router_dialog;
 pub mod parafermion_surface_dialog;
+pub mod moire_superlattice_laser_dialog;
 
 pub use pill_badge::{
     proportional_zoom_scale, render_dual_telemetry_pill, render_pill_badge, PillBadgeStyle,
@@ -374,6 +375,9 @@ pub use weyl_vortex_router_dialog::{
 };
 pub use parafermion_surface_dialog::{
     ParafermionSurfaceDialog, ParafermionSurfaceTab,
+};
+pub use moire_superlattice_laser_dialog::{
+    MoireSuperlatticeLaserDialog, MoireSuperlatticeTab,
 };
 
 

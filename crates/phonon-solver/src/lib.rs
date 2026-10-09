@@ -389,6 +389,7 @@ pub mod fractional_skyrmion_synapse;
 pub mod chiral_transducer_repeater;
 pub mod weyl_vortex_router;
 pub mod parafermion_surface_coprocessor;
+pub mod moire_superlattice_laser;
 
 pub use acoustic::{
     AcousticBenchmarkReport, AcousticBenchmarkRunner, AcousticLinkSimulator, AcousticRealismTier,
@@ -1730,4 +1731,12 @@ pub use parafermion_surface_coprocessor::{
     ParafermionSurfaceProcessor, ParafermionThresholdCurvePoint, SurfaceParafermionBraidPoint,
     SurfaceParafermionMetrics, SurfaceParafermionModePoint, SurfaceParafermionParams,
     SurfaceParafermionSolver, UniversalQuditGate,
+};
+pub use moire_superlattice_laser::{
+    MoireBandDispersionPoint, MoireLaserMetrics, MoireLaserParams, MoireLaserSolver,
+    MoireLaserSpectrumPoint, MoireSpatialProfilePoint, MoireSuperlatticeAuditReport,
+    MoireSuperlatticeLaserProcessor, MoireSuperlatticeMetrics, MoireSuperlatticeParams,
+    MoireSuperlatticeSolver, PolaritonInputOutputCurvePoint, ValleyNodeSensorPoint,
+    ValleySensorNetworkMetrics, ValleySensorNetworkParams, ValleySensorNetworkSolver,
+    ValleyTransmissionSpectrumPoint,
 };
