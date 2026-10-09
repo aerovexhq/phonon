@@ -391,6 +391,7 @@ pub mod weyl_vortex_router;
 pub mod parafermion_surface_coprocessor;
 pub mod moire_superlattice_laser;
 pub mod disclination_holonomic_qudit;
+pub mod floquet_magnon_crossbar;
 
 pub use acoustic::{
     AcousticBenchmarkReport, AcousticBenchmarkRunner, AcousticLinkSimulator, AcousticRealismTier,
@@ -1748,4 +1749,11 @@ pub use disclination_holonomic_qudit::{
     HolonomicQuditMetrics, HolonomicQuditParams, MultiCavityRoutingNode, ParameterLoopPoint,
     QuantumQuditProcessorEngine, QuantumQuditProcessorMetrics, QuantumQuditProcessorParams,
     QuditDimension, QuditHolonomicGateKind, QuditReadoutSpectrumPoint, QuditTomographyState,
+};
+pub use floquet_magnon_crossbar::{
+    CirculatorSMatrixElement, ClusterEntanglementRouterMetrics, ClusterEntanglementRouterParams,
+    ClusterEntanglementRouterSolver, ClusterNodePoint, FloquetChiralTransceiverMetrics,
+    FloquetChiralTransceiverParams, FloquetChiralTransceiverSolver, FloquetMagnonCrossbarAuditReport,
+    FloquetMagnonCrossbarProcessor, QuadratureVariancePoint, SyntheticCirculatorArrayMetrics,
+    SyntheticCirculatorArrayParams, SyntheticCirculatorArraySolver, TransceiverDispersionPoint,
 };

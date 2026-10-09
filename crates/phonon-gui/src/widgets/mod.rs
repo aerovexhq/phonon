@@ -135,6 +135,7 @@ pub mod weyl_vortex_router_dialog;
 pub mod parafermion_surface_dialog;
 pub mod moire_superlattice_laser_dialog;
 pub mod disclination_holonomic_qudit_dialog;
+pub mod floquet_magnon_crossbar_dialog;
 
 pub use pill_badge::{
     proportional_zoom_scale, render_dual_telemetry_pill, render_pill_badge, PillBadgeStyle,
@@ -382,6 +383,9 @@ pub use moire_superlattice_laser_dialog::{
 };
 pub use disclination_holonomic_qudit_dialog::{
     DisclinationHolonomicQuditDialog, DisclinationHolonomicTab,
+};
+pub use floquet_magnon_crossbar_dialog::{
+    FloquetMagnonCrossbarDialog, FloquetMagnonCrossbarTab,
 };
 
 
