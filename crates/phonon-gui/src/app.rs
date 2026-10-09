@@ -62,6 +62,7 @@ use crate::widgets::{
     FractionalSkyrmionSynapseDialog,
     ChiralTransducerRepeaterDialog,
     WeylVortexRouterDialog,
+    ParafermionSurfaceDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -544,6 +545,9 @@ pub struct PhononApp {
     /// Interactive HOWSM Vortex Transceiver & Multi-Terminal Quantum Acoustic Router dialog.
     pub weyl_vortex_router_dialog: WeylVortexRouterDialog,
 
+    /// Interactive Parafermion Lattice Co-Processor & Quantum Acoustic Surface Engine dialog.
+    pub parafermion_surface_dialog: ParafermionSurfaceDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -825,6 +829,7 @@ impl Default for PhononApp {
             fractional_skyrmion_synapse_dialog: FractionalSkyrmionSynapseDialog::new_fast(),
             chiral_transducer_repeater_dialog: ChiralTransducerRepeaterDialog::new_fast(),
             weyl_vortex_router_dialog: WeylVortexRouterDialog::new_fast(),
+            parafermion_surface_dialog: ParafermionSurfaceDialog::new_fast(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -5869,6 +5874,9 @@ impl PhononApp {
 
         // 121. Interactive HOWSM Vortex Transceiver & Multi-Terminal Quantum Acoustic Router Dialog
         self.weyl_vortex_router_dialog.ui(ui.ctx());
+
+        // 122. Interactive Parafermion Lattice Co-Processor & Quantum Acoustic Surface Engine Dialog
+        self.parafermion_surface_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {

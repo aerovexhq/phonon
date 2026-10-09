@@ -308,6 +308,9 @@ pub use widgets::chiral_transducer_repeater_dialog::{
 pub use widgets::weyl_vortex_router_dialog::{
     WeylVortexRouterDialog, WeylVortexRouterTab,
 };
+pub use widgets::parafermion_surface_dialog::{
+    ParafermionSurfaceDialog, ParafermionSurfaceTab,
+};
 
 #[cfg(not(target_arch = "wasm32"))]
 use phonon_core::PhysicsDynamicsBackend;

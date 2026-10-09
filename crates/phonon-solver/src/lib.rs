@@ -388,6 +388,7 @@ pub mod floquet_corner_sensor;
 pub mod fractional_skyrmion_synapse;
 pub mod chiral_transducer_repeater;
 pub mod weyl_vortex_router;
+pub mod parafermion_surface_coprocessor;
 
 pub use acoustic::{
     AcousticBenchmarkReport, AcousticBenchmarkRunner, AcousticLinkSimulator, AcousticRealismTier,
@@ -1721,4 +1722,12 @@ pub use weyl_vortex_router::{
     RouterSpectrumPoint, WeylDispersionPoint, WeylVortexGridPoint, WeylVortexMetrics,
     WeylVortexParams, WeylVortexRadialPoint, WeylVortexRouterAuditReport,
     WeylVortexRouterProcessor, WeylVortexSolver,
+};
+pub use parafermion_surface_coprocessor::{
+    CompiledGateReport, CryogenicCoprocessorMetrics, CryogenicCoprocessorParams,
+    CryogenicCoprocessorSolver, ParafermionReadoutSpectrumPoint, ParafermionSurfaceAuditReport,
+    ParafermionSurfaceCodeMetrics, ParafermionSurfaceCodeParams, ParafermionSurfaceCodeSolver,
+    ParafermionSurfaceProcessor, ParafermionThresholdCurvePoint, SurfaceParafermionBraidPoint,
+    SurfaceParafermionMetrics, SurfaceParafermionModePoint, SurfaceParafermionParams,
+    SurfaceParafermionSolver, UniversalQuditGate,
 };
