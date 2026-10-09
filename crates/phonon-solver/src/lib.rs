@@ -386,6 +386,7 @@ pub mod floquet_magnon_memory;
 pub mod anyon_interferometer_qudit;
 pub mod floquet_corner_sensor;
 pub mod fractional_skyrmion_synapse;
+pub mod chiral_transducer_repeater;
 
 pub use acoustic::{
     AcousticBenchmarkReport, AcousticBenchmarkRunner, AcousticLinkSimulator, AcousticRealismTier,
@@ -1706,10 +1707,10 @@ pub use fractional_skyrmion_synapse::{
     NonAbelianSynapseMetrics, NonAbelianSynapseParams, NonAbelianSynapseSolver,
     SynapticCurvePoint,
 };
-
-
-
-
-
-
-
+pub use chiral_transducer_repeater::{
+    ChiralRouterMetrics, ChiralRouterParams, ChiralRouterSolver, ChiralRouterSpectrumPoint,
+    ChiralTransducerRepeaterAuditReport, ChiralTransducerRepeaterProcessor,
+    EntanglementRepeaterMetrics, EntanglementRepeaterParams, EntanglementRepeaterSolver,
+    PiezoOptomechanicalMetrics, PiezoOptomechanicalParams, PiezoOptomechanicalSolver,
+    RepeaterDistanceSweepPoint, TransductionPowerSweepPoint,
+};

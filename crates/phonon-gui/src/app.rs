@@ -60,6 +60,7 @@ use crate::widgets::{
     ChiralGrapheneBraidingDialog, FloquetMagnonMemoryDialog,
     AnyonInterferometerQuditDialog, FloquetCornerSensorDialog,
     FractionalSkyrmionSynapseDialog,
+    ChiralTransducerRepeaterDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -536,6 +537,9 @@ pub struct PhononApp {
     /// Interactive Quantum Metamaterial Fractional Hall Skyrmion Synaptic Memory & Anyonic Neural Crossbar dialog.
     pub fractional_skyrmion_synapse_dialog: FractionalSkyrmionSynapseDialog,
 
+    /// Interactive Chiral Metamaterial Photonic-Phononic Qubit Transducer & Quantum Network Repeater Node dialog.
+    pub chiral_transducer_repeater_dialog: ChiralTransducerRepeaterDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -815,6 +819,7 @@ impl Default for PhononApp {
             anyon_interferometer_qudit_dialog: AnyonInterferometerQuditDialog::new_fast(),
             floquet_corner_sensor_dialog: FloquetCornerSensorDialog::new_fast(),
             fractional_skyrmion_synapse_dialog: FractionalSkyrmionSynapseDialog::new_fast(),
+            chiral_transducer_repeater_dialog: ChiralTransducerRepeaterDialog::new_fast(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -5853,6 +5858,9 @@ impl PhononApp {
 
         // 119. Interactive Quantum Metamaterial Fractional Hall Skyrmion Synaptic Memory & Neural Crossbar Dialog
         self.fractional_skyrmion_synapse_dialog.ui(ui.ctx());
+
+        // 120. Interactive Chiral Metamaterial Transducer & Quantum Network Repeater Node Dialog
+        self.chiral_transducer_repeater_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {

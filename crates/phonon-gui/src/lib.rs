@@ -302,6 +302,9 @@ pub use widgets::floquet_corner_sensor_dialog::{
 pub use widgets::fractional_skyrmion_synapse_dialog::{
     FractionalSkyrmionSynapseDialog, FractionalSkyrmionSynapseTab,
 };
+pub use widgets::chiral_transducer_repeater_dialog::{
+    ChiralTransducerRepeaterDialog, ChiralTransducerRepeaterTab,
+};
 
 #[cfg(not(target_arch = "wasm32"))]
 use phonon_core::PhysicsDynamicsBackend;
