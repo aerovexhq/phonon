@@ -392,6 +392,7 @@ pub mod parafermion_surface_coprocessor;
 pub mod moire_superlattice_laser;
 pub mod disclination_holonomic_qudit;
 pub mod floquet_magnon_crossbar;
+pub mod moire_valley_qubit;
 
 pub use acoustic::{
     AcousticBenchmarkReport, AcousticBenchmarkRunner, AcousticLinkSimulator, AcousticRealismTier,
@@ -1756,4 +1757,11 @@ pub use floquet_magnon_crossbar::{
     FloquetChiralTransceiverParams, FloquetChiralTransceiverSolver, FloquetMagnonCrossbarAuditReport,
     FloquetMagnonCrossbarProcessor, QuadratureVariancePoint, SyntheticCirculatorArrayMetrics,
     SyntheticCirculatorArrayParams, SyntheticCirculatorArraySolver, TransceiverDispersionPoint,
+};
+pub use moire_valley_qubit::{
+    BusEntanglementMetrics, BusSpectrumPoint, FlatBandDispersionPoint, FlatBandMemoryParams,
+    MemoryDecayPoint, MemoryStorageMetrics, MoireValleyQubitAuditReport, MoireValleyQubitParams,
+    MoireValleyQubitProcessor, MultiNodeValleyBus, PhononMemoryCell, ValleyBlochVector,
+    ValleyBusParams, ValleyBusRoutingMetrics, ValleyPseudospinState, ValleyQubitEngine,
+    ValleyQubitMetrics, ValleyRabiPoint,
 };

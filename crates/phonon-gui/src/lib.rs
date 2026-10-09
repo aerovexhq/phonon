@@ -320,6 +320,9 @@ pub use widgets::disclination_holonomic_qudit_dialog::{
 pub use widgets::floquet_magnon_crossbar_dialog::{
     FloquetMagnonCrossbarDialog, FloquetMagnonCrossbarTab,
 };
+pub use widgets::moire_valley_qubit_dialog::{
+    MoireValleyQubitDialog, MoireValleyQubitTab,
+};
 
 #[cfg(not(target_arch = "wasm32"))]
 use phonon_core::PhysicsDynamicsBackend;

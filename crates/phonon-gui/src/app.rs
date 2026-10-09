@@ -66,6 +66,7 @@ use crate::widgets::{
     MoireSuperlatticeLaserDialog,
     DisclinationHolonomicQuditDialog,
     FloquetMagnonCrossbarDialog,
+    MoireValleyQubitDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -560,6 +561,9 @@ pub struct PhononApp {
     /// Interactive Floquet Chiral Magnon Crossbar & Entanglement Router Super-Array dialog.
     pub floquet_magnon_crossbar_dialog: FloquetMagnonCrossbarDialog,
 
+    /// Interactive Moire Valley Qubit Array & Cryogenic Phonon Memory Bus dialog.
+    pub moire_valley_qubit_dialog: MoireValleyQubitDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -845,6 +849,7 @@ impl Default for PhononApp {
             moire_superlattice_laser_dialog: MoireSuperlatticeLaserDialog::new_fast(),
             disclination_holonomic_qudit_dialog: DisclinationHolonomicQuditDialog::new_fast(),
             floquet_magnon_crossbar_dialog: FloquetMagnonCrossbarDialog::new_fast(),
+            moire_valley_qubit_dialog: MoireValleyQubitDialog::new_fast(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -5895,6 +5900,7 @@ impl PhononApp {
         self.moire_superlattice_laser_dialog.ui(ui.ctx());
         self.disclination_holonomic_qudit_dialog.ui(ui.ctx());
         self.floquet_magnon_crossbar_dialog.ui(ui.ctx());
+        self.moire_valley_qubit_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {
