@@ -1407,6 +1407,12 @@ fn render_top_frame_internal(
                     }
                     ui.close();
                 }
+                if ui.button("Non-Hermitian Chiral Braiding & EP Sensor...").clicked() {
+                    if let Some(a) = app.as_deref_mut() {
+                        a.non_hermitian_braiding_dialog.is_open = true;
+                    }
+                    ui.close();
+                }
             });
         });
         ui.label(RichText::new("|").color(Color32::from_rgb(60, 70, 85)).size(11.0));

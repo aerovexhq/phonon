@@ -68,6 +68,7 @@ use crate::widgets::{
     FloquetMagnonCrossbarDialog,
     MoireValleyQubitDialog,
     CornerMemoryRepeaterDialog,
+    NonHermitianBraidingDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -568,6 +569,9 @@ pub struct PhononApp {
     /// Interactive Higher-Order Corner-State Quantum Memory & Chiral Phonon Transduction Bus dialog (Phase 466).
     pub corner_memory_repeater_dialog: CornerMemoryRepeaterDialog,
 
+    /// Interactive Non-Hermitian Higher-Order Chiral Braiding & EP Sensor dialog (Phase 467).
+    pub non_hermitian_braiding_dialog: NonHermitianBraidingDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -855,6 +859,7 @@ impl Default for PhononApp {
             floquet_magnon_crossbar_dialog: FloquetMagnonCrossbarDialog::new_fast(),
             moire_valley_qubit_dialog: MoireValleyQubitDialog::new_fast(),
             corner_memory_repeater_dialog: CornerMemoryRepeaterDialog::new_fast(),
+            non_hermitian_braiding_dialog: NonHermitianBraidingDialog::new_fast(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -5907,6 +5912,7 @@ impl PhononApp {
         self.floquet_magnon_crossbar_dialog.ui(ui.ctx());
         self.moire_valley_qubit_dialog.ui(ui.ctx());
         self.corner_memory_repeater_dialog.ui(ui.ctx());
+        self.non_hermitian_braiding_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {
