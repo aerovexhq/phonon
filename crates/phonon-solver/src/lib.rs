@@ -385,6 +385,7 @@ pub mod floquet_magnon_crossbar;
 pub mod moire_valley_qubit;
 pub mod corner_memory_repeater;
 pub mod non_hermitian_braiding;
+pub mod distributor_api;
 
 pub use acoustic::{
     AcousticBenchmarkReport, AcousticBenchmarkRunner, AcousticLinkSimulator, AcousticRealismTier,
@@ -1712,4 +1713,11 @@ pub use non_hermitian_braiding::{
     HolonomicStateCompiler, NonHermitianBraidingAuditReport, NonHermitianBraidingProcessor,
     NonHermitianGateKind, NonHermitianGateResult, SkinBraidSequencePoint, SkinBraidingMetrics,
     SkinBraidingParams, SkinBraidingSolver, SkinBraidingSpatialPoint,
+};
+pub use distributor_api::{
+    AlternativeMpn, AssemblySourcingMode, ComponentGrade, ComponentMarketComparison,
+    ConsolidatedProcurementManager, DistributorAuditItem, DistributorAuditReport, DistributorKind,
+    DistributorQuote, DistributorQuotingEngine, LifecycleStatus, MpnResolverEngine, PackagingType,
+    PanelizationSpec, PcbaQuotingEngine, PcbaVolumeQuote, PriceBreak, PurchaseOrderLineItem,
+    ResolvedComponentMpn, SupplierPurchaseOrder, SurfaceFinish,
 };

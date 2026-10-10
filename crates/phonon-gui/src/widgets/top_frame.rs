@@ -1415,6 +1415,12 @@ fn render_top_frame_internal(
                 }
                 ui.close();
             }
+            if ui.button("Electronic Distributor & PCBA Quoting Pipeline...").clicked() {
+                if let Some(a) = app.as_deref_mut() {
+                    a.distributor_quoting_dialog.is_open = true;
+                }
+                ui.close();
+            }
             if ui.button("WASM Deployment & Cache Profiler...").clicked() {
                 if let Some(a) = app.as_deref_mut() {
                     a.wasm_optimization_dialog.is_open = true;
