@@ -387,6 +387,7 @@ pub mod corner_memory_repeater;
 pub mod non_hermitian_braiding;
 pub mod distributor_api;
 pub mod crdt_collaboration;
+pub mod hil_bridge;
 
 pub use acoustic::{
     AcousticBenchmarkReport, AcousticBenchmarkRunner, AcousticLinkSimulator, AcousticRealismTier,
@@ -1728,4 +1729,11 @@ pub use crdt_collaboration::{
     CryptoAuthEngine, CryptoAuthError, LamportTimestamp, MeshTopology, P2pMeshNetwork,
     PeerConnectionState, PeerNode, PeerPresence, PeerRole, PresenceConflict,
     PresenceManager, SignalingMessage, SignalingPayload, SignedCrdtEnvelope, VectorClock,
+};
+pub use hil_bridge::{
+    audit_hil_bridge, CanDecoder, CanFrame, HilAuditItem, HilAuditReport, HilBridgeEngine,
+    HilMode, HilSyncMetrics, HilSynchronizer, I2cDecoder, I2cPacket, Ieee488DefiniteBlock,
+    InstrumentVendor, LogicAnalyzerCapture, LogicTriggerCondition, ScpiChannelState,
+    ScpiCommandKind, ScpiParseError, ScpiProtocolBridge, ScpiStatusByte, SpiDecoder, SpiPacket,
+    TriggerEdge, TriggerMode, UartDecoder, UartFrame, VoltageKind,
 };

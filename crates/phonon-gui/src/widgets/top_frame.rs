@@ -1427,6 +1427,12 @@ fn render_top_frame_internal(
                 }
                 ui.close();
             }
+            if ui.button("Hardware-in-the-Loop (HIL) Protocol Bridge...").clicked() {
+                if let Some(a) = app.as_deref_mut() {
+                    a.hil_bridge_dialog.is_open = true;
+                }
+                ui.close();
+            }
             if ui.button("WASM Deployment & Cache Profiler...").clicked() {
                 if let Some(a) = app.as_deref_mut() {
                     a.wasm_optimization_dialog.is_open = true;
