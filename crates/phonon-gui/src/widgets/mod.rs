@@ -130,6 +130,7 @@ pub mod moire_valley_qubit_dialog;
 pub mod corner_memory_repeater_dialog;
 pub mod non_hermitian_braiding_dialog;
 pub mod distributor_quoting_dialog;
+pub mod collaboration_dialog;
 
 pub use pill_badge::{
     proportional_zoom_scale, render_dual_telemetry_pill, render_pill_badge, PillBadgeStyle,
@@ -372,6 +373,9 @@ pub use non_hermitian_braiding_dialog::{
 };
 pub use distributor_quoting_dialog::{
     DistributorQuotingDialog, DistributorQuotingTab, PoExportFormat,
+};
+pub use collaboration_dialog::{
+    CollaborationDialog, CollaborationTab,
 };
 
 

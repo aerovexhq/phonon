@@ -70,6 +70,7 @@ use crate::widgets::{
     CornerMemoryRepeaterDialog,
     NonHermitianBraidingDialog,
     DistributorQuotingDialog,
+    CollaborationDialog,
 };
 use crate::preferences::AppPreferences;
 use crate::actions::{ActionId, ActionRegistry};
@@ -546,6 +547,9 @@ pub struct PhononApp {
     /// Interactive Electronic Distributor API & PCBA Quoting Pipeline dialog.
     pub distributor_quoting_dialog: DistributorQuotingDialog,
 
+    /// Distributed High-Throughput P2P CAD Collaboration & CRDT Synchronization dialog (Phase 486).
+    pub collaboration_dialog: CollaborationDialog,
+
     /// Interactive Lua Testbench Scripting Console & Expression Grapher dialog.
     pub lua_console_dialog: LuaConsoleDialog,
 
@@ -825,6 +829,7 @@ impl Default for PhononApp {
             corner_memory_repeater_dialog: CornerMemoryRepeaterDialog::new_fast(),
             non_hermitian_braiding_dialog: NonHermitianBraidingDialog::new_fast(),
             distributor_quoting_dialog: DistributorQuotingDialog::new_fast(),
+            collaboration_dialog: CollaborationDialog::new_fast(),
             lua_console_dialog: LuaConsoleDialog::new(),
             symbol_editor: SymbolEditorDialog::new(),
             symbol_library: SymbolLibrary::new(),
@@ -5881,6 +5886,7 @@ impl PhononApp {
         self.corner_memory_repeater_dialog.ui(ui.ctx());
         self.non_hermitian_braiding_dialog.ui(ui.ctx());
         self.distributor_quoting_dialog.ui(ui.ctx());
+        self.collaboration_dialog.ui(ui.ctx());
 
         // 29b. Interactive Subcircuit Packaging Dialog (.phnc)
         if let Some(action) = self.subcircuit_dialog.show(ui.ctx()) {

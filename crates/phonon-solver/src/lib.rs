@@ -386,6 +386,7 @@ pub mod moire_valley_qubit;
 pub mod corner_memory_repeater;
 pub mod non_hermitian_braiding;
 pub mod distributor_api;
+pub mod crdt_collaboration;
 
 pub use acoustic::{
     AcousticBenchmarkReport, AcousticBenchmarkRunner, AcousticLinkSimulator, AcousticRealismTier,
@@ -1720,4 +1721,11 @@ pub use distributor_api::{
     DistributorQuote, DistributorQuotingEngine, LifecycleStatus, MpnResolverEngine, PackagingType,
     PanelizationSpec, PcbaQuotingEngine, PcbaVolumeQuote, PriceBreak, PurchaseOrderLineItem,
     ResolvedComponentMpn, SupplierPurchaseOrder, SurfaceFinish,
+};
+pub use crdt_collaboration::{
+    audit_crdt_collaboration, CollaborationAuditItem, CollaborationAuditReport,
+    CollaborationEngine, CrdtBus, CrdtComponent, CrdtDelta, CrdtEngine, CrdtWire,
+    CryptoAuthEngine, CryptoAuthError, LamportTimestamp, MeshTopology, P2pMeshNetwork,
+    PeerConnectionState, PeerNode, PeerPresence, PeerRole, PresenceConflict,
+    PresenceManager, SignalingMessage, SignalingPayload, SignedCrdtEnvelope, VectorClock,
 };

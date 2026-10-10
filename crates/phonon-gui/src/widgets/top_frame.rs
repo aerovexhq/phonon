@@ -1421,6 +1421,12 @@ fn render_top_frame_internal(
                 }
                 ui.close();
             }
+            if ui.button("Distributed P2P CAD Collaboration & CRDT Sync...").clicked() {
+                if let Some(a) = app.as_deref_mut() {
+                    a.collaboration_dialog.is_open = true;
+                }
+                ui.close();
+            }
             if ui.button("WASM Deployment & Cache Profiler...").clicked() {
                 if let Some(a) = app.as_deref_mut() {
                     a.wasm_optimization_dialog.is_open = true;
