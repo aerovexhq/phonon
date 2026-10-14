@@ -892,7 +892,13 @@ impl Default for PhononApp {
             storage_manager: ProjectStorageManager::new(),
             project_dialog: ProjectDialog::new(),
             preferences: AppPreferences::default(),
-            preferences_dialog: PreferencesDialog::new(),
+            preferences_dialog: {
+                let mut d = PreferencesDialog::new();
+                if std::env::var_os("PHONON_OPEN_PREFERENCES").is_some() {
+                    d.is_open = true;
+                }
+                d
+            },
             should_close: false,
             last_canvas_rect: egui::Rect::from_min_size(egui::Pos2::ZERO, egui::Vec2::new(800.0, 600.0)),
             pending_start_maximize: true,

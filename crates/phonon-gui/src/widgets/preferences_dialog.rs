@@ -15,7 +15,7 @@ use crate::preferences::AppPreferences;
 use crate::schematic::HistoryStack;
 use crate::thermal::Colormap;
 use crate::theme::{PhononTheme, ThemePreset};
-use egui::{Color32, Context, Frame, Pos2, Rect, RichText, ScrollArea, Stroke, Vec2, Window};
+use egui::{Align2, Color32, Context, Frame, Key, Pos2, Rect, RichText, ScrollArea, Stroke, Vec2, Window, vec2};
 
 /// Active navigation category tab in the Preferences modal dialog.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -112,36 +112,59 @@ impl PreferencesDialog {
         let mut changed = false;
         let mut open_flag = self.is_open;
 
-        let window_frame = Frame::window(&ctx.global_style())
-            .fill(Color32::from_rgb(20, 26, 36))
-            .stroke(Stroke::new(1.0, Color32::from_rgb(60, 75, 95)));
-
         let screen_rect = ctx
             .input(|i| i.viewport().inner_rect)
             .unwrap_or(Rect::from_min_size(Pos2::ZERO, Vec2::new(1920.0, 1080.0)));
-        let default_w = (screen_rect.width() * 0.75).clamp(1040.0, 1180.0).min(screen_rect.width() - 32.0);
-        let default_h = (screen_rect.height() * 0.80).clamp(700.0, 820.0).min(screen_rect.height() - 32.0);
-        let min_w = 920.0f32.min(screen_rect.width() - 32.0).max(520.0);
-        let min_h = 620.0f32.min(screen_rect.height() - 32.0).max(420.0);
 
-        Window::new("Preferences")
-            .id(egui::Id::new("preferences_modal_window_v2"))
+        // Modal backdrop overlay
+        let painter = ctx.layer_painter(egui::LayerId::new(
+            egui::Order::Middle,
+            egui::Id::new("preferences_dialog_backdrop"),
+        ));
+        painter.rect_filled(screen_rect, 0.0, Color32::from_black_alpha(150));
+
+        // Keyboard hotkey: Esc -> Close
+        if ctx.input(|i| i.key_pressed(Key::Escape)) {
+            self.close();
+            return false;
+        }
+
+        let target_w = (screen_rect.width() * 0.75).clamp(1040.0, 1200.0).min(screen_rect.width() - 32.0);
+        let target_h = (screen_rect.height() * 0.80).clamp(700.0, 840.0).min(screen_rect.height() - 32.0);
+        let min_w = 960.0f32.min(screen_rect.width() - 32.0).max(520.0);
+        let min_h = 640.0f32.min(screen_rect.height() - 32.0).max(420.0);
+
+        let window_frame = Frame::window(&ctx.global_style())
+            .fill(Color32::from_rgb(18, 24, 34))
+            .stroke(Stroke::new(1.5, Color32::from_rgb(55, 75, 105)))
+            .inner_margin(egui::Margin::symmetric(20, 16));
+
+        Window::new(RichText::new("Preferences").strong().size(16.0))
+            .id(egui::Id::new("preferences_modal_window_v3"))
             .open(&mut open_flag)
+            .order(egui::Order::Foreground)
+            .anchor(Align2::CENTER_CENTER, vec2(0.0, 0.0))
             .collapsible(false)
             .resizable(true)
             .fade_in(false)
-            .default_size(Vec2::new(default_w, default_h))
+            .default_size(Vec2::new(target_w, target_h))
             .min_size(Vec2::new(min_w, min_h))
             .frame(window_frame)
             .show(ctx, |ui| {
+                ui.set_min_size(Vec2::new(min_w, min_h));
+
+                let nav_width = 220.0;
+                let full_avail = ui.available_size();
+                let inner_height = (full_avail.y - 48.0).max(460.0);
+                let content_width = (full_avail.x - nav_width - 24.0).max(640.0);
+
                 ui.horizontal(|ui| {
                     // Left Sidebar Navigation
-                    let nav_height = (ui.available_height() - 40.0).max(10.0);
                     ui.allocate_ui_with_layout(
-                        Vec2::new(210.0, nav_height),
+                        Vec2::new(nav_width, inner_height),
                         egui::Layout::top_down(egui::Align::LEFT),
                         |ui| {
-                            ui.add_space(6.0);
+                            ui.add_space(4.0);
                             let tabs = [
                                 PreferencesTab::General,
                                 PreferencesTab::CanvasLayout,
@@ -153,13 +176,14 @@ impl PreferencesDialog {
                             for tab in tabs {
                                 let is_selected = self.active_tab == tab;
                                 let text = RichText::new(tab.display_name())
-                                    .size(13.5)
+                                    .size(14.0)
+                                    .strong()
                                     .color(if is_selected {
                                         Color32::from_rgb(100, 200, 255)
                                     } else {
-                                        Color32::from_rgb(180, 190, 205)
+                                        Color32::from_rgb(175, 185, 200)
                                     });
-                                ui.add_space(2.0);
+                                ui.add_space(3.0);
                                 if ui.selectable_label(is_selected, text).clicked() {
                                     self.active_tab = tab;
                                     self.status_message = None;
@@ -171,13 +195,16 @@ impl PreferencesDialog {
                     ui.separator();
 
                     // Main Content Panel
-                    ui.vertical(|ui| {
-                        let content_height = (ui.available_height() - 40.0).max(10.0);
-                        ScrollArea::vertical()
-                            .max_height(content_height)
-                            .auto_shrink([false, false])
-                            .show(ui, |ui| {
-                                ui.vertical(|ui| {
+                    ui.allocate_ui_with_layout(
+                        Vec2::new(content_width, inner_height),
+                        egui::Layout::top_down(egui::Align::Min),
+                        |ui| {
+                            ui.set_min_width(content_width);
+                            ScrollArea::vertical()
+                                .max_height(inner_height)
+                                .auto_shrink([false, false])
+                                .show(ui, |ui| {
+                                    ui.set_min_width(content_width - 20.0);
                                     ui.add_space(4.0);
                                     match self.active_tab {
                                         PreferencesTab::General => {
@@ -200,15 +227,15 @@ impl PreferencesDialog {
                                         }
                                     }
                                 });
-                            });
-                    });
+                        },
+                    );
                 });
 
                 ui.separator();
 
                 // Bottom Action Bar
                 ui.horizontal(|ui| {
-                    if ui.button("Reset All to Defaults").clicked() {
+                    if ui.add(egui::Button::new("Reset All to Defaults").min_size(Vec2::new(160.0, 28.0))).clicked() {
                         *preferences = AppPreferences::default();
                         history.max_depth = preferences.in_memory_history_limit;
                         *thermal_colormap = Colormap::Turbo;
@@ -217,11 +244,12 @@ impl PreferencesDialog {
                     }
 
                     if let Some(msg) = &self.status_message {
-                        ui.label(RichText::new(msg).color(Color32::from_rgb(100, 220, 140)));
+                        ui.add_space(8.0);
+                        ui.label(RichText::new(msg).color(Color32::from_rgb(100, 220, 140)).strong());
                     }
 
                     ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-                        if ui.button("Close").clicked() {
+                        if ui.add(egui::Button::new(RichText::new("Close Preferences").strong()).fill(Color32::from_rgb(35, 75, 130)).min_size(Vec2::new(140.0, 28.0))).clicked() {
                             self.close();
                         }
                     });
@@ -233,12 +261,15 @@ impl PreferencesDialog {
         // Sub-modals for YAML Import/Export
         if self.show_yaml_import_modal {
             Window::new("Import Theme YAML")
-                .id(egui::Id::new("import_theme_yaml_modal_v2"))
+                .id(egui::Id::new("import_theme_yaml_modal_v3"))
+                .order(egui::Order::Tooltip)
+                .anchor(Align2::CENTER_CENTER, vec2(0.0, 0.0))
                 .collapsible(false)
                 .resizable(true)
                 .default_size(Vec2::new(760.0, 520.0))
                 .min_size(Vec2::new(580.0, 380.0))
                 .show(ctx, |ui| {
+                    ui.set_min_size(Vec2::new(580.0, 380.0));
                     ui.label("Paste YAML theme specification below:");
                     ui.add(
                         egui::TextEdit::multiline(&mut self.yaml_import_buffer)
@@ -269,12 +300,15 @@ impl PreferencesDialog {
 
         if self.show_yaml_export_modal {
             Window::new("Export Theme YAML")
-                .id(egui::Id::new("export_theme_yaml_modal_v2"))
+                .id(egui::Id::new("export_theme_yaml_modal_v3"))
+                .order(egui::Order::Tooltip)
+                .anchor(Align2::CENTER_CENTER, vec2(0.0, 0.0))
                 .collapsible(false)
                 .resizable(true)
                 .default_size(Vec2::new(760.0, 520.0))
                 .min_size(Vec2::new(580.0, 380.0))
                 .show(ctx, |ui| {
+                    ui.set_min_size(Vec2::new(580.0, 380.0));
                     ui.label("Theme YAML definition (copy to clipboard):");
                     ui.add(
                         egui::TextEdit::multiline(&mut self.yaml_export_buffer)
@@ -304,32 +338,58 @@ impl PreferencesDialog {
     fn render_general_tab(ui: &mut egui::Ui, prefs: &mut AppPreferences) -> bool {
         let mut changed = false;
         ui.heading("General Preferences");
-        ui.add_space(8.0);
+        ui.add_space(4.0);
+        ui.label(RichText::new("Configure session persistence, project defaults, and CAD workspace environment.").color(Color32::from_rgb(160, 175, 195)));
+        ui.add_space(12.0);
 
-        ui.label(RichText::new("Session & Autosave").strong());
-        if ui.checkbox(&mut prefs.autosave_enabled, "Enable periodic session autosave").changed() {
-            changed = true;
-        }
+        let group_frame = Frame::new()
+            .fill(Color32::from_rgb(24, 32, 44))
+            .stroke(Stroke::new(1.0, Color32::from_rgb(45, 60, 80)))
+            .corner_radius(6.0)
+            .inner_margin(egui::Margin::same(14));
 
-        ui.horizontal(|ui| {
-            ui.label("Autosave interval (seconds):");
-            if ui.add(egui::DragValue::new(&mut prefs.autosave_interval_secs).range(5..=600).speed(1.0)).changed() {
+        group_frame.show(ui, |ui| {
+            ui.label(RichText::new("Session Persistence & Autosave").strong().size(14.0));
+            ui.add_space(6.0);
+            if ui.checkbox(&mut prefs.autosave_enabled, "Enable periodic background session autosave").changed() {
+                changed = true;
+            }
+            ui.add_space(4.0);
+            ui.horizontal(|ui| {
+                ui.label("Autosave interval:");
+                if ui.add(egui::DragValue::new(&mut prefs.autosave_interval_secs).range(5..=600).speed(1.0).suffix(" seconds")).changed() {
+                    changed = true;
+                }
+                ui.label(RichText::new("(range: 5s - 600s)").color(Color32::from_rgb(140, 150, 165)));
+            });
+        });
+
+        ui.add_space(12.0);
+
+        group_frame.show(ui, |ui| {
+            ui.label(RichText::new("Project & Schematic Defaults").strong().size(14.0));
+            ui.add_space(6.0);
+            ui.horizontal(|ui| {
+                ui.label("Default project name prefix:");
+                if ui.add(egui::TextEdit::singleline(&mut prefs.default_project_prefix).desired_width(240.0)).changed() {
+                    changed = true;
+                }
+            });
+            ui.add_space(4.0);
+            if ui.checkbox(&mut prefs.auto_center_on_load, "Auto-center schematic canvas viewport on project load").changed() {
                 changed = true;
             }
         });
 
-        ui.add_space(8.0);
-        ui.label(RichText::new("Project Defaults").strong());
-        ui.horizontal(|ui| {
-            ui.label("Default project name prefix:");
-            if ui.text_edit_singleline(&mut prefs.default_project_prefix).changed() {
-                changed = true;
-            }
-        });
+        ui.add_space(12.0);
 
-        if ui.checkbox(&mut prefs.auto_center_on_load, "Auto-center schematic canvas on project load").changed() {
-            changed = true;
-        }
+        group_frame.show(ui, |ui| {
+            ui.label(RichText::new("Environment & Storage Paths").strong().size(14.0));
+            ui.add_space(6.0);
+            ui.label("Local Project Storage:  ~/.local/share/phonon/projects");
+            ui.label("Preferences File:       ~/.local/share/phonon/preferences.conf");
+            ui.label("Graphics Architecture:  Hardware Accelerated OpenGL/Glow & WebGPU");
+        });
 
         changed
     }
@@ -337,40 +397,55 @@ impl PreferencesDialog {
     fn render_canvas_tab(ui: &mut egui::Ui, prefs: &mut AppPreferences) -> bool {
         let mut changed = false;
         ui.heading("Canvas & Layout Settings");
-        ui.add_space(8.0);
+        ui.add_space(4.0);
+        ui.label(RichText::new("Configure grid snapping, display metrics, and quick-action toolbar button shortcuts.").color(Color32::from_rgb(160, 175, 195)));
+        ui.add_space(12.0);
 
-        ui.label(RichText::new("Grid & Snapping").strong());
-        if ui.checkbox(&mut prefs.show_grid, "Show canvas grid").changed() {
-            changed = true;
-        }
+        let group_frame = Frame::new()
+            .fill(Color32::from_rgb(24, 32, 44))
+            .stroke(Stroke::new(1.0, Color32::from_rgb(45, 60, 80)))
+            .corner_radius(6.0)
+            .inner_margin(egui::Margin::same(14));
 
-        ui.horizontal(|ui| {
-            ui.label("Grid spacing (pixels):");
-            if ui.add(egui::Slider::new(&mut prefs.grid_size, 10.0..=50.0).step_by(5.0)).changed() {
+        group_frame.show(ui, |ui| {
+            ui.label(RichText::new("Grid & Alignment Snapping").strong().size(14.0));
+            ui.add_space(6.0);
+            if ui.checkbox(&mut prefs.show_grid, "Display background canvas grid").changed() {
+                changed = true;
+            }
+            ui.add_space(4.0);
+            ui.horizontal(|ui| {
+                ui.label("Grid spacing:");
+                if ui.add(egui::Slider::new(&mut prefs.grid_size, 10.0..=50.0).step_by(5.0).suffix(" px")).changed() {
+                    changed = true;
+                }
+            });
+            ui.add_space(4.0);
+            if ui.checkbox(&mut prefs.snap_to_grid, "Snap components, junctions, and wires to grid").changed() {
                 changed = true;
             }
         });
 
-        if ui.checkbox(&mut prefs.snap_to_grid, "Snap components and wires to grid").changed() {
-            changed = true;
-        }
-
         ui.add_space(12.0);
-        ui.label(RichText::new("Action Toolbar Button Visibility").strong());
-        ui.label("Customize visible quick-action shortcuts in the top toolbar:");
 
-        if ui.checkbox(&mut prefs.show_toolbar_run_dc, "Show 'Run DC (.OP)' button").changed() {
-            changed = true;
-        }
-        if ui.checkbox(&mut prefs.show_toolbar_run_transient, "Show 'Run Transient (.TRAN)' button").changed() {
-            changed = true;
-        }
-        if ui.checkbox(&mut prefs.show_toolbar_export_netlist, "Show 'Export Netlist' button").changed() {
-            changed = true;
-        }
-        if ui.checkbox(&mut prefs.show_toolbar_clear_canvas, "Show 'Clear Canvas' button").changed() {
-            changed = true;
-        }
+        group_frame.show(ui, |ui| {
+            ui.label(RichText::new("Top Toolbar & Playback Controls").strong().size(14.0));
+            ui.add_space(6.0);
+            ui.label(RichText::new("Phonon uses a compact, centered simulation playback pill in the top header. You can additionally toggle legacy quick-action buttons:").color(Color32::from_rgb(160, 175, 195)));
+            ui.add_space(6.0);
+            if ui.checkbox(&mut prefs.show_toolbar_run_dc, "Show 'Run DC (.OP)' quick-action button").changed() {
+                changed = true;
+            }
+            if ui.checkbox(&mut prefs.show_toolbar_run_transient, "Show 'Run Transient (.TRAN)' quick-action button").changed() {
+                changed = true;
+            }
+            if ui.checkbox(&mut prefs.show_toolbar_export_netlist, "Show 'Export Netlist' quick-action button").changed() {
+                changed = true;
+            }
+            if ui.checkbox(&mut prefs.show_toolbar_clear_canvas, "Show 'Clear Canvas' quick-action button").changed() {
+                changed = true;
+            }
+        });
 
         changed
     }
@@ -609,40 +684,61 @@ impl PreferencesDialog {
     ) -> bool {
         let mut changed = false;
         ui.heading("History & Undo Limits");
-        ui.add_space(8.0);
+        ui.add_space(4.0);
+        ui.label(RichText::new("Configure in-memory reversible history depth and on-disk serialization limits.").color(Color32::from_rgb(160, 175, 195)));
+        ui.add_space(12.0);
 
-        ui.label(RichText::new("In-Memory Undo Stack Depth").strong());
-        ui.label("Maximum number of reversible actions preserved in RAM during the active session:");
-        if ui
-            .add(
-                egui::Slider::new(&mut prefs.in_memory_history_limit, 10..=5000)
-                    .logarithmic(true)
-                    .text("actions"),
-            )
-            .changed()
-        {
-            history.max_depth = prefs.in_memory_history_limit;
-            changed = true;
-        }
+        let group_frame = Frame::new()
+            .fill(Color32::from_rgb(24, 32, 44))
+            .stroke(Stroke::new(1.0, Color32::from_rgb(45, 60, 80)))
+            .corner_radius(6.0)
+            .inner_margin(egui::Margin::same(14));
 
-        ui.add_space(10.0);
-        ui.label(RichText::new("On-Disk Tail-Truncated History Depth").strong());
-        ui.label("Maximum number of historical actions saved into .phn binary files to maintain minimal storage footprint:");
-        if ui
-            .add(
-                egui::Slider::new(&mut prefs.on_disk_history_limit, 0..=500)
-                    .text("actions"),
-            )
-            .changed()
-        {
-            changed = true;
-        }
+        group_frame.show(ui, |ui| {
+            ui.label(RichText::new("In-Memory Undo Stack Depth").strong().size(14.0));
+            ui.add_space(4.0);
+            ui.label(RichText::new("Maximum number of reversible actions preserved in RAM during the active session:").color(Color32::from_rgb(160, 175, 195)));
+            ui.add_space(6.0);
+            if ui
+                .add(
+                    egui::Slider::new(&mut prefs.in_memory_history_limit, 10..=5000)
+                        .logarithmic(true)
+                        .suffix(" actions"),
+                )
+                .changed()
+            {
+                history.max_depth = prefs.in_memory_history_limit;
+                changed = true;
+            }
+        });
 
         ui.add_space(12.0);
-        ui.separator();
-        ui.label(format!("Active undo operations count: {}", history.undo_count()));
-        ui.label(format!("Active redo operations count: {}", history.redo_count()));
-        ui.label(format!("History clean baseline index: {}", history.clean_index));
+
+        group_frame.show(ui, |ui| {
+            ui.label(RichText::new("On-Disk Tail-Truncated History Depth").strong().size(14.0));
+            ui.add_space(4.0);
+            ui.label(RichText::new("Maximum number of historical actions saved into .phn binary files to maintain minimal storage footprint:").color(Color32::from_rgb(160, 175, 195)));
+            ui.add_space(6.0);
+            if ui
+                .add(
+                    egui::Slider::new(&mut prefs.on_disk_history_limit, 0..=500)
+                        .suffix(" actions"),
+                )
+                .changed()
+            {
+                changed = true;
+            }
+        });
+
+        ui.add_space(12.0);
+
+        group_frame.show(ui, |ui| {
+            ui.label(RichText::new("Live Session History Telemetry").strong().size(14.0));
+            ui.add_space(6.0);
+            ui.label(format!("Active undo operations count:  {}", history.undo_count()));
+            ui.label(format!("Active redo operations count:  {}", history.redo_count()));
+            ui.label(format!("History clean baseline index:   {}", history.clean_index));
+        });
 
         changed
     }
@@ -654,57 +750,71 @@ impl PreferencesDialog {
     ) -> bool {
         let mut changed = false;
         ui.heading("Thermal & Physics Controls");
-        ui.add_space(8.0);
+        ui.add_space(4.0);
+        ui.label(RichText::new("Configure electro-thermal colormaps, ambient temperatures, and real-time schematic badges.").color(Color32::from_rgb(160, 175, 195)));
+        ui.add_space(12.0);
 
-        ui.label(RichText::new("Thermal Colormap Visualization").strong());
-        ui.horizontal(|ui| {
-            ui.label("Colormap palette:");
-            let cur_cmap = format!("{:?}", thermal_colormap);
-            egui::ComboBox::from_id_salt("pref_colormap_combo")
-                .selected_text(cur_cmap)
-                .show_ui(ui, |ui| {
-                    if ui.selectable_value(thermal_colormap, Colormap::Turbo, "Turbo").clicked() {
-                        prefs.thermal_colormap = "Turbo".to_string();
-                        changed = true;
-                    }
-                    if ui.selectable_value(thermal_colormap, Colormap::Magma, "Magma").clicked() {
-                        prefs.thermal_colormap = "Magma".to_string();
-                        changed = true;
-                    }
-                    if ui.selectable_value(thermal_colormap, Colormap::Inferno, "Inferno").clicked() {
-                        prefs.thermal_colormap = "Inferno".to_string();
-                        changed = true;
-                    }
-                });
+        let group_frame = Frame::new()
+            .fill(Color32::from_rgb(24, 32, 44))
+            .stroke(Stroke::new(1.0, Color32::from_rgb(45, 60, 80)))
+            .corner_radius(6.0)
+            .inner_margin(egui::Margin::same(14));
+
+        group_frame.show(ui, |ui| {
+            ui.label(RichText::new("Thermal Colormap Visualization").strong().size(14.0));
+            ui.add_space(6.0);
+            ui.horizontal(|ui| {
+                ui.label("Colormap palette:");
+                let cur_cmap = format!("{:?}", thermal_colormap);
+                egui::ComboBox::from_id_salt("pref_colormap_combo")
+                    .selected_text(cur_cmap)
+                    .show_ui(ui, |ui| {
+                        if ui.selectable_value(thermal_colormap, Colormap::Turbo, "Turbo (Jet High-Contrast)").clicked() {
+                            prefs.thermal_colormap = "Turbo".to_string();
+                            changed = true;
+                        }
+                        if ui.selectable_value(thermal_colormap, Colormap::Magma, "Magma (Perceptual Heat)").clicked() {
+                            prefs.thermal_colormap = "Magma".to_string();
+                            changed = true;
+                        }
+                        if ui.selectable_value(thermal_colormap, Colormap::Inferno, "Inferno (High-Dynamic Glow)").clicked() {
+                            prefs.thermal_colormap = "Inferno".to_string();
+                            changed = true;
+                        }
+                    });
+            });
         });
 
-        ui.add_space(10.0);
-        ui.label(RichText::new("Ambient Temperature").strong());
-        let celsius = prefs.thermal_ambient_temp_k - 273.15;
-        ui.horizontal(|ui| {
-            ui.label("Ambient T_amb:");
+        ui.add_space(12.0);
+
+        group_frame.show(ui, |ui| {
+            ui.label(RichText::new("Ambient Operating Temperature").strong().size(14.0));
+            ui.add_space(6.0);
+            let celsius = prefs.thermal_ambient_temp_k - 273.15;
+            ui.horizontal(|ui| {
+                ui.label("Ambient T_amb:");
+                if ui
+                    .add(
+                        egui::Slider::new(&mut prefs.thermal_ambient_temp_k, 200.0..=450.0)
+                            .suffix(" K"),
+                    )
+                    .changed()
+                {
+                    changed = true;
+                }
+                ui.label(format!("({:.1} °C / {:.1} °F)", celsius, celsius * 9.0 / 5.0 + 32.0));
+            });
+            ui.add_space(6.0);
             if ui
-                .add(
-                    egui::Slider::new(&mut prefs.thermal_ambient_temp_k, 200.0..=450.0)
-                        .suffix(" K"),
+                .checkbox(
+                    &mut prefs.thermal_overlay_enabled,
+                    "Show real-time electro-thermal badges on schematic components",
                 )
                 .changed()
             {
                 changed = true;
             }
-            ui.label(format!("({:.1} °C)", celsius));
         });
-
-        ui.add_space(10.0);
-        if ui
-            .checkbox(
-                &mut prefs.thermal_overlay_enabled,
-                "Show real-time thermal badges on schematic components",
-            )
-            .changed()
-        {
-            changed = true;
-        }
 
         changed
     }
