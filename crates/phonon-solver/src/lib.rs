@@ -561,11 +561,11 @@ pub use rf::{
     NonLinearMetrics, NonlinearDevice, SmithCircle, SweepType, TwoPortSParameters,
 };
 pub use sensors::{
-    AerovexCoSimPacket, AerovexPhononBridge, AerovexRigidBodyState, EskfConfig, EskfNominalState,
-    FailsafeMode, FaultInjectionConfig, HilActuatorControls, HilBenchmarkReport,
-    HilBenchmarkRunner, HilFlightBridge, HilGpsPacket, HilSensorPacket, Matrix15x15, Matrix3x3,
-    MultiRateEskf, PhononTransducerOutput, PidGains, QuadFlightController, SensorBenchmarkReport,
-    SensorBenchmarkRunner,
+    CoSimPacket, EskfConfig, EskfNominalState, FailsafeMode, FaultInjectionConfig,
+    HilActuatorControls, HilBenchmarkReport, HilBenchmarkRunner, HilFlightBridge, HilGpsPacket,
+    HilSensorPacket, Matrix15x15, Matrix3x3, MultiRateEskf, PhononCoSimBridge,
+    PhononTransducerOutput, PidGains, QuadFlightController, RigidBodyCoSimState,
+    SensorBenchmarkReport, SensorBenchmarkRunner,
 };
 pub use skyrmion_braiding_memory::*;
 pub use skyrmion_phonon_drag::*;

@@ -12,7 +12,8 @@
 
 use egui::Context;
 use phonon_gui::{
-    render_phonon_icon, render_top_frame, PhononApp, TopFrameAction, TopFrameConfig,
+    render_phonon_icon, render_top_frame, render_top_frame_with_app, PhononApp, SimMode,
+    TopFrameAction, TopFrameConfig,
 };
 use std::path::{Path, PathBuf};
 use std::time::{Duration, Instant};
@@ -466,5 +467,57 @@ fn test_project_title_renaming_and_auto_centering() {
     app.pending_auto_center = false;
     app.load_cmos_inverter_demo();
     assert!(app.pending_auto_center);
+}
+
+#[test]
+fn test_centered_simulation_controls_pill_and_mode_toggle() {
+    let mut app = PhononApp::default();
+
+    // 1. Initial Simulation Mode
+    assert_eq!(app.sim_mode, SimMode::Transient);
+    assert_eq!(app.sim_mode.label(), "TRAN");
+    assert_eq!(app.sim_mode.full_name(), "Transient Simulation (.TRAN)");
+
+    // 2. Mode Toggle
+    app.sim_mode.toggle();
+    assert_eq!(app.sim_mode, SimMode::DcOp);
+    assert_eq!(app.sim_mode.label(), "DC");
+    assert_eq!(app.sim_mode.full_name(), "DC Operating Point (.OP)");
+
+    app.sim_mode.toggle();
+    assert_eq!(app.sim_mode, SimMode::Transient);
+
+    // 3. TopFrameAction Variants
+    assert_ne!(TopFrameAction::RunSimulation, TopFrameAction::None);
+    assert_ne!(TopFrameAction::StepSimulation, TopFrameAction::None);
+    assert_ne!(TopFrameAction::StopSimulation, TopFrameAction::None);
+
+    // 4. App-integrated simulation methods
+    app.load_voltage_divider_demo();
+    app.run_active_simulation();
+    assert!(!app.sim_status.is_empty(), "Running active simulation must populate status");
+
+    // Stepping simulation
+    app.step_active_simulation();
+    assert!(
+        app.sim_status.contains("Transient") || app.sim_status.contains("DC"),
+        "Stepping simulation must update status"
+    );
+
+    // Halting simulation
+    app.stop_active_simulation();
+    assert!(
+        app.sim_status.contains("halted") || app.sim_status.contains("cleared"),
+        "Stopping simulation must clear traces and update status"
+    );
+
+    // 5. Headless UI render verification with app
+    let ctx = Context::default();
+    let config = TopFrameConfig::new(false, "Phonon Studio", "0.1.0", "Inverter Test");
+    let mut output = ctx.run_ui(Default::default(), |ui| {
+        let action = render_top_frame_with_app(ui, &config, &mut app);
+        assert_eq!(action, TopFrameAction::None);
+    });
+    output.textures_delta.clear();
 }
 

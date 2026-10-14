@@ -1,12 +1,12 @@
 #![deny(unsafe_code)]
 
 //! Verification test suite for Phonon visual dynamics awareness widgets,
-//! discovery status badges, and in-process backend injection mechanics (Phase 303).
+//! status badges, and in-process backend injection mechanics.
 
 use egui::Color32;
 use phonon_core::{
-    ActuatorInputs, AerovexShmBackend, AutoSelectingDynamicsBackend, BackendInfo, DynamicsError,
-    DynamicsTelemetry, PhysicsDynamicsBackend, ReferenceDynamicsBackend,
+    ActuatorInputs, BackendInfo, DynamicsError, DynamicsTelemetry, PhysicsDynamicsBackend,
+    ReferenceDynamicsBackend,
 };
 use phonon_gui::{DynamicsStatusBadge, PhononApp};
 
@@ -77,14 +77,12 @@ fn test_dynamics_status_badge_reference_mode() {
     let backend = ReferenceDynamicsBackend::default();
     let badge = DynamicsStatusBadge::new();
 
-    assert!(!badge.is_aerovex_mode(&backend));
+    assert!(!badge.is_accelerated_mode(&backend));
     assert_eq!(badge.badge_label(&backend), "[REFERENCE DYNAMICS ACTIVE]");
 
     let (bg, border) = badge.badge_colors(&backend);
     assert_eq!(bg, Color32::from_rgb(26, 40, 56));
     assert_eq!(border, Color32::from_rgb(58, 110, 168));
-
-    assert_eq!(badge.learn_more_url(), "https://aerovex.net");
 
     let tooltip = badge.telemetry_tooltip_text(&backend);
     assert!(tooltip.contains("Phonon Pure Safe Rust Reference RK4 Dynamics Engine"));
@@ -93,16 +91,15 @@ fn test_dynamics_status_badge_reference_mode() {
 }
 
 #[test]
-fn test_dynamics_status_badge_aerovex_shm_mode() {
-    let backend = AerovexShmBackend::new();
+fn test_dynamics_status_badge_accelerated_mode() {
+    let backend = CustomMockDynamicsBackend::new("High-Performance Simulator", "1.0.0", true);
     let badge = DynamicsStatusBadge::new();
 
     assert!(backend.info().is_hardware_accelerated);
-    assert!(backend.info().name.contains("Aerovex"));
-    assert!(badge.is_aerovex_mode(&backend));
+    assert!(badge.is_accelerated_mode(&backend));
     assert_eq!(
         badge.badge_label(&backend),
-        "[ACTIVE: AEROVEX MULTI-PHYSICS SIMULATOR CONNECTED]"
+        "[ACTIVE: HARDWARE-ACCELERATED DYNAMICS]"
     );
 
     let (bg, border) = badge.badge_colors(&backend);
@@ -110,21 +107,18 @@ fn test_dynamics_status_badge_aerovex_shm_mode() {
     assert_eq!(border, Color32::from_rgb(46, 160, 92));
 
     let tooltip = badge.telemetry_tooltip_text(&backend);
-    assert!(tooltip.contains("Aerovex Multi-Physics Simulator Connected"));
-    assert!(tooltip.contains("8.65M ticks/sec"));
-    assert!(tooltip.contains("Rayon 128-World Inflow"));
-    assert!(tooltip.contains("Wolkovitch-Leishman VRS Active"));
-    assert!(tooltip.contains("Aerovex POSIX Shared Memory Connector"));
+    assert!(tooltip.contains("High-Performance Simulator"));
+    assert!(tooltip.contains("Altitude: 150.00 m"));
 }
 
 #[test]
 fn test_dynamics_status_badge_custom_mock_backend() {
     let badge = DynamicsStatusBadge::new();
 
-    // 1. Standalone custom backend without hardware acceleration or Aerovex branding
+    // 1. Standalone custom backend without hardware acceleration
     let custom_solver =
         CustomMockDynamicsBackend::new("Orbital Trajectory Solver", "4.2.1", false);
-    assert!(!badge.is_aerovex_mode(&custom_solver));
+    assert!(!badge.is_accelerated_mode(&custom_solver));
     assert_eq!(
         badge.badge_label(&custom_solver),
         "[REFERENCE DYNAMICS ACTIVE]"
@@ -137,17 +131,16 @@ fn test_dynamics_status_badge_custom_mock_backend() {
     assert!(tooltip.contains("Sim Time: 12.500 s"));
     assert!(tooltip.contains("Steps: 1250"));
 
-    // 2. Custom backend with Aerovex branding
-    let custom_aerovex =
-        CustomMockDynamicsBackend::new("Aerovex In-Process Sim Kernel", "1.0.0", false);
-    assert!(badge.is_aerovex_mode(&custom_aerovex));
+    // 2. Custom backend with hardware acceleration
+    let custom_accel =
+        CustomMockDynamicsBackend::new("GPU Accelerated Simulator", "2.0.0", true);
+    assert!(badge.is_accelerated_mode(&custom_accel));
     assert_eq!(
-        badge.badge_label(&custom_aerovex),
-        "[ACTIVE: AEROVEX MULTI-PHYSICS SIMULATOR CONNECTED]"
+        badge.badge_label(&custom_accel),
+        "[ACTIVE: HARDWARE-ACCELERATED DYNAMICS]"
     );
-    let aero_tooltip = badge.telemetry_tooltip_text(&custom_aerovex);
-    assert!(aero_tooltip.contains("Aerovex In-Process Sim Kernel"));
-    assert!(aero_tooltip.contains("Wolkovitch-Leishman VRS Active"));
+    let accel_tooltip = badge.telemetry_tooltip_text(&custom_accel);
+    assert!(accel_tooltip.contains("GPU Accelerated Simulator"));
 }
 
 #[test]
@@ -166,14 +159,14 @@ fn test_phonon_app_with_backend_construction() {
 
     // Injected custom backend
     let custom_backend = Box::new(CustomMockDynamicsBackend::new(
-        "Aerovex Test In-Process Engine",
+        "Custom In-Process Engine",
         "2.0.0",
         true,
     ));
     let app_custom = PhononApp::with_backend(&cc, custom_backend);
     assert_eq!(
         app_custom.backend().info().name,
-        "Aerovex Test In-Process Engine"
+        "Custom In-Process Engine"
     );
     assert!(app_custom.backend().info().is_hardware_accelerated);
 }
@@ -196,17 +189,6 @@ fn test_backend_switching_telemetry() {
     let tooltip = badge.telemetry_tooltip_text(&backend);
     assert!(tooltip.contains("Steps: 20"));
     assert!(tooltip.contains("Sim Time: 0.200 s"));
-
-    // Auto-selecting backend stepping
-    let mut auto_backend = AutoSelectingDynamicsBackend::new();
-    for _ in 0..10 {
-        auto_backend
-            .step(0.01, &inputs)
-            .expect("auto-selecting step must succeed");
-    }
-    let auto_tooltip = badge.telemetry_tooltip_text(&auto_backend);
-    assert!(auto_tooltip.contains("Steps: 10"));
-    assert!(auto_tooltip.contains("Sim Time: 0.100 s"));
 }
 
 #[test]
@@ -216,11 +198,10 @@ fn test_zero_lag_rendering_benchmark() {
 
     let start = std::time::Instant::now();
     for _ in 0..10_000 {
-        let is_aero = badge.is_aerovex_mode(&backend);
+        let is_accel = badge.is_accelerated_mode(&backend);
         let label = badge.badge_label(&backend);
         let (bg, border) = badge.badge_colors(&backend);
-        let url = badge.learn_more_url();
-        std::hint::black_box((is_aero, label, bg, border, url));
+        std::hint::black_box((is_accel, label, bg, border));
     }
     let elapsed = start.elapsed();
     let evals_per_sec = 10_000.0 / elapsed.as_secs_f64();

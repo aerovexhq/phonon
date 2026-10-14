@@ -1,6 +1,6 @@
 //! Hardware-in-the-Loop (HIL) Flight Co-Simulation Bridge & MAVLink Protocol Engine
 //!
-//! Bridges Aerovex rigid-body multi-physics flight simulation with real-time autopilot
+//! Bridges rigid-body multi-physics flight simulation with real-time autopilot
 //! controllers (PX4 / ArduPilot / custom flight stacks) via MAVLink HIL protocol:
 //! 1. HIL_SENSOR packets (high-rate 500 Hz IMU, baro, mag, temperature).
 //! 2. HIL_GPS packets (10 Hz geodetic fix, pseudorange, DOP, velocity).

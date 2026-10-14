@@ -52,6 +52,8 @@ pub enum ActionId {
     ToggleThermal,
     ToggleErcOverlay,
     RunSimulation,
+    StepSimulation,
+    StopSimulation,
     RunErc,
     ToolSelect,
     ToolWire,
@@ -334,10 +336,24 @@ impl ActionRegistry {
         // Simulate
         registry.register(
             ActionId::RunSimulation,
-            "Run DC Operating Point",
-            "Execute non-linear Newton-Raphson DC solve",
+            "Run Simulation",
+            "Execute active simulation profile (Transient or DC)",
             ActionCategory::Simulate,
             Some("F5"),
+        );
+        registry.register(
+            ActionId::StepSimulation,
+            "Step Simulation",
+            "Advance active simulation by one step",
+            ActionCategory::Simulate,
+            Some("F10"),
+        );
+        registry.register(
+            ActionId::StopSimulation,
+            "Stop Simulation",
+            "Halt active simulation and clear traces",
+            ActionCategory::Simulate,
+            Some("Shift+F5"),
         );
         registry.register(
             ActionId::RunErc,

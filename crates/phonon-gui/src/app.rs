@@ -79,7 +79,7 @@ use eframe::{App, Frame};
 use egui::{
     CentralPanel, Color32, FontId, Key, Panel, PointerButton, Pos2, Rect, RichText, Sense, Stroke, Ui, Vec2,
 };
-use phonon_core::{AutoSelectingDynamicsBackend, PhysicsDynamicsBackend};
+use phonon_core::{PhysicsDynamicsBackend, ReferenceDynamicsBackend};
 use phonon_solver::{solve_dc_non_linear, NewtonOptions};
 use std::collections::{HashMap, HashSet};
 
@@ -119,9 +119,41 @@ pub struct DragAttachedWire {
     pub net_name: Option<String>,
 }
 
+/// Active simulation execution profile mode for Phonon Studio.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+pub enum SimMode {
+    #[default]
+    Transient,
+    DcOp,
+}
+
+impl SimMode {
+    pub fn label(&self) -> &'static str {
+        match self {
+            Self::Transient => "TRAN",
+            Self::DcOp => "DC",
+        }
+    }
+
+    pub fn full_name(&self) -> &'static str {
+        match self {
+            Self::Transient => "Transient Simulation (.TRAN)",
+            Self::DcOp => "DC Operating Point (.OP)",
+        }
+    }
+
+    pub fn toggle(&mut self) {
+        *self = match self {
+            Self::Transient => Self::DcOp,
+            Self::DcOp => Self::Transient,
+        };
+    }
+}
+
 /// The unified Phonon desktop CAD application.
 pub struct PhononApp {
     pub canvas: SchematicCanvas,
+    pub sim_mode: SimMode,
     pub components: Vec<SchematicComponent>,
     pub wires: Vec<SchematicWire>,
     pub next_comp_id: usize,
@@ -669,6 +701,7 @@ impl Default for PhononApp {
     fn default() -> Self {
         let mut app = Self {
             canvas: SchematicCanvas::new(),
+            sim_mode: SimMode::default(),
             components: Vec::with_capacity(64),
             wires: Vec::with_capacity(64),
             next_comp_id: 1,
@@ -845,7 +878,7 @@ impl Default for PhononApp {
             placement_rotation: 0,
             placement_mirrored: false,
             top_frame_config: TopFrameConfig::default(),
-            dynamics_backend: Box::new(AutoSelectingDynamicsBackend::new()),
+            dynamics_backend: Box::new(ReferenceDynamicsBackend::default()),
             palette: ComponentPalette::new(),
             show_palette: true,
             boot_theme_config: crate::default_boot_theme_config(),
@@ -2885,6 +2918,54 @@ impl PhononApp {
         self.oscilloscope = self.multi_graph.primary_scope.clone();
     }
 
+    /// Runs the active simulation profile (Transient or DC).
+    pub fn run_active_simulation(&mut self) {
+        match self.sim_mode {
+            SimMode::Transient => self.run_transient_demo(),
+            SimMode::DcOp => self.run_dc_op(),
+        }
+    }
+
+    /// Advances the active simulation by one step.
+    pub fn step_active_simulation(&mut self) {
+        match self.sim_mode {
+            SimMode::Transient => {
+                if self.oscilloscope.traces.is_empty() {
+                    self.run_transient_demo();
+                } else {
+                    let current_count = self.oscilloscope.traces.first().map(|t| t.len()).unwrap_or(0);
+                    let step_t = current_count as f64 * 0.000005;
+                    let omega = 2.0 * std::f64::consts::PI * 1000.0;
+                    let v_in = 2.5 + 2.5 * (omega * step_t).sin();
+                    let v_out = 1.25 + 1.25 * (omega * step_t - 0.35).sin();
+                    let temp = 25.0 + 12.0 * (1.0 - (-step_t / 0.0008).exp());
+
+                    for trace in &mut self.oscilloscope.traces {
+                        if trace.name.contains("VIN") {
+                            trace.push(step_t, v_in);
+                        } else if trace.name.contains("VOUT") {
+                            trace.push(step_t, v_out);
+                        } else if trace.name.contains("Temp") {
+                            trace.push(step_t, temp);
+                        }
+                    }
+                    self.multi_graph.primary_scope = self.oscilloscope.clone();
+                    self.sim_status = format!("Transient Stepped: t={:.6}s, {} samples", step_t, current_count + 1);
+                }
+            }
+            SimMode::DcOp => {
+                self.run_dc_op();
+            }
+        }
+    }
+
+    /// Halts active simulation and clears transient traces.
+    pub fn stop_active_simulation(&mut self) {
+        self.oscilloscope.clear();
+        self.multi_graph.primary_scope.clear();
+        self.sim_status = "Simulation halted / traces cleared".to_string();
+    }
+
     /// Compiles schematic and runs the non-linear DC Operating Point (.OP) solver.
     pub fn run_dc_op(&mut self) {
         match compile_schematic_with_labels(&self.components, &self.wires, &self.net_labels) {
@@ -3812,7 +3893,9 @@ impl PhononApp {
             ActionId::ToggleOscilloscope => self.show_oscilloscope = !self.show_oscilloscope,
             ActionId::ToggleThermal => self.show_thermal_overlay = !self.show_thermal_overlay,
             ActionId::ToggleErcOverlay => self.show_erc_overlay = !self.show_erc_overlay,
-            ActionId::RunSimulation => self.run_dc_op(),
+            ActionId::RunSimulation => self.run_active_simulation(),
+            ActionId::StepSimulation => self.step_active_simulation(),
+            ActionId::StopSimulation => self.stop_active_simulation(),
             ActionId::RunErc => self.run_erc(),
             ActionId::ToolSelect => {
                 self.selected_tool = ToolMode::Select;
@@ -3902,6 +3985,24 @@ impl PhononApp {
             || (ctrl && shift && ctx.input(|i| i.key_pressed(Key::Z)))
         {
             self.redo();
+            return;
+        }
+
+        // Run Simulation: F5
+        if !ctrl && !shift && ctx.input(|i| i.key_pressed(Key::F5)) {
+            self.run_active_simulation();
+            return;
+        }
+
+        // Stop Simulation: Shift+F5
+        if !ctrl && shift && ctx.input(|i| i.key_pressed(Key::F5)) {
+            self.stop_active_simulation();
+            return;
+        }
+
+        // Step Simulation: F10
+        if !ctrl && ctx.input(|i| i.key_pressed(Key::F10)) {
+            self.step_active_simulation();
             return;
         }
 
@@ -5299,26 +5400,6 @@ impl PhononApp {
                 }
                 _ => {}
             }
-        });
-
-        // Action Toolbar
-        Panel::top("action_toolbar").show(ui, |ui| {
-            ui.horizontal(|ui| {
-                if self.preferences.show_toolbar_run_dc && ui.button("Run DC (.OP)").clicked() {
-                    self.run_dc_op();
-                }
-                if self.preferences.show_toolbar_run_transient && ui.button("Run Transient (.TRAN)").clicked() {
-                    self.run_transient_demo();
-                }
-                if self.preferences.show_toolbar_export_netlist && ui.button("Export Netlist").clicked() {
-                    self.sync_canvas_state();
-                    self.spice_netlist_text = self.netlist_sync.sync_from_canvas(&self.canvas).to_string();
-                    self.show_netlist_window = true;
-                }
-                if self.preferences.show_toolbar_clear_canvas && ui.button("Clear Canvas").clicked() {
-                    self.clear_canvas_user();
-                }
-            });
         });
 
         // Sheet Tabs Bar

@@ -9,6 +9,8 @@
 
 pub mod dispersion;
 pub mod magnetoelastic_drive;
+pub mod polariton_benchmark;
+pub mod polariton_solver;
 pub mod transducer_s_matrix;
 
 pub use dispersion::{
@@ -17,6 +19,9 @@ pub use dispersion::{
 pub use magnetoelastic_drive::{
     MagnetoelasticDriveEngine, MagnetoelasticDriveParams, MagnetoelasticTrackSnapshot,
 };
+pub use polariton_benchmark::{PolaritonBenchmarkResult, PolaritonBenchmarkRunner};
+pub use polariton_solver::PhononMagnonPolaritonSolver;
 pub use transducer_s_matrix::{
     QuantumTransducerSolver, SParameterSample, TransducerCouplingParams,
 };
+

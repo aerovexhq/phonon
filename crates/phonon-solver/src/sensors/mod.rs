@@ -1,9 +1,9 @@
-//! Physics-Coupled Sensors & Multi-Physics Aerovex Co-Simulation Engine
+//! Physics-Coupled Sensors & Multi-Physics Co-Simulation Engine
 //!
 //! Provides synchronized IMU (6-DOF / 9-DOF), piezoresistive/capacitive tactile sensing,
 //! contact manifold force distribution, and Rayon parallel co-simulation benchmarks.
 
-pub mod aerovex_bridge;
+pub mod cosim_bridge;
 pub mod hil_benchmark;
 pub mod hil_flight_bridge;
 pub mod nv_benchmark;
@@ -12,8 +12,8 @@ pub mod nv_solver;
 pub mod sensor_benchmark;
 pub mod sensor_fusion;
 
-pub use aerovex_bridge::{
-    AerovexCoSimPacket, AerovexPhononBridge, AerovexRigidBodyState, PhononTransducerOutput,
+pub use cosim_bridge::{
+    CoSimPacket, PhononCoSimBridge, PhononTransducerOutput, RigidBodyCoSimState,
 };
 pub use hil_benchmark::{HilBenchmarkReport, HilBenchmarkRunner};
 pub use hil_flight_bridge::{

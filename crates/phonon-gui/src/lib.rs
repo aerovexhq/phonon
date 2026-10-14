@@ -27,7 +27,7 @@ pub use scripting::{
 };
 
 pub use actions::{ActionCategory, ActionDef, ActionId, ActionRegistry};
-pub use app::{PhononApp, ToolMode};
+pub use app::{PhononApp, SimMode, ToolMode};
 pub use egui::Theme;
 pub use preferences::AppPreferences;
 pub use storage::{

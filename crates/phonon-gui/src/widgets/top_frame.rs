@@ -5,6 +5,7 @@
 //! Provides cross-platform unified titlebar, master SVG icon emblem, brand menus,
 //! draggable window chrome, and desktop/web divergence controls.
 
+use crate::app::SimMode;
 use crate::schematic::compile_schematic_with_labels;
 use crate::widgets::confirmation_modal::{DemoCircuitKind, PendingAction};
 use crate::widgets::icon::render_phonon_icon;
@@ -22,6 +23,9 @@ pub enum TopFrameAction {
     DownloadDesktopApp,
     SaveProject,
     OpenProject,
+    RunSimulation,
+    StepSimulation,
+    StopSimulation,
     None,
 }
 
@@ -689,6 +693,28 @@ fn render_top_frame_internal(
 
         // Simulate Menu
         ui.menu_button("Simulate", |ui| {
+            if ui.button("Run Simulation (F5)").clicked() {
+                if let Some(a) = app.as_deref_mut() {
+                    a.run_active_simulation();
+                }
+                action = TopFrameAction::RunSimulation;
+                ui.close();
+            }
+            if ui.button("Step Simulation (F10)").clicked() {
+                if let Some(a) = app.as_deref_mut() {
+                    a.step_active_simulation();
+                }
+                action = TopFrameAction::StepSimulation;
+                ui.close();
+            }
+            if ui.button("Stop / Reset Simulation (Shift+F5)").clicked() {
+                if let Some(a) = app.as_deref_mut() {
+                    a.stop_active_simulation();
+                }
+                action = TopFrameAction::StopSimulation;
+                ui.close();
+            }
+            ui.separator();
             if ui.button("Run DC Operating Point (.OP)").clicked() {
                 if let Some(a) = app.as_deref_mut() {
                     a.run_dc_op();
@@ -1480,19 +1506,24 @@ fn render_top_frame_internal(
             }
         });
 
-        // 4. Center Area: Draggable Title Bar with Circuit Name & Version
+        // 4. Center Area: Draggable Title Bar with Centered Simulation Controls Pill
         let right_controls_width = if config.is_web { 165.0 } else { 92.0 };
         let available = ui.available_width();
-        let center_width = (available - right_controls_width).max(20.0);
+        let old_spacing = ui.spacing().item_spacing;
+        let pill_width = 138.0;
+        let fixed_width = right_controls_width + pill_width + 3.0 * old_spacing.x;
+        let total_free = (available - fixed_width).max(0.0);
+        let side_width = (total_free / 2.0).max(4.0);
 
-        let (center_rect, center_resp) =
-            ui.allocate_exact_size(vec2(center_width, 22.0), Sense::click_and_drag());
+        // 4a. Left Title / Drag Zone
+        let (left_rect, left_resp) =
+            ui.allocate_exact_size(vec2(side_width, 22.0), Sense::click_and_drag());
 
-        // Draggable window support
-        if center_resp.drag_started_by(egui::PointerButton::Primary) {
+        // Draggable window support on title zone
+        if left_resp.drag_started_by(egui::PointerButton::Primary) {
             ui.ctx().send_viewport_cmd(ViewportCommand::StartDrag);
         }
-        if center_resp.double_clicked() {
+        if left_resp.double_clicked() {
             let is_max = ui.input(|i| i.viewport().maximized.unwrap_or(false));
             ui.ctx().send_viewport_cmd(ViewportCommand::Maximized(!is_max));
         }
@@ -1501,7 +1532,7 @@ fn render_top_frame_internal(
         let edit_buf_id = ui.id().with("top_frame_rename_buffer");
         let mut is_renaming: bool = ui.data(|d| d.get_temp(edit_id).unwrap_or(false));
 
-        if center_resp.secondary_clicked() {
+        if left_resp.secondary_clicked() {
             is_renaming = true;
             ui.data_mut(|d| {
                 d.insert_temp(edit_id, true);
@@ -1525,7 +1556,7 @@ fn render_top_frame_internal(
                 })
             });
             let edit_response = ui.put(
-                center_rect,
+                left_rect,
                 egui::TextEdit::singleline(&mut buf)
                     .font(FontId::monospace(11.0))
                     .hint_text("Project Title"),
@@ -1542,16 +1573,167 @@ fn render_top_frame_internal(
                     }
                 }
             }
-        } else {
+        } else if left_rect.width() > 30.0 {
             // Display {project_title}{*} (showing * when modified)
             let circuit_display = config.formatted_title();
             ui.painter().text(
-                center_rect.center(),
+                left_rect.center(),
                 egui::Align2::CENTER_CENTER,
                 &circuit_display,
                 FontId::monospace(11.0),
                 Color32::from_rgb(148, 163, 184),
             );
+        }
+
+        // 4b. Centered Simulation Controls Pill [ TRAN | ▶ | ⏭ | ⏹ ]
+        ui.spacing_mut().item_spacing = vec2(0.0, 0.0);
+
+        let current_sim_mode = app.as_deref().map(|a| a.sim_mode).unwrap_or(SimMode::Transient);
+        let mode_label = current_sim_mode.label();
+        let mode_full_name = current_sim_mode.full_name();
+
+        let (mode_rect, mode_resp) = ui.allocate_exact_size(vec2(42.0, 20.0), Sense::click());
+        let (run_rect, run_resp) = ui.allocate_exact_size(vec2(32.0, 20.0), Sense::click());
+        let (step_rect, step_resp) = ui.allocate_exact_size(vec2(32.0, 20.0), Sense::click());
+        let (stop_rect, stop_resp) = ui.allocate_exact_size(vec2(32.0, 20.0), Sense::click());
+
+        ui.spacing_mut().item_spacing = old_spacing;
+
+        let pill_rect = Rect::from_min_max(mode_rect.min, stop_rect.max);
+
+        // Pill container background and border
+        ui.painter().rect_filled(pill_rect, 4.0, Color32::from_rgb(20, 26, 36));
+        ui.painter().rect_stroke(
+            pill_rect,
+            4.0,
+            Stroke::new(1.0, Color32::from_rgb(51, 65, 85)),
+            StrokeKind::Middle,
+        );
+
+        // Sub-button 1: Mode Toggle (TRAN / DC)
+        if mode_resp.hovered() {
+            ui.painter().rect_filled(mode_rect, 3.0, Color32::from_rgb(30, 41, 59));
+        }
+        let mode_color = if mode_resp.hovered() {
+            Color32::from_rgb(186, 230, 253)
+        } else {
+            Color32::from_rgb(125, 211, 252)
+        };
+        ui.painter().text(
+            mode_rect.center(),
+            egui::Align2::CENTER_CENTER,
+            mode_label,
+            FontId::monospace(10.0),
+            mode_color,
+        );
+        if mode_resp.clicked() {
+            if let Some(a) = app.as_deref_mut() {
+                a.sim_mode.toggle();
+            }
+        }
+        mode_resp.on_hover_text(format!(
+            "Active Mode: {}\nClick to toggle Transient (.TRAN) / DC Operating Point (.OP)",
+            mode_full_name
+        ));
+
+        // Sub-button 2: Run Vector Icon (Play triangle)
+        if run_resp.hovered() {
+            ui.painter().rect_filled(run_rect, 0.0, Color32::from_rgb(22, 101, 52));
+        }
+        let run_color = if run_resp.hovered() {
+            Color32::from_rgb(134, 239, 172)
+        } else {
+            Color32::from_rgb(34, 197, 94)
+        };
+        let run_c = run_rect.center();
+        ui.painter().add(egui::Shape::convex_polygon(
+            vec![
+                pos2(run_c.x - 3.5, run_c.y - 4.5),
+                pos2(run_c.x - 3.5, run_c.y + 4.5),
+                pos2(run_c.x + 4.5, run_c.y),
+            ],
+            run_color,
+            Stroke::NONE,
+        ));
+        if run_resp.clicked() {
+            if let Some(a) = app.as_deref_mut() {
+                a.run_active_simulation();
+            }
+            action = TopFrameAction::RunSimulation;
+        }
+        run_resp.on_hover_text("Run Simulation (F5)");
+
+        // Sub-button 3: Step Vector Icon (Step triangle + vertical bar)
+        if step_resp.hovered() {
+            ui.painter().rect_filled(step_rect, 0.0, Color32::from_rgb(30, 58, 100));
+        }
+        let step_color = if step_resp.hovered() {
+            Color32::from_rgb(186, 230, 253)
+        } else {
+            Color32::from_rgb(56, 189, 248)
+        };
+        let step_c = step_rect.center();
+        ui.painter().add(egui::Shape::convex_polygon(
+            vec![
+                pos2(step_c.x - 4.5, step_c.y - 4.0),
+                pos2(step_c.x - 4.5, step_c.y + 4.0),
+                pos2(step_c.x + 1.0, step_c.y),
+            ],
+            step_color,
+            Stroke::NONE,
+        ));
+        ui.painter().line_segment(
+            [pos2(step_c.x + 3.5, step_c.y - 4.0), pos2(step_c.x + 3.5, step_c.y + 4.0)],
+            Stroke::new(1.4, step_color),
+        );
+        if step_resp.clicked() {
+            if let Some(a) = app.as_deref_mut() {
+                a.step_active_simulation();
+            }
+            action = TopFrameAction::StepSimulation;
+        }
+        step_resp.on_hover_text("Step Simulation (F10)");
+
+        // Sub-button 4: Stop Vector Icon (Stop square)
+        if stop_resp.hovered() {
+            ui.painter().rect_filled(stop_rect, 3.0, Color32::from_rgb(127, 29, 29));
+        }
+        let stop_color = if stop_resp.hovered() {
+            Color32::from_rgb(254, 202, 202)
+        } else {
+            Color32::from_rgb(244, 63, 94)
+        };
+        let stop_c = stop_rect.center();
+        ui.painter().rect_filled(
+            Rect::from_center_size(stop_c, vec2(8.0, 8.0)),
+            1.0,
+            stop_color,
+        );
+        if stop_resp.clicked() {
+            if let Some(a) = app.as_deref_mut() {
+                a.stop_active_simulation();
+            }
+            action = TopFrameAction::StopSimulation;
+        }
+        stop_resp.on_hover_text("Stop / Reset Simulation (Shift+F5)");
+
+        // Vertical dividers between pill buttons
+        let div_stroke = Stroke::new(1.0, Color32::from_rgb(51, 65, 85));
+        let py1 = pill_rect.min.y + 3.0;
+        let py2 = pill_rect.max.y - 3.0;
+        ui.painter().line_segment([pos2(mode_rect.max.x, py1), pos2(mode_rect.max.x, py2)], div_stroke);
+        ui.painter().line_segment([pos2(run_rect.max.x, py1), pos2(run_rect.max.x, py2)], div_stroke);
+        ui.painter().line_segment([pos2(step_rect.max.x, py1), pos2(step_rect.max.x, py2)], div_stroke);
+
+        // 4c. Right Spacer / Drag Zone
+        let (_right_rect, right_resp) =
+            ui.allocate_exact_size(vec2(side_width, 22.0), Sense::click_and_drag());
+        if right_resp.drag_started_by(egui::PointerButton::Primary) {
+            ui.ctx().send_viewport_cmd(ViewportCommand::StartDrag);
+        }
+        if right_resp.double_clicked() {
+            let is_max = ui.input(|i| i.viewport().maximized.unwrap_or(false));
+            ui.ctx().send_viewport_cmd(ViewportCommand::Maximized(!is_max));
         }
 
         // 5. Top-Right Window Controls

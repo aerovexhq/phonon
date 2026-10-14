@@ -4,8 +4,8 @@
 //! tracking error (RMSE), specific force gravity compensation, and piezoresistive/capacitive
 //! tactile force telemetry across parallel Rayon worker threads.
 
-use crate::sensors::aerovex_bridge::{
-    AerovexCoSimPacket, AerovexPhononBridge, AerovexRigidBodyState,
+use crate::sensors::cosim_bridge::{
+    CoSimPacket, PhononCoSimBridge, RigidBodyCoSimState,
 };
 use phonon_models::em::{ChannelRng, Vector3D};
 use phonon_models::sensors::{CollisionContactInput, ImuConfig, Quaternion, STANDARD_GRAVITY_M_S2};
@@ -50,7 +50,7 @@ impl SensorBenchmarkRunner {
             .into_par_iter()
             .map(|world_id| {
                 let mut rng = ChannelRng::new(0xDEADBEEF ^ (world_id as u64 + 1));
-                let mut bridge = AerovexPhononBridge::new(
+                let mut bridge = PhononCoSimBridge::new(
                     ImuConfig::new_industrial_9dof(),
                     4,
                     4,
@@ -110,11 +110,11 @@ impl SensorBenchmarkRunner {
                         Vec::new()
                     };
 
-                    let packet = AerovexCoSimPacket {
+                    let packet = CoSimPacket {
                         sim_time_s,
                         tick_index: k as u64,
                         world_id: world_id as u32,
-                        rigid_body: AerovexRigidBodyState {
+                        rigid_body: RigidBodyCoSimState {
                             position_world: vehicle_pos,
                             linear_velocity_world: Vector3D::new(0.0, 0.0, 0.0),
                             linear_accel_body: true_accel_body,

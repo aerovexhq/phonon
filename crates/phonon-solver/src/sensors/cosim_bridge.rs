@@ -1,7 +1,9 @@
-//! Bidirectional Aerovex-Sim & Phonon Multi-Physics Co-Simulation Bridge
+#![deny(unsafe_code)]
+
+//! Bidirectional Flight Dynamics & Phonon Multi-Physics Co-Simulation Bridge
 //!
 //! Provides synchronized lock-free co-simulation stepping bridging discrete
-//! Aerovex multi-world physics ticks (250 - 1000 Hz) with Phonon continuous
+//! multi-world physics ticks (250 - 1000 Hz) with Phonon continuous
 //! MNA circuit and transducer models.
 
 use phonon_models::em::{ChannelRng, Vector3D};
@@ -10,9 +12,9 @@ use phonon_models::sensors::{
     PiezoresistiveSensorConfig, Quaternion, TactileMatrixArray,
 };
 
-/// Kinematic state vector of an Aerovex rigid body in world and body reference frames.
+/// Kinematic state vector of a rigid body in world and body reference frames.
 #[derive(Debug, Clone, PartialEq)]
-pub struct AerovexRigidBodyState {
+pub struct RigidBodyCoSimState {
     /// Position in world Cartesian space in meters.
     pub position_world: Vector3D,
     /// Linear velocity in world Cartesian space in m/s.
@@ -27,7 +29,7 @@ pub struct AerovexRigidBodyState {
     pub mass_kg: f64,
 }
 
-impl Default for AerovexRigidBodyState {
+impl Default for RigidBodyCoSimState {
     fn default() -> Self {
         Self {
             position_world: Vector3D::new(0.0, 0.0, 0.0),
@@ -40,9 +42,9 @@ impl Default for AerovexRigidBodyState {
     }
 }
 
-/// Co-simulation packet passed from Aerovex simulation kernel to Phonon every physics tick.
+/// Co-simulation packet passed from the dynamics simulation kernel to Phonon every physics tick.
 #[derive(Debug, Clone, PartialEq)]
-pub struct AerovexCoSimPacket {
+pub struct CoSimPacket {
     /// Simulation epoch time in seconds.
     pub sim_time_s: f64,
     /// Monotonic physics tick counter.
@@ -50,14 +52,14 @@ pub struct AerovexCoSimPacket {
     /// World index in multi-world simulation (0..127).
     pub world_id: u32,
     /// Rigid body kinematics.
-    pub rigid_body: AerovexRigidBodyState,
+    pub rigid_body: RigidBodyCoSimState,
     /// Active collision contact manifold inputs from rigid body solver.
     pub collision_contacts: Vec<CollisionContactInput>,
     /// Environmental operating temperature in Kelvin.
     pub ambient_temp_kelvin: f64,
 }
 
-/// Transduced multi-physics sensor telemetry returned from Phonon back to Aerovex.
+/// Transduced multi-physics sensor telemetry returned from Phonon back to dynamics engine.
 #[derive(Debug, Clone, PartialEq)]
 pub struct PhononTransducerOutput {
     /// Simulation epoch time in seconds.
@@ -78,9 +80,9 @@ pub struct PhononTransducerOutput {
     pub center_of_pressure_m: (f64, f64),
 }
 
-/// Bidirectional Aerovex-Phonon Co-Simulation Bridge Engine.
+/// Bidirectional Co-Simulation Bridge Engine.
 #[derive(Debug, Clone, PartialEq)]
-pub struct AerovexPhononBridge {
+pub struct PhononCoSimBridge {
     pub imu_config: ImuConfig,
     pub imu_state: ImuState,
     pub tactile_matrix: TactileMatrixArray,
@@ -91,7 +93,7 @@ pub struct AerovexPhononBridge {
     pub last_sim_time_s: f64,
 }
 
-impl AerovexPhononBridge {
+impl PhononCoSimBridge {
     /// Creates a new co-simulation bridge for a vehicle equipped with IMU and 4x4 tactile array.
     pub fn new(
         imu_config: ImuConfig,
@@ -118,10 +120,10 @@ impl AerovexPhononBridge {
         }
     }
 
-    /// Steps the multi-physics transducer models forward by one Aerovex co-simulation tick.
+    /// Steps the multi-physics transducer models forward by one co-simulation tick.
     pub fn step(
         &mut self,
-        packet: &AerovexCoSimPacket,
+        packet: &CoSimPacket,
         rng: &mut ChannelRng,
     ) -> PhononTransducerOutput {
         self.last_sim_time_s = packet.sim_time_s;

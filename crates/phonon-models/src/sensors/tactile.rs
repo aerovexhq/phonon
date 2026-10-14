@@ -9,7 +9,7 @@
 use crate::em::Vector3D;
 use phonon_core::constants::EPSILON_0;
 
-/// Physical collision contact point input from Aerovex rigid-body dynamics engine.
+/// Physical collision contact point input from rigid-body dynamics engine.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct CollisionContactInput {
     /// World Cartesian position of contact point in meters.

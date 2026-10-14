@@ -1,7 +1,7 @@
 //! High-Performance Bounding Volume Hierarchy (BVH) Raycasting Accelerator
 //!
 //! Provides spatial acceleration for high-throughput pulsed laser raycasting,
-//! compatible with Aerovex AABB geometry and supporting multi-hit transmission
+//! compatible with standard AABB geometry and supporting multi-hit transmission
 //! for multi-echo LiDAR returns.
 
 use phonon_models::em::Vector3D;

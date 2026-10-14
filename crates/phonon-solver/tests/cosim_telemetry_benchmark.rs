@@ -1,29 +1,29 @@
-//! Integration Tests: Aerovex Co-Simulation Telemetry & Parallel Benchmark
+#![deny(unsafe_code)]
+
+//! Integration Tests: Co-Simulation Telemetry & Parallel Benchmark
 //!
 //! Validates:
-//! 1. Aerovex-Phonon bridge stepping across continuous quadrotor maneuvers.
+//! 1. Flight co-simulation bridge stepping across continuous quadrotor maneuvers.
 //! 2. Touchdown contact impact telemetry with piezoresistive and capacitive transducers.
 //! 3. 10,000-tick parallel Rayon co-simulation benchmark with Allan variance RMSE validation.
-
-#![deny(unsafe_code)]
 
 use phonon_models::em::{ChannelRng, Vector3D};
 use phonon_models::sensors::{CollisionContactInput, ImuConfig, Quaternion};
 use phonon_solver::sensors::{
-    AerovexCoSimPacket, AerovexPhononBridge, AerovexRigidBodyState, SensorBenchmarkRunner,
+    CoSimPacket, PhononCoSimBridge, RigidBodyCoSimState, SensorBenchmarkRunner,
 };
 
 #[test]
-fn test_aerovex_phonon_bridge_stepping_and_touchdown() {
-    let mut bridge = AerovexPhononBridge::new(ImuConfig::new_industrial_9dof(), 4, 4, 0.005);
+fn test_phonon_cosim_bridge_stepping_and_touchdown() {
+    let mut bridge = PhononCoSimBridge::new(ImuConfig::new_industrial_9dof(), 4, 4, 0.005);
     let mut rng = ChannelRng::new(54321);
 
     // 1. Step in free flight:
-    let flight_packet = AerovexCoSimPacket {
+    let flight_packet = CoSimPacket {
         sim_time_s: 0.002,
         tick_index: 1,
         world_id: 0,
-        rigid_body: AerovexRigidBodyState {
+        rigid_body: RigidBodyCoSimState {
             position_world: Vector3D::new(0.0, 0.0, 5.0),
             linear_velocity_world: Vector3D::new(1.0, 0.0, 0.0),
             linear_accel_body: Vector3D::new(0.0, 0.0, 0.0),
@@ -52,11 +52,11 @@ fn test_aerovex_phonon_bridge_stepping_and_touchdown() {
         0.001,
     );
 
-    let landing_packet = AerovexCoSimPacket {
+    let landing_packet = CoSimPacket {
         sim_time_s: 0.004,
         tick_index: 2,
         world_id: 0,
-        rigid_body: AerovexRigidBodyState {
+        rigid_body: RigidBodyCoSimState {
             position_world: Vector3D::new(0.0, 0.0, 0.0),
             linear_velocity_world: Vector3D::ZERO,
             linear_accel_body: Vector3D::ZERO,
@@ -99,32 +99,12 @@ fn test_parallel_rayon_sensor_benchmark_10k_ticks() {
         "Gravity Comp Verified: {}",
         report.gravity_compensation_verified
     );
-    println!("===========================================================\n");
 
-    assert_eq!(report.total_ticks, 10_000);
-    assert!(report.elapsed_ms > 0.0);
-    assert!(
-        report.ticks_per_second > 50_000.0,
-        "Throughput must exceed 50k ticks/sec"
-    );
-    assert!(
-        report.accel_rmse < 0.5,
-        "Accel RMSE must be within Allan variance noise bounds"
-    );
-    assert!(
-        report.gyro_rmse < 0.05,
-        "Gyro RMSE must be within Allan variance noise bounds"
-    );
-    assert!(
-        report.tactile_tracking_fidelity > 0.95,
-        "Tactile tracking fidelity must exceed 95%"
-    );
-    assert!(
-        report.contact_impacts_detected > 0,
-        "Must detect landing contact impacts"
-    );
-    assert!(
-        report.gravity_compensation_verified,
-        "Must verify stationary gravity compensation"
-    );
+    assert!(report.total_ticks == 10_000);
+    assert!(report.ticks_per_second > 50_000.0);
+    assert!(report.accel_rmse < 0.5);
+    assert!(report.gyro_rmse < 0.05);
+    assert!(report.tactile_tracking_fidelity > 0.95);
+    assert!(report.contact_impacts_detected > 0);
+    assert!(report.gravity_compensation_verified);
 }

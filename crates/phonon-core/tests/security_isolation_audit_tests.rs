@@ -16,11 +16,7 @@ use std::path::{Path, PathBuf};
 use std::time::Instant;
 
 use phonon_core::constants::T_REF;
-use phonon_core::{
-    create_mock_shm_buffer, ActuatorInputs, AerovexPresenceProbe, AerovexShmBackend,
-    AutoSelectingDynamicsBackend, CircuitGraph, PhysicsDynamicsBackend, ProbeStatus,
-    ReferenceDynamicsBackend, ShmSlotData,
-};
+use phonon_core::{ActuatorInputs, CircuitGraph, PhysicsDynamicsBackend, ReferenceDynamicsBackend};
 use phonon_models::bjt::BjtModel;
 use phonon_models::cryogenic::cryo_mosfet::CryoMosfetModel;
 use phonon_models::mosfet::MosfetModel;
@@ -301,38 +297,6 @@ fn test_standalone_dynamics_reference_zero_external_links() {
 }
 
 #[test]
-fn test_presence_probe_graceful_missing_environment() {
-    let non_existent = PathBuf::from("/tmp/non_existent_phonon_audit_shm_probe_491823.bin");
-    let _ = std::fs::remove_file(&non_existent);
-
-    // Verify probing non-existent file path cleanly returns ProbeStatus::NotRunning
-    let status = AerovexPresenceProbe::probe_path(&non_existent);
-    assert_eq!(status, ProbeStatus::NotRunning);
-    assert!(!AerovexPresenceProbe::is_available_at(&non_existent));
-
-    // Verify probing default SHM path when Aerovex is absent returns cleanly without panicking
-    let default_status = AerovexPresenceProbe::probe();
-    match default_status {
-        ProbeStatus::NotRunning | ProbeStatus::StaleHeartbeat { .. } | ProbeStatus::Available { .. } | ProbeStatus::InvalidFormat(_) => {}
-    }
-
-    // Verify probing an empty file returns InvalidFormat gracefully
-    let empty_file = PathBuf::from("/tmp/empty_phonon_probe_file_491824.bin");
-    std::fs::write(&empty_file, b"").expect("Failed to create empty probe test file");
-    let empty_status = AerovexPresenceProbe::probe_path(&empty_file);
-    let _ = std::fs::remove_file(&empty_file);
-    assert!(matches!(empty_status, ProbeStatus::InvalidFormat(_)));
-
-    // Verify probing invalid magic returns InvalidFormat gracefully
-    let bad_magic_file = PathBuf::from("/tmp/bad_magic_phonon_probe_file_491825.bin");
-    let bad_buf = vec![0u8; 64];
-    std::fs::write(&bad_magic_file, &bad_buf).expect("Failed to write bad magic probe test file");
-    let bad_status = AerovexPresenceProbe::probe_path(&bad_magic_file);
-    let _ = std::fs::remove_file(&bad_magic_file);
-    assert!(matches!(bad_status, ProbeStatus::InvalidFormat(_)));
-}
-
-#[test]
 fn test_packaging_checksums_and_deb_integrity() {
     let manifest_dir = Path::new(env!("CARGO_MANIFEST_DIR"));
     let phonon_root = manifest_dir.join("../..");
@@ -422,7 +386,7 @@ fn test_packaging_checksums_and_deb_integrity() {
 
 #[test]
 fn test_backend_info_transparency_audit() {
-    // 1. Reference backend
+    // Reference backend
     let ref_backend = ReferenceDynamicsBackend::new(phonon_core::ReferenceDynamicsParams::default());
     let ref_info = ref_backend.info();
     assert_eq!(ref_info.name, "Phonon Pure Safe Rust Reference RK4 Dynamics Engine");
@@ -431,37 +395,6 @@ fn test_backend_info_transparency_audit() {
     assert_eq!(ref_info.max_tick_rate_hz, 10_000_000.0);
     assert!(ref_info.description.contains("Pure safe Rust"));
     assert!(ref_info.description.contains("6-DOF Newton-Euler"));
-
-    // 2. SHM backend
-    let shm_backend = AerovexShmBackend::new();
-    let shm_info = shm_backend.info();
-    assert_eq!(shm_info.name, "Aerovex POSIX Shared Memory Connector");
-    assert_eq!(shm_info.version, "2.0.0");
-    assert!(shm_info.is_hardware_accelerated);
-    assert_eq!(shm_info.max_tick_rate_hz, 8_650_000.0);
-    assert!(shm_info.description.contains("Lock-free atomic Seqlock"));
-
-    // 3. Auto-selecting backend: defaults to reference when daemon is absent
-    let mut auto_backend = AutoSelectingDynamicsBackend::new();
-    let auto_info = auto_backend.info();
-    assert_eq!(auto_info.name, "Phonon Pure Safe Rust Reference RK4 Dynamics Engine");
-    assert!(!auto_info.is_hardware_accelerated);
-
-    // Verify auto-promotion transparency when active SHM is detected
-    let temp_shm = PathBuf::from("/tmp/phonon_audit_mock_auto_shm_491826.bin");
-    let buf = create_mock_shm_buffer(2, 1, None, &[(0, 2, ShmSlotData::default())]);
-    std::fs::write(&temp_shm, &buf).expect("Failed to write mock SHM buffer");
-
-    auto_backend.set_shm_path(&temp_shm);
-    let step_res = auto_backend.step(0.01, &ActuatorInputs::hover(1.5 * 9.80665 / 4.0));
-    assert!(step_res.is_ok());
-    assert!(auto_backend.is_shm_active());
-
-    let promoted_info = auto_backend.info();
-    assert_eq!(promoted_info.name, "Aerovex POSIX Shared Memory Connector");
-    assert!(promoted_info.is_hardware_accelerated);
-
-    let _ = std::fs::remove_file(&temp_shm);
 }
 
 #[test]
