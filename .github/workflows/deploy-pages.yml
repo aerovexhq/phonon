@@ -1,9 +1,6 @@
 name: Deploy GitHub Pages (Docs & Studio)
 
 on:
-  push:
-    branches:
-      - main
   workflow_dispatch:
 
 permissions:
