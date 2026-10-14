@@ -15,7 +15,7 @@ use crate::preferences::AppPreferences;
 use crate::schematic::HistoryStack;
 use crate::thermal::Colormap;
 use crate::theme::{PhononTheme, ThemePreset};
-use egui::{Color32, Context, Frame, RichText, ScrollArea, Stroke, Vec2, Window};
+use egui::{Color32, Context, Frame, Pos2, Rect, RichText, ScrollArea, Stroke, Vec2, Window};
 
 /// Active navigation category tab in the Preferences modal dialog.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -116,22 +116,32 @@ impl PreferencesDialog {
             .fill(Color32::from_rgb(20, 26, 36))
             .stroke(Stroke::new(1.0, Color32::from_rgb(60, 75, 95)));
 
+        let screen_rect = ctx
+            .input(|i| i.viewport().inner_rect)
+            .unwrap_or(Rect::from_min_size(Pos2::ZERO, Vec2::new(1920.0, 1080.0)));
+        let default_w = (screen_rect.width() * 0.75).clamp(1040.0, 1180.0).min(screen_rect.width() - 32.0);
+        let default_h = (screen_rect.height() * 0.80).clamp(700.0, 820.0).min(screen_rect.height() - 32.0);
+        let min_w = 920.0f32.min(screen_rect.width() - 32.0).max(520.0);
+        let min_h = 620.0f32.min(screen_rect.height() - 32.0).max(420.0);
+
         Window::new("Preferences")
+            .id(egui::Id::new("preferences_modal_window_v2"))
             .open(&mut open_flag)
             .collapsible(false)
             .resizable(true)
             .fade_in(false)
-            .default_size(Vec2::new(720.0, 520.0))
+            .default_size(Vec2::new(default_w, default_h))
+            .min_size(Vec2::new(min_w, min_h))
             .frame(window_frame)
             .show(ctx, |ui| {
                 ui.horizontal(|ui| {
                     // Left Sidebar Navigation
                     let nav_height = (ui.available_height() - 40.0).max(10.0);
                     ui.allocate_ui_with_layout(
-                        Vec2::new(170.0, nav_height),
+                        Vec2::new(210.0, nav_height),
                         egui::Layout::top_down(egui::Align::LEFT),
                         |ui| {
-                            ui.add_space(4.0);
+                            ui.add_space(6.0);
                             let tabs = [
                                 PreferencesTab::General,
                                 PreferencesTab::CanvasLayout,
@@ -143,16 +153,14 @@ impl PreferencesDialog {
                             for tab in tabs {
                                 let is_selected = self.active_tab == tab;
                                 let text = RichText::new(tab.display_name())
-                                    .size(13.0)
+                                    .size(13.5)
                                     .color(if is_selected {
                                         Color32::from_rgb(100, 200, 255)
                                     } else {
                                         Color32::from_rgb(180, 190, 205)
                                     });
-                                if ui
-                                    .selectable_label(is_selected, text)
-                                    .clicked()
-                                {
+                                ui.add_space(2.0);
+                                if ui.selectable_label(is_selected, text).clicked() {
                                     self.active_tab = tab;
                                     self.status_message = None;
                                 }
@@ -225,14 +233,16 @@ impl PreferencesDialog {
         // Sub-modals for YAML Import/Export
         if self.show_yaml_import_modal {
             Window::new("Import Theme YAML")
+                .id(egui::Id::new("import_theme_yaml_modal_v2"))
                 .collapsible(false)
                 .resizable(true)
-                .default_size(Vec2::new(500.0, 380.0))
+                .default_size(Vec2::new(760.0, 520.0))
+                .min_size(Vec2::new(580.0, 380.0))
                 .show(ctx, |ui| {
                     ui.label("Paste YAML theme specification below:");
                     ui.add(
                         egui::TextEdit::multiline(&mut self.yaml_import_buffer)
-                            .desired_rows(14)
+                            .desired_rows(18)
                             .desired_width(f32::INFINITY)
                             .font(egui::TextStyle::Monospace),
                     );
@@ -259,14 +269,16 @@ impl PreferencesDialog {
 
         if self.show_yaml_export_modal {
             Window::new("Export Theme YAML")
+                .id(egui::Id::new("export_theme_yaml_modal_v2"))
                 .collapsible(false)
                 .resizable(true)
-                .default_size(Vec2::new(500.0, 380.0))
+                .default_size(Vec2::new(760.0, 520.0))
+                .min_size(Vec2::new(580.0, 380.0))
                 .show(ctx, |ui| {
                     ui.label("Theme YAML definition (copy to clipboard):");
                     ui.add(
                         egui::TextEdit::multiline(&mut self.yaml_export_buffer)
-                            .desired_rows(14)
+                            .desired_rows(18)
                             .desired_width(f32::INFINITY)
                             .font(egui::TextStyle::Monospace),
                     );
@@ -398,13 +410,14 @@ impl PreferencesDialog {
 
         ui.add_space(10.0);
         ui.label(RichText::new("Theme Color Swatches").strong());
+        ui.add_space(4.0);
 
         let mut theme = prefs.current_theme();
 
         let swatch = |ui: &mut egui::Ui, label: &str, color: &mut Color32| -> bool {
             let mut c_changed = false;
             ui.horizontal(|ui| {
-                ui.allocate_ui(Vec2::new(160.0, 20.0), |ui| {
+                ui.allocate_ui(Vec2::new(170.0, 22.0), |ui| {
                     ui.label(label);
                 });
                 if ui.color_edit_button_srgba(color).changed() {
@@ -415,20 +428,32 @@ impl PreferencesDialog {
         };
 
         let mut theme_edited = false;
-        theme_edited |= swatch(ui, "Canvas Background:", &mut theme.canvas_bg);
-        theme_edited |= swatch(ui, "Grid Dot:", &mut theme.grid_dot);
-        theme_edited |= swatch(ui, "Grid Line:", &mut theme.grid_line);
-        theme_edited |= swatch(ui, "Wire (Normal):", &mut theme.wire_normal);
-        theme_edited |= swatch(ui, "Wire (Selected):", &mut theme.wire_selected);
-        theme_edited |= swatch(ui, "Component Body:", &mut theme.component_body);
-        theme_edited |= swatch(ui, "Component Stroke:", &mut theme.component_stroke);
-        theme_edited |= swatch(ui, "Component Selected:", &mut theme.component_selected);
-        theme_edited |= swatch(ui, "Pin (Normal):", &mut theme.pin_normal);
-        theme_edited |= swatch(ui, "Pin (Connected):", &mut theme.pin_connected);
-        theme_edited |= swatch(ui, "Accent Primary:", &mut theme.accent_primary);
-        theme_edited |= swatch(ui, "Text Primary:", &mut theme.text_primary);
-        theme_edited |= swatch(ui, "Text Secondary:", &mut theme.text_secondary);
-        theme_edited |= swatch(ui, "Voltage Badge:", &mut theme.voltage_badge);
+
+        ui.horizontal(|ui| {
+            ui.vertical(|ui| {
+                ui.set_width(270.0);
+                theme_edited |= swatch(ui, "Canvas Background:", &mut theme.canvas_bg);
+                theme_edited |= swatch(ui, "Grid Dot:", &mut theme.grid_dot);
+                theme_edited |= swatch(ui, "Grid Line:", &mut theme.grid_line);
+                theme_edited |= swatch(ui, "Wire (Normal):", &mut theme.wire_normal);
+                theme_edited |= swatch(ui, "Wire (Selected):", &mut theme.wire_selected);
+                theme_edited |= swatch(ui, "Component Body:", &mut theme.component_body);
+                theme_edited |= swatch(ui, "Component Stroke:", &mut theme.component_stroke);
+            });
+
+            ui.add_space(24.0);
+
+            ui.vertical(|ui| {
+                ui.set_width(270.0);
+                theme_edited |= swatch(ui, "Component Selected:", &mut theme.component_selected);
+                theme_edited |= swatch(ui, "Pin (Normal):", &mut theme.pin_normal);
+                theme_edited |= swatch(ui, "Pin (Connected):", &mut theme.pin_connected);
+                theme_edited |= swatch(ui, "Accent Primary:", &mut theme.accent_primary);
+                theme_edited |= swatch(ui, "Text Primary:", &mut theme.text_primary);
+                theme_edited |= swatch(ui, "Text Secondary:", &mut theme.text_secondary);
+                theme_edited |= swatch(ui, "Voltage Badge:", &mut theme.voltage_badge);
+            });
+        });
 
         if theme_edited {
             theme.name = "Custom Theme".to_string();
@@ -436,7 +461,7 @@ impl PreferencesDialog {
             changed = true;
         }
 
-        ui.add_space(10.0);
+        ui.add_space(12.0);
         ui.horizontal(|ui| {
             if ui.button("Export Theme as YAML...").clicked() {
                 self.yaml_export_buffer = theme.to_yaml_string();
@@ -462,8 +487,12 @@ impl PreferencesDialog {
         ui.add_space(8.0);
 
         ui.horizontal(|ui| {
-            ui.label("Search actions:");
-            ui.text_edit_singleline(&mut self.keybind_search);
+            ui.label(RichText::new("Search actions:").size(13.0));
+            ui.add(
+                egui::TextEdit::singleline(&mut self.keybind_search)
+                    .desired_width(280.0)
+                    .hint_text("Filter by action, category, or shortcut..."),
+            );
             if !self.keybind_search.is_empty() && ui.button("Clear").clicked() {
                 self.keybind_search.clear();
             }
@@ -477,19 +506,20 @@ impl PreferencesDialog {
             });
         });
 
-        ui.add_space(6.0);
+        ui.add_space(8.0);
 
         let query = self.keybind_search.trim().to_lowercase();
 
         egui::Grid::new("keybinds_grid")
             .striped(true)
-            .min_col_width(80.0)
+            .min_col_width(95.0)
+            .spacing(Vec2::new(18.0, 8.0))
             .show(ui, |ui| {
-                ui.label(RichText::new("Action").strong());
-                ui.label(RichText::new("Category").strong());
-                ui.label(RichText::new("Default").strong());
-                ui.label(RichText::new("Assigned").strong());
-                ui.label(RichText::new("Controls").strong());
+                ui.label(RichText::new("Action").strong().size(13.0));
+                ui.label(RichText::new("Category").strong().size(13.0));
+                ui.label(RichText::new("Default").strong().size(13.0));
+                ui.label(RichText::new("Assigned").strong().size(13.0));
+                ui.label(RichText::new("Controls").strong().size(13.0));
                 ui.end_row();
 
                 for action in registry.all() {
