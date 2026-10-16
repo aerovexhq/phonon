@@ -1,0 +1,404 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+/* ==========================================================================
+   Aerovex Design System — Core Phonon SPICE & EDA Tokens
+   Linear / Software-Craft Standard
+   ========================================================================== */
+
+:root {
+  /* Brand Tokens - Linear lavender signature */
+  --vp-c-brand-1: #5e6ad2;
+  --vp-c-brand-2: #717cf0;
+  --vp-c-brand-3: #4b55a8;
+  --vp-c-brand-soft: rgba(94, 106, 210, 0.16);
+
+  /* Engine Highlight - Semiconductor & Cryogenic Cyan */
+  --aerovex-engine-accent: #38bdf8;
+  --aerovex-engine-soft: rgba(56, 189, 248, 0.15);
+  --aerovex-thermal-accent: #f59e0b;
+  --aerovex-status-emerald: #10b981;
+
+  /* Typography Hierarchy */
+  --vp-font-family-base: 'Inter Display', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --vp-font-family-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* Layered Dark Canvas Foundations */
+  --vp-c-bg: #08090a;
+  --vp-c-bg-alt: #0f1012;
+  --vp-c-bg-elv: #15171a;
+  --vp-c-bg-soft: #0f1012;
+
+  /* Hairline Strokes & Borders */
+  --vp-c-border: rgba(255, 255, 255, 0.08);
+  --vp-c-divider: rgba(255, 255, 255, 0.08);
+  --vp-c-gutter: rgba(255, 255, 255, 0.08);
+
+  /* Text Contrast Hierarchy */
+  --vp-c-text-1: #f7f8f8;
+  --vp-c-text-2: #a1a1aa;
+  --vp-c-text-3: #71717a;
+
+  /* Code Surface Tokens */
+  --vp-code-bg: #0f1012;
+  --vp-code-block-bg: #0f1012;
+  --vp-code-inline-bg: rgba(255, 255, 255, 0.06);
+  --vp-code-line-highlight-color: rgba(94, 106, 210, 0.12);
+
+  /* Chrome & Navigation */
+  --vp-nav-bg-color: rgba(8, 9, 10, 0.85);
+  --vp-nav-screen-bg-color: #08090a;
+  --vp-sidebar-bg-color: #08090a;
+}
+
+.dark {
+  --vp-c-bg: #08090a;
+  --vp-c-bg-alt: #0f1012;
+  --vp-c-bg-elv: #15171a;
+  --vp-c-bg-soft: #0f1012;
+
+  --vp-c-border: rgba(255, 255, 255, 0.08);
+  --vp-c-divider: rgba(255, 255, 255, 0.08);
+  --vp-c-gutter: rgba(255, 255, 255, 0.08);
+
+  --vp-c-text-1: #f7f8f8;
+  --vp-c-text-2: #a1a1aa;
+  --vp-c-text-3: #71717a;
+
+  --vp-code-bg: #0f1012;
+  --vp-code-block-bg: #0f1012;
+  --vp-code-inline-bg: rgba(255, 255, 255, 0.06);
+
+  --vp-nav-bg-color: rgba(8, 9, 10, 0.85);
+  --vp-nav-screen-bg-color: #08090a;
+  --vp-sidebar-bg-color: #08090a;
+}
+
+/* Headings with tight -0.035em tracking */
+h1, h2, h3, h4, h5, h6,
+.VPHero .name,
+.VPHero .tagline,
+.VPNavBarTitle,
+.vp-doc h1,
+.vp-doc h2,
+.vp-doc h3,
+.vp-doc h4 {
+  letter-spacing: -0.035em !important;
+}
+
+/* Global scrollbars */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: rgba(94, 106, 210, 0.6);
+}
+
+/* ==========================================================================
+   Vexel-Style High-Craft Sidebar & Navigation Enhancements
+   ========================================================================== */
+
+.VPSidebar {
+  background-color: #08090a !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Category Badges in Sidebar */
+.nx-sidebar-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--vp-font-family-mono);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: rgba(94, 106, 210, 0.15);
+  color: #5e6ad2;
+  border: 1px solid rgba(94, 106, 210, 0.3);
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+/* Category Header in Sidebar */
+.VPSidebarItem.level-0 .text {
+  font-family: var(--vp-font-family-mono) !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.8px !important;
+  color: #71717a !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  width: 100% !important;
+}
+
+/* Active Section Glow Indicator in Sidebar */
+.VPSidebarItem.is-active > .item {
+  background: rgba(94, 106, 210, 0.12) !important;
+  border-left: 2px solid #5e6ad2 !important;
+  box-shadow: 0 0 16px rgba(94, 106, 210, 0.22) !important;
+  border-radius: 6px !important;
+}
+
+.VPSidebarItem.is-active > .item .text {
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  text-shadow: 0 0 8px rgba(94, 106, 210, 0.5) !important;
+}
+
+.VPSidebarItem:not(.is-active) > .item:hover {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border-radius: 6px !important;
+}
+
+.VPSidebarItem.level-1 .text {
+  font-size: 13px !important;
+  color: #a1a1aa !important;
+  transition: color 0.15s ease !important;
+}
+
+.VPSidebarItem.level-1 .text:hover {
+  color: #ffffff !important;
+}
+
+/* ==========================================================================
+   Documentation Content Layout & Typography
+   ========================================================================== */
+
+.vp-doc {
+  color: #d4d4d8;
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.vp-doc h1 {
+  font-size: 32px !important;
+  font-weight: 800 !important;
+  color: #ffffff !important;
+  letter-spacing: -0.035em !important;
+  margin-bottom: 16px !important;
+}
+
+.vp-doc h2 {
+  font-size: 22px !important;
+  font-weight: 700 !important;
+  color: #f7f8f8 !important;
+  letter-spacing: -0.03em !important;
+  margin-top: 36px !important;
+  margin-bottom: 14px !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+  padding-top: 24px !important;
+}
+
+.vp-doc h3 {
+  font-size: 17px !important;
+  font-weight: 600 !important;
+  color: #e4e4e7 !important;
+  letter-spacing: -0.02em !important;
+  margin-top: 24px !important;
+  margin-bottom: 10px !important;
+}
+
+/* ==========================================================================
+   High-Craft Code Blocks with Copy Buttons
+   ========================================================================== */
+
+.vp-doc div[class*='language-'] {
+  background-color: #0f1012 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 10px !important;
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.04), 0 8px 24px rgba(0, 0, 0, 0.4) !important;
+  margin: 20px 0 !important;
+  position: relative !important;
+}
+
+.vp-doc div[class*='language-'] pre {
+  font-family: var(--vp-font-family-mono) !important;
+  font-size: 12.5px !important;
+  line-height: 1.65 !important;
+  padding: 18px 20px !important;
+}
+
+.vp-doc div[class*='language-'] span.lang {
+  font-family: var(--vp-font-family-mono) !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.8px !important;
+  text-transform: uppercase !important;
+  color: #71717a !important;
+  top: 8px !important;
+  right: 48px !important;
+}
+
+/* Copy Button */
+.vp-copy {
+  background: #15171a !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 6px !important;
+  color: #a1a1aa !important;
+  width: 30px !important;
+  height: 30px !important;
+  top: 8px !important;
+  right: 10px !important;
+  transition: all 0.15s ease !important;
+}
+
+.vp-copy:hover {
+  background: #1c1e22 !important;
+  border-color: rgba(94, 106, 210, 0.5) !important;
+  color: #ffffff !important;
+}
+
+/* Inline Code Snippets */
+.vp-doc :not(pre) > code {
+  font-family: var(--vp-font-family-mono) !important;
+  font-size: 12.5px !important;
+  background-color: rgba(255, 255, 255, 0.06) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #38bdf8 !important;
+  padding: 2px 6px !important;
+  border-radius: 4px !important;
+}
+
+/* ==========================================================================
+   SPICE Model Tables & Benchmark Data
+   ========================================================================== */
+
+.vp-doc table {
+  width: 100% !important;
+  border-collapse: collapse !important;
+  margin: 24px 0 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 8px !important;
+  overflow: hidden !important;
+  font-size: 13px !important;
+}
+
+.vp-doc th {
+  background-color: #15171a !important;
+  font-family: var(--vp-font-family-mono) !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.8px !important;
+  text-transform: uppercase !important;
+  color: #a1a1aa !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  padding: 12px 16px !important;
+}
+
+.vp-doc td {
+  border: 1px solid rgba(255, 255, 255, 0.06) !important;
+  padding: 10px 16px !important;
+  color: #d4d4d8 !important;
+}
+
+.vp-doc tr:nth-child(even) td {
+  background-color: rgba(255, 255, 255, 0.015) !important;
+}
+
+.vp-doc tr:hover td {
+  background-color: rgba(94, 106, 210, 0.04) !important;
+}
+
+/* ==========================================================================
+   High-Craft Callout Boxes (Tip, Info, Warning, Danger)
+   ========================================================================== */
+
+.custom-block {
+  margin: 20px 0 !important;
+  padding: 16px 20px !important;
+  border-radius: 8px !important;
+  background-color: #0f1012 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.custom-block .custom-block-title {
+  font-family: var(--vp-font-family-mono) !important;
+  font-size: 11.5px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.8px !important;
+  text-transform: uppercase !important;
+  margin-bottom: 6px !important;
+}
+
+.custom-block.tip {
+  border-left: 3px solid #5e6ad2 !important;
+}
+.custom-block.tip .custom-block-title {
+  color: #5e6ad2 !important;
+}
+
+.custom-block.info {
+  border-left: 3px solid #38bdf8 !important;
+}
+.custom-block.info .custom-block-title {
+  color: #38bdf8 !important;
+}
+
+.custom-block.warning {
+  border-left: 3px solid #f59e0b !important;
+}
+.custom-block.warning .custom-block-title {
+  color: #f59e0b !important;
+}
+
+.custom-block.danger {
+  border-left: 3px solid #ef4444 !important;
+}
+.custom-block.danger .custom-block-title {
+  color: #ef4444 !important;
+}
+
+/* Breadcrumb Navigation */
+.VPDocBreadcrumbs {
+  font-family: var(--vp-font-family-mono);
+  font-size: 11px;
+  color: #71717a;
+  margin-bottom: 12px;
+}
+
+/* Next & Previous Buttons */
+.VPDocFooter .pager-link {
+  background: #0f1012 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 10px !important;
+  transition: all 0.2s ease !important;
+}
+
+.VPDocFooter .pager-link:hover {
+  background: #15171a !important;
+  border-color: rgba(94, 106, 210, 0.35) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
+}
+
+.VPDocFooter .pager-link .desc {
+  font-family: var(--vp-font-family-mono) !important;
+  font-size: 10px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.8px !important;
+  color: #71717a !important;
+}
+
+.VPDocFooter .pager-link .title {
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  color: #ffffff !important;
+}
